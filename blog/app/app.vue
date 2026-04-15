@@ -9,6 +9,11 @@ const { toasts } = useToast()
 const { showLoginModal } = useLoginModal()
 const { showBindEmailModal, triggerGlobal, onBindSuccess } = useBindEmail()
 
+// 页面加载状态
+const isLoading = ref(true)
+const loadingProgress = ref(0)
+const loadingText = ref('正在加载资源...')
+
 // 全局数据
 const { blogConfig, basicConfig, oauthConfig, uploadConfig } = useSysConfig()
 const { menus } = useMenus()
@@ -18,6 +23,9 @@ const { siteStats } = useStats()
 
 // 使用SSR获取全局数据
 const { data: globalData } = await useAsyncData('global-data', async () => {
+  loadingProgress.value = 10
+  loadingText.value = '正在加载配置...'
+
   const [basicConfigData, blogConfigData, oauthConfigData, uploadConfigData, menusData, categoriesData, tagsData, statsData] = await Promise.all([
     getSettingGroup('basic'),
     getSettingGroup('blog'),
@@ -29,6 +37,9 @@ const { data: globalData } = await useAsyncData('global-data', async () => {
     getSiteStats()
   ])
 
+  loadingProgress.value = 60
+  loadingText.value = '正在处理数据...'
+
   // 处理配置数据
   const processConfig = (config: any, prefix: string) => {
     const processed: Record<string, string> = {}
@@ -39,6 +50,9 @@ const { data: globalData } = await useAsyncData('global-data', async () => {
     })
     return processed
   }
+
+  loadingProgress.value = 80
+  loadingText.value = '即将完成...'
 
   return {
     basicConfig: processConfig(basicConfigData, 'basic'),
@@ -70,6 +84,9 @@ if (globalData.value) {
   if (globalData.value.tagsTotal !== undefined) {
     tagsTotal.value = globalData.value.tagsTotal
   }
+
+  loadingProgress.value = 100
+  loadingText.value = '加载完成！'
 }
 
 // 全局路由切换时触发邮箱绑定提示
@@ -96,6 +113,11 @@ onMounted(() => {
 
   // 异步加载 remixicon，避免阻塞首屏渲染
   import('remixicon/fonts/remixicon.css')
+
+  // 延迟隐藏加载动画，确保页面完全渲染
+  setTimeout(() => {
+    isLoading.value = false
+  }, 500)
 })
 
 // SEO Meta
@@ -175,6 +197,17 @@ useHead({
 </script>
 
 <template>
+  <!-- 页面加载动画 -->
+  <UiPageLoader
+    :is-loading="isLoading"
+    :title="blogConfig.title || '加载中'"
+    :progress="loadingProgress"
+    :loading-text="loadingText"
+  />
+
+  <!-- Canvas 背景动画 -->
+  <UiCanvasBackground />
+
   <!-- 背景图片 -->
   <div class="web_bg" :style="{ backgroundImage: `url(${bgImage})` }"></div>
 
