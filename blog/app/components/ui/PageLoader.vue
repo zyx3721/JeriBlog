@@ -122,16 +122,49 @@ const props = withDefaults(defineProps<Props>(), {
   opacity: 0.4;
 }
 
-/* 第三层星星 - 大而慢，带闪烁 */
+/* 第三层星星 - 大而慢，带炫酷闪烁 */
 .stars3 {
   background-image:
     radial-gradient(3px 3px at 75px 125px, #fffacd, rgba(0,0,0,0)),
     radial-gradient(2px 2px at 180px 80px, #f0e68c, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 120px 160px, #fafad2, rgba(0,0,0,0));
+    radial-gradient(2px 2px at 120px 160px, #fafad2, rgba(0,0,0,0)),
+    radial-gradient(3px 3px at 200px 40px, #87ceeb, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 30px 90px, #add8e6, rgba(0,0,0,0)),
+    radial-gradient(3px 3px at 160px 180px, #ffd700, rgba(0,0,0,0));
   background-repeat: repeat;
   background-size: 300px 300px;
-  animation: stars-move 150s linear infinite, twinkle 3s ease-in-out infinite;
-  opacity: 0.5;
+  animation: stars-move 150s linear infinite, twinkle-advanced 4s ease-in-out infinite;
+  opacity: 0.6;
+}
+
+/* 添加更多闪烁星星层 */
+.stars3::before,
+.stars3::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-repeat: repeat;
+}
+
+.stars3::before {
+  background-image:
+    radial-gradient(4px 4px at 50px 50px, rgba(255, 255, 255, 0.9), rgba(0,0,0,0)),
+    radial-gradient(3px 3px at 150px 100px, rgba(135, 206, 250, 0.8), rgba(0,0,0,0)),
+    radial-gradient(3px 3px at 100px 150px, rgba(255, 215, 0, 0.8), rgba(0,0,0,0));
+  background-size: 350px 350px;
+  animation: stars-move 120s linear infinite, twinkle-fast 2s ease-in-out infinite;
+}
+
+.stars3::after {
+  background-image:
+    radial-gradient(5px 5px at 80px 80px, rgba(255, 255, 255, 1), rgba(0,0,0,0)),
+    radial-gradient(4px 4px at 200px 150px, rgba(173, 216, 230, 0.9), rgba(0,0,0,0)),
+    radial-gradient(4px 4px at 120px 40px, rgba(255, 250, 205, 0.9), rgba(0,0,0,0));
+  background-size: 400px 400px;
+  animation: stars-move 180s linear infinite, twinkle-slow 5s ease-in-out infinite;
 }
 
 @keyframes stars-move {
@@ -143,12 +176,63 @@ const props = withDefaults(defineProps<Props>(), {
   }
 }
 
-@keyframes twinkle {
-  0%, 100% {
+/* 高级闪烁动画 - 随机感 */
+@keyframes twinkle-advanced {
+  0% {
+    opacity: 0.6;
+    filter: brightness(1);
+  }
+  20% {
+    opacity: 0.9;
+    filter: brightness(1.3);
+  }
+  40% {
+    opacity: 0.4;
+    filter: brightness(0.8);
+  }
+  60% {
+    opacity: 0.8;
+    filter: brightness(1.2);
+  }
+  80% {
     opacity: 0.5;
+    filter: brightness(0.9);
+  }
+  100% {
+    opacity: 0.6;
+    filter: brightness(1);
+  }
+}
+
+/* 快速闪烁 */
+@keyframes twinkle-fast {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
   }
   50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* 慢速闪烁 */
+@keyframes twinkle-slow {
+  0%, 100% {
+    opacity: 0.4;
+    filter: brightness(1) blur(0);
+  }
+  25% {
     opacity: 0.8;
+    filter: brightness(1.5) blur(1px);
+  }
+  50% {
+    opacity: 0.6;
+    filter: brightness(1.2) blur(0.5px);
+  }
+  75% {
+    opacity: 0.9;
+    filter: brightness(1.4) blur(1px);
   }
 }
 

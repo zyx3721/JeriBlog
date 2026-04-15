@@ -12,7 +12,7 @@ const { showBindEmailModal, triggerGlobal, onBindSuccess } = useBindEmail()
 // 页面加载状态
 const isLoading = ref(true)
 const loadingProgress = ref(0)
-const loadingText = ref('正在加载资源...')
+const loadingText = ref('初始化中...')
 
 // 全局数据
 const { blogConfig, basicConfig, oauthConfig, uploadConfig } = useSysConfig()
@@ -23,9 +23,6 @@ const { siteStats } = useStats()
 
 // 使用SSR获取全局数据
 const { data: globalData } = await useAsyncData('global-data', async () => {
-  loadingProgress.value = 10
-  loadingText.value = '正在加载配置...'
-
   const [basicConfigData, blogConfigData, oauthConfigData, uploadConfigData, menusData, categoriesData, tagsData, statsData] = await Promise.all([
     getSettingGroup('basic'),
     getSettingGroup('blog'),
@@ -37,9 +34,6 @@ const { data: globalData } = await useAsyncData('global-data', async () => {
     getSiteStats()
   ])
 
-  loadingProgress.value = 60
-  loadingText.value = '正在处理数据...'
-
   // 处理配置数据
   const processConfig = (config: any, prefix: string) => {
     const processed: Record<string, string> = {}
@@ -50,9 +44,6 @@ const { data: globalData } = await useAsyncData('global-data', async () => {
     })
     return processed
   }
-
-  loadingProgress.value = 80
-  loadingText.value = '即将完成...'
 
   return {
     basicConfig: processConfig(basicConfigData, 'basic'),
@@ -84,9 +75,33 @@ if (globalData.value) {
   if (globalData.value.tagsTotal !== undefined) {
     tagsTotal.value = globalData.value.tagsTotal
   }
+}
 
-  loadingProgress.value = 100
-  loadingText.value = '加载完成！'
+// 模拟加载进度动画（客户端执行）
+if (process.client) {
+  // 0% -> 30%
+  setTimeout(() => {
+    loadingProgress.value = 30
+    loadingText.value = '正在加载配置...'
+  }, 100)
+
+  // 30% -> 60%
+  setTimeout(() => {
+    loadingProgress.value = 60
+    loadingText.value = '正在加载资源...'
+  }, 400)
+
+  // 60% -> 85%
+  setTimeout(() => {
+    loadingProgress.value = 85
+    loadingText.value = '正在处理数据...'
+  }, 700)
+
+  // 85% -> 100%
+  setTimeout(() => {
+    loadingProgress.value = 100
+    loadingText.value = '加载完成！'
+  }, 1000)
 }
 
 // 全局路由切换时触发邮箱绑定提示
