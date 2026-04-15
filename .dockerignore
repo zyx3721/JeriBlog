@@ -1,0 +1,29 @@
+# Node 依赖（平台相关，在 Docker 内重新安装）
+node_modules/
+admin/node_modules/
+blog/node_modules/
+
+# 构建产物（在 Docker 内重新构建）
+admin/dist/
+blog/.output/
+blog/.nuxt/
+
+# Go 构建产物
+server/flec_blog
+
+# 环境变量文件（含敏感信息，禁止打包进镜像）
+.env
+.env.*
+**/.env
+**/.env.*
+
+# Git 历史
+.git/
+.gitignore
+
+# 日志
+**/*.log
+
+# IDE
+.vscode/
+.idea/

@@ -1,0 +1,415 @@
+package v1
+
+import (
+	"fmt"
+	"io"
+	"mime/multipart"
+	"strconv"
+
+	"flec_blog/internal/dto"
+	"flec_blog/internal/service"
+	"flec_blog/pkg/response"
+
+	"github.com/gin-gonic/gin"
+)
+
+// ArticleController 文章控制器
+type ArticleController struct {
+	articleService *service.ArticleService
+}
+
+// NewArticleController 创建文章控制器
+func NewArticleController(articleService *service.ArticleService) *ArticleController {
+	return &ArticleController{articleService: articleService}
+}
+
+// ============ 前台接口 ============
+
+// ListForWeb 获取前台文章列表
+//
+//	@Summary		文章列表
+//	@Description	获取已发布文章，置顶文章在前。支持按年/月/分类/标签筛选，参数可组合。不传分页参数则返回全部
+//	@Tags			文章
+//	@Accept			json
+//	@Produce		json
+//	@Param			page		query		int		false	"页码"
+//	@Param			page_size	query		int		false	"每页数量（不传则返回全部）"
+//	@Param			year		query		string	false	"年份，如 2025"
+//	@Param			month		query		string	false	"月份 1-12，需配合 year"
+//	@Param			category	query		string	false	"分类 slug"
+//	@Param			tag			query		string	false	"标签 slug"
+//	@Success		200			{object}	response.Response{data=response.PageResult}
+//	@Failure		400			{object}	response.Response
+//	@Router			/articles [get]
+func (c *ArticleController) ListForWeb(ctx *gin.Context) {
+	var req dto.ListArticlesRequest
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		response.ValidateFailed(ctx, err.Error())
+		return
+	}
+
+	articles, total, err := c.articleService.ListForWeb(ctx.Request.Context(), &req)
+	if err != nil {
+		response.Failed(ctx, err.Error())
+		return
+	}
+
+	response.PageSuccess(ctx, articles, total, req.Page, req.PageSize)
+}
+
+// Search 搜索文章
+//
+//	@Summary		搜索
+//	@Description	全文搜索标题和正文，返回匹配的文章及高亮摘要
+//	@Tags			文章
+//	@Accept			json
+//	@Produce		json
+//	@Param			keyword		query		string	true	"搜索词"
+//	@Param			page		query		int		false	"页码"
+//	@Param			page_size	query		int		false	"每页数量（不传则返回全部）"
+//	@Success		200			{object}	response.Response{data=response.PageResult}
+//	@Failure		400			{object}	response.Response
+//	@Router			/articles/search [get]
+func (c *ArticleController) Search(ctx *gin.Context) {
+	var req dto.SearchArticlesRequest
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		response.ValidateFailed(ctx, err.Error())
+		return
+	}
+
+	articles, total, err := c.articleService.Search(ctx.Request.Context(), &req)
+	if err != nil {
+		response.Failed(ctx, err.Error())
+		return
+	}
+
+	response.PageSuccess(ctx, articles, total, req.Page, req.PageSize)
+}
+
+// GetBySlug 通过slug获取文章
+//
+//	@Summary		文章详情
+//	@Description	通过 slug 读取文章完整内容，自动增加阅读数
+//	@Tags			文章
+//	@Accept			json
+//	@Produce		json
+//	@Param			slug	path		string	true	"文章 slug"
+//	@Success		200		{object}	response.Response{data=dto.ArticleDetailResponse}
+//	@Failure		404		{object}	response.Response
+//	@Router			/articles/{slug} [get]
+func (c *ArticleController) GetBySlug(ctx *gin.Context) {
+	slug := ctx.Param("slug")
+	if slug == "" {
+		response.ValidateFailed(ctx, "slug不能为空")
+		return
+	}
+
+	article, err := c.articleService.GetBySlug(ctx.Request.Context(), slug)
+	if err != nil {
+		response.NotFound(ctx, err.Error())
+		return
+	}
+
+	response.Success(ctx, article)
+}
+
+// ============ 后台管理接口 ============
+
+// List 获取文章列表
+//
+//	@Summary		文章列表（管理）
+//	@Description	获取所有文章含草稿，用于后台管理
+//	@Tags			文章管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			page		query		int	false	"页码"
+//	@Param			page_size	query		int	false	"每页数量（不传则返回全部）"
+//	@Success		200			{object}	response.Response{data=response.PageResult}
+//	@Failure		401			{object}	response.Response
+//	@Failure		403			{object}	response.Response
+//	@Router			/admin/articles [get]
+func (c *ArticleController) List(ctx *gin.Context) {
+	var req dto.ListArticlesRequest
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		response.ValidateFailed(ctx, err.Error())
+		return
+	}
+
+	articles, total, err := c.articleService.List(ctx.Request.Context(), &req)
+	if err != nil {
+		response.Failed(ctx, err.Error())
+		return
+	}
+
+	response.PageSuccess(ctx, articles, total, req.Page, req.PageSize)
+}
+
+// Get 获取文章详情
+//
+//	@Summary		文章详情（管理）
+//	@Description	通过 ID 获取，用于编辑器回显
+//	@Tags			文章管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id	path		int	true	"文章 ID"
+//	@Success		200	{object}	response.Response{data=dto.ArticleAdminDetailResponse}
+//	@Failure		400	{object}	response.Response
+//	@Failure		401	{object}	response.Response
+//	@Failure		403	{object}	response.Response
+//	@Failure		404	{object}	response.Response
+//	@Router			/admin/articles/{id} [get]
+func (c *ArticleController) Get(ctx *gin.Context) {
+	id, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
+	if err != nil {
+		response.ValidateFailed(ctx, err.Error())
+		return
+	}
+
+	article, err := c.articleService.Get(ctx.Request.Context(), uint(id))
+	if err != nil {
+		response.NotFound(ctx, err.Error())
+		return
+	}
+
+	response.Success(ctx, article)
+}
+
+// Create 创建文章
+//
+//	@Summary		新建文章
+//	@Description	创建草稿或发布文章，自动生成 slug。支持设置置顶状态和发布状态，发布时自动设置发布时间
+//	@Tags			文章管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			request	body		dto.CreateArticleRequest	true	"文章信息"
+//	@Success		201		{object}	response.Response{data=dto.ArticleAdminDetailResponse}
+//	@Failure		400		{object}	response.Response
+//	@Failure		401		{object}	response.Response
+//	@Failure		403		{object}	response.Response
+//	@Router			/admin/articles [post]
+func (c *ArticleController) Create(ctx *gin.Context) {
+	var req dto.CreateArticleRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		response.ValidateFailed(ctx, err.Error())
+		return
+	}
+
+	article, err := c.articleService.Create(ctx.Request.Context(), &req)
+	if err != nil {
+		response.Failed(ctx, err.Error())
+		return
+	}
+
+	response.Created(ctx, article)
+}
+
+// Update 更新文章
+//
+//	@Summary		更新文章
+//	@Description	修改文章内容、分类、标签、置顶状态、发布状态等。支持调整发布时间，改为发布时自动设置发布时间，会自动更新相关统计
+//	@Tags			文章管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path		int							true	"文章 ID"
+//	@Param			request	body		dto.UpdateArticleRequest	true	"文章信息"
+//	@Success		200		{object}	response.Response{data=dto.ArticleAdminDetailResponse}
+//	@Failure		400		{object}	response.Response
+//	@Failure		401		{object}	response.Response
+//	@Failure		403		{object}	response.Response
+//	@Failure		404		{object}	response.Response
+//	@Router			/admin/articles/{id} [put]
+func (c *ArticleController) Update(ctx *gin.Context) {
+	id, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
+	if err != nil {
+		response.ValidateFailed(ctx, err.Error())
+		return
+	}
+
+	var req dto.UpdateArticleRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		response.ValidateFailed(ctx, err.Error())
+		return
+	}
+
+	updatedArticle, err := c.articleService.Update(ctx.Request.Context(), uint(id), &req)
+	if err != nil {
+		response.Failed(ctx, err.Error())
+		return
+	}
+
+	response.Success(ctx, updatedArticle)
+}
+
+// Delete 删除文章
+//
+//	@Summary		删除文章
+//	@Description	硬删除文章，会自动更新分类和标签的文章计数
+//	@Tags			文章管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id	path		int	true	"文章 ID"
+//	@Success		200	{object}	response.Response
+//	@Failure		400	{object}	response.Response
+//	@Failure		401	{object}	response.Response
+//	@Failure		403	{object}	response.Response
+//	@Failure		404	{object}	response.Response
+//	@Router			/admin/articles/{id} [delete]
+func (c *ArticleController) Delete(ctx *gin.Context) {
+	id, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
+	if err != nil {
+		response.ValidateFailed(ctx, err.Error())
+		return
+	}
+
+	if err := c.articleService.Delete(ctx.Request.Context(), uint(id)); err != nil {
+		response.Failed(ctx, err.Error())
+		return
+	}
+
+	response.Success(ctx, nil)
+}
+
+// ============ 数据导入导出接口 ============
+
+// ImportArticles 导入文章数据
+//
+//	@Summary		导入文章数据
+//	@Description	从Hexo等静态博客系统导入文章数据，上传Markdown文件（支持多文件）
+//	@Tags			文章管理
+//	@Accept			multipart/form-data
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			source_type	formData	string	true	"来源类型，目前支持：hexo"	Enums(hexo)
+//	@Param			files		formData	[]file	true	"文章文件（.md或.markdown格式，支持多文件）"
+//	@Success		200			{object}	response.Response{data=dto.ImportArticlesResult}
+//	@Failure		400			{object}	response.Response
+//	@Failure		401			{object}	response.Response
+//	@Failure		403			{object}	response.Response
+//	@Router			/admin/articles/import [post]
+func (c *ArticleController) ImportArticles(ctx *gin.Context) {
+	form, err := ctx.MultipartForm()
+	if err != nil {
+		response.ValidateFailed(ctx, "文件上传失败")
+		return
+	}
+
+	files := form.File["files"]
+	if len(files) == 0 {
+		response.ValidateFailed(ctx, "请选择要导入的文件")
+		return
+	}
+
+	if len(files) > 100 {
+		response.ValidateFailed(ctx, "单次最多导入100个文件")
+		return
+	}
+
+	// Markdown/Hexo 文件导入
+	const maxFileSize = 10 << 20 // 10MB
+	fileContents := make(map[string]string)
+
+	for _, fileHeader := range files {
+		if !isMarkdownFile(fileHeader.Filename) {
+			response.ValidateFailed(ctx, fmt.Sprintf("文件 %s 不是Markdown格式", fileHeader.Filename))
+			return
+		}
+
+		fileBytes, err := readUploadFile(fileHeader, maxFileSize)
+		if err != nil {
+			response.Failed(ctx, err.Error())
+			return
+		}
+		fileContents[fileHeader.Filename] = string(fileBytes)
+	}
+
+	result, err := c.articleService.ImportFromHexo(ctx.Request.Context(), fileContents)
+	if err != nil {
+		response.Failed(ctx, err.Error())
+		return
+	}
+
+	response.Success(ctx, result)
+}
+
+// readUploadFile 读取上传文件内容
+func readUploadFile(fileHeader *multipart.FileHeader, maxSize int64) ([]byte, error) {
+	if fileHeader.Size > maxSize {
+		return nil, fmt.Errorf("文件 %s 超过大小限制", fileHeader.Filename)
+	}
+
+	file, err := fileHeader.Open()
+	if err != nil {
+		return nil, fmt.Errorf("打开文件失败: %w", err)
+	}
+	defer file.Close()
+
+	return io.ReadAll(file)
+}
+
+// isMarkdownFile 检查文件是否为Markdown格式
+func isMarkdownFile(filename string) bool {
+	return len(filename) > 3 && (filename[len(filename)-3:] == ".md" || filename[len(filename)-9:] == ".markdown")
+}
+
+// ============ 微信公众号导出接口 ============
+
+// ExportToWeChat 导出文章到微信公众号
+//
+//	@Summary		导出到微信公众号
+//	@Description	尝试推送到公众号草稿箱，失败则返回 HTML 供复制
+//	@Tags			文章管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path		int	true	"文章 ID"
+//	@Success		200		{object}	response.Response{data=dto.WeChatExportResult}
+//	@Failure		400		{object}	response.Response
+//	@Failure		401		{object}	response.Response
+//	@Failure		403		{object}	response.Response
+//	@Router			/admin/articles/{id}/wechat/export [post]
+func (c *ArticleController) ExportToWeChat(ctx *gin.Context) {
+	id, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
+	if err != nil {
+		response.ValidateFailed(ctx, "无效的文章 ID")
+		return
+	}
+
+	result := c.articleService.ExportToWeChat(ctx.Request.Context(), uint(id))
+	response.Success(ctx, result)
+}
+
+// DownloadZip 下载文章为压缩包
+//
+//	@Summary		下载为 Markdown
+//	@Description	下载文章为压缩包，包含 Markdown 文件、配图、封面图等资源
+//	@Tags			文章管理
+//	@Accept			json
+//	@Produce		application/zip
+//	@Security		BearerAuth
+//	@Param			id	path		int	true	"文章 ID"
+//	@Success		200	{file}		byte
+//	@Failure		400	{object}	response.Response
+//	@Failure		401	{object}	response.Response
+//	@Failure		404	{object}	response.Response
+//	@Router			/admin/articles/{id}/download/zip [get]
+func (c *ArticleController) DownloadZip(ctx *gin.Context) {
+	id, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
+	if err != nil {
+		response.ValidateFailed(ctx, "无效的文章 ID")
+		return
+	}
+
+	data, filename, err := c.articleService.DownloadZip(ctx.Request.Context(), uint(id))
+	if err != nil {
+		response.Failed(ctx, err.Error())
+		return
+	}
+
+	ctx.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
+	ctx.Data(200, "application/zip", data)
+}

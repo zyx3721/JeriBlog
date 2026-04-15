@@ -1,0 +1,53 @@
+#********************************************************************
+# 项目名称：JeriBlog
+# 文件名称：docker-compose.yml
+# 创建时间：2026-03-31
+#
+# 系统用户：Administrator
+# 作　　者：Jerion
+# 联系邮箱：416685476@qq.com
+# 功能描述：单镜像生产部署，包含 PostgreSQL 数据库与 JeriBlog 应用容器
+#           环境变量从根目录 .env 加载，数据通过卷持久化
+#********************************************************************
+
+services:
+  # ----------------------------------------------------------------
+  # 新建 PostgreSQL 容器（使用已有容器时注释此块）
+  # ----------------------------------------------------------------
+  postgres:
+    image: postgres:17-alpine
+    container_name: blog-postgres
+    restart: unless-stopped
+    networks:
+      - blog_network
+    ports:
+      - 5432:5432
+    volumes:
+      - ./PgSqlData:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      TZ: Asia/Shanghai
+
+  blog:
+    image: registry.cn-shenzhen.aliyuncs.com/zyx3721/jeriblog:latest
+    container_name: blog
+    restart: unless-stopped
+    networks:
+      - blog_network
+    ports:
+      - 80:80
+    env_file:
+      - .env
+    volumes:
+      - ./BlogData:/app/data
+    # ----------------------------------------------------------------
+    # 依赖新建容器（使用已有容器时注释此块）
+    # ----------------------------------------------------------------
+    depends_on:
+      - postgres
+
+networks:
+  blog_network:
+    driver: bridge

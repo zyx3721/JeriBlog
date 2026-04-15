@@ -1,0 +1,98 @@
+package scheduler
+
+import (
+	"time"
+
+	"github.com/robfig/cron/v3"
+
+	"flec_blog/pkg/logger"
+)
+
+// Job 定时任务接口
+type Job interface {
+	Name() string     // 任务名称
+	Execute() error   // 执行任务
+	Schedule() string // cron表达式
+}
+
+// SimpleJob 简单任务实现
+type SimpleJob struct {
+	name     string
+	schedule string
+	execute  func() error
+}
+
+// NewJob 创建一个简单任务
+func NewJob(name, schedule string, execute func() error) Job {
+	return &SimpleJob{
+		name:     name,
+		schedule: schedule,
+		execute:  execute,
+	}
+}
+
+func (j *SimpleJob) Name() string     { return j.name }
+func (j *SimpleJob) Execute() error   { return j.execute() }
+func (j *SimpleJob) Schedule() string { return j.schedule }
+
+// Scheduler 调度器
+type Scheduler struct {
+	cron *cron.Cron
+	jobs map[string]Job
+}
+
+// NewScheduler 创建调度器实例
+func NewScheduler() *Scheduler {
+	// 使用秒级别的cron表达式（6个字段）
+	c := cron.New(cron.WithSeconds())
+
+	return &Scheduler{
+		cron: c,
+		jobs: make(map[string]Job),
+	}
+}
+
+// AddJob 添加定时任务
+func (s *Scheduler) AddJob(job Job) error {
+	name := job.Name()
+	schedule := job.Schedule()
+
+	// 包装任务执行函数，添加日志和错误处理
+	wrappedFunc := func() {
+		startTime := time.Now()
+		logger.Info("[Scheduler] 开始执行任务: %s", name)
+
+		if err := job.Execute(); err != nil {
+			logger.Error("[Scheduler] 任务执行失败 %s: %v", name, err)
+		} else {
+			duration := time.Since(startTime)
+			logger.Info("[Scheduler] 任务执行成功 %s (耗时: %v)", name, duration)
+		}
+	}
+
+	// 添加到cron
+	_, err := s.cron.AddFunc(schedule, wrappedFunc)
+	if err != nil {
+		return err
+	}
+
+	s.jobs[name] = job
+	return nil
+}
+
+// Start 启动调度器
+func (s *Scheduler) Start() {
+	s.cron.Start()
+}
+
+// Stop 停止调度器
+func (s *Scheduler) Stop() {
+	logger.Info("[Scheduler] 停止调度器")
+	ctx := s.cron.Stop()
+	<-ctx.Done()
+}
+
+// GetJobs 获取所有已注册的任务
+func (s *Scheduler) GetJobs() map[string]Job {
+	return s.jobs
+}

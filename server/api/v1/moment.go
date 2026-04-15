@@ -1,0 +1,212 @@
+package v1
+
+import (
+	"strconv"
+
+	"flec_blog/internal/dto"
+	"flec_blog/internal/service"
+	"flec_blog/pkg/response"
+
+	"github.com/gin-gonic/gin"
+)
+
+// MomentController 动态控制器
+type MomentController struct {
+	momentService *service.MomentService
+}
+
+// NewMomentController 创建动态控制器
+func NewMomentController(momentService *service.MomentService) *MomentController {
+	return &MomentController{
+		momentService: momentService,
+	}
+}
+
+// ============ 前台接口 ============
+
+// ListForWeb 前台获取动态列表
+//
+//	@Summary		动态列表
+//	@Description	获取所有公开的动态
+//	@Tags			动态
+//	@Accept			json
+//	@Produce		json
+//	@Param			page		query		int	false	"页码"
+//	@Param			page_size	query		int	false	"每页数量（不传则返回全部）"
+//	@Success		200			{object}	response.Response{data=response.PageResult}
+//	@Router			/moments [get]
+func (c *MomentController) ListForWeb(ctx *gin.Context) {
+	var req dto.ListMomentRequest
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		response.ValidateFailed(ctx, err.Error())
+		return
+	}
+
+	moments, total, err := c.momentService.ListForWeb(ctx.Request.Context(), req.Page, req.PageSize)
+	if err != nil {
+		response.Failed(ctx, err.Error())
+		return
+	}
+
+	response.PageSuccess(ctx, moments, total, req.Page, req.PageSize)
+}
+
+// ============ 后台管理接口 ============
+
+// List 获取动态列表（管理）
+//
+//	@Summary		动态列表（管理）
+//	@Description	获取所有动态用于管理
+//	@Tags			动态管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			page		query		int	false	"页码"
+//	@Param			page_size	query		int	false	"每页数量（不传则返回全部）"
+//	@Success		200			{object}	response.Response{data=response.PageResult}
+//	@Failure		401			{object}	response.Response
+//	@Failure		403			{object}	response.Response
+//	@Router			/admin/moments [get]
+func (c *MomentController) List(ctx *gin.Context) {
+	var req dto.ListMomentRequest
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		response.ValidateFailed(ctx, err.Error())
+		return
+	}
+
+	moments, total, err := c.momentService.List(ctx.Request.Context(), req.Page, req.PageSize)
+	if err != nil {
+		response.Failed(ctx, err.Error())
+		return
+	}
+
+	response.PageSuccess(ctx, moments, total, req.Page, req.PageSize)
+}
+
+// Get 获取动态详情（管理）
+//
+//	@Summary		动态详情（管理）
+//	@Description	通过 ID 获取动态详情
+//	@Tags			动态管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id	path		int	true	"动态 ID"
+//	@Success		200	{object}	response.Response{data=dto.MomentListResponse}
+//	@Failure		400	{object}	response.Response
+//	@Failure		401	{object}	response.Response
+//	@Failure		403	{object}	response.Response
+//	@Failure		404	{object}	response.Response
+//	@Router			/admin/moments/{id} [get]
+func (c *MomentController) Get(ctx *gin.Context) {
+	id, err := strconv.ParseUint(ctx.Param("id"), 10, 32)
+	if err != nil {
+		response.ValidateFailed(ctx, err.Error())
+		return
+	}
+
+	moment, err := c.momentService.Get(ctx.Request.Context(), uint(id))
+	if err != nil {
+		response.Failed(ctx, err.Error())
+		return
+	}
+
+	response.Success(ctx, moment)
+}
+
+// Create 创建动态
+//
+//	@Summary		创建动态
+//	@Description	创建新动态
+//	@Tags			动态管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			request	body		dto.CreateMomentRequest	true	"动态信息"
+//	@Success		201		{object}	response.Response{data=model.Moment}
+//	@Failure		400		{object}	response.Response
+//	@Failure		401		{object}	response.Response
+//	@Failure		403		{object}	response.Response
+//	@Router			/admin/moments [post]
+func (c *MomentController) Create(ctx *gin.Context) {
+	var req dto.CreateMomentRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		response.ValidateFailed(ctx, err.Error())
+		return
+	}
+
+	moment, err := c.momentService.Create(ctx.Request.Context(), &req)
+	if err != nil {
+		response.Failed(ctx, err.Error())
+		return
+	}
+
+	response.Created(ctx, moment)
+}
+
+// Update 更新动态
+//
+//	@Summary		更新动态
+//	@Description	修改动态信息
+//	@Tags			动态管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path		int						true	"动态 ID"
+//	@Param			request	body		dto.UpdateMomentRequest	true	"动态信息"
+//	@Success		200		{object}	response.Response
+//	@Failure		400		{object}	response.Response
+//	@Failure		401		{object}	response.Response
+//	@Failure		403		{object}	response.Response
+//	@Failure		404		{object}	response.Response
+//	@Router			/admin/moments/{id} [put]
+func (c *MomentController) Update(ctx *gin.Context) {
+	id, err := strconv.ParseUint(ctx.Param("id"), 10, 32)
+	if err != nil {
+		response.ValidateFailed(ctx, err.Error())
+		return
+	}
+
+	var req dto.UpdateMomentRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		response.ValidateFailed(ctx, err.Error())
+		return
+	}
+
+	if err := c.momentService.Update(ctx.Request.Context(), uint(id), &req); err != nil {
+		response.Failed(ctx, err.Error())
+		return
+	}
+
+	response.Success(ctx, nil)
+}
+
+// Delete 删除动态
+//
+//	@Summary		删除动态
+//	@Description	删除动态
+//	@Tags			动态管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id	path		int	true	"动态 ID"
+//	@Success		200	{object}	response.Response
+//	@Failure		400	{object}	response.Response
+//	@Failure		401	{object}	response.Response
+//	@Failure		403	{object}	response.Response
+//	@Failure		404	{object}	response.Response
+//	@Router			/admin/moments/{id} [delete]
+func (c *MomentController) Delete(ctx *gin.Context) {
+	id, err := strconv.ParseUint(ctx.Param("id"), 10, 32)
+	if err != nil {
+		response.ValidateFailed(ctx, err.Error())
+		return
+	}
+
+	if err := c.momentService.Delete(ctx.Request.Context(), uint(id)); err != nil {
+		response.Failed(ctx, err.Error())
+		return
+	}
+
+	response.Success(ctx, nil)
+}

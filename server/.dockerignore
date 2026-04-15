@@ -1,0 +1,40 @@
+# Git
+.git
+.gitignore
+.github/
+
+# IDE
+.vscode/
+.idea/
+
+# 环境变量（保留示例文件）
+.env
+docker.env
+
+# 文档
+*.md
+
+# 运行时文件（挂载）
+logs/
+uploads/
+*.db
+
+# 已编译文件（重新构建）
+*.exe
+flec_blog
+vendor/
+
+# 测试文件
+*_test.go
+testdata/
+
+# 临时文件
+tmp/
+*.tmp
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# Docker 配置
+docker-compose.yml
