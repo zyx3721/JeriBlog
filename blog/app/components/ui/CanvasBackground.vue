@@ -1,0 +1,45 @@
+<!--
+项目名称：JeriBlog
+文件名称：CanvasBackground.vue
+创建时间：2026-04-16 02:03:34
+
+系统用户：jerion
+作　　者：Jerion
+联系邮箱：416685476@qq.com
+功能描述：Canvas 背景动画组件，使用 canvas-nest.js 库实现动态线条背景效果，组件卸载时自动清理资源
+-->
+<template>
+  <div class="canvas-bg" ref="container"></div>
+</template>
+
+<script setup lang="ts">
+const container = ref<HTMLElement | null>(null)
+let instance: any = null
+
+onMounted(async () => {
+  // 动态导入 canvas-nest.js
+  const CanvasNest = (await import('canvas-nest.js')).default
+
+  const el = container.value || document.body
+  instance = new CanvasNest(el, {
+    color: '24,170,204', // 主色调 RGB
+    opacity: 0.7,        // 线条透明度
+    count: 100,          // 线条数量
+    zIndex: -1           // 置于内容下方
+  })
+})
+
+onBeforeUnmount(() => {
+  instance?.destroy()
+  instance = null
+})
+</script>
+
+<style scoped>
+.canvas-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+</style>
