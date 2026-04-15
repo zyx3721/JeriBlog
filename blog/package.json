@@ -14,6 +14,7 @@
     "@vueuse/core": "^14.2.1",
     "@vueuse/nuxt": "^14.2.1",
     "aplayer": "^1.10.1",
+    "canvas-nest.js": "^2.0.4",
     "dayjs": "^1.11.19",
     "dompurify": "^3.3.1",
     "entities": "^7.0.1",
