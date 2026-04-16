@@ -25,6 +25,16 @@ const isLoading = ref(true)
 const loadingProgress = ref(0)
 const loadingText = ref('初始化中...')
 
+// 检查是否首次访问（使用 sessionStorage，关闭浏览器后重置）
+const hasLoadedBefore = ref(false)
+if (process.client) {
+  hasLoadedBefore.value = sessionStorage.getItem('blog-loaded') === 'true'
+  // 如果已经加载过，直接跳过加载动画
+  if (hasLoadedBefore.value) {
+    isLoading.value = false
+  }
+}
+
 // 全局数据
 const { blogConfig, basicConfig, oauthConfig, uploadConfig } = useSysConfig()
 const { menus } = useMenus()
@@ -89,7 +99,7 @@ if (globalData.value) {
 }
 
 // 模拟加载进度动画（客户端执行）
-if (process.client) {
+if (process.client && !hasLoadedBefore.value) {
   // 0% -> 30%
   setTimeout(() => {
     loadingProgress.value = 30
@@ -143,6 +153,8 @@ onMounted(() => {
   // 延迟隐藏加载动画，确保页面完全渲染
   setTimeout(() => {
     isLoading.value = false
+    // 标记已加载过（使用 sessionStorage，关闭浏览器后重置）
+    sessionStorage.setItem('blog-loaded', 'true')
   }, 500)
 })
 
