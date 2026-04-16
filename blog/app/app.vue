@@ -182,7 +182,7 @@ useHead({
     return siteTitle.value || null
   },
   link: [
-    { rel: 'icon', href: blogConfig.value.favicon || '/favicon.ico' },
+    { rel: 'icon', type: 'image/x-icon', href: blogConfig.value.favicon || '/favicon.ico?v=2' },
     // PWA Manifest
     { rel: 'manifest', href: '/manifest.json' },
     // RSS/Atom 订阅
