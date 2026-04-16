@@ -1,4 +1,4 @@
-# Flec-Admin
+# Jeri-Admin
 
 > 基于 Vue 3 + Vite + Element Plus 的现代化博客后台管理系统
 
