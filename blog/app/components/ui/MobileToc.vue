@@ -83,7 +83,7 @@ const scrollToHeading = (id: string) => {
 }
 
 const extractTocItems = () => {
-  const article = document.querySelector('.article-content')
+  const article = document.querySelector('.markdown-content')
   if (!article) return
 
   const headings = article.querySelectorAll('h1, h2, h3, h4, h5, h6')
@@ -103,7 +103,7 @@ const extractTocItems = () => {
 }
 
 const updateActiveId = () => {
-  const article = document.querySelector('.article-content')
+  const article = document.querySelector('.markdown-content')
   if (!article) return
 
   const headings = article.querySelectorAll('h1, h2, h3, h4, h5, h6')
