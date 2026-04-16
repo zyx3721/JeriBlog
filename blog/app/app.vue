@@ -25,13 +25,18 @@ const isLoading = ref(true)
 const loadingProgress = ref(0)
 const loadingText = ref('初始化中...')
 
-// 检查是否首次访问（使用 sessionStorage，关闭浏览器后重置）
-const hasLoadedBefore = ref(false)
+// 检查是否为内部路由跳转（使用 sessionStorage 临时标记）
+const isInternalNavigation = ref(false)
 if (process.client) {
-  hasLoadedBefore.value = sessionStorage.getItem('blog-loaded') === 'true'
-  // 如果已经加载过，直接跳过加载动画
-  if (hasLoadedBefore.value) {
+  // 检查是否有内部跳转标记
+  isInternalNavigation.value = sessionStorage.getItem('blog-internal-nav') === 'true'
+  // 清除标记，确保刷新页面时会重新显示加载动画
+  sessionStorage.removeItem('blog-internal-nav')
+
+  // 如果是内部跳转，直接跳过加载动画
+  if (isInternalNavigation.value) {
     isLoading.value = false
+    loadingProgress.value = 100
   }
 }
 
@@ -99,7 +104,7 @@ if (globalData.value) {
 }
 
 // 模拟加载进度动画（客户端执行）
-if (process.client && !hasLoadedBefore.value) {
+if (process.client && !isInternalNavigation.value) {
   // 0% -> 30%
   setTimeout(() => {
     loadingProgress.value = 30
@@ -127,6 +132,12 @@ if (process.client && !hasLoadedBefore.value) {
 
 // 全局路由切换时触发邮箱绑定提示
 const router = useRouter()
+router.beforeEach(() => {
+  // 在路由跳转前设置内部跳转标记
+  if (process.client) {
+    sessionStorage.setItem('blog-internal-nav', 'true')
+  }
+})
 router.afterEach(() => {
   triggerGlobal()
 })
@@ -150,12 +161,10 @@ onMounted(() => {
   // 异步加载 remixicon，避免阻塞首屏渲染
   import('remixicon/fonts/remixicon.css')
 
-  // 只在首次访问时延迟隐藏加载动画
-  if (!hasLoadedBefore.value) {
+  // 只在非内部跳转时延迟隐藏加载动画
+  if (!isInternalNavigation.value) {
     setTimeout(() => {
       isLoading.value = false
-      // 标记已加载过（使用 sessionStorage，关闭浏览器后重置）
-      sessionStorage.setItem('blog-loaded', 'true')
     }, 1200)
   }
 })
