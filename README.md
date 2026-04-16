@@ -1417,20 +1417,17 @@ systemctl reload nginx
 
 B 站视频：
 ```markdown
-:::video bilibili BV1xx411c7mD
-:::
+:::video bilibili BV1xx411c7mD :::
 ```
 
 YouTube 视频：
 ```markdown
-:::video youtube dQw4w9WgXcQ
-:::
+:::video youtube dQw4w9WgXcQ :::
 ```
 
 本地/在线视频：
 ```markdown
-:::video https://example.com/video.mp4
-:::
+:::video https://example.com/video.mp4 :::
 ```
 
 - **登录用户博客端删除评论**
