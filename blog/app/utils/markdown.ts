@@ -878,9 +878,24 @@ export function copyCodeBlock(button: HTMLElement): void {
   const code = container.querySelector('code')
   if (!code) return
 
-  // 只提取代码内容，不包含行号
-  const codeLines = Array.from(code.querySelectorAll('.line-content'))
-  const codeText = codeLines.map(line => line.textContent || '').join('\n')
+  // 获取代码的原始HTML内容
+  const codeHTML = code.innerHTML
+
+  // 使用正则表达式提取每行的内容，避免重复
+  // 匹配格式：<span class="line-number" ...></span><span class="line-content">实际内容</span>
+  const lineRegex = /<span class="line-number"[^>]*><\/span><span class="line-content">([\s\S]*?)<\/span>/g
+  const lines: string[] = []
+  let match
+
+  while ((match = lineRegex.exec(codeHTML)) !== null) {
+    // 获取line-content中的内容，并解码HTML实体
+    const lineContent = match[1]
+    const tempDiv = document.createElement('div')
+    tempDiv.innerHTML = lineContent
+    lines.push(tempDiv.textContent || '')
+  }
+
+  const codeText = lines.join('\n')
 
   // 复制到剪贴板
   navigator.clipboard.writeText(codeText).then(() => {
