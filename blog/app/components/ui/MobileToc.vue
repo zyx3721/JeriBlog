@@ -164,11 +164,18 @@ watch(() => props.visible, (newVal) => {
   width: 80%;
   max-width: 320px;
   height: 100%;
-  background: var(--flec-bg);
-  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: -2px 0 16px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+[data-theme='dark'] .mobile-toc-drawer {
+  background: rgba(30, 30, 30, 0.98);
+  box-shadow: -2px 0 16px rgba(0, 0, 0, 0.5);
 }
 
 .mobile-toc-header {
