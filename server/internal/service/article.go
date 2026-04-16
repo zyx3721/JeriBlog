@@ -1010,6 +1010,9 @@ func parseHexoArticle(content string) (*HexoParsedArticle, error) {
 		markdown = strings.TrimSpace(content)
 	}
 
+	// 转换 HTML img 标签为 Markdown 格式
+	markdown = convertHTMLImagesToMarkdown(markdown)
+
 	// 解析Front Matter
 	parsed := &HexoParsedArticle{
 		Content: markdown,
@@ -1592,5 +1595,40 @@ func (s *ArticleService) sanitizeFilename(name string) string {
 	if len([]rune(result)) > 100 {
 		result = string([]rune(result)[:100])
 	}
+	return result
+}
+
+// convertHTMLImagesToMarkdown 将 HTML <img> 标签转换为 Markdown 格式
+func convertHTMLImagesToMarkdown(content string) string {
+	// 正则表达式匹配 <img> 标签，提取 src 和 alt 属性
+	// 支持多种格式：
+	// <img src="url" alt="text" />
+	// <img alt="text" src="url" />
+	// <img src="url" />
+	// <img src='url' alt='text' style="..." />
+	imgRegex := regexp.MustCompile(`<img\s+[^>]*?>`)
+
+	result := imgRegex.ReplaceAllStringFunc(content, func(imgTag string) string {
+		// 提取 src 属性
+		srcRegex := regexp.MustCompile(`src\s*=\s*["']([^"']+)["']`)
+		srcMatch := srcRegex.FindStringSubmatch(imgTag)
+		if len(srcMatch) < 2 {
+			// 没有找到 src 属性，保持原样
+			return imgTag
+		}
+		src := srcMatch[1]
+
+		// 提取 alt 属性（可选）
+		altRegex := regexp.MustCompile(`alt\s*=\s*["']([^"']*?)["']`)
+		altMatch := altRegex.FindStringSubmatch(imgTag)
+		alt := ""
+		if len(altMatch) >= 2 {
+			alt = altMatch[1]
+		}
+
+		// 转换为 Markdown 格式：![alt](src)
+		return fmt.Sprintf("![%s](%s)", alt, src)
+	})
+
 	return result
 }
