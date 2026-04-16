@@ -208,12 +208,12 @@
 
     <div class="image-row">
       <el-form-item label="微信收款码">
-        <ImageUploader ref="rewardWechatUploaderRef" v-model="form.reward_wechat" upload-type="微信收款码" width="160px"
+        <ImageUploader ref="rewardWechatUploaderRef" v-model="form.wechat_qrcode" upload-type="微信收款码" width="160px"
           height="160px" />
       </el-form-item>
 
       <el-form-item label="支付宝收款码">
-        <ImageUploader ref="rewardAlipayUploaderRef" v-model="form.reward_alipay" upload-type="支付宝收款码" width="160px"
+        <ImageUploader ref="rewardAlipayUploaderRef" v-model="form.alipay_qrcode" upload-type="支付宝收款码" width="160px"
           height="160px" />
       </el-form-item>
     </div>
@@ -275,8 +275,8 @@ interface BlogFormData {
   about_story: string
   custom_head: string
   custom_body: string
-  reward_wechat: string
-  reward_alipay: string
+  wechat_qrcode: string
+  alipay_qrcode: string
   emojis: string
   font: string
 }

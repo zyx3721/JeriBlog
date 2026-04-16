@@ -37,7 +37,7 @@ const handleMaskClick = (e: MouseEvent) => {
 
 // 检查是否配置了打赏功能
 const isRewardEnabled = computed(() => {
-  return blogConfig.value.wechatQrCode || blogConfig.value.alipayQrCode
+  return blogConfig.value.wechat_qrcode || blogConfig.value.alipay_qrcode
 })
 </script>
 
@@ -62,12 +62,12 @@ const isRewardEnabled = computed(() => {
 
           <div v-else class="reward-modal-body">
             <div class="qrcode-container">
-              <div v-if="blogConfig.wechatQrCode" class="qrcode-item">
-                <img :src="blogConfig.wechatQrCode" alt="微信收款码" class="qrcode-image" />
+              <div v-if="blogConfig.wechat_qrcode" class="qrcode-item">
+                <img :src="blogConfig.wechat_qrcode" alt="微信收款码" class="qrcode-image" />
                 <p class="qrcode-label">微信</p>
               </div>
-              <div v-if="blogConfig.alipayQrCode" class="qrcode-item">
-                <img :src="blogConfig.alipayQrCode" alt="支付宝收款码" class="qrcode-image" />
+              <div v-if="blogConfig.alipay_qrcode" class="qrcode-item">
+                <img :src="blogConfig.alipay_qrcode" alt="支付宝收款码" class="qrcode-image" />
                 <p class="qrcode-label">支付宝</p>
               </div>
             </div>

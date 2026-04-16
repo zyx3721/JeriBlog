@@ -137,8 +137,8 @@ const blogForm = ref({
   about_story: '',
   custom_head: '',
   custom_body: '',
-  reward_wechat: '',
-  reward_alipay: '',
+  wechat_qrcode: '',
+  alipay_qrcode: '',
   emojis: '',
   font: ''
 })
@@ -272,8 +272,8 @@ const loadBlogConfigs = async () => {
     blogForm.value.unionsList = parseJSON(configs.about_unions || '', [])
     blogForm.value.custom_head = configs.custom_head || ''
     blogForm.value.custom_body = configs.custom_body || ''
-    blogForm.value.reward_wechat = configs.reward_wechat || ''
-    blogForm.value.reward_alipay = configs.reward_alipay || ''
+    blogForm.value.wechat_qrcode = configs.wechat_qrcode || ''
+    blogForm.value.alipay_qrcode = configs.alipay_qrcode || ''
     blogForm.value.emojis = configs.emojis || ''
     blogForm.value.font = configs.font || ''
   } catch {
@@ -422,11 +422,11 @@ const handleSave = async () => {
       }
       if (blogUploaders.rewardWechatUploaderRef?.getPendingCount()) {
         const uploadedUrl = await blogUploaders.rewardWechatUploaderRef.uploadPendingFile()
-        if (uploadedUrl) blogForm.value.reward_wechat = uploadedUrl
+        if (uploadedUrl) blogForm.value.wechat_qrcode = uploadedUrl
       }
       if (blogUploaders.rewardAlipayUploaderRef?.getPendingCount()) {
         const uploadedUrl = await blogUploaders.rewardAlipayUploaderRef.uploadPendingFile()
-        if (uploadedUrl) blogForm.value.reward_alipay = uploadedUrl
+        if (uploadedUrl) blogForm.value.alipay_qrcode = uploadedUrl
       }
     }
 
@@ -473,8 +473,8 @@ const handleSave = async () => {
       'blog.about_story': blogForm.value.about_story,
       'blog.custom_head': blogForm.value.custom_head,
       'blog.custom_body': blogForm.value.custom_body,
-      'blog.reward_wechat': blogForm.value.reward_wechat,
-      'blog.reward_alipay': blogForm.value.reward_alipay,
+      'blog.wechat_qrcode': blogForm.value.wechat_qrcode,
+      'blog.alipay_qrcode': blogForm.value.alipay_qrcode,
       'blog.emojis': blogForm.value.emojis,
       'blog.font': blogForm.value.font
     }
