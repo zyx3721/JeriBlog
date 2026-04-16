@@ -12,7 +12,7 @@
           <div class="version-list">
             <div class="version-item">
               <span class="label">博客系统</span>
-              <span class="value">FlecBlog</span>
+              <span class="value">JeriBlog</span>
             </div>
             <div class="version-item">
               <span class="label">当前版本</span>
