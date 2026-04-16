@@ -72,6 +72,8 @@ type BlogConfig struct {
 	CustomBody      string // 自定义 Body 代码
 	Emojis          string // 表情包配置
 	Font            string // 字体配置（URL|字体名称）
+	WechatQrCode    string // 微信收款码
+	AlipayQrCode    string // 支付宝收款码
 }
 
 // NotificationConfig 通知配置（从数据库动态加载）

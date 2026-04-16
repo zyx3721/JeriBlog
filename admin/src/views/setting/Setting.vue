@@ -137,6 +137,8 @@ const blogForm = ref({
   about_story: '',
   custom_head: '',
   custom_body: '',
+  reward_wechat: '',
+  reward_alipay: '',
   emojis: '',
   font: ''
 })
@@ -270,6 +272,8 @@ const loadBlogConfigs = async () => {
     blogForm.value.unionsList = parseJSON(configs.about_unions || '', [])
     blogForm.value.custom_head = configs.custom_head || ''
     blogForm.value.custom_body = configs.custom_body || ''
+    blogForm.value.reward_wechat = configs.reward_wechat || ''
+    blogForm.value.reward_alipay = configs.reward_alipay || ''
     blogForm.value.emojis = configs.emojis || ''
     blogForm.value.font = configs.font || ''
   } catch {
@@ -416,6 +420,14 @@ const handleSave = async () => {
         const uploadedUrl = await blogUploaders.aboutExhibitionUploaderRef.uploadPendingFile()
         if (uploadedUrl) blogForm.value.about_exhibition = uploadedUrl
       }
+      if (blogUploaders.rewardWechatUploaderRef?.getPendingCount()) {
+        const uploadedUrl = await blogUploaders.rewardWechatUploaderRef.uploadPendingFile()
+        if (uploadedUrl) blogForm.value.reward_wechat = uploadedUrl
+      }
+      if (blogUploaders.rewardAlipayUploaderRef?.getPendingCount()) {
+        const uploadedUrl = await blogUploaders.rewardAlipayUploaderRef.uploadPendingFile()
+        if (uploadedUrl) blogForm.value.reward_alipay = uploadedUrl
+      }
     }
 
     // 基本配置
@@ -461,6 +473,8 @@ const handleSave = async () => {
       'blog.about_story': blogForm.value.about_story,
       'blog.custom_head': blogForm.value.custom_head,
       'blog.custom_body': blogForm.value.custom_body,
+      'blog.reward_wechat': blogForm.value.reward_wechat,
+      'blog.reward_alipay': blogForm.value.reward_alipay,
       'blog.emojis': blogForm.value.emojis,
       'blog.font': blogForm.value.font
     }

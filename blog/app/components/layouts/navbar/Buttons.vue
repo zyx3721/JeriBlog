@@ -55,6 +55,14 @@ const openSearch = () => {
   showSearchModal.value = true
 }
 
+// 打赏相关状态
+const showRewardModal = ref(false)
+
+// 打开打赏弹窗
+const openReward = () => {
+  showRewardModal.value = true
+}
+
 // 用户菜单显示状态
 const showUserMenu = ref(false)
 const userMenuRef = ref<HTMLElement>()
@@ -78,6 +86,7 @@ const handleLogout = () => {
 
 <template>
   <div class="nav-button">
+    <button class="brighten" @click="openReward" aria-label="打赏"><i class="ri-cup-line ri-xl"></i></button>
     <button class="brighten" @click="openSearch" aria-label="搜索"><i class="ri-search-line ri-xl"></i></button>
     <!-- 主题切换按钮 - 客户端渲染避免 hydration mismatch -->
     <ClientOnly>
@@ -136,6 +145,9 @@ const handleLogout = () => {
 
   <!-- 搜索弹窗 -->
   <FeaturesModalsSearchModal v-model="showSearchModal" />
+
+  <!-- 打赏弹窗 -->
+  <FeaturesModalsRewardModal v-model="showRewardModal" />
 </template>
 
 <style lang="scss" scoped>

@@ -204,6 +204,28 @@
         :disabled="loading" />
     </el-form-item>
 
+    <el-divider content-position="left">打赏配置</el-divider>
+
+    <div class="image-row">
+      <el-form-item label="微信收款码">
+        <ImageUploader ref="rewardWechatUploaderRef" v-model="form.reward_wechat" upload-type="微信收款码" width="160px"
+          height="160px" />
+      </el-form-item>
+
+      <el-form-item label="支付宝收款码">
+        <ImageUploader ref="rewardAlipayUploaderRef" v-model="form.reward_alipay" upload-type="支付宝收款码" width="160px"
+          height="160px" />
+      </el-form-item>
+    </div>
+
+    <el-alert type="info" :closable="false" style="margin-bottom: 20px;">
+      <template #default>
+        <div style="line-height: 1.6;">
+          上传收款码图片后将自动保存。保存后导航栏将显示打赏按钮，若两个字段均为空，点击打赏按钮时将提示"暂未开放打赏功能"。
+        </div>
+      </template>
+    </el-alert>
+
     <el-divider content-position="left">表情包配置</el-divider>
 
     <el-form-item label="表情包">
@@ -253,6 +275,8 @@ interface BlogFormData {
   about_story: string
   custom_head: string
   custom_body: string
+  reward_wechat: string
+  reward_alipay: string
   emojis: string
   font: string
 }
@@ -268,6 +292,8 @@ const faviconUploaderRef = ref<InstanceType<typeof ImageUploader>>()
 const backgroundUploaderRef = ref<InstanceType<typeof ImageUploader>>()
 const screenshotUploaderRef = ref<InstanceType<typeof ImageUploader>>()
 const aboutExhibitionUploaderRef = ref<InstanceType<typeof ImageUploader>>()
+const rewardWechatUploaderRef = ref<InstanceType<typeof ImageUploader>>()
+const rewardAlipayUploaderRef = ref<InstanceType<typeof ImageUploader>>()
 
 // 预设的常用社交平台图标
 const commonIcons = [
@@ -350,7 +376,9 @@ defineExpose({
   faviconUploaderRef,
   backgroundUploaderRef,
   screenshotUploaderRef,
-  aboutExhibitionUploaderRef
+  aboutExhibitionUploaderRef,
+  rewardWechatUploaderRef,
+  rewardAlipayUploaderRef
 })
 </script>
 

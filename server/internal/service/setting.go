@@ -62,6 +62,8 @@ const (
 	KeyBlogCustomBody        = "blog.custom_body"         // 自定义 Body 代码
 	KeyBlogEmojis            = "blog.emojis"              // 表情包配置
 	KeyBlogFont              = "blog.font"                // 字体配置（URL|字体名称）
+	KeyBlogWechatQrCode      = "blog.wechat_qrcode"       // 微信收款码
+	KeyBlogAlipayQrCode      = "blog.alipay_qrcode"       // 支付宝收款码
 )
 
 // 配置键常量 - Notification 相关
@@ -386,6 +388,12 @@ func (s *SettingService) ApplyDatabaseConfig(cfg *config.Config) error {
 		}
 		if v, ok := blogSettings[KeyBlogFont]; ok && v != "" {
 			cfg.Blog.Font = v
+		}
+		if v, ok := blogSettings[KeyBlogWechatQrCode]; ok && v != "" {
+			cfg.Blog.WechatQrCode = v
+		}
+		if v, ok := blogSettings[KeyBlogAlipayQrCode]; ok && v != "" {
+			cfg.Blog.AlipayQrCode = v
 		}
 	}
 

@@ -20,7 +20,7 @@ const { blogConfig } = useSysConfig()
 
 @media screen and (max-width: 768px) {
   .logo-container {
-    display: none;
+    display: none !important;
   }
 }
 </style>
