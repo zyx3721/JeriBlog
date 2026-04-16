@@ -192,6 +192,7 @@ const regionPlaceholder = computed(() => {
     case 'cos': return '例如 ap-guangzhou, ap-beijing'
     case 'oss': return '例如 oss-cn-hangzhou, oss-cn-beijing'
     case 'kodo': return '例如 cn-east-1, cn-north-1, cn-south-1'
+    case 'minio': return '例如 us-east-1, cn-east-1'
     default: return ''
   }
 })
@@ -207,7 +208,7 @@ const endpointPlaceholder = computed(() => {
 
 const showRegion = computed(() => {
   const t = form.value.storage_type
-  return t === 's3' || t === 'cos' || t === 'oss' || t === 'kodo'
+  return t === 's3' || t === 'cos' || t === 'oss' || t === 'kodo' || t === 'minio'
 })
 
 const showEndpoint = computed(() => {
