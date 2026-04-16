@@ -540,6 +540,9 @@ const handleSave = async () => {
     // 并行保存所有配置组
     await Promise.all(savePromises)
 
+    // 保存成功后重新加载配置，确保显示最新的值
+    await loadAllConfigs()
+
     ElMessage.success('配置保存成功')
   } catch (e) {
     if (e instanceof Error) ElMessage.error(e.message)
