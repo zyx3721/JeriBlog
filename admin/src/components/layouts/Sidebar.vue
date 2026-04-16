@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar" :class="{ 'is-collapse': isCollapse }">
     <div class="logo">
-      <span v-show="!isCollapse">Flec 管理系统</span>
+      <span v-show="!isCollapse">Jeri 管理系统</span>
     </div>
     <el-menu :default-active="route.path" :collapse="isCollapse" background-color="#304156" text-color="#bfcbd9"
       active-text-color="#409eff" router @select="handleMenuSelect">
