@@ -1396,44 +1396,109 @@ systemctl reload nginx
 
 ### 功能增强
 
-- **Markdown 渲染增强**
-  - 支持视频嵌入功能，可在文章中嵌入 B站、YouTube 等视频
-  - 支持音频播放器，可嵌入音乐播放器
-  - 优化代码块渲染，支持更多语言高亮
-  - 优化表格样式，提升可读性
+- **分离博客端和管理后台登录逻辑**
+  - 博客端改用独立的 token key (blog_access_token/blog_refresh_token)
+  - 避免与管理后台的 token 冲突
+  - 实现两个系统的登录状态完全独立
 
-#### 视频嵌入示例
+- **移动端文章目录功能**
+  - 添加移动端目录按钮，仅在文章页且移动端显示
+  - 自动提取文章标题生成目录
+  - 支持点击跳转到对应标题
+  - 实时高亮当前阅读位置
+  - 右侧抽屉式交互，支持滑动动画
 
-在 Markdown 文章中使用以下语法嵌入视频：
+- **文章支持在线视频嵌入**
+  - 支持 B 站、YouTube 和本地视频嵌入
+  - 添加视频样式和响应式布局
+  - 更新 DOMPurify 配置允许视频标签
 
-**B站视频**：
+**使用方法**：
+
+B 站视频：
 ```markdown
-@[bilibili](BV1xx411c7mD)
+:::video bilibili BV1xx411c7mD
+:::
 ```
 
-**YouTube 视频**：
+YouTube 视频：
 ```markdown
-@[youtube](dQw4w9WgXcQ)
+:::video youtube dQw4w9WgXcQ
+:::
 ```
 
-**通用视频链接**：
+本地/在线视频：
 ```markdown
-@[video](https://example.com/video.mp4)
+:::video https://example.com/video.mp4
+:::
 ```
 
-#### 音频播放器示例
+- **登录用户博客端删除评论**
+  - 后端添加 is_deleted 字段到评论响应
+  - 前端添加删除评论功能
+  - 仅评论作者可删除自己的评论
+  - 添加删除确认弹窗
+  - 删除后自动更新评论计数
 
-在 Markdown 文章中使用以下语法嵌入音频：
+- **文章导入功能优化**
+  - 支持 Hexo 和 Markdown 两种格式导入
+  - 添加图片自动下载上传功能
+  - 添加数据来源选择（Hexo/Markdown）
+  - 添加图片上传开关选项
+  - 重构导入逻辑，统一入口方法
+  - 优化错误处理和结果反馈
 
-```markdown
-@[audio](https://example.com/music.mp3)
-```
+- **添加 KaTeX 数学公式支持**
+  - 安装 @traptitech/markdown-it-katex 和 katex 依赖
+  - 在 markdown.ts 中配置 KaTeX 插件
+  - 添加 KaTeX 样式定义，支持行内和块级公式
+  - 支持公式错误提示和暗色主题
 
-或使用 APlayer 播放器（支持歌词、封面等）：
+- **添加通用错误处理页面**
+  - 创建统一的错误页面组件
+  - 支持 404、403、500 等常见错误
+  - 提供返回上一页和返回首页功能
+  - 响应式设计适配移动端
 
-```markdown
-@[aplayer]({"name":"歌曲名","artist":"歌手","url":"https://example.com/music.mp3","cover":"https://example.com/cover.jpg","lrc":"https://example.com/lyric.lrc"})
-```
+- **文章自定义 slug 字段支持**
+  - 前端：在文章表单中添加 slug 输入框，支持自定义 URL 标识
+  - 后端：Create 时优先使用用户提供的 slug，为空时自动生成
+  - 后端：Update 时支持修改 slug，并验证新 slug 是否已存在
+
+- **分类/标签计数改为实时统计**
+  - 移除 Category 和 Tag 模型的 Count 字段
+  - 添加 CategoryResponse 和 TagResponse DTO，包含实时统计的 Count
+  - 删除 Repository 层的计数增减方法
+  - 修改 Service 层使用实时查询替代冗余字段
+  - 优势：数据一致性更好，无需维护冗余字段，避免并发更新导致的计数不准确问题
+
+- **异常友链通知**
+  - 添加友链异常检测和通知功能
+
+- **文件引用检查基础设施**
+  - 在所有 repository 中添加 HasFileReference 方法
+  - FileRepository 添加 GetByStatus 方法
+  - FileService 添加 FileUsageChecker 结构和引用检查逻辑
+  - Delete 方法添加引用检查，防止误删被引用文件
+
+### Bug 修复
+
+- **修复移动端文章目录显示为空**
+  - 修正 CSS 选择器从 .article-content 改为 .markdown-content
+  - 修复 extractTocFromContent 和 updateActiveId 函数
+  - 确保移动端目录正确提取标题
+
+- **修复文章表单布局不均匀问题**
+  - 统一 Slug、分类、标签三个字段为三等分布局
+  - 移除 form-col-1-4 和 form-col-1-2 类名
+  - 统一使用 form-col 类实现均匀分布
+
+### 响应式设计优化
+
+- 表格添加横向滚动容器支持
+- 评论元信息移动端样式优化
+- 页脚导航布局调整（小屏幕 2 列）
+- 导航栏断点调整为 900px
 
 # 八、许可证
 
