@@ -618,7 +618,9 @@ INSERT INTO settings (key, value, "group", is_public) VALUES
 ('blog.about_story', '欢迎来到我的个人博客！这里是我分享技术、记录生活、积累知识的小天地。希望这些内容能对你有所帮助。如果你有任何想法或建议，欢迎随时与我交流！', 'blog', TRUE),
 ('blog.custom_head', '', 'blog', TRUE),
 ('blog.custom_body', '', 'blog', TRUE),
-('blog.emojis', '', 'blog', TRUE)
+('blog.emojis', '', 'blog', TRUE),
+('blog.wechat_qrcode', '', 'blog', TRUE),
+('blog.alipay_qrcode', '', 'blog', TRUE)
 ON CONFLICT (key) DO NOTHING;
 
 -- 通知配置
