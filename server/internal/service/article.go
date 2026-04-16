@@ -15,6 +15,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"context"
+	"crypto/sha256"
 	"fmt"
 	"io"
 	"net/http"
@@ -109,6 +110,7 @@ func (s *ArticleService) Get(_ context.Context, id uint) (*dto.ArticleAdminDetai
 	response := &dto.ArticleAdminDetailResponse{
 		ID:          article.ID,
 		Title:       article.Title,
+		Slug:        article.Slug,
 		Content:     article.Content,
 		Summary:     article.Summary,
 		AISummary:   article.AISummary,
@@ -458,21 +460,29 @@ func (s *ArticleService) Create(ctx context.Context, req *dto.CreateArticleReque
 		article.PublishTime = &now
 	}
 
-	// 生成唯一slug
-	generatedSlug, err := random.UniqueCode(8, s.articleRepo.CheckSlugExists)
-	if err != nil {
-		return nil, fmt.Errorf("生成 slug 失败: %w", err)
+	// 处理 slug：如果用户提供了则使用，否则自动生成
+	if req.Slug != "" {
+		// 检查用户提供的 slug 是否已存在
+		exists, err := s.articleRepo.CheckSlugExists(req.Slug)
+		if err != nil {
+			return nil, fmt.Errorf("检查 slug 失败: %w", err)
+		}
+		if exists {
+			return nil, fmt.Errorf("slug 已存在: %s", req.Slug)
+		}
+		article.Slug = req.Slug
+	} else {
+		// 自动生成唯一 slug
+		generatedSlug, err := random.UniqueCode(8, s.articleRepo.CheckSlugExists)
+		if err != nil {
+			return nil, fmt.Errorf("生成 slug 失败: %w", err)
+		}
+		article.Slug = generatedSlug
 	}
-	article.Slug = generatedSlug
 
 	// 创建文章并关联标签
 	if err := s.articleRepo.Create(article, req.TagIDs); err != nil {
 		return nil, err
-	}
-
-	// 如果是发布状态，增加分类和标签计数
-	if article.IsPublish {
-		s.incrementCounts(ctx, article)
 	}
 
 	// 标记封面为使用中
@@ -510,8 +520,6 @@ func (s *ArticleService) Update(ctx context.Context, id uint, req *dto.UpdateArt
 	}
 
 	// 保存旧值用于后续处理
-	oldCategoryID := article.CategoryID
-	oldTagIDs := extractTagIDs(article.Tags)
 	oldCover := article.Cover
 	oldContent := article.Content
 	oldIsPublish := article.IsPublish
@@ -523,6 +531,20 @@ func (s *ArticleService) Update(ctx context.Context, id uint, req *dto.UpdateArt
 	if req.Content != "" {
 		article.Content = req.Content
 	}
+
+	// 处理 slug 更新
+	if req.Slug != "" && req.Slug != article.Slug {
+		// 检查新 slug 是否已被其他文章使用
+		exists, err := s.articleRepo.CheckSlugExists(req.Slug)
+		if err != nil {
+			return nil, fmt.Errorf("检查 slug 失败: %w", err)
+		}
+		if exists {
+			return nil, fmt.Errorf("slug 已存在: %s", req.Slug)
+		}
+		article.Slug = req.Slug
+	}
+
 	article.Summary = req.Summary
 	article.AISummary = req.AISummary
 	article.Cover = req.Cover
@@ -565,20 +587,6 @@ func (s *ArticleService) Update(ctx context.Context, id uint, req *dto.UpdateArt
 		return nil, err
 	}
 
-	// 处理发布状态变化的计数
-	if oldIsPublish != article.IsPublish {
-		if article.IsPublish {
-			// 草稿 -> 已发布：增加计数
-			s.incrementCounts(ctx, article)
-		} else {
-			// 已发布 -> 草稿：减少计数
-			s.decrementCounts(ctx, article)
-		}
-	} else if article.IsPublish {
-		// 如果一直是已发布状态，更新分类和标签计数（处理分类/标签变更）
-		s.updateCountsOnChange(ctx, oldCategoryID, req.CategoryID, oldTagIDs, req.TagIDs)
-	}
-
 	// 处理封面变化
 	if s.fileService != nil && oldCover != req.Cover {
 		if oldCover != "" {
@@ -613,11 +621,6 @@ func (s *ArticleService) Delete(ctx context.Context, id uint) error {
 		return err
 	}
 
-	// 如果是已发布文章，减少计数
-	if article.IsPublish {
-		s.decrementCounts(ctx, article)
-	}
-
 	// 标记封面为未使用
 	if s.fileService != nil && article.Cover != "" {
 		_ = s.fileService.MarkAsUnused(article.Cover)
@@ -630,95 +633,6 @@ func (s *ArticleService) Delete(ctx context.Context, id uint) error {
 }
 
 // ============ 辅助方法 ============
-
-// extractTagIDs 提取标签ID列表
-func extractTagIDs(tags []model.Tag) []uint {
-	if len(tags) == 0 {
-		return nil
-	}
-	ids := make([]uint, 0, len(tags))
-	for _, tag := range tags {
-		ids = append(ids, tag.ID)
-	}
-	return ids
-}
-
-// incrementCounts 增加分类和标签的文章计数
-func (s *ArticleService) incrementCounts(ctx context.Context, article *model.Article) {
-	if article.CategoryID != nil && *article.CategoryID > 0 {
-		_ = s.categoryRepo.IncrementCount(ctx, *article.CategoryID)
-	}
-	if tagIDs := extractTagIDs(article.Tags); len(tagIDs) > 0 {
-		_ = s.tagRepo.IncrementCountBatch(ctx, tagIDs)
-	}
-}
-
-// decrementCounts 减少分类和标签的文章计数
-func (s *ArticleService) decrementCounts(ctx context.Context, article *model.Article) {
-	if article.CategoryID != nil && *article.CategoryID > 0 {
-		_ = s.categoryRepo.DecrementCount(ctx, *article.CategoryID)
-	}
-	if tagIDs := extractTagIDs(article.Tags); len(tagIDs) > 0 {
-		_ = s.tagRepo.DecrementCountBatch(ctx, tagIDs)
-	}
-}
-
-// diffTagIDs 比较标签ID列表差异
-func diffTagIDs(oldIDs, newIDs []uint) (removed, added []uint) {
-	oldMap := make(map[uint]bool, len(oldIDs))
-	for _, id := range oldIDs {
-		oldMap[id] = true
-	}
-
-	newMap := make(map[uint]bool, len(newIDs))
-	for _, id := range newIDs {
-		newMap[id] = true
-		if !oldMap[id] {
-			added = append(added, id)
-		}
-	}
-
-	for _, id := range oldIDs {
-		if !newMap[id] {
-			removed = append(removed, id)
-		}
-	}
-	return
-}
-
-// updateCountsOnChange 更新文章时处理计数变化
-func (s *ArticleService) updateCountsOnChange(ctx context.Context, oldCategoryID, newCategoryID *uint, oldTagIDs, newTagIDs []uint) {
-	// 处理分类计数变化
-	oldID := getIDValue(oldCategoryID)
-	newID := getIDValue(newCategoryID)
-	if oldID != newID {
-		if oldID > 0 {
-			_ = s.categoryRepo.DecrementCount(ctx, oldID)
-		}
-		if newID > 0 {
-			_ = s.categoryRepo.IncrementCount(ctx, newID)
-		}
-	}
-
-	// 处理标签计数变化
-	if newTagIDs != nil {
-		removed, added := diffTagIDs(oldTagIDs, newTagIDs)
-		if len(removed) > 0 {
-			_ = s.tagRepo.DecrementCountBatch(ctx, removed)
-		}
-		if len(added) > 0 {
-			_ = s.tagRepo.IncrementCountBatch(ctx, added)
-		}
-	}
-}
-
-// getIDValue 安全获取指针ID的值
-func getIDValue(id *uint) uint {
-	if id == nil {
-		return 0
-	}
-	return *id
-}
 
 // extractContentImages 从 Markdown/HTML 内容中提取所有图片 URL
 func extractContentImages(content string) []string {
@@ -804,8 +718,8 @@ func (s *ArticleService) updateContentFileStatus(oldContent, newContent string) 
 
 // ============ 数据导入导出方法 ============
 
-// ImportFromHexo 从Hexo格式导入文章
-func (s *ArticleService) ImportFromHexo(ctx context.Context, files map[string]string) (*dto.ImportArticlesResult, error) {
+// ImportArticles 导入文章（支持 Hexo 和 Markdown 格式）
+func (s *ArticleService) ImportArticles(ctx context.Context, files map[string]string, sourceType string, uploadImages bool, host string) (*dto.ImportArticlesResult, error) {
 	if len(files) == 0 {
 		return nil, fmt.Errorf("没有找到有效的文章数据")
 	}
@@ -820,13 +734,8 @@ func (s *ArticleService) ImportFromHexo(ctx context.Context, files map[string]st
 
 	// 处理每篇文章
 	for filename, content := range files {
-		if err := s.importSingleHexoArticle(ctx, content, categoryCache, tagCache); err != nil {
-			result.Failed++
-			result.Errors = append(result.Errors, dto.ImportArticleError{
-				Filename: filename,
-				Title:    extractTitle(content),
-				Error:    err.Error(),
-			})
+		if err := s.importSingleArticle(ctx, filename, content, sourceType, uploadImages, host, categoryCache, tagCache); err != nil {
+			result.AddError(filename, extractTitle(content), err.Error())
 		} else {
 			result.Success++
 		}
@@ -838,17 +747,40 @@ func (s *ArticleService) ImportFromHexo(ctx context.Context, files map[string]st
 	return result, nil
 }
 
-// importSingleHexoArticle 导入单篇Hexo文章
-func (s *ArticleService) importSingleHexoArticle(
+// importSingleArticle 导入单篇文章
+func (s *ArticleService) importSingleArticle(
 	ctx context.Context,
+	filename string,
 	content string,
+	sourceType string,
+	uploadImages bool,
+	host string,
 	categoryCache map[string]*model.Category,
 	tagCache map[string]*model.Tag,
 ) error {
-	// 解析Hexo文章
-	parsed, err := parseHexoArticle(content)
+	// 解析文章
+	var parsed *HexoParsedArticle
+	var err error
+
+	switch sourceType {
+	case "hexo":
+		parsed, err = parseHexoArticle(content)
+	case "markdown":
+		parsed, err = parseMarkdownArticle(filename, content)
+	default:
+		return fmt.Errorf("不支持的来源类型: %s", sourceType)
+	}
+
 	if err != nil {
 		return fmt.Errorf("解析失败: %w", err)
+	}
+
+	// 处理图片上传
+	if uploadImages {
+		parsed.Content, err = s.downloadAndUploadImages(ctx, parsed.Content, host)
+		if err != nil {
+			return fmt.Errorf("图片处理失败: %w", err)
+		}
 	}
 
 	// 处理分类
@@ -900,10 +832,12 @@ func (s *ArticleService) importSingleHexoArticle(
 		return fmt.Errorf("保存失败: %w", err)
 	}
 
-	// 增加分类和标签计数
-	s.incrementCounts(ctx, article)
-
 	return nil
+}
+
+// ImportFromHexo 从Hexo格式导入文章（保留向后兼容）
+func (s *ArticleService) ImportFromHexo(ctx context.Context, files map[string]string) (*dto.ImportArticlesResult, error) {
+	return s.ImportArticles(ctx, files, "hexo", false, "")
 }
 
 // getOrCreateCategory 获取或创建分类
@@ -1169,6 +1103,139 @@ func extractTitleFromMarkdown(content string) string {
 		}
 	}
 	return ""
+}
+
+// parseMarkdownArticle 解析纯 Markdown 格式文章
+func parseMarkdownArticle(filename, content string) (*HexoParsedArticle, error) {
+	parsed := &HexoParsedArticle{
+		Tags:        []string{},
+		PublishTime: nil,
+		UpdateTime:  nil,
+	}
+
+	// 从文件名提取标题
+	if filename != "" {
+		lowerName := strings.ToLower(filename)
+		if strings.HasSuffix(lowerName, ".md") {
+			parsed.Title = strings.TrimSpace(filename[:len(filename)-3])
+		} else if strings.HasSuffix(lowerName, ".markdown") {
+			parsed.Title = strings.TrimSpace(filename[:len(filename)-9])
+		} else {
+			parsed.Title = strings.TrimSpace(filename)
+		}
+	}
+
+	// 如果文件名没有标题，尝试从内容提取
+	if parsed.Title == "" {
+		parsed.Title = extractTitleFromMarkdown(content)
+	}
+
+	// 如果还是没有标题，使用默认值
+	if parsed.Title == "" {
+		parsed.Title = "未命名文章"
+	}
+
+	parsed.Summary = generateSummary(content, 200)
+	parsed.Content = content
+
+	return parsed, nil
+}
+
+// downloadAndUploadImages 下载并上传文章中的图片
+func (s *ArticleService) downloadAndUploadImages(ctx context.Context, content string, host string) (string, error) {
+	if s.fileService == nil {
+		return content, nil
+	}
+
+	// 提取所有图片 URL
+	imageURLs := extractContentImages(content)
+	if len(imageURLs) == 0 {
+		return content, nil
+	}
+
+	// 去重
+	uniqueURLs := make(map[string]bool)
+	for _, url := range imageURLs {
+		uniqueURLs[url] = true
+	}
+
+	// 并发下载上传图片
+	replacements := make(map[string]string)
+	for url := range uniqueURLs {
+		// 跳过相对路径和本地路径
+		if strings.HasPrefix(url, "./") || strings.HasPrefix(url, "../") || strings.HasPrefix(url, "/") {
+			continue
+		}
+
+		// 下载并上传图片
+		newURL, err := s.downloadAndUploadSingleImage(ctx, url, host)
+		if err == nil {
+			replacements[url] = newURL
+		}
+	}
+
+	// 替换内容中的图片 URL
+	for oldURL, newURL := range replacements {
+		content = strings.ReplaceAll(content, oldURL, newURL)
+	}
+
+	return content, nil
+}
+
+// downloadAndUploadSingleImage 下载并上传单张图片
+func (s *ArticleService) downloadAndUploadSingleImage(ctx context.Context, imgURL string, host string) (string, error) {
+	if s.fileService == nil || imgURL == "" {
+		return imgURL, nil
+	}
+
+	// 跳过相对路径
+	if strings.HasPrefix(imgURL, "./") || strings.HasPrefix(imgURL, "../") || strings.HasPrefix(imgURL, "/") {
+		return imgURL, nil
+	}
+
+	// 下载图片
+	data, ext, err := s.fetchImage(ctx, imgURL)
+	if err != nil {
+		return imgURL, fmt.Errorf("下载图片失败: %w", err)
+	}
+
+	// 生成文件名（使用 SHA256 哈希避免重复）
+	hashBytes := sha256.Sum256(data)
+	hashStr := fmt.Sprintf("%x", hashBytes)[:12]
+	filename := fmt.Sprintf("import_%s%s", hashStr, ext)
+
+	// 确定 MIME 类型
+	mimeType := "image/jpeg"
+	switch strings.ToLower(ext) {
+	case ".png":
+		mimeType = "image/png"
+	case ".gif":
+		mimeType = "image/gif"
+	case ".webp":
+		mimeType = "image/webp"
+	case ".avif":
+		mimeType = "image/avif"
+	case ".svg":
+		mimeType = "image/svg+xml"
+	case ".bmp":
+		mimeType = "image/bmp"
+	case ".tiff", ".tif":
+		mimeType = "image/tiff"
+	}
+
+	// 上传图片
+	reader := bytes.NewReader(data)
+	uploadedURL, err := s.fileService.UploadFromReader(reader, filename, mimeType, "文章图片", 0, host)
+	if err != nil {
+		return imgURL, fmt.Errorf("上传图片失败: %w", err)
+	}
+
+	// 标记文件为已使用
+	if err := s.fileService.MarkAsUsed(uploadedURL); err != nil {
+		logger.Warn("标记文件状态失败: %v", err)
+	}
+
+	return uploadedURL, nil
 }
 
 // ============ 微信公众号导出 ============

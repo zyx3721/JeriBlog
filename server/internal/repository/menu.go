@@ -114,6 +114,13 @@ func (r *MenuRepository) HasChildren(id uint) (bool, error) {
 	return count > 0, err
 }
 
+// ExistsByIcon 检查是否有菜单图标引用该文件
+func (r *MenuRepository) ExistsByIcon(url string) (bool, error) {
+	var count int64
+	err := r.db.Model(&model.Menu{}).Where("icon = ?", url).Count(&count).Error
+	return count > 0, err
+}
+
 // GetChildrenCount 获取子菜单数量
 func (r *MenuRepository) GetChildrenCount(id uint) (int64, error) {
 	var count int64

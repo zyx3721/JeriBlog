@@ -45,6 +45,10 @@
     <el-drawer v-model="drawerVisible" title="文章设置" :size="drawerSize" direction="rtl">
       <el-form ref="formRef" :model="formData" label-width="100px" label-position="top" class="drawer-form">
         <div class="form-row">
+          <el-form-item label="文章Slug" prop="slug" class="form-col">
+            <el-input v-model="formData.slug" placeholder="留空自动生成" clearable maxlength="200" />
+          </el-form-item>
+
           <el-form-item label="文章分类" prop="category_id" class="form-col">
             <el-select v-model="formData.category_id" placeholder="请选择或输入分类名称" style="width: 100%" clearable filterable
               allow-create @change="handleCategorySelect">
@@ -258,6 +262,7 @@ const canAutoSave = computed(() => {
 // 表单数据
 const formData = reactive({
   title: '',
+  slug: '',
   content: '',
   summary: '',
   ai_summary: '',
@@ -276,6 +281,7 @@ const formData = reactive({
 // 保存原始数据快照，用于检测变化
 const originalData = reactive({
   title: '',
+  slug: '',
   content: '',
   summary: '',
   ai_summary: '',
@@ -406,6 +412,7 @@ const fetchArticle = async (id: number) => {
     // 填充表单数据
     const data = {
       title: article.title,
+      slug: (article as any).slug || '',
       content: article.content,
       summary: article.summary,
       ai_summary: article.ai_summary || '',
@@ -510,6 +517,7 @@ const handleSave = async (autoRedirect: boolean = true) => {
     // 准备提交数据
     const submitData: any = {
       title: formData.title.trim(),
+      slug: formData.slug.trim(),
       content: formData.content.trim(),
       summary: formData.summary.trim(),
       ai_summary: formData.ai_summary.trim(),
@@ -602,6 +610,7 @@ const hasFormChanged = (): boolean => {
 
   return (
     formData.title !== originalData.title ||
+    formData.slug !== originalData.slug ||
     formData.content !== originalData.content ||
     formData.summary !== originalData.summary ||
     formData.ai_summary !== originalData.ai_summary ||

@@ -25,6 +25,8 @@ import sub from 'markdown-it-sub'
 import sup from 'markdown-it-sup'
 // @ts-ignore - 没有类型定义
 import underline from 'markdown-it-plugin-underline'
+// @ts-ignore - 没有类型定义
+import katex from '@traptitech/markdown-it-katex'
 
 import DOMPurify from 'isomorphic-dompurify'
 import { getEmojiMapSync, replaceEmojisInText } from '@/composables/useEmojis'
@@ -211,6 +213,60 @@ function renderLinkCard(params: string[]): string {
   </div>`
 }
 
+/**
+ * 渲染在线视频
+ * @param params - [平台或URL, 视频ID(可选)]
+ * 支持格式：
+ * - :::video bilibili BV1xxx :::
+ * - :::video youtube dQw4w9WgXcQ :::
+ * - :::video https://example.com/video.mp4 :::
+ */
+function renderVideo(params: string[]): string {
+  if (params.length === 0) return ''
+
+  const platformOrUrl = params[0] || ''
+  const videoId = params[1] || ''
+
+  // B站视频
+  if (platformOrUrl === 'bilibili' && videoId) {
+    return `<div class="custom-video">
+      <iframe
+        src="//player.bilibili.com/player.html?bvid=${videoId}&autoplay=0"
+        scrolling="no"
+        border="0"
+        frameborder="no"
+        framespacing="0"
+        allowfullscreen="true"
+        sandbox="allow-scripts allow-same-origin allow-popups"
+        referrerpolicy="strict-origin-when-cross-origin">
+      </iframe>
+    </div>`
+  }
+
+  // YouTube视频
+  if (platformOrUrl === 'youtube' && videoId) {
+    return `<div class="custom-video">
+      <iframe
+        src="https://www.youtube.com/embed/${videoId}"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        sandbox="allow-scripts allow-same-origin allow-popups"
+        referrerpolicy="strict-origin-when-cross-origin">
+      </iframe>
+    </div>`
+  }
+
+  // 本地/在线视频URL
+  if (platformOrUrl.startsWith('http://') || platformOrUrl.startsWith('https://') || platformOrUrl.startsWith('/')) {
+    return `<div class="custom-video">
+      <video src="${platformOrUrl}" controls preload="metadata"></video>
+    </div>`
+  }
+
+  return ''
+}
+
 // 创建 markdown-it 实例
 const md = new MarkdownIt({
   html: false,
@@ -296,6 +352,24 @@ md.use(sub)
 // 使用下划线插件（支持 ++下划线++ 语法）
 md.use(underline)
 
+// 使用 KaTeX 插件（支持数学公式）
+md.use(katex, {
+  throwOnError: false,
+  errorColor: '#cc0000'
+})
+
+// 自定义表格渲染规则 - 添加滚动容器包裹
+const defaultTableOpen = md.renderer.rules.table_open || (() => '<table>\n');
+const defaultTableClose = md.renderer.rules.table_close || (() => '</table>\n');
+
+md.renderer.rules.table_open = function (tokens, idx, options, env, self) {
+  return '<div class="table-wrapper">' + defaultTableOpen(tokens, idx, options, env, self);
+};
+
+md.renderer.rules.table_close = function (tokens, idx, options, env, self) {
+  return defaultTableClose(tokens, idx, options, env, self) + '</div>';
+};
+
 // ========== 自定义块插件 ==========
 
 /**
@@ -323,6 +397,8 @@ function customBlocksPlugin(md: MarkdownIt) {
       let html = ''
       if (tag === 'link') {
         html = renderLinkCard(params)
+      } else if (tag === 'video') {
+        html = renderVideo(params)
       }
 
       if (html) {
@@ -522,7 +598,13 @@ export function renderMarkdown(markdown: string): string {
       'a', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td',
       'div', 'span', 'sup', 'sub', 'kbd', 'abbr',
       'input', 'label', 'button', 'i', 'section',
-      'svg', 'path', 'g', 'rect', 'circle', 'ellipse', 'line', 'polygon', 'polyline', 'text', 'foreignObject'
+      'svg', 'path', 'g', 'rect', 'circle', 'ellipse', 'line', 'polygon', 'polyline', 'text', 'foreignObject',
+      // KaTeX / MathML 标签
+      'math', 'mrow', 'mi', 'mo', 'mn', 'msup', 'msub', 'msubsup', 'mfrac', 'msqrt', 'mroot',
+      'mover', 'munder', 'munderover', 'mtable', 'mtr', 'mtd', 'mtext', 'mspace', 'mpadded',
+      'menclose', 'mstyle', 'merror', 'mfenced', 'mphantom', 'annotation', 'semantics',
+      // 视频相关标签
+      'video', 'iframe', 'audio', 'source'
     ],
     ALLOWED_ATTR: [
       'href', 'title', 'target', 'rel', 'src', 'alt', 'width', 'height',
@@ -530,10 +612,22 @@ export function renderMarkdown(markdown: string): string {
       'type', 'checked', 'disabled', 'for', 'onclick', 'start',
       'd', 'fill', 'stroke', 'stroke-width', 'x', 'y', 'cx', 'cy', 'r', 'rx', 'ry',
       'x1', 'y1', 'x2', 'y2', 'points', 'transform', 'viewBox', 'xmlns',
-      'text-anchor', 'font-size', 'font-family', 'dominant-baseline', 'data-processed'
+      'text-anchor', 'font-size', 'font-family', 'dominant-baseline', 'data-processed',
+      // KaTeX / MathML 属性
+      'style', 'mathvariant', 'mathcolor', 'mathbackground', 'mathsize',
+      'displaystyle', 'scriptlevel', 'linethickness', 'lspace', 'rspace',
+      'stretchy', 'symmetric', 'largeop', 'movablelimits', 'accent',
+      'minsize', 'maxsize', 'open', 'close', 'separators', 'notation',
+      'encoding', 'definitionurl', 'display', 'xmlns:xlink',
+      'depth', 'voffset', 'columnalign', 'rowalign', 'columnspacing', 'rowspacing',
+      // 视频相关属性
+      'controls', 'preload', 'autoplay', 'loop', 'muted', 'poster',
+      'allowfullscreen', 'scrolling', 'border', 'frameborder', 'framespacing', 'allow',
+      'sandbox', 'referrerpolicy',
+      'data-server', 'data-type', 'data-id'
     ],
     ALLOW_DATA_ATTR: true,
-    ADD_ATTR: ['target', 'onclick']
+    ADD_ATTR: ['target', 'onclick', 'allowfullscreen']
   })
 }
 

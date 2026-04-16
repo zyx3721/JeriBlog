@@ -11,6 +11,10 @@
 
 import { ref, computed } from 'vue'
 
+// 博客端专用的 token key，避免与管理后台冲突
+const BLOG_ACCESS_TOKEN_KEY = 'blog_access_token'
+const BLOG_REFRESH_TOKEN_KEY = 'blog_refresh_token'
+
 // Token 状态
 export const accessToken = ref<string | null>(null)
 export const refreshToken = ref<string | null>(null)
@@ -20,8 +24,8 @@ export const isLoggedIn = computed(() => !!accessToken.value && accessToken.valu
 
 // 从 localStorage 初始化 token（仅客户端）
 if (process.client) {
-  accessToken.value = localStorage.getItem('access_token')
-  refreshToken.value = localStorage.getItem('refresh_token')
+  accessToken.value = localStorage.getItem(BLOG_ACCESS_TOKEN_KEY)
+  refreshToken.value = localStorage.getItem(BLOG_REFRESH_TOKEN_KEY)
 }
 
 /**
@@ -30,11 +34,11 @@ if (process.client) {
 export const setTokens = (access: string, refresh: string): void => {
   accessToken.value = access
   refreshToken.value = refresh
-  
+
   // 同步到 localStorage（仅客户端）
   if (process.client) {
-    localStorage.setItem('access_token', access)
-    localStorage.setItem('refresh_token', refresh)
+    localStorage.setItem(BLOG_ACCESS_TOKEN_KEY, access)
+    localStorage.setItem(BLOG_REFRESH_TOKEN_KEY, refresh)
   }
 }
 
@@ -43,10 +47,10 @@ export const setTokens = (access: string, refresh: string): void => {
  */
 export const setAccessToken = (access: string): void => {
   accessToken.value = access
-  
+
   // 同步到 localStorage（仅客户端）
   if (process.client) {
-    localStorage.setItem('access_token', access)
+    localStorage.setItem(BLOG_ACCESS_TOKEN_KEY, access)
   }
 }
 
@@ -57,8 +61,8 @@ export const logout = (): void => {
   accessToken.value = null
   refreshToken.value = null
   if (process.client) {
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('refresh_token')
+    localStorage.removeItem(BLOG_ACCESS_TOKEN_KEY)
+    localStorage.removeItem(BLOG_REFRESH_TOKEN_KEY)
   }
 }
 

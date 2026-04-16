@@ -462,7 +462,7 @@ func initScheduler(fileService *service.FileService, userService *service.UserSe
 
 	// 注册清理任务
 	_ = s.AddJob(scheduler.NewJob("清理过期验证码", "0 0 2 * * *", verificationService.CleanExpiredVerifications))
-	_ = s.AddJob(scheduler.NewJob("清理未使用文件", "0 0 3 * * *", fileService.CleanupUnusedFiles))
+	_ = s.AddJob(scheduler.NewJob("清理未使用文件", "0 0 3 * * *", fileService.DeleteUnusedFiles))
 	_ = s.AddJob(scheduler.NewJob("清理过期Token黑名单", "0 0 4 * * *", userService.CleanupExpiredTokens))
 
 	// RSS订阅相关任务

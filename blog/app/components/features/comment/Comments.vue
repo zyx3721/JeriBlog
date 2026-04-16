@@ -23,7 +23,7 @@ const props = defineProps<{
 }>()
 
 // 使用评论 store
-const { comments, fetchComments, addComment, resetComments, flattenComments } = useComments()
+const { comments, fetchComments, addComment, removeComment, resetComments, flattenComments } = useComments()
 
 // 加载表情映射
 const { blogConfig } = useSysConfig()
@@ -141,12 +141,18 @@ const cancelReply = () => {
   replyingToNickname.value = ''
 }
 
+// 删除评论
+const handleDeleteComment = async (commentId: number) => {
+  await removeComment(commentId)
+}
+
 // 提供评论上下文给所有子组件
 provideCommentContext({
   targetType: computed(() => props.targetType),
   targetKey: computed(() => props.targetKey),
   addComment: handleAddComment,
   addReply: handleAddReply,
+  deleteComment: handleDeleteComment,
   showLogin: openLogin,
   replyState: {
     replyingToId,

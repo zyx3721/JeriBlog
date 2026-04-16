@@ -13,6 +13,7 @@
 export interface Article {
     id: number
     title: string
+    slug: string
     content: string
     summary?: string
     ai_summary?: string
@@ -39,6 +40,7 @@ export interface Article {
 // 创建文章请求
 export interface CreateArticleRequest {
     title: string
+    slug?: string
     content: string
     summary?: string
     cover?: string
@@ -50,9 +52,10 @@ export interface CreateArticleRequest {
     is_outdated?: boolean  // 是否过时
 }
 
-// 更新文章请求  
+// 更新文章请求
 export interface UpdateArticleRequest {
     title?: string
+    slug?: string
     content?: string
     summary?: string
     cover?: string
