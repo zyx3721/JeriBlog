@@ -213,6 +213,16 @@ type ImportArticleError struct {
 	Error    string `json:"error"`
 }
 
+// AddError 添加错误信息
+func (r *ImportArticlesResult) AddError(filename, title, errMsg string) {
+	r.Failed++
+	r.Errors = append(r.Errors, ImportArticleError{
+		Filename: filename,
+		Title:    title,
+		Error:    errMsg,
+	})
+}
+
 // ============ 微信公众号导出 ============
 
 // WeChatExportResult 微信导出结果
