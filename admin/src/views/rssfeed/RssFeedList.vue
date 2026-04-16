@@ -1,3 +1,14 @@
+<!--
+项目名称：JeriBlog
+文件名称：RssFeedList.vue
+创建时间：2026-04-16 15:08:10
+
+系统用户：Jerion
+作　　者：Jerion
+联系邮箱：416685476@qq.com
+功能描述：页面组件 - RssFeedList页面
+-->
+
 <template>
   <common-list title="RSS订阅" :data="articleList" :loading="loading" :total="total" v-model:page="queryParams.page"
     v-model:page-size="queryParams.page_size" :show-create="false" @refresh="fetchArticles"

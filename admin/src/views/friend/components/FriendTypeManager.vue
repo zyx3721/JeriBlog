@@ -1,3 +1,14 @@
+<!--
+项目名称：JeriBlog
+文件名称：FriendTypeManager.vue
+创建时间：2026-04-16 15:08:10
+
+系统用户：Jerion
+作　　者：Jerion
+联系邮箱：416685476@qq.com
+功能描述：页面组件 - FriendTypeManager页面
+-->
+
 <template>
   <el-dialog v-model="visible" title="友链类型管理" width="550px" :align-center="true">
     <el-table :data="list" style="margin: 20px 0" max-height="350">

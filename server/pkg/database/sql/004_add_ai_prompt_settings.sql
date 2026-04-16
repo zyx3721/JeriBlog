@@ -1,3 +1,14 @@
+/*
+项目名称：JeriBlog
+文件名称：004_add_ai_prompt_settings.sql
+创建时间：2026-04-16 15:30:00
+
+系统用户：Jerion
+作　　者：Jerion
+联系邮箱：416685476@qq.com
+功能描述：添加 AI 提示词配置项（摘要生成、AI总结、标题生成）
+*/
+
 -- 添加 AI 提示词配置项
 INSERT INTO settings (key, value, "group", is_public, created_at, updated_at)
 VALUES

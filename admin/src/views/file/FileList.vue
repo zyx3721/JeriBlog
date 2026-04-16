@@ -1,3 +1,14 @@
+<!--
+项目名称：JeriBlog
+文件名称：FileList.vue
+创建时间：2026-04-16 15:08:10
+
+系统用户：Jerion
+作　　者：Jerion
+联系邮箱：416685476@qq.com
+功能描述：页面组件 - FileList页面
+-->
+
 <template>
   <common-list title="文件管理" :data="fileList" :loading="loading" :total="total" :show-create="false"
     v-model:page="query.page" v-model:page-size="query.page_size" @refresh="loadList" @update:page="loadList"

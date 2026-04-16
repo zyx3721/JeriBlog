@@ -1,3 +1,14 @@
+<!--
+项目名称：JeriBlog
+文件名称：BlogSettingsTab.vue
+创建时间：2026-04-16 15:08:10
+
+系统用户：Jerion
+作　　者：Jerion
+联系邮箱：416685476@qq.com
+功能描述：页面组件 - BlogSettingsTab页面
+-->
+
 <template>
   <el-form :model="form" label-width="120px" class="setting-form">
     <el-divider content-position="left">网站信息</el-divider>

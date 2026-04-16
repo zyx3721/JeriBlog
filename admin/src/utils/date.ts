@@ -1,3 +1,14 @@
+/*
+项目名称：JeriBlog
+文件名称：date.ts
+创建时间：2026-04-16 15:08:10
+
+系统用户：Jerion
+作　　者：Jerion
+联系邮箱：416685476@qq.com
+功能描述：工具函数 - date工具
+*/
+
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
 import relativeTime from 'dayjs/plugin/relativeTime'

@@ -1,3 +1,14 @@
+/*
+项目名称：JeriBlog
+文件名称：markdown.ts
+创建时间：2026-04-16 15:08:10
+
+系统用户：Jerion
+作　　者：Jerion
+联系邮箱：416685476@qq.com
+功能描述：工具函数 - markdown工具
+*/
+
 import MarkdownIt from 'markdown-it'
 import anchor from 'markdown-it-anchor'
 // @ts-ignore - 没有类型定义

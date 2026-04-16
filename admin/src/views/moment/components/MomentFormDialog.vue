@@ -1,3 +1,14 @@
+<!--
+项目名称：JeriBlog
+文件名称：MomentFormDialog.vue
+创建时间：2026-04-16 15:08:10
+
+系统用户：Jerion
+作　　者：Jerion
+联系邮箱：416685476@qq.com
+功能描述：页面组件 - MomentFormDialog页面
+-->
+
 <template>
   <el-dialog v-model="visible" :title="dialogTitle" width="800px" :close-on-click-modal="false" top="8vh">
     <div class="moment-editor">

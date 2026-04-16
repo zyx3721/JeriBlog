@@ -1,3 +1,14 @@
+/*
+项目名称：JeriBlog
+文件名称：ai.go
+创建时间：2026-04-16 15:02:06
+
+系统用户：Jerion
+作　　者：Jerion
+联系邮箱：416685476@qq.com
+功能描述：AI 接口处理器
+*/
+
 package v1
 
 import (

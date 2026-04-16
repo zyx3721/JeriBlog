@@ -1,3 +1,14 @@
+/*
+项目名称：JeriBlog
+文件名称：setting.go
+创建时间：2026-04-16 15:00:03
+
+系统用户：Jerion
+作　　者：Jerion
+联系邮箱：416685476@qq.com
+功能描述：系统设置业务逻辑
+*/
+
 package service
 
 import (
@@ -276,6 +287,32 @@ func (s *SettingService) UpdateGroup(group string, updates map[string]string) er
 					}
 					if newScreenshot != "" {
 						_ = s.fileService.MarkAsUsed(newScreenshot)
+					}
+				}
+			}
+
+			// 处理微信收款码
+			if newWechatQr, ok := updates[KeyBlogWechatQrCode]; ok {
+				oldWechatQr := oldSettings[KeyBlogWechatQrCode]
+				if oldWechatQr != newWechatQr {
+					if oldWechatQr != "" {
+						_ = s.fileService.MarkAsUnused(oldWechatQr)
+					}
+					if newWechatQr != "" {
+						_ = s.fileService.MarkAsUsed(newWechatQr)
+					}
+				}
+			}
+
+			// 处理支付宝收款码
+			if newAlipayQr, ok := updates[KeyBlogAlipayQrCode]; ok {
+				oldAlipayQr := oldSettings[KeyBlogAlipayQrCode]
+				if oldAlipayQr != newAlipayQr {
+					if oldAlipayQr != "" {
+						_ = s.fileService.MarkAsUnused(oldAlipayQr)
+					}
+					if newAlipayQr != "" {
+						_ = s.fileService.MarkAsUsed(newAlipayQr)
 					}
 				}
 			}

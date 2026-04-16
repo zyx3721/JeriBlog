@@ -1,3 +1,14 @@
+/*
+项目名称：JeriBlog
+文件名称：comment.go
+创建时间：2026-04-16 15:00:36
+
+系统用户：Jerion
+作　　者：Jerion
+联系邮箱：416685476@qq.com
+功能描述：评论数据模型
+*/
+
 package model
 
 import "gorm.io/gorm"

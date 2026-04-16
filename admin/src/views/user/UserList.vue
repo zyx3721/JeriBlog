@@ -1,3 +1,14 @@
+<!--
+项目名称：JeriBlog
+文件名称：UserList.vue
+创建时间：2026-04-16 15:08:10
+
+系统用户：Jerion
+作　　者：Jerion
+联系邮箱：416685476@qq.com
+功能描述：页面组件 - UserList页面
+-->
+
 <template>
   <common-list title="用户列表" :data="userList" :loading="loading" :total="total" v-model:page="queryParams.page"
     v-model:page-size="queryParams.page_size" create-text="新增用户" @create="handleCreate" @refresh="fetchUsers"

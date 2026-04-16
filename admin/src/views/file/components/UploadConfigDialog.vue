@@ -1,3 +1,14 @@
+<!--
+项目名称：JeriBlog
+文件名称：UploadConfigDialog.vue
+创建时间：2026-04-16 15:08:10
+
+系统用户：Jerion
+作　　者：Jerion
+联系邮箱：416685476@qq.com
+功能描述：页面组件 - UploadConfigDialog页面
+-->
+
 <template>
   <el-dialog v-model="visible" :title="'上传配置'" width="600px" :close-on-click-modal="false" @close="handleClose">
     <el-form ref="formRef" :model="form" label-width="100px">
