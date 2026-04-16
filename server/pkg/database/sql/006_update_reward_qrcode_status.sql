@@ -15,7 +15,7 @@ SET status = 1, updated_at = NOW()
 WHERE file_url IN (
     SELECT value
     FROM settings
-    WHERE `key` = 'blog.wechat_qrcode' AND value != ''
+    WHERE key = 'blog.wechat_qrcode' AND value != ''
 );
 
 -- 更新支付宝收款码状态
@@ -24,5 +24,5 @@ SET status = 1, updated_at = NOW()
 WHERE file_url IN (
     SELECT value
     FROM settings
-    WHERE `key` = 'blog.alipay_qrcode' AND value != ''
+    WHERE key = 'blog.alipay_qrcode' AND value != ''
 );
