@@ -331,7 +331,7 @@ func (c *ArticleController) ImportArticles(ctx *gin.Context) {
 	uploadImages := ctx.PostForm("upload_images") == "true"
 
 	// 提取 host 用于生成完整的图片 URL
-	host := upload.ExtractHostFromContext(ctx)
+	host := upload.ExtractHostFromContext(ctx, "")
 
 	// Markdown/Hexo 文件导入
 	const maxFileSize = 10 << 20 // 10MB

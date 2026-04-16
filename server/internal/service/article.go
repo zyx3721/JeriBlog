@@ -15,6 +15,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"context"
+	"crypto/sha256"
 	"fmt"
 	"io"
 	"net/http"
@@ -717,8 +718,8 @@ func (s *ArticleService) updateContentFileStatus(oldContent, newContent string) 
 
 // ============ 数据导入导出方法 ============
 
-// ImportFromHexo 从Hexo格式导入文章
-func (s *ArticleService) ImportFromHexo(ctx context.Context, files map[string]string) (*dto.ImportArticlesResult, error) {
+// ImportArticles 导入文章（支持 Hexo 和 Markdown 格式）
+func (s *ArticleService) ImportArticles(ctx context.Context, files map[string]string, sourceType string, uploadImages bool, host string) (*dto.ImportArticlesResult, error) {
 	if len(files) == 0 {
 		return nil, fmt.Errorf("没有找到有效的文章数据")
 	}
@@ -733,13 +734,8 @@ func (s *ArticleService) ImportFromHexo(ctx context.Context, files map[string]st
 
 	// 处理每篇文章
 	for filename, content := range files {
-		if err := s.importSingleHexoArticle(ctx, content, categoryCache, tagCache); err != nil {
-			result.Failed++
-			result.Errors = append(result.Errors, dto.ImportArticleError{
-				Filename: filename,
-				Title:    extractTitle(content),
-				Error:    err.Error(),
-			})
+		if err := s.importSingleArticle(ctx, filename, content, sourceType, uploadImages, host, categoryCache, tagCache); err != nil {
+			result.AddError(filename, extractTitle(content), err.Error())
 		} else {
 			result.Success++
 		}
@@ -751,17 +747,40 @@ func (s *ArticleService) ImportFromHexo(ctx context.Context, files map[string]st
 	return result, nil
 }
 
-// importSingleHexoArticle 导入单篇Hexo文章
-func (s *ArticleService) importSingleHexoArticle(
+// importSingleArticle 导入单篇文章
+func (s *ArticleService) importSingleArticle(
 	ctx context.Context,
+	filename string,
 	content string,
+	sourceType string,
+	uploadImages bool,
+	host string,
 	categoryCache map[string]*model.Category,
 	tagCache map[string]*model.Tag,
 ) error {
-	// 解析Hexo文章
-	parsed, err := parseHexoArticle(content)
+	// 解析文章
+	var parsed *HexoParsedArticle
+	var err error
+
+	switch sourceType {
+	case "hexo":
+		parsed, err = parseHexoArticle(content)
+	case "markdown":
+		parsed, err = parseMarkdownArticle(filename, content)
+	default:
+		return fmt.Errorf("不支持的来源类型: %s", sourceType)
+	}
+
 	if err != nil {
 		return fmt.Errorf("解析失败: %w", err)
+	}
+
+	// 处理图片上传
+	if uploadImages {
+		parsed.Content, err = s.downloadAndUploadImages(ctx, parsed.Content, host)
+		if err != nil {
+			return fmt.Errorf("图片处理失败: %w", err)
+		}
 	}
 
 	// 处理分类
@@ -814,6 +833,11 @@ func (s *ArticleService) importSingleHexoArticle(
 	}
 
 	return nil
+}
+
+// ImportFromHexo 从Hexo格式导入文章（保留向后兼容）
+func (s *ArticleService) ImportFromHexo(ctx context.Context, files map[string]string) (*dto.ImportArticlesResult, error) {
+	return s.ImportArticles(ctx, files, "hexo", false, "")
 }
 
 // getOrCreateCategory 获取或创建分类
@@ -1079,6 +1103,139 @@ func extractTitleFromMarkdown(content string) string {
 		}
 	}
 	return ""
+}
+
+// parseMarkdownArticle 解析纯 Markdown 格式文章
+func parseMarkdownArticle(filename, content string) (*HexoParsedArticle, error) {
+	parsed := &HexoParsedArticle{
+		Tags:        []string{},
+		PublishTime: nil,
+		UpdateTime:  nil,
+	}
+
+	// 从文件名提取标题
+	if filename != "" {
+		lowerName := strings.ToLower(filename)
+		if strings.HasSuffix(lowerName, ".md") {
+			parsed.Title = strings.TrimSpace(filename[:len(filename)-3])
+		} else if strings.HasSuffix(lowerName, ".markdown") {
+			parsed.Title = strings.TrimSpace(filename[:len(filename)-9])
+		} else {
+			parsed.Title = strings.TrimSpace(filename)
+		}
+	}
+
+	// 如果文件名没有标题，尝试从内容提取
+	if parsed.Title == "" {
+		parsed.Title = extractTitleFromMarkdown(content)
+	}
+
+	// 如果还是没有标题，使用默认值
+	if parsed.Title == "" {
+		parsed.Title = "未命名文章"
+	}
+
+	parsed.Summary = generateSummary(content, 200)
+	parsed.Content = content
+
+	return parsed, nil
+}
+
+// downloadAndUploadImages 下载并上传文章中的图片
+func (s *ArticleService) downloadAndUploadImages(ctx context.Context, content string, host string) (string, error) {
+	if s.fileService == nil {
+		return content, nil
+	}
+
+	// 提取所有图片 URL
+	imageURLs := extractContentImages(content)
+	if len(imageURLs) == 0 {
+		return content, nil
+	}
+
+	// 去重
+	uniqueURLs := make(map[string]bool)
+	for _, url := range imageURLs {
+		uniqueURLs[url] = true
+	}
+
+	// 并发下载上传图片
+	replacements := make(map[string]string)
+	for url := range uniqueURLs {
+		// 跳过相对路径和本地路径
+		if strings.HasPrefix(url, "./") || strings.HasPrefix(url, "../") || strings.HasPrefix(url, "/") {
+			continue
+		}
+
+		// 下载并上传图片
+		newURL, err := s.downloadAndUploadSingleImage(ctx, url, host)
+		if err == nil {
+			replacements[url] = newURL
+		}
+	}
+
+	// 替换内容中的图片 URL
+	for oldURL, newURL := range replacements {
+		content = strings.ReplaceAll(content, oldURL, newURL)
+	}
+
+	return content, nil
+}
+
+// downloadAndUploadSingleImage 下载并上传单张图片
+func (s *ArticleService) downloadAndUploadSingleImage(ctx context.Context, imgURL string, host string) (string, error) {
+	if s.fileService == nil || imgURL == "" {
+		return imgURL, nil
+	}
+
+	// 跳过相对路径
+	if strings.HasPrefix(imgURL, "./") || strings.HasPrefix(imgURL, "../") || strings.HasPrefix(imgURL, "/") {
+		return imgURL, nil
+	}
+
+	// 下载图片
+	data, ext, err := s.fetchImage(ctx, imgURL)
+	if err != nil {
+		return imgURL, fmt.Errorf("下载图片失败: %w", err)
+	}
+
+	// 生成文件名（使用 SHA256 哈希避免重复）
+	hashBytes := sha256.Sum256(data)
+	hashStr := fmt.Sprintf("%x", hashBytes)[:12]
+	filename := fmt.Sprintf("import_%s%s", hashStr, ext)
+
+	// 确定 MIME 类型
+	mimeType := "image/jpeg"
+	switch strings.ToLower(ext) {
+	case ".png":
+		mimeType = "image/png"
+	case ".gif":
+		mimeType = "image/gif"
+	case ".webp":
+		mimeType = "image/webp"
+	case ".avif":
+		mimeType = "image/avif"
+	case ".svg":
+		mimeType = "image/svg+xml"
+	case ".bmp":
+		mimeType = "image/bmp"
+	case ".tiff", ".tif":
+		mimeType = "image/tiff"
+	}
+
+	// 上传图片
+	reader := bytes.NewReader(data)
+	uploadedURL, err := s.fileService.UploadFromReader(reader, filename, mimeType, "文章图片", 0, host)
+	if err != nil {
+		return imgURL, fmt.Errorf("上传图片失败: %w", err)
+	}
+
+	// 标记文件为已使用
+	if err := s.fileService.MarkAsUsed(uploadedURL); err != nil {
+		logger.Warn("标记文件状态失败: %v", err)
+	}
+
+	return uploadedURL, nil
 }
 
 // ============ 微信公众号导出 ============
