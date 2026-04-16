@@ -42,7 +42,7 @@ onMounted(() => {
     </div>
     <div class="column-right">
       <a class="links" href="/subscribe" target="_self" aria-label="订阅本站">订阅</a>
-      <a class="links" href="https://github.com/talen8/FlecBlog" target="_blank" aria-label="FlecBLOG源码"
+      <a class="links" href="https://github.com/zyx3721/JeriBlog" target="_blank" aria-label="JeriBLOG源码"
         rel="noopener noreferrer">源码</a>
     </div>
   </div>
