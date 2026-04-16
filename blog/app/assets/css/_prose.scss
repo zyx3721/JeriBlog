@@ -431,6 +431,26 @@
       background: transparent;
       border: none;
       border-radius: 0;
+      max-height: 600px;
+      overflow-y: auto;
+
+      // 自定义滚动条样式
+      &::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: var(--prose-codeblock-bg);
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: var(--prose-codeblock-line-number);
+        border-radius: 4px;
+
+        &:hover {
+          background: var(--prose-link);
+        }
+      }
 
       code {
         display: block;
@@ -443,12 +463,23 @@
         font-size: 0.9rem;
         font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
 
-        // 隐藏滚动条
+        // 隐藏横向滚动条
         &::-webkit-scrollbar {
-          display: none;
+          height: 6px;
         }
-        -ms-overflow-style: none;
-        scrollbar-width: none;
+
+        &::-webkit-scrollbar-track {
+          background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: var(--prose-codeblock-line-number);
+          border-radius: 3px;
+
+          &:hover {
+            background: var(--prose-link);
+          }
+        }
 
         .line-number {
           display: inline-block;
