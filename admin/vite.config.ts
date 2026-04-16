@@ -18,8 +18,8 @@ export default defineConfig(({ mode }) => {
       VitePWA({
         registerType: 'autoUpdate',
         manifest: {
-          name: 'Flec 管理系统',
-          short_name: 'Flec Admin',
+          name: 'Jeri 管理系统',
+          short_name: 'Jeri Admin',
           description: '后台管理系统',
           theme_color: '#f7f7f7',
           background_color: '#ffffff',
