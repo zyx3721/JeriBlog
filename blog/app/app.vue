@@ -150,12 +150,14 @@ onMounted(() => {
   // 异步加载 remixicon，避免阻塞首屏渲染
   import('remixicon/fonts/remixicon.css')
 
-  // 延迟隐藏加载动画，确保页面完全渲染
-  setTimeout(() => {
-    isLoading.value = false
-    // 标记已加载过（使用 sessionStorage，关闭浏览器后重置）
-    sessionStorage.setItem('blog-loaded', 'true')
-  }, 500)
+  // 只在首次访问时延迟隐藏加载动画
+  if (!hasLoadedBefore.value) {
+    setTimeout(() => {
+      isLoading.value = false
+      // 标记已加载过（使用 sessionStorage，关闭浏览器后重置）
+      sessionStorage.setItem('blog-loaded', 'true')
+    }, 1200)
+  }
 })
 
 // SEO Meta
