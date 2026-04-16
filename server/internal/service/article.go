@@ -521,6 +521,7 @@ func (s *ArticleService) Update(ctx context.Context, id uint, req *dto.UpdateArt
 	// 保存旧值用于后续处理
 	oldCover := article.Cover
 	oldContent := article.Content
+	oldIsPublish := article.IsPublish
 
 	// 更新字段
 	if req.Title != "" {
@@ -531,19 +532,16 @@ func (s *ArticleService) Update(ctx context.Context, id uint, req *dto.UpdateArt
 	}
 
 	// 处理 slug 更新
-	if req.Slug != nil {
-		newSlug := *req.Slug
-		if newSlug != "" && newSlug != article.Slug {
-			// 检查新 slug 是否已被其他文章使用
-			exists, err := s.articleRepo.CheckSlugExists(newSlug)
-			if err != nil {
-				return nil, fmt.Errorf("检查 slug 失败: %w", err)
-			}
-			if exists {
-				return nil, fmt.Errorf("slug 已存在: %s", newSlug)
-			}
-			article.Slug = newSlug
+	if req.Slug != "" && req.Slug != article.Slug {
+		// 检查新 slug 是否已被其他文章使用
+		exists, err := s.articleRepo.CheckSlugExists(req.Slug)
+		if err != nil {
+			return nil, fmt.Errorf("检查 slug 失败: %w", err)
 		}
+		if exists {
+			return nil, fmt.Errorf("slug 已存在: %s", req.Slug)
+		}
+		article.Slug = req.Slug
 	}
 
 	article.Summary = req.Summary
@@ -814,9 +812,6 @@ func (s *ArticleService) importSingleHexoArticle(
 	if err := s.articleRepo.Create(article, tagIDs); err != nil {
 		return fmt.Errorf("保存失败: %w", err)
 	}
-
-	// 增加分类和标签计数
-	s.incrementCounts(ctx, article)
 
 	return nil
 }
