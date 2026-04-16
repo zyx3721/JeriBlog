@@ -980,107 +980,120 @@ type HexoParsedArticle struct {
 
 // parseHexoArticle 解析Hexo文章格式（Front Matter + Markdown）
 func parseHexoArticle(content string) (*HexoParsedArticle, error) {
+	var frontMatter string
+	var markdown string
+
 	// 检查是否包含Front Matter标记
-	if !strings.HasPrefix(content, "---") {
-		return nil, fmt.Errorf("无效的Hexo格式：缺少Front Matter")
+	if strings.HasPrefix(content, "---") {
+		// 分割Front Matter和内容
+		parts := strings.SplitN(content, "---", 3)
+		if len(parts) >= 3 {
+			frontMatter = parts[1]
+			markdown = strings.TrimSpace(parts[2])
+		} else {
+			// Front Matter 格式不完整，当作纯 Markdown 处理
+			markdown = strings.TrimSpace(content)
+		}
+	} else {
+		// 纯 Markdown 文件，没有 Front Matter
+		markdown = strings.TrimSpace(content)
 	}
-
-	// 分割Front Matter和内容
-	parts := strings.SplitN(content, "---", 3)
-	if len(parts) < 3 {
-		return nil, fmt.Errorf("无效的Hexo格式：Front Matter格式错误")
-	}
-
-	frontMatter := parts[1]
-	markdown := strings.TrimSpace(parts[2])
 
 	// 解析Front Matter
 	parsed := &HexoParsedArticle{
 		Content: markdown,
 	}
 
-	lines := strings.Split(frontMatter, "\n")
-	var tagLines []string
-	inTags := false
+	// 如果有 Front Matter，解析它
+	if frontMatter != "" {
+		lines := strings.Split(frontMatter, "\n")
+		var tagLines []string
+		inTags := false
 
-	for _, line := range lines {
-		line = strings.TrimSpace(line)
-		if line == "" {
-			continue
-		}
-
-		// 处理标签数组
-		if inTags {
-			if strings.HasPrefix(line, "-") {
-				tagValue := strings.TrimSpace(strings.TrimPrefix(line, "-"))
-				tagValue = strings.Trim(tagValue, "\"'")
-				if tagValue != "" {
-					tagLines = append(tagLines, tagValue)
-				}
-			} else {
-				inTags = false
-			}
-		}
-
-		// 解析键值对
-		if strings.Contains(line, ":") && !strings.HasPrefix(line, "-") {
-			parts := strings.SplitN(line, ":", 2)
-			key := strings.TrimSpace(parts[0])
-			value := ""
-			if len(parts) > 1 {
-				value = strings.TrimSpace(parts[1])
-				value = strings.Trim(value, "\"'")
+		for _, line := range lines {
+			line = strings.TrimSpace(line)
+			if line == "" {
+				continue
 			}
 
-			switch key {
-			case "title":
-				parsed.Title = value
-			case "date":
-				if t, err := parseHexoDate(value); err == nil {
-					parsed.PublishTime = t
-				}
-			case "updated":
-				if t, err := parseHexoDate(value); err == nil {
-					parsed.UpdateTime = t
-				}
-			case "categories", "category":
-				if value != "" {
-					parsed.Category = value
-				}
-				// 如果value为空，可能是数组格式，下一行开始
-			case "tags":
-				if value != "" {
-					// 内联格式: tags: [tag1, tag2]
-					value = strings.Trim(value, "[]")
-					for _, tag := range strings.Split(value, ",") {
-						tag = strings.TrimSpace(tag)
-						tag = strings.Trim(tag, "\"'")
-						if tag != "" {
-							parsed.Tags = append(parsed.Tags, tag)
-						}
+			// 处理标签数组
+			if inTags {
+				if strings.HasPrefix(line, "-") {
+					tagValue := strings.TrimSpace(strings.TrimPrefix(line, "-"))
+					tagValue = strings.Trim(tagValue, "\"'")
+					if tagValue != "" {
+						tagLines = append(tagLines, tagValue)
 					}
 				} else {
-					// 数组格式
-					inTags = true
+					inTags = false
 				}
-			case "cover", "thumbnail":
-				parsed.Cover = value
-			case "description", "excerpt":
-				parsed.Summary = value
-			case "slug", "abbrlink":
-				parsed.Slug = value
 			}
+
+			// 解析键值对
+			if strings.Contains(line, ":") && !strings.HasPrefix(line, "-") {
+				parts := strings.SplitN(line, ":", 2)
+				key := strings.TrimSpace(parts[0])
+				value := ""
+				if len(parts) > 1 {
+					value = strings.TrimSpace(parts[1])
+					value = strings.Trim(value, "\"'")
+				}
+
+				switch key {
+				case "title":
+					parsed.Title = value
+				case "date":
+					if t, err := parseHexoDate(value); err == nil {
+						parsed.PublishTime = t
+					}
+				case "updated":
+					if t, err := parseHexoDate(value); err == nil {
+						parsed.UpdateTime = t
+					}
+				case "categories", "category":
+					if value != "" {
+						parsed.Category = value
+					}
+					// 如果value为空，可能是数组格式，下一行开始
+				case "tags":
+					if value != "" {
+						// 内联格式: tags: [tag1, tag2]
+						value = strings.Trim(value, "[]")
+						for _, tag := range strings.Split(value, ",") {
+							tag = strings.TrimSpace(tag)
+							tag = strings.Trim(tag, "\"'")
+							if tag != "" {
+								parsed.Tags = append(parsed.Tags, tag)
+							}
+						}
+					} else {
+						// 数组格式
+						inTags = true
+					}
+				case "cover", "thumbnail":
+					parsed.Cover = value
+				case "description", "excerpt":
+					parsed.Summary = value
+				case "slug", "abbrlink":
+					parsed.Slug = value
+				}
+			}
+		}
+
+		// 添加收集的标签
+		if len(tagLines) > 0 {
+			parsed.Tags = append(parsed.Tags, tagLines...)
 		}
 	}
 
-	// 添加收集的标签
-	if len(tagLines) > 0 {
-		parsed.Tags = append(parsed.Tags, tagLines...)
+	// 如果没有标题，尝试从 Markdown 内容中提取第一个标题
+	if parsed.Title == "" {
+		parsed.Title = extractTitleFromMarkdown(markdown)
 	}
 
-	// 验证必需字段
+	// 如果还是没有标题，返回错误
 	if parsed.Title == "" {
-		return nil, fmt.Errorf("文章缺少标题")
+		return nil, fmt.Errorf("文章缺少标题（需要在 Front Matter 中指定 title 或在内容中使用 # 标题）")
 	}
 
 	// 如果没有摘要，从内容中生成
@@ -1126,6 +1139,22 @@ func generateSummary(content string, maxLen int) string {
 		return string(runes[:maxLen]) + "..."
 	}
 	return content
+}
+
+// extractTitleFromMarkdown 从 Markdown 内容中提取第一个标题
+func extractTitleFromMarkdown(content string) string {
+	lines := strings.Split(content, "\n")
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		// 匹配 # 标题
+		if strings.HasPrefix(line, "#") {
+			title := strings.TrimSpace(strings.TrimLeft(line, "#"))
+			if title != "" {
+				return title
+			}
+		}
+	}
+	return ""
 }
 
 // ============ 微信公众号导出 ============
