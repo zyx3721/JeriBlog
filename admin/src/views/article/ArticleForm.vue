@@ -44,12 +44,12 @@
     <!-- 侧边抽屉 - 文章设置 -->
     <el-drawer v-model="drawerVisible" title="文章设置" :size="drawerSize" direction="rtl">
       <el-form ref="formRef" :model="formData" label-width="100px" label-position="top" class="drawer-form">
-        <div class="form-row form-row-three">
-          <el-form-item label="文章Slug" prop="slug" class="form-col-1-4">
+        <div class="form-row">
+          <el-form-item label="文章Slug" prop="slug" class="form-col">
             <el-input v-model="formData.slug" placeholder="留空自动生成" clearable maxlength="200" />
           </el-form-item>
 
-          <el-form-item label="文章分类" prop="category_id" class="form-col-1-4">
+          <el-form-item label="文章分类" prop="category_id" class="form-col">
             <el-select v-model="formData.category_id" placeholder="请选择或输入分类名称" style="width: 100%" clearable filterable
               allow-create @change="handleCategorySelect">
               <el-option v-for="category in categories" :key="category.id" :label="category.name"
@@ -57,7 +57,7 @@
             </el-select>
           </el-form-item>
 
-          <el-form-item label="文章标签" prop="tag_ids" class="form-col-1-2">
+          <el-form-item label="文章标签" prop="tag_ids" class="form-col">
             <el-select v-model="formData.tag_ids" placeholder="请选择或输入标签名称" style="width: 100%" multiple clearable
               collapse-tags collapse-tags-tooltip :max-collapse-tags="3" filterable allow-create
               @change="handleTagSelect">
