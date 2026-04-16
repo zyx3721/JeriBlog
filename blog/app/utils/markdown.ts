@@ -304,6 +304,18 @@ md.use(katex, {
   errorColor: '#cc0000'
 })
 
+// 自定义表格渲染规则 - 添加滚动容器包裹
+const defaultTableOpen = md.renderer.rules.table_open || (() => '<table>\n');
+const defaultTableClose = md.renderer.rules.table_close || (() => '</table>\n');
+
+md.renderer.rules.table_open = function (tokens, idx, options, env, self) {
+  return '<div class="table-wrapper">' + defaultTableOpen(tokens, idx, options, env, self);
+};
+
+md.renderer.rules.table_close = function (tokens, idx, options, env, self) {
+  return defaultTableClose(tokens, idx, options, env, self) + '</div>';
+};
+
 // ========== 自定义块插件 ==========
 
 /**

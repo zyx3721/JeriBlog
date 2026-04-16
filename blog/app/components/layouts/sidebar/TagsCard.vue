@@ -15,12 +15,22 @@ const { isExpanded, toggleExpand } = useExpandable()
 
 const tagCloudRef = ref<HTMLElement | null>(null)
 const needsExpand = ref(false)
+const isMobile = ref(false)
 
 const updateNeedsExpand = () => {
-    needsExpand.value = tagCloudRef.value ? tagCloudRef.value.scrollHeight > 150 : false
+    isMobile.value = window.innerWidth < 900
+    needsExpand.value = !isMobile.value && tagCloudRef.value ? tagCloudRef.value.scrollHeight > 150 : false
 }
 
-onMounted(updateNeedsExpand)
+onMounted(() => {
+    updateNeedsExpand()
+    window.addEventListener('resize', updateNeedsExpand)
+})
+
+onUnmounted(() => {
+    window.removeEventListener('resize', updateNeedsExpand)
+})
+
 watch(tags, () => nextTick(updateNeedsExpand), { deep: true })
 
 const getTagSize = (count: number) => {
@@ -97,6 +107,21 @@ const getTagSize = (count: number) => {
 
     &:hover {
         color: var(--flec-btn-hover);
+    }
+}
+
+@media (max-width: 900px) {
+    .expand-toggle {
+        display: none;
+    }
+
+    .card-tag-cloud.can-expand:not(.is-expanded) {
+        max-height: none;
+        overflow: visible;
+
+        &::after {
+            display: none;
+        }
     }
 }
 </style>

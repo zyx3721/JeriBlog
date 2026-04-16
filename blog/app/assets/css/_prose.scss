@@ -488,12 +488,42 @@
   }
 
   // ===== 表格 =====
-  table {
-    border-collapse: collapse;
+  // 表格滚动容器
+  .table-wrapper {
     width: 100%;
+    overflow-x: auto;
     margin: 1.5rem 0;
     border-radius: 6px;
     box-shadow: 0 1px 3px var(--prose-table-shadow);
+    -webkit-overflow-scrolling: touch;
+
+    // 自定义滚动条样式
+    &::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: var(--prose-table-row-even);
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--prose-table-border);
+      border-radius: 3px;
+
+      &:hover {
+        background: var(--prose-link);
+      }
+    }
+  }
+
+  table {
+    border-collapse: collapse;
+    width: max-content;
+    min-width: 100%;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
     font-size: 0.9rem;
   }
 
@@ -1036,6 +1066,10 @@
           font-size: 18px;
         }
       }
+    }
+
+    .table-wrapper {
+      margin: 1rem 0;
     }
 
     table {
