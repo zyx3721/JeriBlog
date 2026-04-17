@@ -13,6 +13,37 @@
   <common-list title="友链管理" :data="friendList" :loading="loading" :total="total" v-model:page="queryParams.page"
     v-model:page-size="queryParams.page_size" create-text="新增友链" @create="handleCreate" @refresh="fetchFriends"
     @update:page="fetchFriends" @update:pageSize="fetchFriends">
+    <!-- 搜索表单 -->
+    <template #toolbar-before>
+      <div class="search-form">
+        <el-input
+          v-model="queryParams.keyword"
+          placeholder="搜索友链..."
+          clearable
+          style="width: 240px"
+          @keyup.enter="handleSearch"
+          @clear="handleSearch"
+        />
+        <el-select
+          v-model="queryParams.type_id"
+          placeholder="类型"
+          clearable
+          style="width: 150px"
+          @change="handleSearch"
+        >
+          <el-option label="全部类型" :value="undefined" />
+          <el-option
+            v-for="type in typeList"
+            :key="type.id"
+            :label="type.name"
+            :value="type.id"
+          />
+        </el-select>
+        <el-button type="primary" @click="handleSearch">搜索</el-button>
+        <el-button @click="handleReset">重置</el-button>
+      </div>
+    </template>
+
     <!-- 额外按钮 -->
     <template #toolbar-after>
       <el-button @click="handleTypeManage">
@@ -90,17 +121,23 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Link } from '@element-plus/icons-vue'
 import CommonList from '@/components/common/CommonList.vue'
-import type { Friend } from '@/types/friend'
+import type { Friend, FriendType } from '@/types/friend'
 import type { PaginationQuery } from '@/types/request'
-import { getFriends, deleteFriend } from '@/api/friend'
+import { getFriends, deleteFriend, getFriendTypes } from '@/api/friend'
 import { formatDateTime } from '@/utils/date'
 import FriendFormDialog from './components/FriendFormDialog.vue'
 import FriendTypeManager from './components/FriendTypeManager.vue'
 
 const loading = ref(false)
 const friendList = ref<Friend[]>([])
+const typeList = ref<FriendType[]>([])
 const total = ref(0)
-const queryParams = ref<PaginationQuery>({ page: 1, page_size: 20 })
+const queryParams = ref<PaginationQuery & { keyword?: string; type_id?: number }>({
+  page: 1,
+  page_size: 20,
+  keyword: '',
+  type_id: undefined
+})
 
 // 对话框相关
 const dialogVisible = ref(false)
@@ -109,6 +146,16 @@ const currentFriend = ref<Friend | null>(null)
 // 类型管理对话框
 const typeManagerVisible = ref(false)
 const typeManagerRef = ref<InstanceType<typeof FriendTypeManager>>()
+
+// 获取类型列表
+const fetchTypes = async () => {
+  try {
+    const result = await getFriendTypes()
+    typeList.value = result.list
+  } catch {
+    ElMessage.error('获取类型列表失败')
+  }
+}
 
 const fetchFriends = async () => {
   loading.value = true
@@ -124,6 +171,23 @@ const fetchFriends = async () => {
   } finally {
     loading.value = false
   }
+}
+
+// 搜索
+const handleSearch = () => {
+  queryParams.value.page = 1
+  fetchFriends()
+}
+
+// 重置
+const handleReset = () => {
+  queryParams.value = {
+    page: 1,
+    page_size: queryParams.value.page_size,
+    keyword: '',
+    type_id: undefined
+  }
+  fetchFriends()
 }
 
 const handleCreate = () => {
@@ -167,10 +231,20 @@ const getRSSTimeClass = (rssLatime?: string): string => {
   return ''
 }
 
-onMounted(fetchFriends)
+onMounted(() => {
+  fetchTypes()
+  fetchFriends()
+})
 </script>
 
 <style scoped>
+.search-form {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .rss-warning {
   color: #e6a23c;
 }

@@ -66,6 +66,8 @@ export interface Friend {
 export interface FriendQuery {
   page?: number
   page_size?: number
+  keyword?: string  // 搜索关键词
+  type_id?: number  // 类型ID筛选
 }
 
 // 友链列表响应数据

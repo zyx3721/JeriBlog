@@ -196,7 +196,7 @@ func convertToFriendInGroupResponse(friends []model.Friend) []dto.FriendInGroupR
 
 // List 获取友链列表
 func (s *FriendService) List(ctx context.Context, req *dto.ListFriendRequest) ([]dto.FriendListResponse, int64, error) {
-	friends, total, err := s.repo.List(ctx, req.Page, req.PageSize)
+	friends, total, err := s.repo.List(ctx, req.Page, req.PageSize, req.Keyword, req.TypeID)
 	if err != nil {
 		return nil, 0, err
 	}

@@ -94,11 +94,22 @@ func (r *FriendRepository) DeleteType(ctx context.Context, id uint) error {
 // ============ 基础CRUD ============
 
 // List 获取友链列表（后台管理用，预加载类型信息）
-func (r *FriendRepository) List(ctx context.Context, page, pageSize int) ([]model.Friend, int64, error) {
+func (r *FriendRepository) List(ctx context.Context, page, pageSize int, keyword string, typeID *uint) ([]model.Friend, int64, error) {
 	var friends []model.Friend
 	var total int64
 
 	query := r.db.WithContext(ctx).Model(&model.Friend{})
+
+	// 关键词搜索：名称、链接、描述
+	if keyword != "" {
+		query = query.Where("name LIKE ? OR url LIKE ? OR description LIKE ?",
+			"%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%")
+	}
+
+	// 类型筛选
+	if typeID != nil {
+		query = query.Where("type = ?", *typeID)
+	}
 
 	err := query.Count(&total).Error
 	if err != nil {
