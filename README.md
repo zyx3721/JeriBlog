@@ -982,13 +982,6 @@ server {
         expires 7d;
         add_header Cache-Control "public, max-age=604800";
     }
-
-    # 可选：管理后台静态资源缓存
-    location ~* ^/admin/(.*\.(js|css|png|jpg|jpeg|gif|ico|svg))$ {
-        alias /data/myBlog/admin/dist/$1;  # 按实际部署路径修改
-        expires 30d;
-        add_header Cache-Control "public, max-age=2592000";
-    }
 }
 ```
 
@@ -1097,13 +1090,6 @@ server {
         try_files $uri $uri/ /admin/index.html;
         expires 7d;
         add_header Cache-Control "public, max-age=604800";
-    }
-
-    # 可选：管理后台静态资源缓存
-    location ~* ^/admin/(.*\.(js|css|png|jpg|jpeg|gif|ico|svg))$ {
-        alias /data/myBlog/admin/dist/$1;  # 按实际部署路径修改
-        expires 30d;
-        add_header Cache-Control "public, max-age=2592000";
     }
 }
 ```
