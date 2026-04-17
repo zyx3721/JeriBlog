@@ -453,7 +453,7 @@
           display: inline-block;
           position: sticky;
           left: 0;
-          width: 2rem;
+          width: 3.5rem; // 增加宽度以支持三位数行号
           padding-right: .5rem;
           margin-right: 1rem;
           text-align: right;
@@ -469,7 +469,8 @@
 
         .line-content {
           display: inline;
-          white-space: pre;
+          white-space: pre-wrap; // 改为pre-wrap支持自动换行
+          word-break: break-all; // 长单词自动断行
         }
       }
     }
