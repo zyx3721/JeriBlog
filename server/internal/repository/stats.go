@@ -423,18 +423,18 @@ func (r *StatsRepository) GetVisitLogs(req *dto.GetVisitLogsRequest) ([]model.Vi
 	// 构建查询
 	query := r.db.Model(&model.Visit{})
 
-	// 关键词搜索（IP、页面URL、地理位置）
+	// 关键词搜索（访客ID、IP、页面URL、地理位置、浏览器、操作系统、来源）
 	if req.Keyword != "" {
-		query = query.Where("ip LIKE ? OR page_url LIKE ? OR location LIKE ?",
-			"%"+req.Keyword+"%", "%"+req.Keyword+"%", "%"+req.Keyword+"%")
+		query = query.Where("visitor_id LIKE ? OR ip LIKE ? OR page_url LIKE ? OR location LIKE ? OR browser LIKE ? OR os LIKE ? OR referer LIKE ?",
+			"%"+req.Keyword+"%", "%"+req.Keyword+"%", "%"+req.Keyword+"%", "%"+req.Keyword+"%", "%"+req.Keyword+"%", "%"+req.Keyword+"%", "%"+req.Keyword+"%")
 	}
 
-	// 时间范围筛选
+	// 时间范围筛选（支持时分秒）
 	if req.StartDate != "" {
-		query = query.Where("visit_date >= ?", req.StartDate)
+		query = query.Where("created_at >= ?", req.StartDate)
 	}
 	if req.EndDate != "" {
-		query = query.Where("visit_date <= ?", req.EndDate)
+		query = query.Where("created_at <= ?", req.EndDate)
 	}
 
 	// 获取总数

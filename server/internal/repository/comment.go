@@ -105,23 +105,24 @@ func (r *CommentRepository) List(ctx context.Context, offset, limit int, keyword
 	// 包含软删除的记录
 	query := r.db.WithContext(ctx).Unscoped().Model(&model.Comment{})
 
-	// 关键词搜索：评论内容、用户昵称、用户邮箱
+	// 关键词搜索：评论内容、用户昵称、用户邮箱、文章标题
 	if keyword != "" {
 		query = query.Joins("LEFT JOIN users ON users.id = comments.user_id").
-			Where("comments.content LIKE ? OR users.nickname LIKE ? OR users.email LIKE ?",
-				"%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%")
+			Joins("LEFT JOIN articles ON comments.target_type = 'article' AND articles.slug = comments.target_key").
+			Where("comments.content LIKE ? OR users.nickname LIKE ? OR users.email LIKE ? OR articles.title LIKE ?",
+				"%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%")
 	}
 
 	// 状态过滤
 	if status != nil {
-		query = query.Where("status = ?", *status)
+		query = query.Where("comments.status = ?", *status)
 	}
 
 	if err := query.Count(&total).Error; err != nil {
 		return nil, 0, err
 	}
 
-	err := query.Order("created_at DESC").
+	err := query.Order("comments.created_at DESC").
 		Preload("User", func(db *gorm.DB) *gorm.DB {
 			return db.Unscoped().Select("id, email, nickname, avatar, badge, deleted_at")
 		}).

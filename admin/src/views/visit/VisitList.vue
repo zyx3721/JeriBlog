@@ -18,21 +18,22 @@
             <div class="search-form">
                 <el-input
                     v-model="queryParams.keyword"
-                    placeholder="搜索IP、页面URL、地理位置..."
+                    placeholder="搜索访客ID、IP、页面URL、地理位置、浏览器、操作系统、来源..."
                     clearable
-                    style="width: 260px"
+                    style="width: 420px"
                     @keyup.enter="handleSearch"
                     @clear="handleSearch"
                 />
                 <el-date-picker
                     v-model="dateRange"
-                    type="daterange"
+                    type="datetimerange"
                     range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                    style="width: 260px"
+                    start-placeholder="开始时间"
+                    end-placeholder="结束时间"
+                    style="width: 360px"
                     @change="handleDateChange"
                     clearable
+                    value-format="YYYY-MM-DD HH:mm:ss"
                 />
                 <el-button type="primary" @click="handleSearch">搜索</el-button>
                 <el-button @click="handleReset">重置</el-button>
@@ -107,7 +108,7 @@ const queryParams = ref<VisitQuery>({
     start_date: undefined,
     end_date: undefined
 })
-const dateRange = ref<[Date, Date] | null>(null)
+const dateRange = ref<[string, string] | null>(null)
 
 const fetchVisits = async () => {
     loading.value = true
@@ -125,10 +126,10 @@ const fetchVisits = async () => {
     }
 }
 
-const handleDateChange = (value: [Date, Date] | null) => {
+const handleDateChange = (value: [string, string] | null) => {
     if (value) {
-        queryParams.value.start_date = value[0].toISOString().split('T')[0]
-        queryParams.value.end_date = value[1].toISOString().split('T')[0]
+        queryParams.value.start_date = value[0]
+        queryParams.value.end_date = value[1]
     } else {
         queryParams.value.start_date = undefined
         queryParams.value.end_date = undefined

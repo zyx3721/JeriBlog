@@ -102,7 +102,7 @@ func (r *FriendRepository) List(ctx context.Context, page, pageSize int, keyword
 
 	// 关键词搜索：名称、链接、描述
 	if keyword != "" {
-		query = query.Where("name LIKE ? OR url LIKE ? OR description LIKE ?",
+		query = query.Where("friends.name LIKE ? OR friends.url LIKE ? OR friends.description LIKE ?",
 			"%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%")
 	}
 

@@ -19,7 +19,7 @@
       <div class="search-form">
         <el-input
           v-model="queryParams.keyword"
-          placeholder="搜索评论..."
+          placeholder="搜索内容、用户、来源..."
           clearable
           style="width: 240px"
           @keyup.enter="handleSearch"
@@ -52,8 +52,10 @@
           <div style="flex: 1; min-width: 0; overflow: hidden; text-align: left">
             <div style="font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{
               row.user.nickname }}</div>
-            <div style="font-size: 12px; color: #999; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{
-              row.user.email }}</div>
+            <el-tooltip :content="row.user.email" placement="top">
+              <div style="font-size: 12px; color: #999; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{
+                row.user.email }}</div>
+            </el-tooltip>
           </div>
         </div>
       </template>

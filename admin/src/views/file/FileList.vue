@@ -41,10 +41,18 @@
           style="width: 140px"
           @change="handleSearch"
         >
-          <el-option label="image" value="image" />
-          <el-option label="avatar" value="avatar" />
-          <el-option label="cover" value="cover" />
-          <el-option label="attachment" value="attachment" />
+          <el-option label="用户头像" value="用户头像" />
+          <el-option label="文章封面" value="文章封面" />
+          <el-option label="站长头像" value="站长头像" />
+          <el-option label="站长形象" value="站长形象" />
+          <el-option label="博客图标" value="博客图标" />
+          <el-option label="博客背景" value="博客背景" />
+          <el-option label="博客截图" value="博客截图" />
+          <el-option label="展览图片" value="展览图片" />
+          <el-option label="友情链接A" value="友情链接A" />
+          <el-option label="友情链接S" value="友情链接S" />
+          <el-option label="微信收款码" value="微信收款码" />
+          <el-option label="支付宝收款码" value="支付宝收款码" />
         </el-select>
         <el-button type="primary" @click="handleSearch">搜索</el-button>
         <el-button @click="handleReset">重置</el-button>

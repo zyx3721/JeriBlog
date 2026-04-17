@@ -18,7 +18,7 @@
       <div class="search-form">
         <el-input
           v-model="queryParams.keyword"
-          placeholder="搜索友链..."
+          placeholder="搜索名称、链接、描述..."
           clearable
           style="width: 240px"
           @keyup.enter="handleSearch"
@@ -110,7 +110,7 @@
     <!-- 额外内容 -->
     <template #extra>
       <friend-form-dialog v-model="dialogVisible" :edit-friend="currentFriend" @success="handleFriendSuccess" />
-      <friend-type-manager ref="typeManagerRef" v-model="typeManagerVisible" @success="fetchFriends" />
+      <friend-type-manager ref="typeManagerRef" v-model="typeManagerVisible" @success="handleTypeSuccess" />
     </template>
   </common-list>
 </template>
@@ -201,6 +201,11 @@ const handleEdit = (friend: Friend) => {
 
 const handleTypeManage = () => {
   typeManagerVisible.value = true
+}
+
+const handleTypeSuccess = () => {
+  fetchTypes()
+  fetchFriends()
 }
 
 const handleFriendSuccess = () => {
