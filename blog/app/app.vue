@@ -21,7 +21,7 @@ const { showLoginModal } = useLoginModal()
 const { showBindEmailModal, triggerGlobal, onBindSuccess } = useBindEmail()
 
 // 全局加载状态
-const { isLoading, hasInitialized, setLoading, setInitialized } = useAppLoading()
+const { isLoading, hasInitialized, progress, loadingText, setLoading, setInitialized, setProgress, setLoadingText } = useAppLoading()
 
 // 全局数据
 const { blogConfig, basicConfig, oauthConfig, uploadConfig } = useSysConfig()
@@ -111,13 +111,45 @@ onMounted(() => {
   // 异步加载 remixicon，避免阻塞首屏渲染
   import('remixicon/fonts/remixicon.css')
 
-  // 首次加载：等待数据加载完成后关闭加载动画
+  // 首次加载：模拟加载进度
   if (!hasInitialized.value) {
-    // 最少显示1秒加载动画，提升用户体验
-    setTimeout(() => {
-      setLoading(false)
-      setInitialized(true)
-    }, 1000)
+    let currentProgress = 0
+    const loadingSteps = [
+      { progress: 20, text: '正在加载配置...' },
+      { progress: 40, text: '正在加载菜单...' },
+      { progress: 60, text: '正在加载分类和标签...' },
+      { progress: 80, text: '正在加载统计数据...' },
+      { progress: 100, text: '加载完成！' }
+    ]
+
+    const updateProgress = (index: number) => {
+      if (index >= loadingSteps.length) {
+        setTimeout(() => {
+          setLoading(false)
+          setInitialized(true)
+        }, 300)
+        return
+      }
+
+      const step = loadingSteps[index]
+      const duration = 200
+      const steps = (step.progress - currentProgress) / 10
+
+      const interval = setInterval(() => {
+        currentProgress += steps
+        if (currentProgress >= step.progress) {
+          currentProgress = step.progress
+          setProgress(currentProgress)
+          setLoadingText(step.text)
+          clearInterval(interval)
+          setTimeout(() => updateProgress(index + 1), 100)
+        } else {
+          setProgress(currentProgress)
+        }
+      }, duration / 10)
+    }
+
+    updateProgress(0)
   } else {
     // 已初始化过，直接关闭加载动画
     setLoading(false)
@@ -205,6 +237,8 @@ useHead({
   <UiPageLoader
     :is-loading="isLoading"
     :title="blogConfig.title || '加载中'"
+    :progress="progress"
+    :loading-text="loadingText"
   />
 
   <!-- Canvas 背景动画 -->
