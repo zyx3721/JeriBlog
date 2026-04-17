@@ -305,8 +305,8 @@ md.renderer.rules.fence = (tokens, idx) => {
   const numberedLines = highlightedCode
     .replace(/\n$/, '')
     .split('\n')
-    .map((line, index) => `<span class="line-number" data-line="${index + 1}"></span><span class="line-content">${line}</span>`)
-    .join('\n')
+    .map((line, index) => `<div class="code-line"><span class="line-number" data-line="${index + 1}"></span><span class="line-content">${line}</span></div>`)
+    .join('')
 
   // 返回完整结构
   return `<div class="code-block-container"><div class="code-toolbar"><button class="code-fold-btn" onclick="this.closest('.code-block-container').classList.toggle('collapsed')" title="折叠/展开"><i class="ri-arrow-down-s-line"></i></button><span class="code-lang">${displayLang}</span><button class="code-copy-btn" onclick="copyCodeBlock(this)" title="复制代码"><i class="ri-file-copy-fill"></i></button></div><pre><code>${numberedLines}</code></pre></div>`
