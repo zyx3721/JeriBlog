@@ -878,14 +878,19 @@ export function copyCodeBlock(button: HTMLElement): void {
   const code = container.querySelector('code')
   if (!code) return
 
-  // 方案：直接通过 DOM 查询所有 line-content 元素
-  const lineContents = code.querySelectorAll('.line-content')
+  // 方案：只选择 code 的直接子元素中的 .line-content，避免选中嵌套的元素
   const lines: string[] = []
 
-  lineContents.forEach(lineElement => {
-    // 使用 textContent 直接获取纯文本（自动解码 HTML 实体）
-    const lineText = lineElement.textContent || ''
-    lines.push(lineText)
+  // 遍历 code 的所有直接子节点
+  Array.from(code.childNodes).forEach(node => {
+    // 只处理元素节点且 class 为 line-content 的元素
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const element = node as HTMLElement
+      if (element.classList.contains('line-content')) {
+        // 使用 textContent 直接获取纯文本（自动解码 HTML 实体）
+        lines.push(element.textContent || '')
+      }
+    }
   })
 
   const codeText = lines.join('\n')
