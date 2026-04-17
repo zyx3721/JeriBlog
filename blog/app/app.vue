@@ -20,10 +20,8 @@ const { toasts } = useToast()
 const { showLoginModal } = useLoginModal()
 const { showBindEmailModal, triggerGlobal, onBindSuccess } = useBindEmail()
 
-// 页面加载状态 - 默认显示加载动画
-const isLoading = ref(true)
-const loadingProgress = ref(0)
-const loadingText = ref('初始化中...')
+// 全局加载状态
+const { isLoading, hasInitialized, setLoading, setInitialized } = useAppLoading()
 
 // 全局数据
 const { blogConfig, basicConfig, oauthConfig, uploadConfig } = useSysConfig()
@@ -88,33 +86,6 @@ if (globalData.value) {
   }
 }
 
-// 模拟加载进度动画（客户端执行）
-if (process.client) {
-  // 0% -> 30%
-  setTimeout(() => {
-    loadingProgress.value = 30
-    loadingText.value = '正在加载配置...'
-  }, 100)
-
-  // 30% -> 60%
-  setTimeout(() => {
-    loadingProgress.value = 60
-    loadingText.value = '正在加载资源...'
-  }, 400)
-
-  // 60% -> 85%
-  setTimeout(() => {
-    loadingProgress.value = 85
-    loadingText.value = '正在处理数据...'
-  }, 700)
-
-  // 85% -> 100%
-  setTimeout(() => {
-    loadingProgress.value = 100
-    loadingText.value = '加载完成！'
-  }, 1000)
-}
-
 // 全局路由切换时触发邮箱绑定提示
 const router = useRouter()
 router.afterEach(() => {
@@ -140,10 +111,17 @@ onMounted(() => {
   // 异步加载 remixicon，避免阻塞首屏渲染
   import('remixicon/fonts/remixicon.css')
 
-  // 延迟隐藏加载动画
-  setTimeout(() => {
-    isLoading.value = false
-  }, 1200)
+  // 首次加载：等待数据加载完成后关闭加载动画
+  if (!hasInitialized.value) {
+    // 最少显示1秒加载动画，提升用户体验
+    setTimeout(() => {
+      setLoading(false)
+      setInitialized(true)
+    }, 1000)
+  } else {
+    // 已初始化过，直接关闭加载动画
+    setLoading(false)
+  }
 })
 
 // SEO Meta
@@ -227,8 +205,6 @@ useHead({
   <UiPageLoader
     :is-loading="isLoading"
     :title="blogConfig.title || '加载中'"
-    :progress="loadingProgress"
-    :loading-text="loadingText"
   />
 
   <!-- Canvas 背景动画 -->
