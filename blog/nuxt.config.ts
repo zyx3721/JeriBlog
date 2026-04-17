@@ -73,7 +73,9 @@ export default defineNuxtConfig({
     registerType: 'autoUpdate',
     manifest: false, // 使用自定义的动态 manifest
     workbox: {
-      navigateFallback: '/',
+      cleanupOutdatedCaches: true,
+      skipWaiting: true,
+      clientsClaim: true,
       globPatterns: ['**/*.{js,css,html,png,ico,webp,woff,woff2}'],
       globIgnores: ['**/remixicon*.svg'],
       maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
@@ -87,6 +89,18 @@ export default defineNuxtConfig({
               maxEntries: 100,
               maxAgeSeconds: 60 * 60 * 24 * 30 // 30 天
             }
+          }
+        },
+        {
+          urlPattern: ({ request }) => request.mode === 'navigate',
+          handler: 'NetworkFirst',
+          options: {
+            cacheName: 'pages',
+            expiration: {
+              maxEntries: 50,
+              maxAgeSeconds: 60 * 60 * 24 * 7 // 7 天
+            },
+            networkTimeoutSeconds: 10
           }
         }
       ]
