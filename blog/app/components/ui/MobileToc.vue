@@ -161,8 +161,8 @@ watch(() => props.visible, (newVal) => {
 }
 
 .mobile-toc-drawer {
-  width: 80%;
-  max-width: 320px;
+  width: 75%;
+  max-width: 280px;
   height: 100%;
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(20px);
@@ -182,12 +182,13 @@ watch(() => props.visible, (newVal) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px;
+  padding: 16px;
   border-bottom: 1px solid var(--flec-border);
+  flex-shrink: 0;
 
   h3 {
     margin: 0;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
     color: var(--flec-text);
   }
@@ -219,7 +220,8 @@ watch(() => props.visible, (newVal) => {
 .mobile-toc-content {
   flex: 1;
   overflow-y: auto;
-  padding: 10px 0;
+  padding: 8px 0;
+  overscroll-behavior: contain;
 }
 
 .empty-toc {
@@ -249,7 +251,7 @@ watch(() => props.visible, (newVal) => {
 }
 
 .toc-item {
-  padding: 10px 20px;
+  padding: 10px 16px;
   cursor: pointer;
   transition: all 0.2s;
   color: var(--flec-text-secondary);
@@ -258,12 +260,12 @@ watch(() => props.visible, (newVal) => {
   border-left: 3px solid transparent;
 
   &.level-1 {
-    padding-left: 20px;
+    padding-left: 16px;
     font-weight: 600;
   }
 
   &.level-2 {
-    padding-left: 30px;
+    padding-left: 28px;
   }
 
   &.level-3 {
@@ -271,15 +273,15 @@ watch(() => props.visible, (newVal) => {
   }
 
   &.level-4 {
-    padding-left: 50px;
+    padding-left: 52px;
   }
 
   &.level-5 {
-    padding-left: 60px;
+    padding-left: 64px;
   }
 
   &.level-6 {
-    padding-left: 70px;
+    padding-left: 76px;
   }
 
   &:hover {
@@ -344,6 +346,43 @@ watch(() => props.visible, (newVal) => {
 
     &:hover {
       background: var(--flec-text-secondary);
+    }
+  }
+}
+
+// 小屏幕优化
+@media screen and (max-width: 360px) {
+  .mobile-toc-drawer {
+    width: 80%;
+    max-width: 260px;
+  }
+
+  .toc-item {
+    font-size: 13px;
+    padding: 8px 12px;
+
+    &.level-1 {
+      padding-left: 12px;
+    }
+
+    &.level-2 {
+      padding-left: 24px;
+    }
+
+    &.level-3 {
+      padding-left: 36px;
+    }
+
+    &.level-4 {
+      padding-left: 48px;
+    }
+
+    &.level-5 {
+      padding-left: 60px;
+    }
+
+    &.level-6 {
+      padding-left: 72px;
     }
   }
 }
