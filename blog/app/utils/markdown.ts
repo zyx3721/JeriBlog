@@ -897,13 +897,14 @@ export function copyCodeBlock(button: HTMLElement): void {
 
   const codeText = lines.join('\n')
 
-  // 复制到剪贴板
-  navigator.clipboard.writeText(codeText).then(() => {
-    // 更新按钮状态
+  // 更新按钮状态的函数
+  const updateButtonState = (success: boolean) => {
     const icon = button.querySelector('i')
     if (icon) {
-      icon.className = 'ri-check-line'
-      button.classList.add('copied')
+      icon.className = success ? 'ri-check-line' : 'ri-error-warning-line'
+      if (success) {
+        button.classList.add('copied')
+      }
     }
 
     // 2秒后恢复
@@ -913,9 +914,51 @@ export function copyCodeBlock(button: HTMLElement): void {
         button.classList.remove('copied')
       }
     }, 2000)
-  }).catch(err => {
-    console.error('复制失败:', err)
-  })
+  }
+
+  // 优先使用 Clipboard API（需要 HTTPS 或 localhost）
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(codeText)
+      .then(() => updateButtonState(true))
+      .catch(() => {
+        // Clipboard API 失败，降级到传统方法
+        fallbackCopy(codeText, updateButtonState)
+      })
+  } else {
+    // 非安全上下文（HTTP），使用传统方法
+    fallbackCopy(codeText, updateButtonState)
+  }
+}
+
+// 降级复制方法（兼容 HTTP 环境）
+function fallbackCopy(text: string, callback: (success: boolean) => void): void {
+  const textarea = document.createElement('textarea')
+  textarea.value = text
+  textarea.style.position = 'fixed'
+  textarea.style.top = '0'
+  textarea.style.left = '0'
+  textarea.style.width = '2em'
+  textarea.style.height = '2em'
+  textarea.style.padding = '0'
+  textarea.style.border = 'none'
+  textarea.style.outline = 'none'
+  textarea.style.boxShadow = 'none'
+  textarea.style.background = 'transparent'
+  textarea.style.opacity = '0'
+
+  document.body.appendChild(textarea)
+  textarea.focus()
+  textarea.select()
+
+  try {
+    const successful = document.execCommand('copy')
+    callback(successful)
+  } catch (err) {
+    console.error('降级复制失败:', err)
+    callback(false)
+  }
+
+  document.body.removeChild(textarea)
 }
 
 // 标签页切换功能
