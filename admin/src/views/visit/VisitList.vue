@@ -20,7 +20,7 @@
                     v-model="queryParams.keyword"
                     placeholder="搜索访客ID、IP、页面URL、地理位置、浏览器、操作系统、来源..."
                     clearable
-                    style="width: 420px"
+                    style="width: 460px"
                     @keyup.enter="handleSearch"
                     @clear="handleSearch"
                 />
