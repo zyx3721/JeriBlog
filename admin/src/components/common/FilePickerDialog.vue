@@ -156,8 +156,15 @@ const fetchFileList = async () => {
   try {
     loading.value = true
     const params: any = {
-      page: currentPage.value,
-      page_size: pageSize.value === 0 ? 10000 : pageSize.value // 0 表示全部，传一个大值
+      page: currentPage.value
+    }
+
+    // 如果不是"全部"，才传 page_size
+    if (pageSize.value > 0) {
+      params.page_size = pageSize.value
+    } else {
+      // 选择"全部"时，传一个较大的值
+      params.page_size = 1000
     }
 
     // 如果有文件类型限制，添加到参数中
