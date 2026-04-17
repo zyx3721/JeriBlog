@@ -75,46 +75,9 @@ const initZoom = () => {
   })
 }
 
-// 初始化代码块滚动事件处理（支持shift+滚轮横向滚动）
-const initCodeBlockScroll = () => {
-  const contentEl = document.querySelector('.markdown-content')
-  if (!contentEl) return
-
-  const codeBlocks = contentEl.querySelectorAll('.code-block-container pre')
-  codeBlocks.forEach(pre => {
-    pre.addEventListener('wheel', (e: Event) => {
-      const wheelEvent = e as WheelEvent
-      const target = wheelEvent.currentTarget as HTMLElement
-
-      // 如果按下 shift 键，处理横向滚动
-      if (wheelEvent.shiftKey) {
-        wheelEvent.preventDefault()
-        wheelEvent.stopPropagation()
-
-        // 手动处理横向滚动
-        target.scrollLeft += wheelEvent.deltaY
-        return
-      }
-
-      // 处理原生横向滚动
-      const { deltaX, scrollLeft, scrollWidth, clientWidth } = target
-      if (Math.abs(deltaX) > 0) {
-        const atLeft = scrollLeft === 0
-        const atRight = scrollLeft + clientWidth >= scrollWidth - 1
-
-        // 如果在代码块内部可以滚动，阻止事件冒泡
-        if ((deltaX < 0 && !atLeft) || (deltaX > 0 && !atRight)) {
-          wheelEvent.stopPropagation()
-        }
-      }
-    }, { passive: false })
-  })
-}
-
 watch(() => renderedContent.value, async () => {
   await nextTick()
   initZoom()
-  initCodeBlockScroll()
   await renderMermaidDiagrams()
 })
 
@@ -131,7 +94,6 @@ onMounted(() => {
 
   nextTick(async () => {
     initZoom()
-    initCodeBlockScroll()
     await renderMermaidDiagrams()
   })
 })
