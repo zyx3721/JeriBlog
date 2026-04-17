@@ -25,7 +25,7 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
 	// 配置代理信任
-	_ = r.SetTrustedProxies([]string{"127.0.0.1", "10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"})
+	_ = r.SetTrustedProxies([]string{"127.0.0.1", "172.0.0.0/8", "10.0.0.0/8", "192.168.0.0/16"})
 
 	// 初始化仓库
 	articleRepo := repository.NewArticleRepository(db.DB)
