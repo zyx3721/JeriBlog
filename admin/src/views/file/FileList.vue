@@ -31,7 +31,6 @@
           style="width: 140px"
           @change="handleSearch"
         >
-          <el-option label="全部状态" value="" />
           <el-option label="未使用" :value="0" />
           <el-option label="使用中" :value="1" />
         </el-select>
@@ -42,7 +41,6 @@
           style="width: 140px"
           @change="handleSearch"
         >
-          <el-option label="全部用途" value="" />
           <el-option label="image" value="image" />
           <el-option label="avatar" value="avatar" />
           <el-option label="cover" value="cover" />

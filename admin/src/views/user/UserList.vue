@@ -32,7 +32,6 @@
           style="width: 140px"
           @change="handleSearch"
         >
-          <el-option label="全部角色" value="" />
           <el-option label="超级管理员" value="super_admin" />
           <el-option label="管理员" value="admin" />
           <el-option label="普通用户" value="user" />
