@@ -132,8 +132,11 @@ type ArticleContribution struct {
 
 // GetVisitLogsRequest 获取访问日志请求
 type GetVisitLogsRequest struct {
-	Page     int `form:"page" binding:"omitempty,min=1"`              // 页码
-	PageSize int `form:"page_size" binding:"omitempty,min=1,max=100"` // 每页数量
+	Page      int    `form:"page" binding:"omitempty,min=1"`              // 页码
+	PageSize  int    `form:"page_size" binding:"omitempty,min=1,max=100"` // 每页数量
+	Keyword   string `form:"keyword"`                                     // 搜索关键词（IP、页面URL、地理位置）
+	StartDate string `form:"start_date"`                                  // 开始日期 YYYY-MM-DD
+	EndDate   string `form:"end_date"`                                    // 结束日期 YYYY-MM-DD
 }
 
 // ============ 访问日志响应 ============

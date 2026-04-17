@@ -10,7 +10,7 @@
 */
 
 import request from "@/utils/request";
-import type { DashboardStats, TrendDataItem, TrendQuery, CategoryStats, TagStats, ArticleContribution, VisitListData, ContributionQuery } from "@/types/stats";
+import type { DashboardStats, TrendDataItem, TrendQuery, CategoryStats, TagStats, ArticleContribution, VisitListData, ContributionQuery, VisitQuery } from "@/types/stats";
 import type { PaginationQuery } from "@/types/request";
 
 /**
@@ -60,6 +60,6 @@ export function getArticleContribution(params?: ContributionQuery): Promise<Arti
  * @param params 查询参数
  * @returns Promise<VisitListData>
  */
-export function getVisits(params: PaginationQuery): Promise<VisitListData> {
+export function getVisits(params: VisitQuery): Promise<VisitListData> {
   return request.get("/admin/stats/visits", { params });
 }

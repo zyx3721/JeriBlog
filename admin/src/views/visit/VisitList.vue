@@ -13,6 +13,32 @@
     <common-list title="访问日志" :data="visitList" :loading="loading" :total="total" :show-create="false"
         v-model:page="queryParams.page" v-model:page-size="queryParams.page_size" @refresh="fetchVisits"
         @update:page="fetchVisits" @update:pageSize="fetchVisits">
+        <!-- 搜索表单 -->
+        <template #toolbar-before>
+            <div class="search-form">
+                <el-input
+                    v-model="queryParams.keyword"
+                    placeholder="搜索IP、页面URL、地理位置..."
+                    clearable
+                    style="width: 260px"
+                    @keyup.enter="handleSearch"
+                    @clear="handleSearch"
+                />
+                <el-date-picker
+                    v-model="dateRange"
+                    type="daterange"
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    style="width: 260px"
+                    @change="handleDateChange"
+                    clearable
+                />
+                <el-button type="primary" @click="handleSearch">搜索</el-button>
+                <el-button @click="handleReset">重置</el-button>
+            </div>
+        </template>
+
         <!-- 表格列 -->
         <el-table-column label="访客ID" width="150" align="center">
             <template #default="{ row }">
@@ -26,7 +52,7 @@
 
         <el-table-column label="IP地址" width="140" align="center" prop="ip" />
 
-        <el-table-column label="访问页面" min-width="250">
+        <el-table-column label="访问页面" min-width="250" align="center">
             <template #default="{ row }">
                 <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
                     <el-tooltip :content="row.page_url" placement="top">
@@ -67,15 +93,21 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import CommonList from '@/components/common/CommonList.vue'
-import type { Visit } from '@/types/stats'
-import type { PaginationQuery } from '@/types/request'
+import type { Visit, VisitQuery } from '@/types/stats'
 import { getVisits } from '@/api/stats'
 import { formatDateTime } from '@/utils/date'
 
 const loading = ref(false)
 const visitList = ref<Visit[]>([])
 const total = ref(0)
-const queryParams = ref<PaginationQuery>({ page: 1, page_size: 20 })
+const queryParams = ref<VisitQuery>({
+    page: 1,
+    page_size: 20,
+    keyword: undefined,
+    start_date: undefined,
+    end_date: undefined
+})
+const dateRange = ref<[Date, Date] | null>(null)
 
 const fetchVisits = async () => {
     loading.value = true
@@ -93,5 +125,37 @@ const fetchVisits = async () => {
     }
 }
 
+const handleDateChange = (value: [Date, Date] | null) => {
+    if (value) {
+        queryParams.value.start_date = value[0].toISOString().split('T')[0]
+        queryParams.value.end_date = value[1].toISOString().split('T')[0]
+    } else {
+        queryParams.value.start_date = undefined
+        queryParams.value.end_date = undefined
+    }
+}
+
+const handleSearch = () => {
+    queryParams.value.page = 1
+    fetchVisits()
+}
+
+const handleReset = () => {
+    queryParams.value.keyword = undefined
+    queryParams.value.start_date = undefined
+    queryParams.value.end_date = undefined
+    queryParams.value.page = 1
+    dateRange.value = null
+    fetchVisits()
+}
+
 onMounted(fetchVisits)
 </script>
+
+<style scoped>
+.search-form {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+</style>

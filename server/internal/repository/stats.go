@@ -420,15 +420,31 @@ func (r *StatsRepository) GetVisitLogs(req *dto.GetVisitLogsRequest) ([]model.Vi
 	var visits []model.Visit
 	var total int64
 
+	// 构建查询
+	query := r.db.Model(&model.Visit{})
+
+	// 关键词搜索（IP、页面URL、地理位置）
+	if req.Keyword != "" {
+		query = query.Where("ip LIKE ? OR page_url LIKE ? OR location LIKE ?",
+			"%"+req.Keyword+"%", "%"+req.Keyword+"%", "%"+req.Keyword+"%")
+	}
+
+	// 时间范围筛选
+	if req.StartDate != "" {
+		query = query.Where("visit_date >= ?", req.StartDate)
+	}
+	if req.EndDate != "" {
+		query = query.Where("visit_date <= ?", req.EndDate)
+	}
+
 	// 获取总数
-	if err := r.db.Model(&model.Visit{}).Count(&total).Error; err != nil {
+	if err := query.Count(&total).Error; err != nil {
 		return nil, 0, err
 	}
 
 	// 分页查询
 	offset := (req.Page - 1) * req.PageSize
-	err := r.db.Model(&model.Visit{}).
-		Order("created_at DESC").
+	err := query.Order("created_at DESC").
 		Limit(req.PageSize).
 		Offset(offset).
 		Find(&visits).Error

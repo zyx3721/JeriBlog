@@ -87,3 +87,12 @@ export interface VisitListData {
   page: number
   page_size: number
 }
+
+// 访问日志查询参数
+export interface VisitQuery {
+  page: number
+  page_size: number
+  keyword?: string
+  start_date?: string
+  end_date?: string
+}
