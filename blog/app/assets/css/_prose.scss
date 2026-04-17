@@ -440,8 +440,6 @@
         display: block;
         padding: .5rem 1rem .5rem 0;
         overflow-x: visible; // 移除横向滚动
-        white-space: pre-wrap; // 支持自动换行
-        word-break: break-all; // 长单词自动断行
         background: none;
         border: none;
         color: var(--prose-codeblock-text);
@@ -449,11 +447,14 @@
         font-size: 0.9rem;
         font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
 
+        .code-line {
+          display: flex;
+          align-items: flex-start;
+        }
+
         .line-number {
-          display: inline-block;
-          position: sticky;
-          left: 0;
-          width: 3.5rem; // 增加宽度以支持三位数行号
+          flex-shrink: 0;
+          width: 3.5rem; // 支持三位数行号
           padding-right: .5rem;
           margin-right: 1rem;
           text-align: right;
@@ -468,8 +469,8 @@
         }
 
         .line-content {
-          display: inline;
-          white-space: pre-wrap; // 改为pre-wrap支持自动换行
+          flex: 1;
+          white-space: pre-wrap; // 支持自动换行
           word-break: break-all; // 长单词自动断行
         }
       }
