@@ -10,8 +10,7 @@
 */
 
 import request from "@/utils/request";
-import type { LoginParams, LoginResponse, User, UserListData, ResetPasswordRequest, CreateUserRequest, UpdateUserRequest, RefreshTokenRequest, RefreshTokenResponse } from "@/types/user";
-import type { PaginationQuery } from "@/types/request";
+import type { LoginParams, LoginResponse, User, UserListData, ResetPasswordRequest, CreateUserRequest, UpdateUserRequest, RefreshTokenRequest, RefreshTokenResponse, UserQuery } from "@/types/user";
 
 /**
  * 用户登录
@@ -44,7 +43,7 @@ export function logout(): Promise<void> {
  * @param params 查询参数
  * @returns Promise<UserListData>
  */
-export function getUsers(params: PaginationQuery): Promise<UserListData> {
+export function getUsers(params: UserQuery): Promise<UserListData> {
   return request.get("/admin/users", { params });
 }
 

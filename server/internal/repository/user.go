@@ -109,17 +109,32 @@ func (r *UserRepository) GetGuestByEmail(email string) (*model.User, error) {
 }
 
 // List 获取用户列表（后台管理）
-func (r *UserRepository) List(offset, limit int) ([]model.User, int64, error) {
+func (r *UserRepository) List(offset, limit int, keyword string, role model.UserRole) ([]model.User, int64, error) {
 	var users []model.User
 	var total int64
 
-	// 包含软删除的用户
-	err := r.db.Unscoped().Model(&model.User{}).Count(&total).Error
+	// 构建查询
+	query := r.db.Unscoped().Model(&model.User{})
+
+	// 关键词搜索（昵称、邮箱、网站）
+	if keyword != "" {
+		query = query.Where("nickname LIKE ? OR email LIKE ? OR website LIKE ?",
+			"%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%")
+	}
+
+	// 角色筛选
+	if role != "" {
+		query = query.Where("role = ?", role)
+	}
+
+	// 统计总数
+	err := query.Count(&total).Error
 	if err != nil {
 		return nil, 0, err
 	}
 
-	err = r.db.Unscoped().
+	// 查询列表
+	err = query.
 		Select("id, email, nickname, avatar, badge, website, is_enabled, role, last_login, created_at, updated_at, deleted_at, has_password, github_id, google_id, qq_id, feishu_open_id").
 		Order("created_at DESC").
 		Offset(offset).Limit(limit).Find(&users).Error

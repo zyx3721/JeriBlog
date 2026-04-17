@@ -84,6 +84,15 @@ export interface UserListData {
     page_size: number
 }
 
+// 用户查询参数
+export interface UserQuery {
+    page: number
+    page_size: number
+    keyword?: string
+    role?: string
+    is_enabled?: boolean
+}
+
 // 刷新Token请求
 export interface RefreshTokenRequest {
     refresh_token: string

@@ -13,6 +13,36 @@
   <common-list title="用户列表" :data="userList" :loading="loading" :total="total" v-model:page="queryParams.page"
     v-model:page-size="queryParams.page_size" create-text="新增用户" @create="handleCreate" @refresh="fetchUsers"
     @update:page="fetchUsers" @update:pageSize="fetchUsers">
+
+    <!-- 搜索表单 -->
+    <template #toolbar-before>
+      <div class="search-form">
+        <el-input
+          v-model="queryParams.keyword"
+          placeholder="搜索昵称、邮箱、网站..."
+          clearable
+          style="width: 240px"
+          @keyup.enter="handleSearch"
+          @clear="handleSearch"
+        />
+        <el-select
+          v-model="queryParams.role"
+          placeholder="角色"
+          clearable
+          style="width: 140px"
+          @change="handleSearch"
+        >
+          <el-option label="全部角色" :value="undefined" />
+          <el-option label="超级管理员" value="super_admin" />
+          <el-option label="管理员" value="admin" />
+          <el-option label="普通用户" value="user" />
+          <el-option label="访客" value="guest" />
+        </el-select>
+        <el-button type="primary" @click="handleSearch">搜索</el-button>
+        <el-button @click="handleReset">重置</el-button>
+      </div>
+    </template>
+
     <!-- 表格列 -->
     <el-table-column label="头像" width="100" align="center">
       <template #default="{ row }">
@@ -25,7 +55,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="昵称" min-width="130">
+    <el-table-column label="昵称" min-width="130" align="center">
       <template #default="{ row }">
         <div style="display: flex; align-items: center; gap: 8px">
           <span>{{ row.nickname }}</span>
@@ -45,7 +75,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="网站地址" min-width="150">
+    <el-table-column label="网站地址" min-width="150" align="center">
       <template #default="{ row }">
         <span v-if="row.website">{{ row.website }}</span>
         <span v-else style="color: #999">-</span>
@@ -128,16 +158,20 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { User } from '@element-plus/icons-vue'
 import CommonList from '@/components/common/CommonList.vue'
-import type { User as UserType } from '@/types/user'
+import type { User as UserType, UserQuery } from '@/types/user'
 import { getUsers, deleteUser } from '@/api/user'
-import type { PaginationQuery } from '@/types/request'
 import UserFormDialog from './components/UserFormDialog.vue'
 import { formatDateTime } from '@/utils/date'
 
 const loading = ref(false)
 const userList = ref<UserType[]>([])
 const total = ref(0)
-const queryParams = ref<PaginationQuery>({ page: 1, page_size: 20 })
+const queryParams = ref<UserQuery>({
+  page: 1,
+  page_size: 20,
+  keyword: undefined,
+  role: undefined
+})
 
 // 对话框相关
 const dialogVisible = ref(false)
@@ -157,6 +191,18 @@ const fetchUsers = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const handleSearch = () => {
+  queryParams.value.page = 1
+  fetchUsers()
+}
+
+const handleReset = () => {
+  queryParams.value.keyword = undefined
+  queryParams.value.role = undefined
+  queryParams.value.page = 1
+  fetchUsers()
 }
 
 const handleCreate = () => {
@@ -186,6 +232,12 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.search-form {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
 .login-methods {
   display: flex;
   align-items: center;
