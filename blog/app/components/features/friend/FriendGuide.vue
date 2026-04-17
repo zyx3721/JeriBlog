@@ -21,9 +21,13 @@ const { open: openLogin } = useLoginModal()
 
 const contactEmail = computed(() => basicConfig.value.author_email || '')
 
+// 获取当前站点 URL（SSR 兼容）
+const requestURL = useRequestURL()
+const siteOrigin = computed(() => requestURL.origin)
+
 const siteConfig = computed(() => ({
   name: blogConfig.value.title,
-  link: process.client ? window.location.origin : '',
+  link: siteOrigin.value,
   avatar: blogConfig.value.favicon,
   description: blogConfig.value.slogan,
   screenshot: blogConfig.value.screenshot
