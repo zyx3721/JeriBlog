@@ -432,6 +432,8 @@ export function useTags() {
 export function useAppLoading() {
   const isLoading = useState<boolean>('app-loading', () => true)
   const hasInitialized = useState<boolean>('app-initialized', () => false)
+  const progress = useState<number>('app-loading-progress', () => 0)
+  const loadingText = useState<string>('app-loading-text', () => '正在初始化...')
 
   const setLoading = (loading: boolean) => {
     isLoading.value = loading
@@ -441,10 +443,22 @@ export function useAppLoading() {
     hasInitialized.value = initialized
   }
 
+  const setProgress = (value: number) => {
+    progress.value = Math.min(100, Math.max(0, value))
+  }
+
+  const setLoadingText = (text: string) => {
+    loadingText.value = text
+  }
+
   return {
     isLoading,
     hasInitialized,
+    progress,
+    loadingText,
     setLoading,
-    setInitialized
+    setInitialized,
+    setProgress,
+    setLoadingText
   }
 }
