@@ -31,7 +31,7 @@
           style="width: 150px"
           @change="handleSearch"
         >
-          <el-option label="全部分类" :value="undefined" />
+          <el-option label="全部分类" :value="0" />
           <el-option
             v-for="category in categoryList"
             :key="category.id"
