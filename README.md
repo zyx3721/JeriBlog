@@ -1389,8 +1389,8 @@ systemctl reload nginx
 ### 样式优化
 
 - **优化代码块滚动行为**
-  - 将代码块最大高度从 600px 改为 200 行（约 261px）
-  - 使用 calc() 动态计算高度：200行 × 行高1.45 × 字体0.9rem + padding
+  - 将代码块最大高度从 600px 改为 60 行（约 79px）
+  - 使用 calc() 动态计算高度：60行 × 行高1.45 × 字体0.9rem + padding
   - 添加 overscroll-behavior: contain 防止滚动穿透
   - 鼠标在代码块内时优先滚动代码块，不触发外部页面滚动
 
@@ -1505,6 +1505,11 @@ YouTube 视频：
   - 使用 textContent 自动解码 HTML 实体和去除标签
   - 修复包含高亮语法的代码无法完整复制的问题
   - 提升代码简洁性和性能（从 15 行优化到 8 行）
+
+- **修复长代码块复制时内容重复的问题**
+  - 改用遍历直接子节点的方式，只选择 class 为 line-content 的直接子元素
+  - 避免 querySelectorAll 选中嵌套在高亮代码中的其他元素
+  - 确保长代码块复制时内容完整且不重复
 
 - **修复移动端文章目录显示为空**
   - 修正 CSS 选择器从 .article-content 改为 .markdown-content
