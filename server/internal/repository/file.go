@@ -78,7 +78,15 @@ func (r *FileRepository) GetByUploadType(uploadType string, offset, limit int) (
 	var files []model.File
 	var total int64
 
-	query := r.db.Model(&model.File{}).Where("upload_type = ?", uploadType)
+	query := r.db.Model(&model.File{})
+
+	// 如果是 "image"，则查询所有图片类型的文件（通过 file_type 字段）
+	if uploadType == "image" {
+		query = query.Where("file_type LIKE ?", "image/%")
+	} else {
+		// 否则按 upload_type 精确匹配
+		query = query.Where("upload_type = ?", uploadType)
+	}
 
 	if err := query.Count(&total).Error; err != nil {
 		return nil, 0, err
