@@ -235,7 +235,7 @@ func (s *CommentService) DeleteForWeb(ctx context.Context, id uint, userID uint)
 // List 获取评论列表
 func (s *CommentService) List(ctx context.Context, req *dto.CommentQueryRequest) ([]dto.CommentListResponse, int64, error) {
 	offset := (req.Page - 1) * req.PageSize
-	comments, total, err := s.repo.List(ctx, offset, req.PageSize, req.Status)
+	comments, total, err := s.repo.List(ctx, offset, req.PageSize, req.Keyword, req.Status)
 	if err != nil {
 		return nil, 0, err
 	}

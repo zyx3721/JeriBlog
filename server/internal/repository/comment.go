@@ -98,12 +98,17 @@ func (r *CommentRepository) GetForWeb(ctx context.Context, id uint) (*model.Comm
 }
 
 // List 获取评论列表（后台管理）
-func (r *CommentRepository) List(ctx context.Context, offset, limit int, status *int) ([]model.Comment, int64, error) {
+func (r *CommentRepository) List(ctx context.Context, offset, limit int, keyword string, status *int) ([]model.Comment, int64, error) {
 	var comments []model.Comment
 	var total int64
 
 	// 包含软删除的记录
 	query := r.db.WithContext(ctx).Unscoped().Model(&model.Comment{})
+
+	// 关键词搜索：评论内容
+	if keyword != "" {
+		query = query.Where("content LIKE ?", "%"+keyword+"%")
+	}
 
 	// 状态过滤
 	if status != nil {

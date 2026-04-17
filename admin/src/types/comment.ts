@@ -30,6 +30,14 @@ export interface Comment {
     }
 }
 
+// 评论查询参数
+export interface CommentQuery {
+    page?: number
+    page_size?: number
+    keyword?: string  // 搜索关键词
+    status?: number   // 状态筛选
+}
+
 // 分页数据
 export interface CommentListData {
     list: Comment[]

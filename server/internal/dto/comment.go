@@ -84,9 +84,10 @@ type CommentQueryForWebRequest struct {
 
 // CommentQueryRequest 后台评论查询请求
 type CommentQueryRequest struct {
-	Page     int  `form:"page,default=1" binding:"min=1"`
-	PageSize int  `form:"page_size,default=10" binding:"min=1,max=100"`
-	Status   *int `form:"status"`
+	Page     int    `form:"page,default=1" binding:"min=1"`
+	PageSize int    `form:"page_size,default=10" binding:"min=1,max=100"`
+	Keyword  string `form:"keyword" binding:"omitempty,max=100"` // 搜索关键词（用户信息、评论内容、评论来源）
+	Status   *int   `form:"status"`                              // 状态筛选（0=隐藏，1=显示）
 }
 
 // ============ 后台评论响应 ============

@@ -14,6 +14,33 @@
     v-model:page="queryParams.page" v-model:page-size="queryParams.page_size" @refresh="fetchComments"
     @update:page="fetchComments" @update:pageSize="fetchComments">
 
+    <!-- 搜索表单 -->
+    <template #toolbar-before>
+      <div class="search-form">
+        <el-input
+          v-model="queryParams.keyword"
+          placeholder="搜索评论..."
+          clearable
+          style="width: 240px"
+          @keyup.enter="handleSearch"
+          @clear="handleSearch"
+        />
+        <el-select
+          v-model="queryParams.status"
+          placeholder="状态"
+          clearable
+          style="width: 120px"
+          @change="handleSearch"
+        >
+          <el-option label="全部状态" :value="undefined" />
+          <el-option label="显示" :value="1" />
+          <el-option label="隐藏" :value="0" />
+        </el-select>
+        <el-button type="primary" @click="handleSearch">搜索</el-button>
+        <el-button @click="handleReset">重置</el-button>
+      </div>
+    </template>
+
     <!-- 表格列 -->
     <el-table-column label="用户信息" width="180" align="center">
       <template #default="{ row }">
@@ -124,15 +151,19 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { User } from '@element-plus/icons-vue'
 import CommonList from '@/components/common/CommonList.vue'
-import type { Comment } from '@/types/comment'
-import type { PaginationQuery } from '@/types/request'
+import type { Comment, CommentQuery } from '@/types/comment'
 import { getComments, deleteComment, restoreComment, toggleCommentStatus, createComment } from '@/api/comment'
 import { formatDateTime } from '@/utils/date'
 
 const loading = ref(false)
 const commentList = ref<Comment[]>([])
 const total = ref(0)
-const queryParams = ref<PaginationQuery>({ page: 1, page_size: 20 })
+const queryParams = ref<CommentQuery>({
+  page: 1,
+  page_size: 20,
+  keyword: '',
+  status: undefined
+})
 
 // 回复相关状态
 const replyDialogVisible = ref(false)
@@ -156,6 +187,23 @@ const fetchComments = async () => {
   } finally {
     loading.value = false
   }
+}
+
+// 搜索
+const handleSearch = () => {
+  queryParams.value.page = 1
+  fetchComments()
+}
+
+// 重置
+const handleReset = () => {
+  queryParams.value = {
+    page: 1,
+    page_size: queryParams.value.page_size,
+    keyword: '',
+    status: undefined
+  }
+  fetchComments()
 }
 
 const handleStatusChange = async (comment: Comment) => {
@@ -245,6 +293,12 @@ onMounted(fetchComments)
 </script>
 
 <style scoped lang="scss">
+.search-form {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
 .reply-info {
   padding: 12px;
   background-color: #f5f7fa;
