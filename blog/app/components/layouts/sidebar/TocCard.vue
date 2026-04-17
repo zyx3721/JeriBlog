@@ -118,7 +118,9 @@ onMounted(() => {
   padding: 0;
   max-height: calc(100vh - 176px);
   overflow-y: auto;
+  overflow-x: hidden;
   scroll-behavior: smooth;
+  overscroll-behavior: contain;
 
   // 自定义滚动条样式
   &::-webkit-scrollbar {
@@ -132,12 +134,6 @@ onMounted(() => {
 
   &::-webkit-scrollbar-track {
     background: transparent;
-  }
-
-  // 鼠标悬停时允许滚动
-  &:hover {
-    // 确保鼠标悬停时可以滚动
-    overscroll-behavior: contain;
   }
 }
 
