@@ -80,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getFileList } from '@/api/file'
 import type { FileInfo } from '@/types/file'
@@ -131,10 +131,37 @@ watch(
       searchKeyword.value = ''
       currentPage.value = 1
       fetchFileList()
+      // 修复分页选择器显示
+      nextTick(() => {
+        fixPageSizeDisplay()
+      })
     }
   },
   { immediate: true }
 )
+
+// 修复分页选择器显示 "全部" 而不是 "999999条/页"
+const fixPageSizeDisplay = () => {
+  // 使用 setTimeout 确保 Element Plus 的下拉菜单已经渲染
+  setTimeout(() => {
+    const selectInput = document.querySelector('.pagination-bar .el-pagination__sizes .el-input__inner')
+    if (selectInput && selectInput.textContent?.includes('999999')) {
+      const observer = new MutationObserver(() => {
+        if (selectInput.textContent?.includes('999999')) {
+          selectInput.textContent = selectInput.textContent.replace(/999999\s*条\/页/, '全部')
+        }
+      })
+      observer.observe(selectInput, { childList: true, subtree: true, characterData: true })
+    }
+  }, 100)
+}
+
+// 监听 pageSize 变化，修复显示
+watch(pageSize, () => {
+  nextTick(() => {
+    fixPageSizeDisplay()
+  })
+})
 
 // 监听 dialogVisible 变化
 watch(dialogVisible, (val) => {
@@ -157,20 +184,26 @@ const fetchFileList = async () => {
 
     const response = await getFileList(params)
 
-    // 如果有搜索关键词，在前端过滤
+    // 直接使用后端返回的数据，不做前端过滤
+    fileList.value = response.list || []
+    total.value = response.total || 0
+
+    // 如果有搜索关键词，在前端过滤显示
     if (searchKeyword.value.trim()) {
       const keyword = searchKeyword.value.trim().toLowerCase()
-      fileList.value = response.list.filter(file =>
+      const filtered = fileList.value.filter(file =>
         file.original_name.toLowerCase().includes(keyword) ||
         file.filename.toLowerCase().includes(keyword)
       )
-      total.value = fileList.value.length
-    } else {
-      fileList.value = response.list
-      total.value = response.total
+      // 只更新显示的列表，不改变原始数据
+      fileList.value = filtered
+      total.value = filtered.length
     }
-  } catch (error) {
-    ElMessage.error('获取文件列表失败')
+  } catch (error: any) {
+    console.error('获取文件列表失败:', error)
+    ElMessage.error(error.message || '获取文件列表失败')
+    fileList.value = []
+    total.value = 0
   } finally {
     loading.value = false
   }
