@@ -431,7 +431,7 @@
       background: transparent;
       border: none;
       border-radius: 0;
-      max-height: calc(200 * 1.45 * 0.9rem + 1rem); // 200行 * 行高 * 字体大小 + padding
+      max-height: calc(60 * 1.45 * 0.9rem + 1rem); // 60行 * 行高 * 字体大小 + padding
       overflow-y: auto;
       overscroll-behavior: contain; // 防止滚动穿透到外部
 
