@@ -10,16 +10,20 @@
 -->
 
 <template>
-  <el-dialog v-model="dialogVisible" title="选择文件" width="900px" :close-on-click-modal="false" @close="handleClose">
+  <el-dialog v-model="dialogVisible" title="选择文件" :width="dialogWidth" :close-on-click-modal="false" @close="handleClose">
     <div class="file-picker-container">
-      <!-- 搜索和筛选 -->
+      <!-- 搜索栏 -->
       <div class="filter-bar">
-        <el-select v-model="filterType" placeholder="文件类型" style="width: 150px" clearable @change="handleSearch">
-          <el-option label="全部" value="" />
-          <el-option label="图片" value="image" />
-          <el-option label="文档" value="document" />
-          <el-option label="其他" value="other" />
-        </el-select>
+        <el-input
+          v-model="searchKeyword"
+          placeholder="搜索文件名"
+          clearable
+          @input="handleSearch"
+        >
+          <template #prefix>
+            <i class="ri-search-line"></i>
+          </template>
+        </el-input>
       </div>
 
       <!-- 文件列表 -->
@@ -43,7 +47,6 @@
               <div class="file-name" :title="file.original_name">{{ file.original_name }}</div>
               <div class="file-meta">
                 <span>{{ formatFileSize(file.file_size) }}</span>
-                <span>{{ formatDate(file.upload_time) }}</span>
               </div>
             </div>
             <div v-if="selectedFile?.id === file.id" class="selected-badge">
@@ -59,7 +62,7 @@
           v-model:current-page="currentPage"
           v-model:page-size="pageSize"
           :total="total"
-          :page-sizes="[12, 24, 48, 96]"
+          :page-sizes="[20, 50, 100, 200, 999999]"
           layout="total, sizes, prev, pager, next"
           @current-change="handlePageChange"
           @size-change="handleSizeChange"
@@ -77,10 +80,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getFileList } from '@/api/file'
 import type { FileInfo } from '@/types/file'
+import { useDebounceFn } from '@vueuse/core'
 
 interface Props {
   modelValue: boolean
@@ -103,9 +107,18 @@ const loading = ref(false)
 const fileList = ref<FileInfo[]>([])
 const selectedFile = ref<FileInfo | null>(null)
 const currentPage = ref(1)
-const pageSize = ref(12)
+const pageSize = ref(20)
 const total = ref(0)
-const filterType = ref('')
+const searchKeyword = ref('')
+
+// 响应式对话框宽度
+const dialogWidth = computed(() => {
+  const width = window.innerWidth
+  if (width <= 768) return '95%'
+  if (width <= 1024) return '80%'
+  if (width <= 1440) return '700px'
+  return '800px'
+})
 
 // 监听 modelValue 变化
 watch(
@@ -115,7 +128,7 @@ watch(
     if (val) {
       // 打开对话框时重置并加载数据
       selectedFile.value = null
-      filterType.value = props.fileType || ''
+      searchKeyword.value = ''
       currentPage.value = 1
       fetchFileList()
     }
@@ -132,14 +145,30 @@ watch(dialogVisible, (val) => {
 const fetchFileList = async () => {
   try {
     loading.value = true
-    const params = {
+    const params: any = {
       page: currentPage.value,
-      page_size: pageSize.value,
-      type: filterType.value || undefined
+      page_size: pageSize.value === 999999 ? 999999 : pageSize.value
     }
+
+    // 如果有文件类型限制，添加到参数中
+    if (props.fileType) {
+      params.type = props.fileType
+    }
+
     const response = await getFileList(params)
-    fileList.value = response.list
-    total.value = response.total
+
+    // 如果有搜索关键词，在前端过滤
+    if (searchKeyword.value.trim()) {
+      const keyword = searchKeyword.value.trim().toLowerCase()
+      fileList.value = response.list.filter(file =>
+        file.original_name.toLowerCase().includes(keyword) ||
+        file.filename.toLowerCase().includes(keyword)
+      )
+      total.value = fileList.value.length
+    } else {
+      fileList.value = response.list
+      total.value = response.total
+    }
   } catch (error) {
     ElMessage.error('获取文件列表失败')
   } finally {
@@ -159,22 +188,16 @@ const formatFileSize = (size: number) => {
   return `${(size / (1024 * 1024)).toFixed(2)} MB`
 }
 
-// 格式化日期
-const formatDate = (dateStr: string) => {
-  const date = new Date(dateStr)
-  return date.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' })
-}
-
 // 选择文件
 const handleSelectFile = (file: FileInfo) => {
   selectedFile.value = file
 }
 
-// 搜索
-const handleSearch = () => {
+// 搜索（使用防抖）
+const handleSearch = useDebounceFn(() => {
   currentPage.value = 1
   fetchFileList()
-}
+}, 500)
 
 // 分页变化
 const handlePageChange = () => {
@@ -205,13 +228,11 @@ const handleClose = () => {
 .file-picker-container {
   .filter-bar {
     margin-bottom: 16px;
-    display: flex;
-    gap: 12px;
   }
 
   .file-list {
-    min-height: 400px;
-    max-height: 500px;
+    min-height: 300px;
+    max-height: 450px;
     overflow-y: auto;
     margin-bottom: 16px;
 
@@ -219,13 +240,18 @@ const handleClose = () => {
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 400px;
+      height: 300px;
     }
 
     .file-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 12px;
+
+      @media (max-width: 768px) {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
+      }
 
       .file-item {
         position: relative;
@@ -248,7 +274,7 @@ const handleClose = () => {
 
         .file-preview {
           width: 100%;
-          height: 120px;
+          height: 100px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -257,6 +283,10 @@ const handleClose = () => {
           overflow: hidden;
           margin-bottom: 8px;
 
+          @media (max-width: 768px) {
+            height: 80px;
+          }
+
           img {
             width: 100%;
             height: 100%;
@@ -264,14 +294,18 @@ const handleClose = () => {
           }
 
           .file-icon {
-            font-size: 48px;
+            font-size: 40px;
             color: #909399;
+
+            @media (max-width: 768px) {
+              font-size: 32px;
+            }
           }
         }
 
         .file-info {
           .file-name {
-            font-size: 13px;
+            font-size: 12px;
             color: #303133;
             margin-bottom: 4px;
             overflow: hidden;
@@ -280,11 +314,11 @@ const handleClose = () => {
           }
 
           .file-meta {
-            font-size: 12px;
+            font-size: 11px;
             color: #909399;
             display: flex;
             justify-content: space-between;
-            gap: 8px;
+            gap: 4px;
 
             span {
               overflow: hidden;
@@ -298,8 +332,8 @@ const handleClose = () => {
           position: absolute;
           top: 8px;
           right: 8px;
-          width: 24px;
-          height: 24px;
+          width: 22px;
+          height: 22px;
           background: #409eff;
           border-radius: 50%;
           display: flex;
@@ -315,6 +349,14 @@ const handleClose = () => {
   .pagination-bar {
     display: flex;
     justify-content: center;
+
+    :deep(.el-pagination) {
+      @media (max-width: 768px) {
+        .el-pagination__sizes {
+          display: none;
+        }
+      }
+    }
   }
 }
 
