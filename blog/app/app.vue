@@ -20,25 +20,21 @@ const { toasts } = useToast()
 const { showLoginModal } = useLoginModal()
 const { showBindEmailModal, triggerGlobal, onBindSuccess } = useBindEmail()
 
-// 页面加载状态
-const isLoading = ref(true)
-const loadingProgress = ref(0)
-const loadingText = ref('初始化中...')
-
 // 检查是否已经加载过（使用 sessionStorage 标记整个会话）
 const hasLoaded = ref(false)
 if (process.client) {
   // 检查会话中是否已经加载过
   hasLoaded.value = sessionStorage.getItem('blog-has-loaded') === 'true'
+}
 
-  // 如果已经加载过，直接跳过加载动画
-  if (hasLoaded.value) {
-    isLoading.value = false
-    loadingProgress.value = 100
-  } else {
-    // 第一次加载，设置标记（会话期间一直有效）
-    sessionStorage.setItem('blog-has-loaded', 'true')
-  }
+// 页面加载状态 - 如果已经加载过，初始值就是 false
+const isLoading = ref(!hasLoaded.value)
+const loadingProgress = ref(hasLoaded.value ? 100 : 0)
+const loadingText = ref(hasLoaded.value ? '加载完成！' : '初始化中...')
+
+// 第一次加载时设置标记
+if (process.client && !hasLoaded.value) {
+  sessionStorage.setItem('blog-has-loaded', 'true')
 }
 
 // 全局数据
