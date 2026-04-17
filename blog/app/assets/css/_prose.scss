@@ -472,6 +472,8 @@
           flex: 1;
           white-space: pre-wrap; // 支持自动换行
           word-break: break-all; // 长单词自动断行
+          padding-left: 0; // 确保换行后的内容对齐
+          min-width: 0; // 防止内容溢出
         }
       }
     }
