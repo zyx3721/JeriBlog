@@ -75,15 +75,44 @@ const initZoom = () => {
   })
 }
 
+// 初始化代码块滚动事件处理
+const initCodeBlockScroll = () => {
+  const contentEl = document.querySelector('.markdown-content')
+  if (!contentEl) return
+
+  const codeBlocks = contentEl.querySelectorAll('.code-block-container pre')
+  codeBlocks.forEach(pre => {
+    // 阻止滚动事件冒泡到父元素
+    pre.addEventListener('wheel', (e: Event) => {
+      const wheelEvent = e as WheelEvent
+      const target = wheelEvent.currentTarget as HTMLElement
+
+      // 检查是否到达滚动边界
+      const atTop = target.scrollTop === 0
+      const atBottom = target.scrollTop + target.clientHeight >= target.scrollHeight
+
+      // 如果在边界且继续向边界方向滚动，则阻止事件传播
+      if ((atTop && wheelEvent.deltaY < 0) || (atBottom && wheelEvent.deltaY > 0)) {
+        // 到达边界，允许事件传播（滚动外部）
+        return
+      }
+
+      // 未到达边界，阻止事件传播（只滚动代码块内部）
+      wheelEvent.stopPropagation()
+    }, { passive: false })
+  })
+}
+
 watch(() => renderedContent.value, async () => {
   await nextTick()
   initZoom()
+  initCodeBlockScroll()
   await renderMermaidDiagrams()
 })
 
 onMounted(() => {
   initMermaid()
-  
+
   // 加载表情数据
   const emojisUrl = blogConfig.value.emojis
   if (emojisUrl) {
@@ -91,9 +120,10 @@ onMounted(() => {
       emojiMap.value = map
     })
   }
-  
+
   nextTick(async () => {
     initZoom()
+    initCodeBlockScroll()
     await renderMermaidDiagrams()
   })
 })
