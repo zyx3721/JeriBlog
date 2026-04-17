@@ -13,6 +13,48 @@
   <common-list title="文章列表" :data="articleList" :loading="loading" :total="total" v-model:page="queryParams.page"
     v-model:page-size="queryParams.page_size" create-text="新增文章" @create="handleCreate" @refresh="fetchArticles"
     @update:page="fetchArticles" @update:pageSize="fetchArticles">
+    <!-- 搜索表单 -->
+    <template #toolbar-before>
+      <div class="search-form">
+        <el-input
+          v-model="queryParams.keyword"
+          placeholder="搜索文章..."
+          clearable
+          style="width: 240px"
+          @keyup.enter="handleSearch"
+          @clear="handleSearch"
+        />
+        <el-select
+          v-model="queryParams.category_id"
+          placeholder="分类"
+          clearable
+          style="width: 150px"
+          @change="handleSearch"
+        >
+          <el-option label="全部分类" :value="undefined" />
+          <el-option
+            v-for="category in categoryList"
+            :key="category.id"
+            :label="category.name"
+            :value="category.id"
+          />
+        </el-select>
+        <el-select
+          v-model="queryParams.status"
+          placeholder="状态"
+          clearable
+          style="width: 120px"
+          @change="handleSearch"
+        >
+          <el-option label="全部状态" value="" />
+          <el-option label="已发布" value="published" />
+          <el-option label="草稿" value="draft" />
+        </el-select>
+        <el-button type="primary" @click="handleSearch">搜索</el-button>
+        <el-button @click="handleReset">重置</el-button>
+      </div>
+    </template>
+
     <!-- 额外按钮 -->
     <template #toolbar-after>
       <el-button @click="categoryDialogVisible = true">
@@ -138,6 +180,13 @@
 </template>
 
 <style scoped>
+.search-form {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .export-options {
   display: flex;
   flex-direction: column;
@@ -211,8 +260,10 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { View, ChatDotRound, Upload, EditPen, Loading } from '@element-plus/icons-vue'
 import CommonList from '@/components/common/CommonList.vue'
 import type { Article } from '@/types/article'
+import type { Category } from '@/types/category'
 import type { PaginationQuery } from '@/types/request'
 import { getArticles, deleteArticle, exportToWeChat, downloadArticleZip } from '@/api/article'
+import { getCategories } from '@/api/category'
 import CategoryManager from './components/CategoryManager.vue'
 import TagManager from './components/TagManager.vue'
 import { formatDateTime } from '@/utils/date'
@@ -222,8 +273,25 @@ const loading = ref(false)
 const categoryDialogVisible = ref(false)
 const tagDialogVisible = ref(false)
 const articleList = ref<Article[]>([])
+const categoryList = ref<Category[]>([])
 const total = ref(0)
-const queryParams = ref<PaginationQuery>({ page: 1, page_size: 20 })
+const queryParams = ref<PaginationQuery>({
+  page: 1,
+  page_size: 20,
+  keyword: '',
+  category_id: undefined,
+  status: ''
+})
+
+// 获取分类列表
+const fetchCategories = async () => {
+  try {
+    const result = await getCategories()
+    categoryList.value = result.list
+  } catch {
+    ElMessage.error('获取分类列表失败')
+  }
+}
 
 const fetchArticles = async () => {
   loading.value = true
@@ -239,6 +307,24 @@ const fetchArticles = async () => {
   } finally {
     loading.value = false
   }
+}
+
+// 搜索
+const handleSearch = () => {
+  queryParams.value.page = 1
+  fetchArticles()
+}
+
+// 重置
+const handleReset = () => {
+  queryParams.value = {
+    page: 1,
+    page_size: queryParams.value.page_size,
+    keyword: '',
+    category_id: undefined,
+    status: ''
+  }
+  fetchArticles()
 }
 
 const handleCreate = () => router.push('/articles/create')
@@ -415,5 +501,8 @@ const copyRichText = async (html: string) => {
   }
 }
 
-onMounted(fetchArticles)
+onMounted(() => {
+  fetchCategories()
+  fetchArticles()
+})
 </script>

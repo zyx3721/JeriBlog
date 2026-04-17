@@ -223,15 +223,34 @@ func (r *ArticleRepository) CountByTag(tagID uint, onlyPublished bool) (int64, e
 // ============ 基础CRUD ============
 
 // List 获取文章列表
-func (r *ArticleRepository) List(offset, limit int) ([]model.Article, int64, error) {
+func (r *ArticleRepository) List(offset, limit int, keyword string, categoryID uint, status string) ([]model.Article, int64, error) {
 	var articles []model.Article
 	var total int64
 
-	if err := r.db.Model(&model.Article{}).Count(&total).Error; err != nil {
+	query := r.db.Model(&model.Article{})
+
+	// 关键词搜索（标题）
+	if keyword != "" {
+		query = query.Where("title ILIKE ?", "%"+keyword+"%")
+	}
+
+	// 分类筛选
+	if categoryID > 0 {
+		query = query.Where("category_id = ?", categoryID)
+	}
+
+	// 状态筛选
+	if status == "published" {
+		query = query.Where("is_publish = ?", true)
+	} else if status == "draft" {
+		query = query.Where("is_publish = ?", false)
+	}
+
+	if err := query.Count(&total).Error; err != nil {
 		return nil, 0, err
 	}
 
-	if err := r.db.Order("is_publish ASC, publish_time DESC NULLS LAST, created_at DESC").
+	if err := query.Order("is_publish ASC, publish_time DESC NULLS LAST, created_at DESC").
 		Preload("Category").
 		Preload("Tags").
 		Offset(offset).

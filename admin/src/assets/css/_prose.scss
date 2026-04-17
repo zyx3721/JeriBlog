@@ -468,6 +468,8 @@
         display: block;
         padding: 1em;
         overflow-x: auto;
+        overflow-y: auto;
+        max-height: 500px;
         background: none;
         border: none;
         color: var(--prose-codeblock-text);

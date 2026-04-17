@@ -19,12 +19,15 @@ import (
 
 // ListArticlesRequest 文章列表请求
 type ListArticlesRequest struct {
-	Page     int    `form:"page,default=1" binding:"min=0"`
-	PageSize int    `form:"page_size,default=10" binding:"min=0"`
-	Year     string `form:"year"`
-	Month    string `form:"month"`
-	Category string `form:"category"`
-	Tag      string `form:"tag"`
+	Page       int    `form:"page,default=1" binding:"min=0"`
+	PageSize   int    `form:"page_size,default=10" binding:"min=0"`
+	Year       string `form:"year"`
+	Month      string `form:"month"`
+	Category   string `form:"category"`
+	Tag        string `form:"tag"`
+	Keyword    string `form:"keyword"`      // 搜索关键词（标题）
+	CategoryID uint   `form:"category_id"`  // 分类ID
+	Status     string `form:"status"`       // 状态：published-已发布, draft-草稿
 }
 
 // ============ 通用文章响应 ============
