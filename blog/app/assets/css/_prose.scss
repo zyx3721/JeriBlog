@@ -431,57 +431,23 @@
       background: transparent;
       border: none;
       border-radius: 0;
-      // 移除max-height和overflow-y限制，直接显示全部代码
-      overflow-x: auto; // 保留横向滚动
-      overscroll-behavior: contain; // 防止滚动穿透到外部
-
-      // 自定义滚动条样式（仅用于横向滚动）
-      &::-webkit-scrollbar {
-        height: 8px;
-      }
-
-      &::-webkit-scrollbar-track {
-        background: var(--prose-codeblock-bg);
-      }
-
-      &::-webkit-scrollbar-thumb {
-        background: var(--prose-codeblock-line-number);
-        border-radius: 4px;
-
-        &:hover {
-          background: var(--prose-link);
-        }
-      }
+      // 移除横向滚动，改为自动换行
+      overflow-x: visible;
+      white-space: pre-wrap; // 支持自动换行
+      word-break: break-all; // 长单词自动断行
 
       code {
         display: block;
         padding: .5rem 1rem .5rem 0;
-        overflow-x: auto;
+        overflow-x: visible; // 移除横向滚动
+        white-space: pre-wrap; // 支持自动换行
+        word-break: break-all; // 长单词自动断行
         background: none;
         border: none;
         color: var(--prose-codeblock-text);
         line-height: 1.45;
         font-size: 0.9rem;
         font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-        overscroll-behavior: contain; // 防止横向滚动穿透
-
-        // 隐藏横向滚动条
-        &::-webkit-scrollbar {
-          height: 6px;
-        }
-
-        &::-webkit-scrollbar-track {
-          background: transparent;
-        }
-
-        &::-webkit-scrollbar-thumb {
-          background: var(--prose-codeblock-line-number);
-          border-radius: 3px;
-
-          &:hover {
-            background: var(--prose-link);
-          }
-        }
 
         .line-number {
           display: inline-block;
