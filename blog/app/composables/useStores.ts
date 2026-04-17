@@ -427,3 +427,24 @@ export function useTags() {
 
   return { tags, total, fetchTags }
 }
+
+// 全局加载状态管理
+export function useAppLoading() {
+  const isLoading = useState<boolean>('app-loading', () => true)
+  const hasInitialized = useState<boolean>('app-initialized', () => false)
+
+  const setLoading = (loading: boolean) => {
+    isLoading.value = loading
+  }
+
+  const setInitialized = (initialized: boolean) => {
+    hasInitialized.value = initialized
+  }
+
+  return {
+    isLoading,
+    hasInitialized,
+    setLoading,
+    setInitialized
+  }
+}
