@@ -58,15 +58,25 @@
 
       <!-- 分页 -->
       <div class="pagination-bar">
+        <div class="page-size-selector">
+          <span class="label">每页显示：</span>
+          <el-select v-model="pageSize" @change="handleSizeChange">
+            <el-option :value="20" label="20条/页" />
+            <el-option :value="50" label="50条/页" />
+            <el-option :value="100" label="100条/页" />
+            <el-option :value="200" label="200条/页" />
+            <el-option :value="0" label="全部" />
+          </el-select>
+        </div>
         <el-pagination
+          v-if="pageSize > 0"
           v-model:current-page="currentPage"
-          v-model:page-size="pageSize"
+          :page-size="pageSize"
           :total="total"
-          :page-sizes="[20, 50, 100, 200, 999999]"
-          layout="total, sizes, prev, pager, next"
+          layout="total, prev, pager, next"
           @current-change="handlePageChange"
-          @size-change="handleSizeChange"
         />
+        <div v-else class="total-info">共 {{ total }} 条</div>
       </div>
     </div>
 
@@ -80,7 +90,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed, nextTick } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getFileList } from '@/api/file'
 import type { FileInfo } from '@/types/file'
@@ -131,37 +141,10 @@ watch(
       searchKeyword.value = ''
       currentPage.value = 1
       fetchFileList()
-      // 修复分页选择器显示
-      nextTick(() => {
-        fixPageSizeDisplay()
-      })
     }
   },
   { immediate: true }
 )
-
-// 修复分页选择器显示 "全部" 而不是 "999999条/页"
-const fixPageSizeDisplay = () => {
-  // 使用 setTimeout 确保 Element Plus 的下拉菜单已经渲染
-  setTimeout(() => {
-    const selectInput = document.querySelector('.pagination-bar .el-pagination__sizes .el-input__inner')
-    if (selectInput && selectInput.textContent?.includes('999999')) {
-      const observer = new MutationObserver(() => {
-        if (selectInput.textContent?.includes('999999')) {
-          selectInput.textContent = selectInput.textContent.replace(/999999\s*条\/页/, '全部')
-        }
-      })
-      observer.observe(selectInput, { childList: true, subtree: true, characterData: true })
-    }
-  }, 100)
-}
-
-// 监听 pageSize 变化，修复显示
-watch(pageSize, () => {
-  nextTick(() => {
-    fixPageSizeDisplay()
-  })
-})
 
 // 监听 dialogVisible 变化
 watch(dialogVisible, (val) => {
@@ -174,7 +157,7 @@ const fetchFileList = async () => {
     loading.value = true
     const params: any = {
       page: currentPage.value,
-      page_size: pageSize.value === 999999 ? 999999 : pageSize.value
+      page_size: pageSize.value === 0 ? 10000 : pageSize.value // 0 表示全部，传一个大值
     }
 
     // 如果有文件类型限制，添加到参数中
@@ -184,7 +167,7 @@ const fetchFileList = async () => {
 
     const response = await getFileList(params)
 
-    // 直接使用后端返回的数据，不做前端过滤
+    // 直接使用后端返回的数据
     fileList.value = response.list || []
     total.value = response.total || 0
 
@@ -195,7 +178,6 @@ const fetchFileList = async () => {
         file.original_name.toLowerCase().includes(keyword) ||
         file.filename.toLowerCase().includes(keyword)
       )
-      // 只更新显示的列表，不改变原始数据
       fileList.value = filtered
       total.value = filtered.length
     }
@@ -381,7 +363,29 @@ const handleClose = () => {
 
   .pagination-bar {
     display: flex;
+    align-items: center;
     justify-content: center;
+    gap: 16px;
+
+    .page-size-selector {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .label {
+        font-size: 14px;
+        color: #606266;
+      }
+
+      .el-select {
+        width: 120px;
+      }
+    }
+
+    .total-info {
+      font-size: 14px;
+      color: #606266;
+    }
 
     :deep(.el-pagination) {
       @media (max-width: 768px) {
@@ -389,6 +393,11 @@ const handleClose = () => {
           display: none;
         }
       }
+    }
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 12px;
     }
   }
 }
