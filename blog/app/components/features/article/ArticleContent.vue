@@ -86,34 +86,26 @@ const initCodeBlockScroll = () => {
       const wheelEvent = e as WheelEvent
       const target = wheelEvent.currentTarget as HTMLElement
 
-      // 获取滚动方向和距离
-      const { deltaX, deltaY, shiftKey } = wheelEvent
-      const { scrollLeft, scrollWidth, clientWidth } = target
+      // 如果按下 shift 键，处理横向滚动
+      if (wheelEvent.shiftKey) {
+        wheelEvent.preventDefault()
+        wheelEvent.stopPropagation()
 
-      // 检查横向滚动边界
-      const atLeft = scrollLeft === 0
-      const atRight = scrollLeft + clientWidth >= scrollWidth - 1
-
-      // 判断是否需要阻止默认行为
-      let shouldPrevent = false
-
-      // 处理横向滚动（原生横向滚动或shift+纵向滚动）
-      if (Math.abs(deltaX) > 0 || shiftKey) {
-        const scrollAmount = shiftKey ? deltaY : deltaX
-        // 向左滚动且未到最左，或向右滚动且未到最右
-        if ((scrollAmount < 0 && !atLeft) || (scrollAmount > 0 && !atRight)) {
-          shouldPrevent = true
-          // shift+滚轮时，手动处理横向滚动
-          if (shiftKey) {
-            wheelEvent.preventDefault()
-            target.scrollLeft += deltaY
-          }
-        }
+        // 手动处理横向滚动
+        target.scrollLeft += wheelEvent.deltaY
+        return
       }
 
-      // 如果需要在代码块内部滚动，阻止事件冒泡
-      if (shouldPrevent) {
-        wheelEvent.stopPropagation()
+      // 处理原生横向滚动
+      const { deltaX, scrollLeft, scrollWidth, clientWidth } = target
+      if (Math.abs(deltaX) > 0) {
+        const atLeft = scrollLeft === 0
+        const atRight = scrollLeft + clientWidth >= scrollWidth - 1
+
+        // 如果在代码块内部可以滚动，阻止事件冒泡
+        if ((deltaX < 0 && !atLeft) || (deltaX > 0 && !atRight)) {
+          wheelEvent.stopPropagation()
+        }
       }
     }, { passive: false })
   })
