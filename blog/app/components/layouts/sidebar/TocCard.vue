@@ -85,9 +85,30 @@ const handleScroll = () => {
   }
 }
 
+// 阻止目录滚动时触发页面滚动
+const handleTocWheel = (e: WheelEvent) => {
+  if (!tocListRef.value) return
+
+  const container = tocListRef.value
+  const { scrollTop, scrollHeight, clientHeight } = container
+  const atTop = scrollTop === 0
+  const atBottom = scrollTop + clientHeight >= scrollHeight - 1
+
+  // 如果在边界且继续滚动，则阻止事件冒泡
+  if ((e.deltaY < 0 && !atTop) || (e.deltaY > 0 && !atBottom)) {
+    e.stopPropagation()
+  }
+}
+
 onMounted(() => {
   // 使用 VueUse 自动管理事件监听（自动清理）
   useEventListener(window, 'scroll', handleScroll, { passive: true })
+
+  // 监听目录容器的滚动事件，阻止冒泡
+  if (tocListRef.value) {
+    useEventListener(tocListRef.value, 'wheel', handleTocWheel, { passive: false })
+  }
+
   handleScroll() // 初始化当前阅读项
 })
 </script>
