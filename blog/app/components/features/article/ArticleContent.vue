@@ -105,14 +105,14 @@ const initCodeBlockScroll = () => {
           shouldPrevent = true
           // shift+滚轮时，手动处理横向滚动
           if (shiftKey) {
+            wheelEvent.preventDefault()
             target.scrollLeft += deltaY
           }
         }
       }
 
-      // 如果需要在代码块内部滚动，阻止默认行为和事件冒泡
+      // 如果需要在代码块内部滚动，阻止事件冒泡
       if (shouldPrevent) {
-        wheelEvent.preventDefault()
         wheelEvent.stopPropagation()
       }
     }, { passive: false })
