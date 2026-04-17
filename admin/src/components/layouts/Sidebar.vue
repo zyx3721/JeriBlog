@@ -113,6 +113,18 @@ const handleMenuSelect = () => {
 <style scoped lang="scss">
 .sidebar {
   height: 100%;
+  background: linear-gradient(180deg, #1f2937 0%, #304156 50%, #1a2332 100%);
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  // 隐藏滚动条但保持滚动功能
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+  scrollbar-width: none; // Firefox
+  -ms-overflow-style: none; // IE/Edge
 
   .logo {
     height: 60px;
@@ -141,6 +153,7 @@ const handleMenuSelect = () => {
 
   :deep(.el-menu) {
     border-right: none;
+    background: transparent;
 
     .el-menu-item,
     .el-sub-menu__title {
