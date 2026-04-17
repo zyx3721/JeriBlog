@@ -13,6 +13,46 @@
   <common-list title="文件管理" :data="fileList" :loading="loading" :total="total" :show-create="false"
     v-model:page="query.page" v-model:page-size="query.page_size" @refresh="loadList" @update:page="loadList"
     @update:pageSize="loadList">
+    <!-- 搜索表单 -->
+    <template #toolbar-before>
+      <div class="search-form">
+        <el-input
+          v-model="query.keyword"
+          placeholder="搜索文件名、原始文件名..."
+          clearable
+          style="width: 240px"
+          @keyup.enter="handleSearch"
+          @clear="handleSearch"
+        />
+        <el-select
+          v-model="query.status"
+          placeholder="状态"
+          clearable
+          style="width: 140px"
+          @change="handleSearch"
+        >
+          <el-option label="全部状态" :value="undefined" />
+          <el-option label="未使用" :value="0" />
+          <el-option label="使用中" :value="1" />
+        </el-select>
+        <el-select
+          v-model="query.upload_type"
+          placeholder="用途"
+          clearable
+          style="width: 140px"
+          @change="handleSearch"
+        >
+          <el-option label="全部用途" :value="undefined" />
+          <el-option label="image" value="image" />
+          <el-option label="avatar" value="avatar" />
+          <el-option label="cover" value="cover" />
+          <el-option label="attachment" value="attachment" />
+        </el-select>
+        <el-button type="primary" @click="handleSearch">搜索</el-button>
+        <el-button @click="handleReset">重置</el-button>
+      </div>
+    </template>
+
     <!-- 右上角工具栏 -->
     <template #toolbar-after>
       <el-button type="primary" @click="uploadDialogVisible = true">上传配置</el-button>
@@ -33,7 +73,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column prop="original_name" label="原始文件名" min-width="200" show-overflow-tooltip />
+    <el-table-column prop="original_name" label="原始文件名" min-width="200" align="center" show-overflow-tooltip />
 
     <el-table-column prop="file_type" label="类型" width="100" align="center" />
 
@@ -71,11 +111,17 @@ import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import CommonList from '@/components/common/CommonList.vue'
 import { getFileList, deleteFile } from '@/api/file'
-import type { FileInfo, FileListQuery } from '@/types/file'
+import type { FileInfo, FileQuery } from '@/types/file'
 import { formatDateTime } from '@/utils/date'
 import UploadConfigDialog from '@/views/file/components/UploadConfigDialog.vue'
 
-const query = reactive<FileListQuery>({ page: 1, page_size: 20 })
+const query = reactive<FileQuery>({
+  page: 1,
+  page_size: 20,
+  keyword: undefined,
+  status: undefined,
+  upload_type: undefined
+})
 const fileList = ref<FileInfo[]>([])
 const total = ref(0)
 const loading = ref(false)
@@ -95,6 +141,19 @@ const loadList = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const handleSearch = () => {
+  query.page = 1
+  loadList()
+}
+
+const handleReset = () => {
+  query.keyword = undefined
+  query.status = undefined
+  query.upload_type = undefined
+  query.page = 1
+  loadList()
 }
 
 const copyUrl = async (file: FileInfo) => {
@@ -135,3 +194,11 @@ const getStatusText = (status: number) => {
 
 onMounted(loadList)
 </script>
+
+<style scoped>
+.search-form {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+</style>

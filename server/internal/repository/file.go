@@ -53,15 +53,36 @@ func (r *FileRepository) Delete(id uint) error {
 // ============ 查询方法 ============
 
 // List 获取文件列表
-func (r *FileRepository) List(offset, limit int) ([]model.File, int64, error) {
+func (r *FileRepository) List(offset, limit int, keyword string, status *int, uploadType string) ([]model.File, int64, error) {
 	var files []model.File
 	var total int64
 
-	if err := r.db.Model(&model.File{}).Count(&total).Error; err != nil {
+	// 构建查询
+	query := r.db.Model(&model.File{})
+
+	// 关键词搜索（文件名、原始文件名）
+	if keyword != "" {
+		query = query.Where("file_name LIKE ? OR original_name LIKE ?",
+			"%"+keyword+"%", "%"+keyword+"%")
+	}
+
+	// 状态筛选
+	if status != nil {
+		query = query.Where("status = ?", *status)
+	}
+
+	// 上传类型筛选
+	if uploadType != "" {
+		query = query.Where("upload_type = ?", uploadType)
+	}
+
+	// 统计总数
+	if err := query.Count(&total).Error; err != nil {
 		return nil, 0, err
 	}
 
-	err := r.db.Order("created_at DESC").
+	// 查询列表
+	err := query.Order("created_at DESC").
 		Offset(offset).
 		Limit(limit).
 		Find(&files).Error

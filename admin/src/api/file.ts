@@ -10,7 +10,7 @@
 */
 
 import request from "@/utils/request";
-import type { FileInfo, FileListData, FileListQuery } from "@/types/file";
+import type { FileInfo, FileListData, FileListQuery, FileQuery } from "@/types/file";
 
 /**
  * 上传文件响应接口
@@ -46,10 +46,10 @@ export async function uploadFile(file: File, type = 'image'): Promise<UploadResp
 
 /**
  * 获取文件列表
- * @param {FileListQuery} params - 查询参数
+ * @param {FileQuery} params - 查询参数
  * @returns {Promise<FileListData>} 文件列表
  */
-export function getFileList(params: FileListQuery): Promise<FileListData> {
+export function getFileList(params: FileQuery): Promise<FileListData> {
   return request.get("/admin/files", { params });
 }
 

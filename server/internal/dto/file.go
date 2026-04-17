@@ -35,9 +35,12 @@ type FileUploadForWebResponse struct {
 
 // ListFilesRequest 文件列表请求
 type ListFilesRequest struct {
-	Type     string `form:"type"`
-	Page     int    `form:"page,default=1" binding:"min=1"`
-	PageSize int    `form:"page_size,default=20" binding:"min=1,max=1000"`
+	Type       string `form:"type"`
+	Page       int    `form:"page,default=1" binding:"min=1"`
+	PageSize   int    `form:"page_size,default=20" binding:"min=1,max=1000"`
+	Keyword    string `form:"keyword"`     // 搜索关键词（文件名、原始文件名）
+	Status     *int   `form:"status"`      // 状态筛选（0=未使用，1=使用中）
+	UploadType string `form:"upload_type"` // 上传类型筛选
 }
 
 // ============ 后台文件管理响应 ============

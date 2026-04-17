@@ -29,6 +29,15 @@ export interface FileListQuery {
   type?: string
 }
 
+// 文件查询参数
+export interface FileQuery {
+  page: number
+  page_size: number
+  keyword?: string
+  status?: number
+  upload_type?: string
+}
+
 // 文件列表响应
 export interface FileListData {
   list: FileInfo[]

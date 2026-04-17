@@ -245,17 +245,9 @@ func (s *FileService) Upload(req *upload.Request, host string) (*dto.FileRespons
 // List 获取文件列表
 func (s *FileService) List(req *dto.ListFilesRequest) ([]dto.FileResponse, int64, error) {
 	offset := (req.Page - 1) * req.PageSize
-	var files []model.File
-	var total int64
-	var err error
 
-	// 根据类型过滤
-	if req.Type != "" {
-		files, total, err = s.fileRepo.GetByUploadType(req.Type, offset, req.PageSize)
-	} else {
-		files, total, err = s.fileRepo.List(offset, req.PageSize)
-	}
-
+	// 调用仓储层查询（支持关键词、状态、上传类型筛选）
+	files, total, err := s.fileRepo.List(offset, req.PageSize, req.Keyword, req.Status, req.UploadType)
 	if err != nil {
 		return nil, 0, fmt.Errorf("获取文件列表失败: %w", err)
 	}
