@@ -113,16 +113,15 @@ onMounted(() => {
 
   // 首次加载：模拟加载进度
   if (!hasInitialized.value) {
-    let currentProgress = 0
     const loadingSteps = [
-      { progress: 20, text: '正在加载配置...' },
-      { progress: 40, text: '正在加载菜单...' },
-      { progress: 60, text: '正在加载分类和标签...' },
-      { progress: 80, text: '正在加载统计数据...' },
-      { progress: 100, text: '加载完成！' }
+      { progress: 20, text: '正在加载配置...', delay: 200 },
+      { progress: 40, text: '正在加载菜单...', delay: 200 },
+      { progress: 60, text: '正在加载分类和标签...', delay: 200 },
+      { progress: 80, text: '正在加载统计数据...', delay: 200 },
+      { progress: 100, text: '加载完成！', delay: 200 }
     ]
 
-    const updateProgress = (index: number) => {
+    const updateProgress = async (index: number) => {
       if (index >= loadingSteps.length) {
         setTimeout(() => {
           setLoading(false)
@@ -132,21 +131,11 @@ onMounted(() => {
       }
 
       const step = loadingSteps[index]
-      const duration = 200
-      const steps = (step.progress - currentProgress) / 10
+      setProgress(step.progress)
+      setLoadingText(step.text)
 
-      const interval = setInterval(() => {
-        currentProgress += steps
-        if (currentProgress >= step.progress) {
-          currentProgress = step.progress
-          setProgress(currentProgress)
-          setLoadingText(step.text)
-          clearInterval(interval)
-          setTimeout(() => updateProgress(index + 1), 100)
-        } else {
-          setProgress(currentProgress)
-        }
-      }, duration / 10)
+      await new Promise(resolve => setTimeout(resolve, step.delay))
+      updateProgress(index + 1)
     }
 
     updateProgress(0)
