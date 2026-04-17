@@ -83,7 +83,17 @@ const handleMenuClick = () => {
 .sidebar {
   background-color: #304156;
   transition: width 0.3s;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  // 隐藏滚动条但保持滚动功能
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+  scrollbar-width: none; // Firefox
+  -ms-overflow-style: none; // IE/Edge
 
   // 移动端抽屉效果
   @media (max-width: 768px) {
