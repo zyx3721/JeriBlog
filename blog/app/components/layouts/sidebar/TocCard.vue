@@ -94,10 +94,23 @@ const handleTocWheel = (e: WheelEvent) => {
   const atTop = scrollTop === 0
   const atBottom = scrollTop + clientHeight >= scrollHeight - 1
 
-  // 如果在边界且继续滚动，则阻止事件冒泡
-  if ((e.deltaY < 0 && !atTop) || (e.deltaY > 0 && !atBottom)) {
-    e.stopPropagation()
+  // 向上滚动
+  if (e.deltaY < 0) {
+    if (atTop) {
+      // 已经在顶部，阻止默认行为（防止触发外部滚动）
+      e.preventDefault()
+    }
   }
+  // 向下滚动
+  else if (e.deltaY > 0) {
+    if (atBottom) {
+      // 已经在底部，阻止默认行为（防止触发外部滚动）
+      e.preventDefault()
+    }
+  }
+
+  // 阻止事件冒泡
+  e.stopPropagation()
 }
 
 onMounted(() => {
