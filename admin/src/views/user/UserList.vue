@@ -97,7 +97,20 @@
       <template #default="{ row }">
         <template v-if="!row.deleted_at">
           <el-button type="primary" link size="small" @click="handleEdit(row)">编辑</el-button>
-          <el-button type="danger" link size="small" @click="handleDelete(row.id)">删除</el-button>
+          <el-tooltip
+            v-if="row.id === 1 && row.role === 'super_admin'"
+            content="禁止删除默认超级管理员"
+            placement="top"
+          >
+            <el-button type="danger" link size="small" disabled>删除</el-button>
+          </el-tooltip>
+          <el-button
+            v-else
+            type="danger"
+            link
+            size="small"
+            @click="handleDelete(row.id)"
+          >删除</el-button>
         </template>
       </template>
     </el-table-column>
