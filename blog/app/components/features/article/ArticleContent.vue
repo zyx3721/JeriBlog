@@ -75,7 +75,7 @@ const initZoom = () => {
   })
 }
 
-// 初始化代码块滚动事件处理
+// 初始化代码块滚动事件处理（仅处理横向滚动）
 const initCodeBlockScroll = () => {
   const contentEl = document.querySelector('.markdown-content')
   if (!contentEl) return
@@ -87,29 +87,18 @@ const initCodeBlockScroll = () => {
       const target = wheelEvent.currentTarget as HTMLElement
 
       // 获取滚动方向和距离
-      const { deltaX, deltaY } = wheelEvent
-      const { scrollTop, scrollLeft, scrollHeight, scrollWidth, clientHeight, clientWidth } = target
-
-      // 检查垂直滚动边界
-      const atTop = scrollTop === 0
-      const atBottom = scrollTop + clientHeight >= scrollHeight - 1
+      const { deltaX } = wheelEvent
+      const { scrollLeft, scrollWidth, clientWidth } = target
 
       // 检查横向滚动边界
       const atLeft = scrollLeft === 0
       const atRight = scrollLeft + clientWidth >= scrollWidth - 1
 
-      // 判断是否需要阻止默认行为
+      // 判断是否需要阻止默认行为（仅处理横向滚动）
       let shouldPrevent = false
 
-      // 处理垂直滚动
-      if (Math.abs(deltaY) > Math.abs(deltaX)) {
-        // 向上滚动且未到顶部，或向下滚动且未到底部
-        if ((deltaY < 0 && !atTop) || (deltaY > 0 && !atBottom)) {
-          shouldPrevent = true
-        }
-      }
       // 处理横向滚动
-      else if (Math.abs(deltaX) > 0) {
+      if (Math.abs(deltaX) > 0) {
         // 向左滚动且未到最左，或向右滚动且未到最右
         if ((deltaX < 0 && !atLeft) || (deltaX > 0 && !atRight)) {
           shouldPrevent = true
