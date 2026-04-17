@@ -32,7 +32,7 @@
           style="width: 120px"
           @change="handleSearch"
         >
-          <el-option label="全部状态" :value="undefined" />
+          <el-option label="全部状态" value="" />
           <el-option label="显示" :value="1" />
           <el-option label="隐藏" :value="0" />
         </el-select>

@@ -31,7 +31,7 @@
           style="width: 150px"
           @change="handleSearch"
         >
-          <el-option label="全部类型" :value="undefined" />
+          <el-option label="全部类型" value="" />
           <el-option
             v-for="type in typeList"
             :key="type.id"
