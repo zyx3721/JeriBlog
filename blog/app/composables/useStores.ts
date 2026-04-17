@@ -431,7 +431,16 @@ export function useTags() {
 // 全局加载状态管理
 export function useAppLoading() {
   const isLoading = useState<boolean>('app-loading', () => true)
-  const hasInitialized = useState<boolean>('app-initialized', () => false)
+
+  // 从 sessionStorage 读取初始化状态
+  const getInitializedState = () => {
+    if (import.meta.client) {
+      return sessionStorage.getItem('app-initialized') === 'true'
+    }
+    return false
+  }
+
+  const hasInitialized = useState<boolean>('app-initialized', () => getInitializedState())
   const progress = useState<number>('app-loading-progress', () => 0)
   const loadingText = useState<string>('app-loading-text', () => '正在初始化...')
 
@@ -441,6 +450,10 @@ export function useAppLoading() {
 
   const setInitialized = (initialized: boolean) => {
     hasInitialized.value = initialized
+    // 持久化到 sessionStorage
+    if (import.meta.client) {
+      sessionStorage.setItem('app-initialized', initialized ? 'true' : 'false')
+    }
   }
 
   const setProgress = (value: number) => {
