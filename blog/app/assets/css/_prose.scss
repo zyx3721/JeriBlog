@@ -431,13 +431,13 @@
       background: transparent;
       border: none;
       border-radius: 0;
-      max-height: calc(60 * 1.45 * 0.9rem + 1rem); // 60行 * 行高 * 字体大小 + padding
-      overflow-y: auto;
+      // 移除max-height和overflow-y限制，直接显示全部代码
+      overflow-x: auto; // 保留横向滚动
       overscroll-behavior: contain; // 防止滚动穿透到外部
 
-      // 自定义滚动条样式
+      // 自定义滚动条样式（仅用于横向滚动）
       &::-webkit-scrollbar {
-        width: 8px;
+        height: 8px;
       }
 
       &::-webkit-scrollbar-track {
