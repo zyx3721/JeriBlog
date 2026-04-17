@@ -110,9 +110,16 @@
                 </el-input>
               </div>
 
-              <el-button type="primary" @click="handleCoverCommand" class="make-cover-btn">
-                制作封面
-              </el-button>
+              <div class="cover-actions">
+                <el-button type="success" @click="filePickerVisible = true" class="action-btn">
+                  <i class="ri-folder-image-line"></i>
+                  选择文件
+                </el-button>
+                <el-button type="primary" @click="handleCoverCommand" class="action-btn">
+                  <i class="ri-palette-line"></i>
+                  制作封面
+                </el-button>
+              </div>
             </div>
           </div>
         </el-form-item>
@@ -169,6 +176,9 @@
     <!-- 封面制作对话框 -->
     <CoverMakerDialog v-model="coverMakerVisible" :title="formData.title" :author="authorInfo.name"
       :avatar="authorInfo.avatar" @confirm="handleCoverMakerConfirm" @save="handleCoverMakerSave" />
+
+    <!-- 文件选择对话框 -->
+    <FilePickerDialog v-model="filePickerVisible" file-type="image" @confirm="handleFileSelect" />
   </div>
 </template>
 
@@ -193,6 +203,7 @@ import { useDebounceFn } from '@vueuse/core'
 import ImageUploader from '@/components/common/ImageUploader.vue'
 import CodeMirrorEditor from './components/CodeMirrorEditor.vue'
 import CoverMakerDialog from './components/CoverMakerDialog.vue'
+import FilePickerDialog from '@/components/common/FilePickerDialog.vue'
 
 const drawerSize = computed(() => {
   return window.innerWidth <= 768 ? '100%' : 800
@@ -206,6 +217,7 @@ const coverUploaderRef = ref<InstanceType<typeof ImageUploader>>()
 const loading = ref(false)
 const drawerVisible = ref(false)
 const coverMakerVisible = ref(false)
+const filePickerVisible = ref(false)
 const categories = ref<Category[]>([])
 const tags = ref<Tag[]>([])
 const articleInfo = ref<Article>({} as Article)
@@ -874,6 +886,12 @@ const handleCoverMakerSave = async (imageUrl: string) => {
   }
 }
 
+// 处理文件选择
+const handleFileSelect = (file: any) => {
+  formData.cover = file.file_url
+  ElMessage.success('已选择文件')
+}
+
 // 路由离开守卫：离开页面时自动保存草稿
 onBeforeRouteLeave(async (to, from, next) => {
   // 如果已保存，直接离开
@@ -1155,9 +1173,22 @@ onBeforeRouteLeave(async (to, from, next) => {
         }
       }
 
-      .make-cover-btn {
+      .cover-actions {
+        display: flex;
+        gap: 12px;
         width: 100%;
-        max-width: 285px;
+
+        .action-btn {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+
+          i {
+            font-size: 16px;
+          }
+        }
       }
     }
 
@@ -1168,8 +1199,12 @@ onBeforeRouteLeave(async (to, from, next) => {
       .cover-right {
         width: 100%;
 
-        .make-cover-btn {
-          max-width: none;
+        .cover-actions {
+          flex-direction: column;
+
+          .action-btn {
+            width: 100%;
+          }
         }
       }
     }
