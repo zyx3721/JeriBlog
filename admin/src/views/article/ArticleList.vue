@@ -312,18 +312,33 @@ const handleExportToWeChat = async () => {
 // 下载为 Markdown
 const handleDownloadMarkdown = async () => {
   let waitingMessage: ReturnType<typeof ElMessage> | undefined
+  let progressMessage: ReturnType<typeof ElMessage> | undefined
+
+  // 5秒后显示第一条提示
   const waitingTimer = setTimeout(() => {
     waitingMessage = ElMessage({
-      message: '网络较慢或文件资源较大，请耐心等待...',
+      message: '正在打包文章资源，请稍候...',
       type: 'info',
       duration: 0
     })
-  }, 10000)
+  }, 5000)
+
+  // 30秒后显示进度提示
+  const progressTimer = setTimeout(() => {
+    waitingMessage?.close()
+    progressMessage = ElMessage({
+      message: '文章资源较大，正在处理中，请耐心等待...',
+      type: 'warning',
+      duration: 0
+    })
+  }, 30000)
 
   try {
     const blob = await downloadArticleZip(exportArticleId.value)
     clearTimeout(waitingTimer)
+    clearTimeout(progressTimer)
     waitingMessage?.close()
+    progressMessage?.close()
 
     const article = articleList.value.find(a => a.id === exportArticleId.value)
     const filename = article ? `${article.title}.zip` : `article-${exportArticleId.value}.zip`
@@ -332,7 +347,9 @@ const handleDownloadMarkdown = async () => {
     exportDialogVisible.value = false
   } catch (error) {
     clearTimeout(waitingTimer)
+    clearTimeout(progressTimer)
     waitingMessage?.close()
+    progressMessage?.close()
     const errorMsg = error instanceof Error ? error.message : '下载失败，请稍后重试'
     ElMessage.error(errorMsg)
   }

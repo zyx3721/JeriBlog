@@ -91,6 +91,6 @@ export function exportToWeChat(id: number): Promise<WeChatExportResult> {
 export function downloadArticleZip(id: number): Promise<Blob> {
   return request.get(`/admin/articles/${id}/download/zip`, {
     responseType: "blob",
-    timeout: 300000
+    timeout: 600000 // 10分钟超时，适应大文章导出
   });
 }
