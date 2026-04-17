@@ -1404,6 +1404,11 @@ systemctl reload nginx
 
 ### 功能增强
 
+- **禁止删除默认超级管理员**
+  - 后端：在 Delete 方法中添加保护逻辑，禁止删除 ID 为 1 且角色为 super_admin 的用户
+  - 前端：禁用默认超级管理员的删除按钮，并添加提示信息
+  - 防止误删系统超级管理员账户，提升系统安全性
+
 - **分离博客端和管理后台登录逻辑**
   - 博客端改用独立的 token key (blog_access_token/blog_refresh_token)
   - 避免与管理后台的 token 冲突
