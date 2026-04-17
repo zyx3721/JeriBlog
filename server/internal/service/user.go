@@ -728,6 +728,11 @@ func (s *UserService) Delete(id uint) error {
 		return err
 	}
 
+	// 禁止删除默认超级管理员（ID为1且角色为super_admin）
+	if user.ID == 1 && user.Role == "super_admin" {
+		return errors.New("禁止删除默认超级管理员")
+	}
+
 	// 标记头像为未使用
 	if s.fileService != nil && user.Avatar != "" {
 		_ = s.fileService.MarkAsUnused(user.Avatar)
