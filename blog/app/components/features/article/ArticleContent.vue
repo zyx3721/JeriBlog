@@ -82,23 +82,45 @@ const initCodeBlockScroll = () => {
 
   const codeBlocks = contentEl.querySelectorAll('.code-block-container pre')
   codeBlocks.forEach(pre => {
-    // 阻止滚动事件冒泡到父元素
     pre.addEventListener('wheel', (e: Event) => {
       const wheelEvent = e as WheelEvent
       const target = wheelEvent.currentTarget as HTMLElement
 
-      // 检查是否到达滚动边界
-      const atTop = target.scrollTop === 0
-      const atBottom = target.scrollTop + target.clientHeight >= target.scrollHeight
+      // 获取滚动方向和距离
+      const { deltaX, deltaY } = wheelEvent
+      const { scrollTop, scrollLeft, scrollHeight, scrollWidth, clientHeight, clientWidth } = target
 
-      // 如果在边界且继续向边界方向滚动，则阻止事件传播
-      if ((atTop && wheelEvent.deltaY < 0) || (atBottom && wheelEvent.deltaY > 0)) {
-        // 到达边界，允许事件传播（滚动外部）
-        return
+      // 检查垂直滚动边界
+      const atTop = scrollTop === 0
+      const atBottom = scrollTop + clientHeight >= scrollHeight - 1
+
+      // 检查横向滚动边界
+      const atLeft = scrollLeft === 0
+      const atRight = scrollLeft + clientWidth >= scrollWidth - 1
+
+      // 判断是否需要阻止默认行为
+      let shouldPrevent = false
+
+      // 处理垂直滚动
+      if (Math.abs(deltaY) > Math.abs(deltaX)) {
+        // 向上滚动且未到顶部，或向下滚动且未到底部
+        if ((deltaY < 0 && !atTop) || (deltaY > 0 && !atBottom)) {
+          shouldPrevent = true
+        }
+      }
+      // 处理横向滚动
+      else if (Math.abs(deltaX) > 0) {
+        // 向左滚动且未到最左，或向右滚动且未到最右
+        if ((deltaX < 0 && !atLeft) || (deltaX > 0 && !atRight)) {
+          shouldPrevent = true
+        }
       }
 
-      // 未到达边界，阻止事件传播（只滚动代码块内部）
-      wheelEvent.stopPropagation()
+      // 如果需要在代码块内部滚动，阻止默认行为和事件冒泡
+      if (shouldPrevent) {
+        wheelEvent.preventDefault()
+        wheelEvent.stopPropagation()
+      }
     }, { passive: false })
   })
 }

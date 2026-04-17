@@ -20,22 +20,10 @@ const { toasts } = useToast()
 const { showLoginModal } = useLoginModal()
 const { showBindEmailModal, triggerGlobal, onBindSuccess } = useBindEmail()
 
-// 检查是否已经加载过（使用 sessionStorage 标记整个会话）
-const hasLoaded = ref(false)
-if (process.client) {
-  // 检查会话中是否已经加载过
-  hasLoaded.value = sessionStorage.getItem('blog-has-loaded') === 'true'
-}
-
-// 页面加载状态 - 如果已经加载过，初始值就是 false
-const isLoading = ref(!hasLoaded.value)
-const loadingProgress = ref(hasLoaded.value ? 100 : 0)
-const loadingText = ref(hasLoaded.value ? '加载完成！' : '初始化中...')
-
-// 第一次加载时设置标记
-if (process.client && !hasLoaded.value) {
-  sessionStorage.setItem('blog-has-loaded', 'true')
-}
+// 页面加载状态 - 默认显示加载动画
+const isLoading = ref(true)
+const loadingProgress = ref(0)
+const loadingText = ref('初始化中...')
 
 // 全局数据
 const { blogConfig, basicConfig, oauthConfig, uploadConfig } = useSysConfig()
@@ -101,7 +89,7 @@ if (globalData.value) {
 }
 
 // 模拟加载进度动画（客户端执行）
-if (process.client && !hasLoaded.value) {
+if (process.client) {
   // 0% -> 30%
   setTimeout(() => {
     loadingProgress.value = 30
@@ -152,12 +140,10 @@ onMounted(() => {
   // 异步加载 remixicon，避免阻塞首屏渲染
   import('remixicon/fonts/remixicon.css')
 
-  // 只在第一次加载时延迟隐藏加载动画
-  if (!hasLoaded.value) {
-    setTimeout(() => {
-      isLoading.value = false
-    }, 1200)
-  }
+  // 延迟隐藏加载动画
+  setTimeout(() => {
+    isLoading.value = false
+  }, 1200)
 })
 
 // SEO Meta
