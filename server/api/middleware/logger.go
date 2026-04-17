@@ -42,6 +42,12 @@ func Logger() gin.HandlerFunc {
 		userAgent := c.Request.UserAgent()
 		referer := c.Request.Referer()
 
+		// 调试：记录所有 IP 相关头部
+		xForwardedFor := c.Request.Header.Get("X-Forwarded-For")
+		xRealIP := c.Request.Header.Get("X-Real-IP")
+		logger.Debug("IP Headers - ClientIP: %s, X-Forwarded-For: %s, X-Real-IP: %s, RemoteAddr: %s",
+			clientIP, xForwardedFor, xRealIP, c.Request.RemoteAddr)
+
 		// 处理请求
 		c.Next()
 
