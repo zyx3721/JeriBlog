@@ -75,7 +75,7 @@ const initZoom = () => {
   })
 }
 
-// 初始化代码块滚动事件处理（仅处理横向滚动）
+// 初始化代码块滚动事件处理（支持shift+滚轮横向滚动）
 const initCodeBlockScroll = () => {
   const contentEl = document.querySelector('.markdown-content')
   if (!contentEl) return
@@ -87,21 +87,26 @@ const initCodeBlockScroll = () => {
       const target = wheelEvent.currentTarget as HTMLElement
 
       // 获取滚动方向和距离
-      const { deltaX } = wheelEvent
+      const { deltaX, deltaY, shiftKey } = wheelEvent
       const { scrollLeft, scrollWidth, clientWidth } = target
 
       // 检查横向滚动边界
       const atLeft = scrollLeft === 0
       const atRight = scrollLeft + clientWidth >= scrollWidth - 1
 
-      // 判断是否需要阻止默认行为（仅处理横向滚动）
+      // 判断是否需要阻止默认行为
       let shouldPrevent = false
 
-      // 处理横向滚动
-      if (Math.abs(deltaX) > 0) {
+      // 处理横向滚动（原生横向滚动或shift+纵向滚动）
+      if (Math.abs(deltaX) > 0 || shiftKey) {
+        const scrollAmount = shiftKey ? deltaY : deltaX
         // 向左滚动且未到最左，或向右滚动且未到最右
-        if ((deltaX < 0 && !atLeft) || (deltaX > 0 && !atRight)) {
+        if ((scrollAmount < 0 && !atLeft) || (scrollAmount > 0 && !atRight)) {
           shouldPrevent = true
+          // shift+滚轮时，手动处理横向滚动
+          if (shiftKey) {
+            target.scrollLeft += deltaY
+          }
         }
       }
 
