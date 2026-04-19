@@ -560,6 +560,14 @@ func (s *CommentService) getTargetTitle(targetType, targetKey string) string {
 		}
 		return "未知页面"
 
+	case "moment":
+		// 动态
+		return "动态"
+
+	case "guestbook":
+		// 留言
+		return "留言"
+
 	default:
 		return "未知类型"
 	}

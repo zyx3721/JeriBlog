@@ -13,6 +13,7 @@ package repository
 
 import (
 	"context"
+	"strings"
 
 	"flec_blog/internal/model"
 
@@ -120,9 +121,8 @@ func (r *CommentRepository) List(ctx context.Context, offset, limit int, keyword
 			Joins("LEFT JOIN articles ON comments.target_type = 'article' AND articles.slug = comments.target_key")
 
 		// 基础搜索条件
-		conditions := "comments.content LIKE ? OR users.nickname LIKE ? OR users.email LIKE ? OR articles.title LIKE ? OR comments.target_type LIKE ?"
+		conditions := "comments.content LIKE ? OR users.nickname LIKE ? OR users.email LIKE ? OR articles.title LIKE ?"
 		args := []interface{}{
-			"%" + keyword + "%",
 			"%" + keyword + "%",
 			"%" + keyword + "%",
 			"%" + keyword + "%",
@@ -133,6 +133,11 @@ func (r *CommentRepository) List(ctx context.Context, offset, limit int, keyword
 		if englishType, ok := typeMap[keyword]; ok {
 			conditions += " OR comments.target_type = ?"
 			args = append(args, englishType)
+		}
+
+		// 特殊处理："文章已删除" - 搜索 target_type='article' 且文章不存在的评论
+		if keyword == "文章已删除" || strings.Contains(keyword, "已删除") {
+			conditions += " OR (comments.target_type = 'article' AND articles.id IS NULL)"
 		}
 
 		query = query.Where(conditions, args...)
