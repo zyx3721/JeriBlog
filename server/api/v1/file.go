@@ -19,7 +19,6 @@ import (
 	"flec_blog/internal/dto"
 	"flec_blog/internal/service"
 	"flec_blog/pkg/errcode"
-	"flec_blog/pkg/logger"
 	"flec_blog/pkg/response"
 	"flec_blog/pkg/upload"
 
@@ -225,18 +224,13 @@ func (ctrl *FileController) Get(c *gin.Context) {
 func (ctrl *FileController) Delete(c *gin.Context) {
 	idStr := c.Param("id")
 
-	// 记录请求参数，便于调试
-	logger.Info("收到删除文件请求，ID参数: %s", idStr)
-
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		logger.Warn("文件ID解析失败: %s, 错误: %v", idStr, err)
 		response.Error(c, errcode.InvalidParams.WithDetails("文件ID格式错误: "+err.Error()))
 		return
 	}
 
 	if err := ctrl.fileService.Delete(uint(id)); err != nil {
-		logger.Error("删除文件失败 [ID=%d]: %v", id, err)
 		if strings.Contains(err.Error(), "文件不存在") {
 			response.Error(c, errcode.FileNotFound)
 			return
@@ -249,6 +243,5 @@ func (ctrl *FileController) Delete(c *gin.Context) {
 		return
 	}
 
-	logger.Info("文件删除成功 [ID=%d]", id)
 	response.Success(c, nil)
 }

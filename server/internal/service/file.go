@@ -70,8 +70,6 @@ func NewFileUsageChecker(
 
 // IsActuallyUsed 检查文件是否仍被业务引用
 func (c *FileUsageChecker) IsActuallyUsed(fileURL string) (bool, string, error) {
-	logger.Info("开始检查文件引用: %s", fileURL)
-
 	checks := []struct {
 		name string
 		fn   func(string) (bool, error)
@@ -95,7 +93,6 @@ func (c *FileUsageChecker) IsActuallyUsed(fileURL string) (bool, string, error) 
 			logger.Error("检查文件引用失败 [%s]: %v", check.name, err)
 			return false, "", err
 		}
-		logger.Info("检查 [%s]: %v", check.name, used)
 		if used {
 			logger.Info("文件被引用 [%s]: %s", check.name, fileURL)
 			return true, check.name, nil
@@ -300,25 +297,18 @@ func (s *FileService) Get(id uint) (*dto.FileResponse, error) {
 
 // Delete 删除文件
 func (s *FileService) Delete(id uint) error {
-	logger.Info("开始删除文件 [ID=%d]", id)
-
 	file, err := s.fileRepo.Get(id)
 	if err != nil {
-		logger.Warn("文件不存在 [ID=%d]: %v", id, err)
 		return fmt.Errorf("文件不存在: %w", err)
 	}
-
-	logger.Info("文件信息 [ID=%d, URL=%s, Type=%s, Path=%s]", id, file.FileURL, file.UploadType, file.FilePath)
 
 	// 检查文件是否被引用
 	if s.usageChecker != nil {
 		used, source, err := s.usageChecker.IsActuallyUsed(file.FileURL)
 		if err != nil {
-			logger.Error("检查文件引用失败 [ID=%d, URL=%s]: %v", id, file.FileURL, err)
 			return fmt.Errorf("检查文件引用失败: %w", err)
 		}
 		if used {
-			logger.Warn("文件正在被使用，无法删除 [ID=%d, Source=%s]", id, source)
 			return fmt.Errorf("文件正在被使用，无法删除 (引用来源: %s)", source)
 		}
 	}
@@ -326,31 +316,22 @@ func (s *FileService) Delete(id uint) error {
 	// 检查是否有其他文件记录使用相同的 URL
 	otherFilesExist, err := s.fileRepo.ExistsByURLExcludingID(file.FileURL, id)
 	if err != nil {
-		logger.Error("检查文件记录失败 [ID=%d]: %v", id, err)
 		return fmt.Errorf("检查文件记录失败: %w", err)
 	}
 
 	// 只有当没有其他文件记录使用相同 URL 时，才删除物理文件
 	if !otherFilesExist {
-		logger.Info("准备删除物理文件 [Path=%s, StorageType=%s]", file.FilePath, file.StorageType)
 		if err := s.uploadManager.DeleteFileByStorageType(file.FilePath, file.StorageType); err != nil {
 			// 对于默认头像等系统生成的文件，如果物理文件不存在，只记录警告，不阻止删除数据库记录
-			logger.Warn("删除物理文件失败 [ID=%d, Path=%s]: %v", id, file.FilePath, err)
-			// 继续执行，删除数据库记录
-		} else {
-			logger.Info("物理文件删除成功 [Path=%s]", file.FilePath)
+			return fmt.Errorf("删除存储文件失败: %w", err)
 		}
-	} else {
-		logger.Info("其他文件记录使用相同URL，跳过物理文件删除 [URL=%s]", file.FileURL)
 	}
 
 	// 删除数据库记录
 	if err := s.fileRepo.Delete(id); err != nil {
-		logger.Error("删除文件记录失败 [ID=%d]: %v", id, err)
 		return fmt.Errorf("删除文件记录失败: %w", err)
 	}
 
-	logger.Info("文件删除成功 [ID=%d]", id)
 	return nil
 }
 
