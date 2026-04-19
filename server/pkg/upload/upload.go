@@ -291,6 +291,7 @@ func (m *Manager) SaveFileData(data []byte, fileHash string, originalName string
 		FileType:     fileType,
 		FileHash:     fileHash,
 		UploadType:   uploadType,
+		StorageType:  m.config.Upload.StorageType,
 		UserID:       userID,
 		UploadTime:   time.Now(),
 		FileURL:      m.storage.GetURL(filePath, host),
