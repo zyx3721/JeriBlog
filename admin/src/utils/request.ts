@@ -138,8 +138,9 @@ request.interceptors.response.use(
       }
     }
     
-    // 其他错误直接返回
-    return Promise.reject(error)
+    // 其他错误：尝试提取后端返回的错误信息
+    const message = error.response?.data?.message || error.message || '请求失败'
+    return Promise.reject(new Error(message))
   }
 )
 
