@@ -56,7 +56,7 @@
 
     <el-table-column label="昵称" min-width="130" align="center">
       <template #default="{ row }">
-        <div style="display: flex; align-items: center; gap: 8px">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 8px">
           <span>{{ row.nickname }}</span>
           <el-tag v-if="row.badge" type="info" effect="plain" size="small">{{ row.badge }}</el-tag>
           <el-tag v-if="row.deleted_at" type="danger" size="small">已删除</el-tag>
@@ -219,6 +219,8 @@ const handleDelete = async (id: number) => {
     await ElMessageBox.confirm('确定要删除这个用户吗？', '提示', { type: 'warning' })
     await deleteUser(id)
     ElMessage.success('删除成功')
+    currentUser.value = null
+    dialogVisible.value = false
     fetchUsers()
   } catch (error) {
     if (error !== 'cancel' && error instanceof Error) ElMessage.error(error.message)

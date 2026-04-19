@@ -51,32 +51,9 @@ func (r *UserRepository) Update(user *model.User) error {
 	return r.db.Save(user).Error
 }
 
-// Delete 软删除用户
+// Delete 物理删除用户
 func (r *UserRepository) Delete(id uint) error {
-	return r.db.Transaction(func(tx *gorm.DB) error {
-		// 获取用户信息
-		var user model.User
-		if err := tx.First(&user, id).Error; err != nil {
-			return err
-		}
-
-		// 生成短随机后缀
-		suffix := random.Code(4)
-
-		// 更新邮箱，避免唯一索引冲突
-		user.Email = user.Email + "_" + suffix
-		user.Avatar = ""
-		user.IsEnabled = false
-		user.Password = ""
-
-		// 保存更新
-		if err := tx.Save(&user).Error; err != nil {
-			return err
-		}
-
-		// 软删除
-		return tx.Delete(&model.User{}, id).Error
-	})
+	return r.db.Unscoped().Delete(&model.User{}, id).Error
 }
 
 // ============ 查询方法 ============
@@ -148,6 +125,7 @@ func (r *UserRepository) List(offset, limit int, keyword string, role model.User
 // ExistsByAvatar 检查是否有用户头像引用该文件
 func (r *UserRepository) ExistsByAvatar(url string) (bool, error) {
 	var count int64
+	// 只查询未删除的用户，已删除用户的头像不算"正在使用"
 	err := r.db.Model(&model.User{}).Where("avatar = ?", url).Count(&count).Error
 	return count > 0, err
 }
