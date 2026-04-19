@@ -285,6 +285,9 @@ const handleReply = async () => {
 // 获取目标类型显示文本
 const getTargetTypeText = (type: string) => {
   const typeMap: Record<string, string> = {
+    article: '文章',
+    moment: '动态',
+    guestbook: '留言',
     page: '页面'
   }
   return typeMap[type] || type

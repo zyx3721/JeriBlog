@@ -107,10 +107,35 @@ func (r *CommentRepository) List(ctx context.Context, offset, limit int, keyword
 
 	// 关键词搜索：评论内容、用户昵称、用户邮箱、文章标题、评论来源类型
 	if keyword != "" {
+		// 中文类型映射
+		typeMap := map[string]string{
+			"文章": "article",
+			"动态": "moment",
+			"留言": "guestbook",
+			"页面": "page",
+		}
+
+		// 构建搜索条件
 		query = query.Joins("LEFT JOIN users ON users.id = comments.user_id").
-			Joins("LEFT JOIN articles ON comments.target_type = 'article' AND articles.slug = comments.target_key").
-			Where("comments.content LIKE ? OR users.nickname LIKE ? OR users.email LIKE ? OR articles.title LIKE ? OR comments.target_type LIKE ?",
-				"%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%")
+			Joins("LEFT JOIN articles ON comments.target_type = 'article' AND articles.slug = comments.target_key")
+
+		// 基础搜索条件
+		conditions := "comments.content LIKE ? OR users.nickname LIKE ? OR users.email LIKE ? OR articles.title LIKE ? OR comments.target_type LIKE ?"
+		args := []interface{}{
+			"%" + keyword + "%",
+			"%" + keyword + "%",
+			"%" + keyword + "%",
+			"%" + keyword + "%",
+			"%" + keyword + "%",
+		}
+
+		// 如果关键词匹配中文类型，添加对应的英文类型搜索
+		if englishType, ok := typeMap[keyword]; ok {
+			conditions += " OR comments.target_type = ?"
+			args = append(args, englishType)
+		}
+
+		query = query.Where(conditions, args...)
 	}
 
 	// 状态过滤
