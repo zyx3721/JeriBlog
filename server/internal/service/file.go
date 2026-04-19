@@ -311,9 +311,17 @@ func (s *FileService) Delete(id uint) error {
 		}
 	}
 
-	// 根据文件的存储类型删除物理文件
-	if err := s.uploadManager.DeleteFileByStorageType(file.FilePath, file.StorageType); err != nil {
-		return fmt.Errorf("删除存储文件失败: %w", err)
+	// 检查是否有其他文件记录使用相同的 URL
+	otherFilesExist, err := s.fileRepo.ExistsByURLExcludingID(file.FileURL, id)
+	if err != nil {
+		return fmt.Errorf("检查文件记录失败: %w", err)
+	}
+
+	// 只有当没有其他文件记录使用相同 URL 时，才删除物理文件
+	if !otherFilesExist {
+		if err := s.uploadManager.DeleteFileByStorageType(file.FilePath, file.StorageType); err != nil {
+			return fmt.Errorf("删除存储文件失败: %w", err)
+		}
 	}
 
 	// 删除数据库记录

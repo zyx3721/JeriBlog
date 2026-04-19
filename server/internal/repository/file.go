@@ -132,6 +132,15 @@ func (r *FileRepository) GetByStatus(status int) ([]model.File, error) {
 	return files, err
 }
 
+// ExistsByURLExcludingID 检查是否存在其他文件记录使用相同的URL（排除指定ID）
+func (r *FileRepository) ExistsByURLExcludingID(url string, excludeID uint) (bool, error) {
+	var count int64
+	err := r.db.Model(&model.File{}).
+		Where("file_url = ? AND id != ?", url, excludeID).
+		Count(&count).Error
+	return count > 0, err
+}
+
 // ============ 辅助方法 ============
 
 // UpdateStatus 更新文件使用状态
