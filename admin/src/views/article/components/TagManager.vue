@@ -51,7 +51,7 @@ import type { Tag } from '@/types/tag'
 
 const props = defineProps<{ modelValue: boolean }>()
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'success'])
 
 const visible = computed({
   get: () => props.modelValue,
@@ -96,6 +96,7 @@ async function remove(row: Tag) {
     await ElMessageBox.confirm('确定要删除这个标签吗？')
     await deleteTag(row.id)
     await loadData()
+    emit('success')
     ElMessage.success('删除成功')
   } catch { }
 }
@@ -114,6 +115,7 @@ async function save() {
     }
     await loadData()
     formVisible.value = false
+    emit('success')
     ElMessage.success('保存成功')
   } catch (err) {
     ElMessage.error('保存失败')

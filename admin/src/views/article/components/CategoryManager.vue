@@ -53,7 +53,7 @@ import { ElMessage, ElMessageBox, ElLoading } from 'element-plus'
 import { getCategories, createCategory, updateCategory, deleteCategory } from '@/api/category'
 import type { Category } from '@/types/category'
 const props = defineProps<{ modelValue: boolean }>()
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'success'])
 
 const visible = computed({
   get: () => props.modelValue,
@@ -98,6 +98,7 @@ async function remove(row: Category) {
     await ElMessageBox.confirm('确定要删除这个分类吗？')
     await deleteCategory(row.id)
     await loadData()
+    emit('success')
     ElMessage.success('删除成功')
   } catch { }
 }
@@ -116,6 +117,7 @@ async function save() {
     }
     await loadData()
     formVisible.value = false
+    emit('success')
     ElMessage.success('保存成功')
   } catch (err) {
     ElMessage.error('保存失败')
