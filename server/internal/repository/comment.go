@@ -105,12 +105,12 @@ func (r *CommentRepository) List(ctx context.Context, offset, limit int, keyword
 	// 包含软删除的记录
 	query := r.db.WithContext(ctx).Unscoped().Model(&model.Comment{})
 
-	// 关键词搜索：评论内容、用户昵称、用户邮箱、文章标题
+	// 关键词搜索：评论内容、用户昵称、用户邮箱、文章标题、评论来源类型
 	if keyword != "" {
 		query = query.Joins("LEFT JOIN users ON users.id = comments.user_id").
 			Joins("LEFT JOIN articles ON comments.target_type = 'article' AND articles.slug = comments.target_key").
-			Where("comments.content LIKE ? OR users.nickname LIKE ? OR users.email LIKE ? OR articles.title LIKE ?",
-				"%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%")
+			Where("comments.content LIKE ? OR users.nickname LIKE ? OR users.email LIKE ? OR articles.title LIKE ? OR comments.target_type LIKE ?",
+				"%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%")
 	}
 
 	// 状态过滤
