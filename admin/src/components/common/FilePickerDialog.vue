@@ -183,7 +183,7 @@ const fetchFileList = async () => {
       const keyword = searchKeyword.value.trim().toLowerCase()
       const filtered = fileList.value.filter(file =>
         file.original_name.toLowerCase().includes(keyword) ||
-        file.filename.toLowerCase().includes(keyword)
+        file.file_name.toLowerCase().includes(keyword)
       )
       fileList.value = filtered
       total.value = filtered.length
