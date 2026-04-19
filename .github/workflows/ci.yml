@@ -9,20 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       packages: write
-
-    strategy:
-      matrix:
-        target: [admin, blog, server]
-        include:
-          - target: admin
-            image_name: flec-admin
-            context: ./admin
-          - target: blog
-            image_name: flec-blog
-            context: ./blog
-          - target: server
-            image_name: flec-server
-            context: ./server
+      contents: write
 
     steps:
       - uses: actions/checkout@v6
@@ -38,7 +25,7 @@ jobs:
       - name: 生成标签
         id: tags
         run: |
-          IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image_name }}"
+          IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/jeriblog"
           VERSION=${GITHUB_REF#refs/tags/v}
           if [[ "$VERSION" =~ (alpha|beta|rc|pre) ]]; then
             echo "tags=${IMAGE}:${VERSION}" >> $GITHUB_OUTPUT
@@ -51,19 +38,17 @@ jobs:
           fi
 
       - name: 设置 Go 环境
-        if: matrix.target == 'server'
         uses: actions/setup-go@v6
         with:
           go-version: '1.25'
           cache-dependency-path: server/go.sum
 
       - name: 交叉编译多平台二进制文件
-        if: matrix.target == 'server'
         working-directory: server
         run: |
           VERSION=${GITHUB_REF#refs/tags/v}
           mkdir -p dist
-          
+
           prepare_package() {
             local pkg_dir=$1
             mkdir -p ${pkg_dir}
@@ -71,74 +56,58 @@ jobs:
             cp .env.example ${pkg_dir}/.env.example
             echo "请将 .env.example 复制为 .env 并配置相关参数" > ${pkg_dir}/README.txt
           }
-          
+
+          echo "🔨 编译 Linux AMD64..."
           GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w -X 'flec_blog/internal/service.AppVersion=${VERSION}'" -o flec-server ./cmd/main.go
           prepare_package "dist/linux_amd64"
           mv flec-server dist/linux_amd64/
           tar -czf dist/flec-server_${VERSION}_linux_amd64.tar.gz -C dist linux_amd64
           rm -rf dist/linux_amd64
-          
+
+          echo "🔨 编译 Linux ARM64..."
           GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-s -w -X 'flec_blog/internal/service.AppVersion=${VERSION}'" -o flec-server ./cmd/main.go
           prepare_package "dist/linux_arm64"
           mv flec-server dist/linux_arm64/
           tar -czf dist/flec-server_${VERSION}_linux_arm64.tar.gz -C dist linux_arm64
           rm -rf dist/linux_arm64
-          
+
+          echo "🔨 编译 macOS AMD64..."
           GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w -X 'flec_blog/internal/service.AppVersion=${VERSION}'" -o flec-server ./cmd/main.go
           prepare_package "dist/darwin_amd64"
           mv flec-server dist/darwin_amd64/
           tar -czf dist/flec-server_${VERSION}_darwin_amd64.tar.gz -C dist darwin_amd64
           rm -rf dist/darwin_amd64
-          
+
+          echo "🔨 编译 macOS ARM64..."
           GOOS=darwin GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-s -w -X 'flec_blog/internal/service.AppVersion=${VERSION}'" -o flec-server ./cmd/main.go
           prepare_package "dist/darwin_arm64"
           mv flec-server dist/darwin_arm64/
           tar -czf dist/flec-server_${VERSION}_darwin_arm64.tar.gz -C dist darwin_arm64
           rm -rf dist/darwin_arm64
-          
+
+          echo "🔨 编译 Windows AMD64..."
           GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w -X 'flec_blog/internal/service.AppVersion=${VERSION}'" -o flec-server.exe ./cmd/main.go
           prepare_package "dist/windows_amd64"
           mv flec-server.exe dist/windows_amd64/
           cd dist && zip -r flec-server_${VERSION}_windows_amd64.zip windows_amd64 && cd ..
           rm -rf dist/windows_amd64
-          
+
+          echo "📝 生成校验和..."
           cd dist
           sha256sum *.tar.gz *.zip > checksums.txt
           cd ..
 
+          echo "✅ 编译完成"
+
       - name: 构建并推送 Docker 镜像
         uses: docker/build-push-action@v7
         with:
-          context: ${{ matrix.context }}
+          context: .
+          file: ./deploy/Dockerfile
           push: true
           tags: ${{ steps.tags.outputs.tags }}
           build-args: |
             APP_VERSION=${{ github.ref_name }}
-
-      - name: 上传构建产物
-        if: matrix.target == 'server'
-        uses: actions/upload-artifact@v4
-        with:
-          name: server-dist
-          path: server/dist/
-          retention-days: 1
-
-  release:
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - name: 下载构建产物
-        uses: actions/download-artifact@v4
-        with:
-          name: server-dist
-          path: server/dist/
 
       - name: 生成 Changelog
         id: changelog
@@ -159,7 +128,7 @@ jobs:
           fi
 
           cat > release_notes.md << EOF
-          ## 🎉 版本 ${VERSION} 发布
+          ## 🎉 JeriBlog v${VERSION} 发布
 
           ### 📋 构建信息
           - **版本**: v${VERSION}
@@ -169,10 +138,20 @@ jobs:
           ### 📝 更新内容
           ${COMMITS}
 
-          ### 📦 Docker 镜像
-          - 管理端: \`${{ secrets.DOCKERHUB_USERNAME }}/flec-admin:${VERSION}\`
-          - 博客端: \`${{ secrets.DOCKERHUB_USERNAME }}/flec-blog:${VERSION}\`
-          - 服务端: \`${{ secrets.DOCKERHUB_USERNAME }}/flec-server:${VERSION}\`
+          ### 🐳 Docker 镜像
+          \`\`\`bash
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/jeriblog:${VERSION}
+          \`\`\`
+
+          ### 📦 二进制下载
+          - Linux AMD64: \`flec-server_${VERSION}_linux_amd64.tar.gz\`
+          - Linux ARM64: \`flec-server_${VERSION}_linux_arm64.tar.gz\`
+          - macOS AMD64: \`flec-server_${VERSION}_darwin_amd64.tar.gz\`
+          - macOS ARM64: \`flec-server_${VERSION}_darwin_arm64.tar.gz\`
+          - Windows AMD64: \`flec-server_${VERSION}_windows_amd64.zip\`
+
+          ### 🔐 校验和
+          请下载 \`checksums.txt\` 验证文件完整性。
           EOF
 
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
