@@ -223,7 +223,7 @@ func (r *ArticleRepository) CountByTag(tagID uint, onlyPublished bool) (int64, e
 // ============ 基础CRUD ============
 
 // List 获取文章列表
-func (r *ArticleRepository) List(offset, limit int, keyword string, categoryID uint, status string) ([]model.Article, int64, error) {
+func (r *ArticleRepository) List(offset, limit int, keyword string, categoryID uint, tagID uint, status string) ([]model.Article, int64, error) {
 	var articles []model.Article
 	var total int64
 
@@ -237,6 +237,13 @@ func (r *ArticleRepository) List(offset, limit int, keyword string, categoryID u
 	// 分类筛选
 	if categoryID > 0 {
 		query = query.Where("category_id = ?", categoryID)
+	}
+
+	// 标签筛选
+	if tagID > 0 {
+		query = query.Joins("JOIN article_tags ON article_tags.article_id = articles.id").
+			Where("article_tags.tag_id = ?", tagID).
+			Distinct()
 	}
 
 	// 状态筛选

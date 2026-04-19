@@ -361,7 +361,7 @@ func (s *ArticleService) GetBySlug(ctx context.Context, slug string) (*dto.Artic
 // List 获取文章列表
 func (s *ArticleService) List(ctx context.Context, req *dto.ListArticlesRequest) ([]dto.ArticleListResponse, int64, error) {
 	offset := (req.Page - 1) * req.PageSize
-	articles, total, err := s.articleRepo.List(offset, req.PageSize, req.Keyword, req.CategoryID, req.Status)
+	articles, total, err := s.articleRepo.List(offset, req.PageSize, req.Keyword, req.CategoryID, req.TagID, req.Status)
 	if err != nil {
 		return nil, 0, err
 	}

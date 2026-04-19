@@ -22,5 +22,6 @@ export interface PaginationQuery {
     page_size: number
     keyword?: string        // 搜索关键词（标题）
     category_id?: number    // 分类ID
+    tag_id?: number         // 标签ID
     status?: string         // 状态：all-全部, published-已发布, draft-草稿
 }

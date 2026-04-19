@@ -27,6 +27,7 @@ type ListArticlesRequest struct {
 	Tag        string `form:"tag"`
 	Keyword    string `form:"keyword"`      // 搜索关键词（标题）
 	CategoryID uint   `form:"category_id"`  // 分类ID
+	TagID      uint   `form:"tag_id"`       // 标签ID
 	Status     string `form:"status"`       // 状态：published-已发布, draft-草稿
 }
 
