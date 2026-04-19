@@ -42,7 +42,7 @@
                 </div>
 
                 <!-- 表格 - 完全由外部控制 -->
-                <el-table v-else :data="data" border style="width: 100%; height: 100%" v-bind="$attrs">
+                <el-table v-else :data="data" border style="width: 100%; height: 100%" v-bind="$attrs" :row-key="rowKey">
                     <slot />
                 </el-table>
             </div>
@@ -70,6 +70,7 @@ withDefaults(defineProps<{
     showPagination?: boolean
     showCreate?: boolean
     createText?: string
+    rowKey?: string
 }>(), {
     loading: false,
     total: 0,
@@ -77,7 +78,8 @@ withDefaults(defineProps<{
     pageSize: 10,
     showPagination: true,
     showCreate: true,
-    createText: '新增'
+    createText: '新增',
+    rowKey: 'id'
 })
 
 defineEmits<{
