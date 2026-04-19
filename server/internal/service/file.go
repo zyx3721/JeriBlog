@@ -90,11 +90,11 @@ func (c *FileUsageChecker) IsActuallyUsed(fileURL string) (bool, string, error) 
 	for _, check := range checks {
 		used, err := check.fn(fileURL)
 		if err != nil {
-			logger.Errorf("检查文件引用失败 [%s]: %v", check.name, err)
+			logger.Error("检查文件引用失败 [%s]: %v", check.name, err)
 			return false, "", err
 		}
 		if used {
-			logger.Infof("文件被引用 [%s]: %s", check.name, fileURL)
+			logger.Info("文件被引用 [%s]: %s", check.name, fileURL)
 			return true, check.name, nil
 		}
 	}
