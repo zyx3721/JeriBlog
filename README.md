@@ -255,6 +255,31 @@ r.SetTrustedProxies([]string{
 - 本地视频需要先上传到服务器或使用在线视频链接
 - 视频会自动适配响应式布局，支持移动端播放
 
+### 1.7.3 Swagger 文档生成
+
+后端使用 Swagger 自动生成 API 文档。当修改 API 接口注释后，需要重新生成文档。
+
+**生成命令**：
+
+```bash
+# 进入 server 目录
+cd server
+
+# 生成 Swagger 文档
+swag init -g cmd/main.go -o docs --parseDependency --parseInternal
+```
+
+**参数说明**：
+- `-g cmd/main.go`：指定主入口文件
+- `-o docs`：指定文档输出目录
+- `--parseDependency`：解析依赖包中的类型定义
+- `--parseInternal`：解析 internal 包中的类型定义
+
+**注意事项**：
+- 修改 API 注释后必须重新生成文档
+- 确保注释中引用的类型已正确导入
+- 生成的文档文件位于 `server/docs/` 目录
+
 # 二、环境要求
 
 | 依赖       | 版本要求            |
@@ -1187,16 +1212,21 @@ systemctl reload nginx
 
 以下为接口速查表，按模块分组列出所有路由。
 
-## 6.1 订阅源
+## 6.1 基础路由
+
+- `GET /` - 根路径欢迎页面（返回服务运行状态）
+- `GET /swagger/*any` - Swagger API 文档
+
+## 6.2 订阅源
 
 - `GET /atom.xml` - Atom 订阅源
 - `GET /rss.xml` - RSS 2.0 订阅源
 
-## 6.2 前台公开接口
+## 6.3 前台公开接口
 
 基础路径：`/api/v1`
 
-### 6.2.1 站点配置与统计
+### 6.3.1 站点配置与统计
 
 - `GET /api/v1/health` - 服务健康检查（返回服务及数据库连接状态）
 - `GET /api/v1/settings/:group` - 获取公开配置分组
@@ -1204,7 +1234,7 @@ systemctl reload nginx
 - `GET /api/v1/stats/site` - 网站统计信息
 - `GET /api/v1/stats/archives` - 文章归档数据
 
-### 6.2.2 用户认证
+### 6.3.2 用户认证
 
 - `POST /api/v1/auth/register` - 用户注册
 - `POST /api/v1/auth/login` - 用户登录
@@ -1215,7 +1245,7 @@ systemctl reload nginx
 - `GET /api/v1/auth/:provider` - OAuth 第三方登录
 - `GET /api/v1/auth/:provider/callback` - OAuth 回调
 
-### 6.2.3 用户信息（需登录）
+### 6.3.3 用户信息（需登录）
 
 - `GET /api/v1/user/profile` - 获取当前用户信息
 - `PATCH /api/v1/user/profile` - 更新当前用户信息
@@ -1224,67 +1254,67 @@ systemctl reload nginx
 - `DELETE /api/v1/user/deactivate` - 注销账号
 - `DELETE /api/v1/user/oauth/:provider` - 解绑第三方账号
 
-### 6.2.4 文章
+### 6.3.4 文章
 
 - `GET /api/v1/articles` - 获取文章列表
 - `GET /api/v1/articles/search` - 搜索文章
 - `GET /api/v1/articles/:slug` - 获取文章详情
 
-### 6.2.5 标签
+### 6.3.5 标签
 
 - `GET /api/v1/tags` - 获取标签列表
 - `GET /api/v1/tags/:slug` - 获取标签详情
 
-### 6.2.6 分类
+### 6.3.6 分类
 
 - `GET /api/v1/categories` - 获取分类列表
 - `GET /api/v1/categories/:slug` - 获取分类详情
 
-### 6.2.7 友链
+### 6.3.7 友链
 
 - `GET /api/v1/friends` - 获取友链列表
 - `POST /api/v1/friends/apply` - 申请友链（需登录）
 
-### 6.2.8 动态
+### 6.3.8 动态
 
 - `GET /api/v1/moments` - 获取动态列表
 
-### 6.2.9 菜单
+### 6.3.9 菜单
 
 - `GET /api/v1/menus` - 获取菜单树
 
-### 6.2.10 评论
+### 6.3.10 评论
 
 - `GET /api/v1/comments` - 获取评论列表
-- `POST /api/v1/comments` - 发表评论
+- `POST /api/v1/comments` - 发表评论（支持匿名和登录用户）
 - `PUT /api/v1/comments/:id` - 更新评论（需登录）
 - `DELETE /api/v1/comments/:id` - 删除评论（需登录）
 
-### 6.2.11 通知（需登录）
+### 6.3.11 通知（需登录）
 
 - `GET /api/v1/notifications` - 获取通知列表
 - `PUT /api/v1/notifications/:id/read` - 标记已读
 - `PUT /api/v1/notifications/read-all` - 全部标记已读
 
-### 6.2.12 文件上传
+### 6.3.12 文件上传
 
-- `POST /api/v1/upload` - 上传文件
+- `POST /api/v1/upload` - 上传文件（支持匿名和登录用户）
 
-### 6.2.13 反馈投诉
+### 6.3.13 反馈投诉
 
 - `POST /api/v1/feedback` - 提交反馈
 - `GET /api/v1/feedback/ticket/:ticket_no` - 查询工单状态
 
-### 6.2.14 邮件订阅
+### 6.3.14 邮件订阅
 
 - `POST /api/v1/subscribe` - 订阅邮件通知
 - `GET /api/v1/subscribe/unsubscribe` - 退订邮件通知
 
-## 6.3 后台管理接口
+## 6.4 后台管理接口
 
 基础路径：`/api/v1/admin`，所有接口需携带管理员 JWT Token。
 
-### 6.3.1 用户管理
+### 6.4.1 用户管理
 
 - `GET /api/v1/admin/users` - 获取用户列表
 - `GET /api/v1/admin/users/:id` - 获取用户详情
@@ -1292,7 +1322,7 @@ systemctl reload nginx
 - `PUT /api/v1/admin/users/:id` - 更新用户信息
 - `DELETE /api/v1/admin/users/:id` - 删除用户
 
-### 6.3.2 文章管理
+### 6.4.2 文章管理
 
 - `GET /api/v1/admin/articles` - 获取文章列表
 - `GET /api/v1/admin/articles/:id` - 获取文章详情
@@ -1303,7 +1333,7 @@ systemctl reload nginx
 - `POST /api/v1/admin/articles/:id/wechat/export` - 导出到微信公众号
 - `GET /api/v1/admin/articles/:id/download/zip` - 下载为 Markdown 压缩包
 
-### 6.3.3 标签管理
+### 6.4.3 标签管理
 
 - `GET /api/v1/admin/tags` - 获取标签列表
 - `GET /api/v1/admin/tags/:id` - 获取标签详情
@@ -1311,7 +1341,7 @@ systemctl reload nginx
 - `PUT /api/v1/admin/tags/:id` - 更新标签
 - `DELETE /api/v1/admin/tags/:id` - 删除标签
 
-### 6.3.4 分类管理
+### 6.4.4 分类管理
 
 - `GET /api/v1/admin/categories` - 获取分类列表
 - `GET /api/v1/admin/categories/:id` - 获取分类详情
@@ -1319,7 +1349,7 @@ systemctl reload nginx
 - `PUT /api/v1/admin/categories/:id` - 更新分类
 - `DELETE /api/v1/admin/categories/:id` - 删除分类
 
-### 6.3.5 友链管理
+### 6.4.5 友链管理
 
 - `GET /api/v1/admin/friends/types` - 获取友链类型列表
 - `GET /api/v1/admin/friends/types/:id` - 获取类型详情
@@ -1332,7 +1362,7 @@ systemctl reload nginx
 - `PUT /api/v1/admin/friends/:id` - 更新友链
 - `DELETE /api/v1/admin/friends/:id` - 删除友链
 
-### 6.3.6 动态管理
+### 6.4.6 动态管理
 
 - `GET /api/v1/admin/moments` - 获取动态列表
 - `GET /api/v1/admin/moments/:id` - 获取动态详情
@@ -1340,7 +1370,7 @@ systemctl reload nginx
 - `PUT /api/v1/admin/moments/:id` - 更新动态
 - `DELETE /api/v1/admin/moments/:id` - 删除动态
 
-### 6.3.7 评论管理
+### 6.4.7 评论管理
 
 - `GET /api/v1/admin/comments` - 获取评论列表
 - `GET /api/v1/admin/comments/:id` - 获取评论详情
@@ -1350,14 +1380,14 @@ systemctl reload nginx
 - `DELETE /api/v1/admin/comments/:id` - 删除评论
 - `POST /api/v1/admin/comments/import` - 导入评论（支持 Artalk 等格式）
 
-### 6.3.8 文件管理
+### 6.4.8 文件管理
 
 - `GET /api/v1/admin/files` - 获取文件列表
 - `GET /api/v1/admin/files/:id` - 获取文件详情
 - `POST /api/v1/admin/files` - 上传文件
 - `DELETE /api/v1/admin/files/:id` - 删除文件
 
-### 6.3.9 统计管理
+### 6.4.9 统计管理
 
 - `GET /api/v1/admin/stats/dashboard` - 获取仪表盘统计数据
 - `GET /api/v1/admin/stats/trend` - 获取访问趋势（支持按天/周/月聚合）
@@ -1366,7 +1396,7 @@ systemctl reload nginx
 - `GET /api/v1/admin/stats/contribution` - 获取文章贡献数据
 - `GET /api/v1/admin/stats/visits` - 获取访问日志列表
 
-### 6.3.10 菜单管理
+### 6.4.10 菜单管理
 
 - `GET /api/v1/admin/menus` - 获取菜单树
 - `GET /api/v1/admin/menus/:id` - 获取菜单详情
@@ -1374,49 +1404,49 @@ systemctl reload nginx
 - `PUT /api/v1/admin/menus/:id` - 更新菜单
 - `DELETE /api/v1/admin/menus/:id` - 删除菜单
 
-### 6.3.11 反馈管理
+### 6.4.11 反馈管理
 
 - `GET /api/v1/admin/feedback` - 获取反馈列表
 - `GET /api/v1/admin/feedback/:id` - 获取反馈详情
 - `PUT /api/v1/admin/feedback/:id` - 更新反馈
 - `DELETE /api/v1/admin/feedback/:id` - 删除反馈
 
-### 6.3.12 通知管理
+### 6.4.12 通知管理
 
 - `GET /api/v1/admin/notifications` - 获取通知列表
 - `PUT /api/v1/admin/notifications/:id/read` - 标记已读
 - `PUT /api/v1/admin/notifications/read-all` - 全部标记已读
 
-### 6.3.13 配置管理
+### 6.4.13 配置管理
 
 - `GET /api/v1/admin/settings/:group` - 获取指定分组配置
 - `PATCH /api/v1/admin/settings/:group` - 更新指定分组配置
 
-### 6.3.14 系统信息
+### 6.4.14 系统信息
 
 - `GET /api/v1/admin/system/static` - 获取系统静态信息（OS、Go 版本等）
 - `GET /api/v1/admin/system/dynamic` - 获取系统动态信息（CPU、内存等）
 
-### 6.3.15 管理工具
+### 6.4.15 管理工具
 
-- `POST /api/v1/admin/tools/parse-video` - 解析视频链接
-- `POST /api/v1/admin/tools/fetch-linkmeta` - 获取链接元数据
+- `POST /api/v1/admin/tools/parse-video` - 解析视频链接（B站、YouTube等）
+- `POST /api/v1/admin/tools/fetch-linkmeta` - 获取链接元数据（标题、描述、图标等）
 - `POST /api/v1/admin/tools/download-image` - 下载图片到服务器
 
-### 6.3.16 AI 功能
+### 6.4.16 AI 功能
 
 - `POST /api/v1/admin/ai/test` - 测试 AI 配置连通性
 - `POST /api/v1/admin/ai/summary` - 生成文章摘要
 - `POST /api/v1/admin/ai/ai-summary` - AI 智能摘要
 - `POST /api/v1/admin/ai/title` - AI 生成文章标题
 
-### 6.3.17 RSS 订阅管理
+### 6.4.17 RSS 订阅管理
 
 - `GET /api/v1/admin/rssfeed` - 获取 RSS 文章列表
-- `PUT /api/v1/admin/rssfeed/:id/read` - 标记文章已读（仅超级管理员）
-- `PUT /api/v1/admin/rssfeed/read-all` - 全部标记已读（仅超级管理员）
+- `PUT /api/v1/admin/rssfeed/:id/read` - 标记文章已读（需超级管理员权限）
+- `PUT /api/v1/admin/rssfeed/read-all` - 全部标记已读（需超级管理员权限）
 
-### 6.3.18 邮件订阅者管理
+### 6.4.18 邮件订阅者管理
 
 - `GET /api/v1/admin/subscribers` - 获取订阅者列表
 - `DELETE /api/v1/admin/subscribers/:id` - 删除订阅者
