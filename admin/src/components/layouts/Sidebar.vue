@@ -114,13 +114,10 @@ const handleMenuSelect = () => {
 const handleItemClick = (path: string) => {
   // 如果点击的是当前路由，则刷新页面
   if (route.path === path) {
-    // 通过改变路由的 query 参数来触发组件重新加载
-    router.replace({
-      path: path,
-      query: { _t: Date.now() }
-    }).then(() => {
-      // 立即移除 query 参数，保持 URL 干净
-      router.replace({ path: path })
+    // 先跳转到一个空路由，再跳回来，触发组件重新挂载
+    const currentPath = route.path
+    router.replace('/redirect').then(() => {
+      router.replace(currentPath)
     })
   }
 }

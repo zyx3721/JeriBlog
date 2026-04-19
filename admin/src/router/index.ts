@@ -31,6 +31,12 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '仪表盘', requiresAuth: true }
       },
       {
+        path: 'redirect',
+        name: 'Redirect',
+        component: () => import('@/views/Redirect.vue'),
+        meta: { title: '重定向', requiresAuth: true }
+      },
+      {
         path: 'articles',
         name: 'Articles',
         component: () => import('@/views/article/ArticleList.vue'),
