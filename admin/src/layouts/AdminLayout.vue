@@ -28,11 +28,7 @@
           <Header :layout-mode="layoutMode" :sidebar-collapsed="sidebarCollapsed" @toggle-sidebar="toggleSidebar" />
         </el-header>
         <el-main>
-          <router-view v-slot="{ Component }">
-            <keep-alive>
-              <component :is="Component" />
-            </keep-alive>
-          </router-view>
+          <router-view :key="$route.fullPath" />
         </el-main>
       </el-container>
     </el-container>
