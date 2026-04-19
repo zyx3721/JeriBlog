@@ -134,7 +134,7 @@ func (c *MomentController) Get(ctx *gin.Context) {
 //	@Produce		json
 //	@Security		BearerAuth
 //	@Param			request	body		dto.CreateMomentRequest	true	"动态信息"
-//	@Success		201		{object}	response.Response{data=model.Moment}
+//	@Success		201		{object}	response.Response{data=dto.MomentListResponse}
 //	@Failure		400		{object}	response.Response
 //	@Failure		401		{object}	response.Response
 //	@Failure		403		{object}	response.Response
