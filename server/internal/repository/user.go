@@ -124,8 +124,8 @@ func (r *UserRepository) List(offset, limit int, keyword string, role model.User
 // ExistsByAvatar 检查是否有用户头像引用该文件
 func (r *UserRepository) ExistsByAvatar(url string) (bool, error) {
 	var count int64
-	// 查询所有用户（包括已删除的），因为已删除用户的头像文件仍然存在
-	err := r.db.Unscoped().Model(&model.User{}).Where("avatar = ?", url).Count(&count).Error
+	// 只查询未删除的用户，已删除用户的头像文件可以删除
+	err := r.db.Model(&model.User{}).Where("avatar = ?", url).Count(&count).Error
 	return count > 0, err
 }
 

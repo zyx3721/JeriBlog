@@ -70,6 +70,8 @@ func NewFileUsageChecker(
 
 // IsActuallyUsed 检查文件是否仍被业务引用
 func (c *FileUsageChecker) IsActuallyUsed(fileURL string) (bool, string, error) {
+	logger.Info("开始检查文件引用: %s", fileURL)
+
 	checks := []struct {
 		name string
 		fn   func(string) (bool, error)
@@ -93,6 +95,7 @@ func (c *FileUsageChecker) IsActuallyUsed(fileURL string) (bool, string, error) 
 			logger.Error("检查文件引用失败 [%s]: %v", check.name, err)
 			return false, "", err
 		}
+		logger.Info("检查 [%s]: %v", check.name, used)
 		if used {
 			logger.Info("文件被引用 [%s]: %s", check.name, fileURL)
 			return true, check.name, nil
