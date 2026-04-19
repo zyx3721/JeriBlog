@@ -111,9 +111,14 @@ func (r *CommentRepository) List(ctx context.Context, offset, limit int, keyword
 		// 中文类型映射
 		typeMap := map[string]string{
 			"文章": "article",
-			"动态": "moment",
-			"留言": "guestbook",
 			"页面": "page",
+		}
+
+		// 页面标题映射（target_type='page' 时的 target_key）
+		pageKeyMap := map[string]string{
+			"留言": "message",
+			"动态": "moment",
+			"友链": "friend",
 		}
 
 		// 构建搜索条件
@@ -133,6 +138,17 @@ func (r *CommentRepository) List(ctx context.Context, offset, limit int, keyword
 		if englishType, ok := typeMap[keyword]; ok {
 			conditions += " OR comments.target_type = ?"
 			args = append(args, englishType)
+		}
+
+		// 如果关键词匹配页面标题，添加页面类型+key的搜索
+		if pageKey, ok := pageKeyMap[keyword]; ok {
+			conditions += " OR (comments.target_type = 'page' AND comments.target_key = ?)"
+			args = append(args, pageKey)
+		}
+
+		// 特殊处理："动态"可能是 target_type='moment' 或 target_type='page' AND target_key='moment'
+		if keyword == "动态" {
+			conditions += " OR comments.target_type = 'moment'"
 		}
 
 		// 特殊处理："文章已删除" - 搜索 target_type='article' 且文章不存在的评论
