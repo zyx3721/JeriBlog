@@ -12,7 +12,7 @@
 <template>
   <common-list title="文件管理" :data="fileList" :loading="loading" :total="total" :show-create="false"
     v-model:page="query.page" v-model:page-size="query.page_size" @refresh="loadList" @update:page="loadList"
-    @update:pageSize="loadList">
+    @update:pageSize="loadList" row-key="id">
     <!-- 搜索表单 -->
     <template #toolbar-before>
       <div class="search-form">
