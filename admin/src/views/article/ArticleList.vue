@@ -31,12 +31,25 @@
           style="width: 150px"
           @change="handleSearch"
         >
-          <el-option label="全部分类" :value="0" />
           <el-option
             v-for="category in categoryList"
             :key="category.id"
             :label="category.name"
             :value="category.id"
+          />
+        </el-select>
+        <el-select
+          v-model="queryParams.tag_id"
+          placeholder="标签"
+          clearable
+          style="width: 150px"
+          @change="handleSearch"
+        >
+          <el-option
+            v-for="tag in tagList"
+            :key="tag.id"
+            :label="tag.name"
+            :value="tag.id"
           />
         </el-select>
         <el-select
@@ -46,7 +59,6 @@
           style="width: 120px"
           @change="handleSearch"
         >
-          <el-option label="全部状态" value="" />
           <el-option label="已发布" value="published" />
           <el-option label="草稿" value="draft" />
         </el-select>
@@ -67,8 +79,8 @@
 
     <!-- 额外组件 -->
     <template #extra>
-      <category-manager v-model="categoryDialogVisible" />
-      <tag-manager v-model="tagDialogVisible" />
+      <category-manager v-model="categoryDialogVisible" @success="fetchCategories" />
+      <tag-manager v-model="tagDialogVisible" @success="fetchTags" />
     </template>
 
     <!-- 表格列 - 直接使用 el-table-column -->
@@ -261,9 +273,11 @@ import { View, ChatDotRound, Upload, EditPen, Loading } from '@element-plus/icon
 import CommonList from '@/components/common/CommonList.vue'
 import type { Article } from '@/types/article'
 import type { Category } from '@/types/category'
+import type { Tag } from '@/types/tag'
 import type { PaginationQuery } from '@/types/request'
 import { getArticles, deleteArticle, exportToWeChat, downloadArticleZip } from '@/api/article'
 import { getCategories } from '@/api/category'
+import { getTags } from '@/api/tag'
 import CategoryManager from './components/CategoryManager.vue'
 import TagManager from './components/TagManager.vue'
 import { formatDateTime } from '@/utils/date'
@@ -274,12 +288,14 @@ const categoryDialogVisible = ref(false)
 const tagDialogVisible = ref(false)
 const articleList = ref<Article[]>([])
 const categoryList = ref<Category[]>([])
+const tagList = ref<Tag[]>([])
 const total = ref(0)
 const queryParams = ref<PaginationQuery>({
   page: 1,
   page_size: 20,
   keyword: '',
   category_id: undefined,
+  tag_id: undefined,
   status: ''
 })
 
@@ -290,6 +306,16 @@ const fetchCategories = async () => {
     categoryList.value = result.list
   } catch {
     ElMessage.error('获取分类列表失败')
+  }
+}
+
+// 获取标签列表
+const fetchTags = async () => {
+  try {
+    const result = await getTags()
+    tagList.value = result.list
+  } catch {
+    ElMessage.error('获取标签列表失败')
   }
 }
 
@@ -322,6 +348,7 @@ const handleReset = () => {
     page_size: queryParams.value.page_size,
     keyword: '',
     category_id: undefined,
+    tag_id: undefined,
     status: ''
   }
   fetchArticles()
@@ -503,6 +530,7 @@ const copyRichText = async (html: string) => {
 
 onMounted(() => {
   fetchCategories()
+  fetchTags()
   fetchArticles()
 })
 </script>
