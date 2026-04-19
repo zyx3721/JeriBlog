@@ -222,20 +222,32 @@ func (ctrl *FileController) Get(c *gin.Context) {
 //	@Failure		404	{object}	response.Response
 //	@Router			/admin/files/{id} [delete]
 func (ctrl *FileController) Delete(c *gin.Context) {
-	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	idStr := c.Param("id")
+
+	// 记录请求参数，便于调试
+	logger.Info("收到删除文件请求，ID参数: %s", idStr)
+
+	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		response.Error(c, errcode.InvalidParams.WithDetails(err.Error()))
+		logger.Warn("文件ID解析失败: %s, 错误: %v", idStr, err)
+		response.Error(c, errcode.InvalidParams.WithDetails("文件ID格式错误: "+err.Error()))
 		return
 	}
 
 	if err := ctrl.fileService.Delete(uint(id)); err != nil {
+		logger.Error("删除文件失败 [ID=%d]: %v", id, err)
 		if strings.Contains(err.Error(), "文件不存在") {
 			response.Error(c, errcode.FileNotFound)
+			return
+		}
+		if strings.Contains(err.Error(), "正在被使用") {
+			response.Error(c, errcode.FileProcessError.WithDetails(err.Error()))
 			return
 		}
 		response.Error(c, errcode.FileProcessError.WithDetails(err.Error()))
 		return
 	}
 
+	logger.Info("文件删除成功 [ID=%d]", id)
 	response.Success(c, nil)
 }
