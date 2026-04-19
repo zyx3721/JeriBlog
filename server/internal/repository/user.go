@@ -13,7 +13,6 @@ package repository
 
 import (
 	"flec_blog/internal/model"
-	"flec_blog/pkg/random"
 	"time"
 
 	"gorm.io/gorm"
