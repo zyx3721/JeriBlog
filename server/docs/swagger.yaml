@@ -1,6 +1,6 @@
 basePath: /api/v1
 definitions:
-  dto.AIAISummaryRequest:
+  flec_blog_internal_dto.AIAISummaryRequest:
     properties:
       content:
         description: 文章内容
@@ -8,13 +8,13 @@ definitions:
     required:
     - content
     type: object
-  dto.AIAISummaryResponse:
+  flec_blog_internal_dto.AIAISummaryResponse:
     properties:
       summary:
         description: 生成的AI摘要
         type: string
     type: object
-  dto.AISummaryRequest:
+  flec_blog_internal_dto.AISummaryRequest:
     properties:
       content:
         description: 文章内容
@@ -22,13 +22,13 @@ definitions:
     required:
     - content
     type: object
-  dto.AISummaryResponse:
+  flec_blog_internal_dto.AISummaryResponse:
     properties:
       summary:
         description: 生成的摘要
         type: string
     type: object
-  dto.AITestRequest:
+  flec_blog_internal_dto.AITestRequest:
     properties:
       api_key:
         type: string
@@ -41,7 +41,7 @@ definitions:
     - base_url
     - model
     type: object
-  dto.AITitleRequest:
+  flec_blog_internal_dto.AITitleRequest:
     properties:
       content:
         description: 文章内容
@@ -49,13 +49,13 @@ definitions:
     required:
     - content
     type: object
-  dto.AITitleResponse:
+  flec_blog_internal_dto.AITitleResponse:
     properties:
       title:
         description: 生成的标题
         type: string
     type: object
-  dto.AdminCreateUserRequest:
+  flec_blog_internal_dto.AdminCreateUserRequest:
     properties:
       avatar:
         maxLength: 255
@@ -75,7 +75,7 @@ definitions:
         type: string
       role:
         allOf:
-        - $ref: '#/definitions/model.UserRole'
+        - $ref: '#/definitions/flec_blog_internal_model.UserRole'
         enum:
         - super_admin
         - admin
@@ -90,7 +90,7 @@ definitions:
     - password
     - role
     type: object
-  dto.AdminUpdateUserRequest:
+  flec_blog_internal_dto.AdminUpdateUserRequest:
     properties:
       avatar:
         maxLength: 255
@@ -114,7 +114,7 @@ definitions:
         type: string
       role:
         allOf:
-        - $ref: '#/definitions/model.UserRole'
+        - $ref: '#/definitions/flec_blog_internal_model.UserRole'
         enum:
         - super_admin
         - admin
@@ -124,7 +124,7 @@ definitions:
         maxLength: 255
         type: string
     type: object
-  dto.ApplyFriendRequest:
+  flec_blog_internal_dto.ApplyFriendRequest:
     properties:
       avatar:
         description: 网站头像/logo
@@ -152,7 +152,7 @@ definitions:
     - name
     - url
     type: object
-  dto.ArchiveItem:
+  flec_blog_internal_dto.ArchiveItem:
     properties:
       count:
         description: 文章数量
@@ -164,15 +164,15 @@ definitions:
         description: 年份
         type: string
     type: object
-  dto.ArchivesResponse:
+  flec_blog_internal_dto.ArchivesResponse:
     properties:
       archives:
         description: 归档列表
         items:
-          $ref: '#/definitions/dto.ArchiveItem'
+          $ref: '#/definitions/flec_blog_internal_dto.ArchiveItem'
         type: array
     type: object
-  dto.ArticleAdminDetailResponse:
+  flec_blog_internal_dto.ArticleAdminDetailResponse:
     properties:
       ai_summary:
         type: string
@@ -200,7 +200,9 @@ definitions:
       location:
         type: string
       publish_time:
-        $ref: '#/definitions/utils.JSONTime'
+        $ref: '#/definitions/flec_blog_pkg_utils.JSONTime'
+      slug:
+        type: string
       summary:
         type: string
       tags:
@@ -215,9 +217,9 @@ definitions:
       title:
         type: string
       update_time:
-        $ref: '#/definitions/utils.JSONTime'
+        $ref: '#/definitions/flec_blog_pkg_utils.JSONTime'
     type: object
-  dto.ArticleContribution:
+  flec_blog_internal_dto.ArticleContribution:
     properties:
       count:
         description: 文章发布数量
@@ -226,7 +228,7 @@ definitions:
         description: 日期 YYYY-MM-DD
         type: string
     type: object
-  dto.ArticleDetailResponse:
+  flec_blog_internal_dto.ArticleDetailResponse:
     properties:
       ai_summary:
         type: string
@@ -270,7 +272,7 @@ definitions:
             type: string
         type: object
       publish_time:
-        $ref: '#/definitions/utils.JSONTime'
+        $ref: '#/definitions/flec_blog_pkg_utils.JSONTime'
       slug:
         type: string
       summary:
@@ -289,13 +291,13 @@ definitions:
       title:
         type: string
       update_time:
-        $ref: '#/definitions/utils.JSONTime'
+        $ref: '#/definitions/flec_blog_pkg_utils.JSONTime'
       url:
         type: string
       view_count:
         type: integer
     type: object
-  dto.CategoryForWebResponse:
+  flec_blog_internal_dto.CategoryForWebResponse:
     properties:
       count:
         type: integer
@@ -312,7 +314,7 @@ definitions:
       url:
         type: string
     type: object
-  dto.CategoryStats:
+  flec_blog_internal_dto.CategoryStats:
     properties:
       count:
         description: 文章数量
@@ -321,7 +323,7 @@ definitions:
         description: 分类名称
         type: string
     type: object
-  dto.ChangePasswordRequest:
+  flec_blog_internal_dto.ChangePasswordRequest:
     properties:
       new_password:
         maxLength: 32
@@ -333,7 +335,7 @@ definitions:
     - new_password
     - old_password
     type: object
-  dto.CollectRequest:
+  flec_blog_internal_dto.CollectRequest:
     properties:
       article_id:
         description: 文章ID（可选）
@@ -373,14 +375,14 @@ definitions:
         description: 访问URL
         type: string
     type: object
-  dto.CommentListResponse:
+  flec_blog_internal_dto.CommentListResponse:
     properties:
       content:
         type: string
       created_at:
-        $ref: '#/definitions/utils.JSONTime'
+        $ref: '#/definitions/flec_blog_pkg_utils.JSONTime'
       deleted_at:
-        $ref: '#/definitions/utils.JSONTime'
+        $ref: '#/definitions/flec_blog_pkg_utils.JSONTime'
       id:
         type: integer
       parent_id:
@@ -412,7 +414,7 @@ definitions:
             type: string
         type: object
     type: object
-  dto.CommentResponse:
+  flec_blog_internal_dto.CommentResponse:
     properties:
       browser:
         description: 浏览器内核
@@ -420,9 +422,11 @@ definitions:
       content:
         type: string
       created_at:
-        $ref: '#/definitions/utils.JSONTime'
+        $ref: '#/definitions/flec_blog_pkg_utils.JSONTime'
       id:
         type: integer
+      is_deleted:
+        type: boolean
       location:
         description: 地理位置
         type: string
@@ -433,7 +437,7 @@ definitions:
         type: integer
       replies:
         items:
-          $ref: '#/definitions/dto.CommentResponse'
+          $ref: '#/definitions/flec_blog_internal_dto.CommentResponse'
         type: array
       reply_user:
         properties:
@@ -478,7 +482,7 @@ definitions:
             type: string
         type: object
     type: object
-  dto.CreateArticleRequest:
+  flec_blog_internal_dto.CreateArticleRequest:
     properties:
       category_id:
         type: integer
@@ -501,6 +505,9 @@ definitions:
       location:
         description: 发布地点
         type: string
+      slug:
+        description: 自定义 URL slug
+        type: string
       summary:
         type: string
       tag_ids:
@@ -513,7 +520,7 @@ definitions:
     - content
     - title
     type: object
-  dto.CreateCategoryRequest:
+  flec_blog_internal_dto.CreateCategoryRequest:
     properties:
       description:
         maxLength: 200
@@ -526,7 +533,7 @@ definitions:
     required:
     - name
     type: object
-  dto.CreateCommentRequest:
+  flec_blog_internal_dto.CreateCommentRequest:
     properties:
       content:
         maxLength: 500
@@ -556,7 +563,7 @@ definitions:
     - target_key
     - target_type
     type: object
-  dto.CreateFriendRequest:
+  flec_blog_internal_dto.CreateFriendRequest:
     properties:
       avatar:
         maxLength: 255
@@ -587,7 +594,7 @@ definitions:
     - name
     - url
     type: object
-  dto.CreateFriendTypeRequest:
+  flec_blog_internal_dto.CreateFriendTypeRequest:
     properties:
       is_visible:
         type: boolean
@@ -599,21 +606,21 @@ definitions:
     required:
     - name
     type: object
-  dto.CreateMomentRequest:
+  flec_blog_internal_dto.CreateMomentRequest:
     properties:
       content:
-        $ref: '#/definitions/dto.MomentContent'
+        $ref: '#/definitions/flec_blog_internal_dto.MomentContent'
       is_publish:
         description: 是否发布，默认true
         type: boolean
       publish_time:
         allOf:
-        - $ref: '#/definitions/utils.JSONTime'
+        - $ref: '#/definitions/flec_blog_pkg_utils.JSONTime'
         description: 发布时间（可选，不填则使用创建时间）
     required:
     - content
     type: object
-  dto.CreateTagRequest:
+  flec_blog_internal_dto.CreateTagRequest:
     properties:
       description:
         maxLength: 200
@@ -624,7 +631,7 @@ definitions:
     required:
     - name
     type: object
-  dto.DashboardStats:
+  flec_blog_internal_dto.DashboardStats:
     properties:
       comments_growth:
         description: 评论数增长率
@@ -672,14 +679,14 @@ definitions:
         description: 访客量增长率
         type: number
     type: object
-  dto.DeactivateAccountRequest:
+  flec_blog_internal_dto.DeactivateAccountRequest:
     properties:
       password:
         type: string
     required:
     - password
     type: object
-  dto.FeedbackResponse:
+  flec_blog_internal_dto.FeedbackResponse:
     properties:
       admin_reply:
         type: string
@@ -688,7 +695,7 @@ definitions:
         type: string
       feedback_time:
         allOf:
-        - $ref: '#/definitions/utils.JSONTime'
+        - $ref: '#/definitions/flec_blog_pkg_utils.JSONTime'
         description: 反馈时间
       form_content:
         description: 表单内容
@@ -698,7 +705,7 @@ definitions:
         type: string
       reply_time:
         allOf:
-        - $ref: '#/definitions/utils.JSONTime'
+        - $ref: '#/definitions/flec_blog_pkg_utils.JSONTime'
         description: 回复时间
       report_type:
         type: string
@@ -712,7 +719,7 @@ definitions:
       user_agent:
         type: string
     type: object
-  dto.FileResponse:
+  flec_blog_internal_dto.FileResponse:
     properties:
       file_name:
         type: string
@@ -730,32 +737,32 @@ definitions:
         description: 文件状态：0=未使用 1=使用中
         type: integer
       upload_time:
-        $ref: '#/definitions/utils.JSONTime'
+        $ref: '#/definitions/flec_blog_pkg_utils.JSONTime'
       upload_type:
         type: string
       user_id:
         type: integer
     type: object
-  dto.FileUploadForWebResponse:
+  flec_blog_internal_dto.FileUploadForWebResponse:
     properties:
       file_url:
         type: string
       original_name:
         type: string
     type: object
-  dto.ForgotPasswordRequest:
+  flec_blog_internal_dto.ForgotPasswordRequest:
     properties:
       email:
         type: string
     required:
     - email
     type: object
-  dto.FriendGroupResponse:
+  flec_blog_internal_dto.FriendGroupResponse:
     properties:
       friends:
         description: 该类型下的友链（已排序）
         items:
-          $ref: '#/definitions/dto.FriendInGroupResponse'
+          $ref: '#/definitions/flec_blog_internal_dto.FriendInGroupResponse'
         type: array
       type_id:
         description: 类型ID，未分类为 null
@@ -767,7 +774,7 @@ definitions:
         description: 类型排序值
         type: integer
     type: object
-  dto.FriendInGroupResponse:
+  flec_blog_internal_dto.FriendInGroupResponse:
     properties:
       avatar:
         type: string
@@ -787,12 +794,12 @@ definitions:
       url:
         type: string
     type: object
-  dto.GroupedFriendsResponse:
+  flec_blog_internal_dto.GroupedFriendsResponse:
     properties:
       groups:
         description: 友链分组列表
         items:
-          $ref: '#/definitions/dto.FriendGroupResponse'
+          $ref: '#/definitions/flec_blog_internal_dto.FriendGroupResponse'
         type: array
       total_friends:
         description: 友链总数
@@ -801,7 +808,7 @@ definitions:
         description: 分组总数
         type: integer
     type: object
-  dto.ImportArticleError:
+  flec_blog_internal_dto.ImportArticleError:
     properties:
       error:
         type: string
@@ -810,14 +817,14 @@ definitions:
       title:
         type: string
     type: object
-  dto.ImportArticlesResult:
+  flec_blog_internal_dto.ImportArticlesResult:
     properties:
       categories_added:
         description: 新增分类数量
         type: integer
       errors:
         items:
-          $ref: '#/definitions/dto.ImportArticleError'
+          $ref: '#/definitions/flec_blog_internal_dto.ImportArticleError'
         type: array
       failed:
         type: integer
@@ -829,7 +836,7 @@ definitions:
       total:
         type: integer
     type: object
-  dto.ImportCommentError:
+  flec_blog_internal_dto.ImportCommentError:
     properties:
       content:
         type: string
@@ -838,11 +845,11 @@ definitions:
       index:
         type: integer
     type: object
-  dto.ImportCommentsResult:
+  flec_blog_internal_dto.ImportCommentsResult:
     properties:
       errors:
         items:
-          $ref: '#/definitions/dto.ImportCommentError'
+          $ref: '#/definitions/flec_blog_internal_dto.ImportCommentError'
         type: array
       failed:
         type: integer
@@ -853,7 +860,7 @@ definitions:
       user_created:
         type: integer
     type: object
-  dto.LoginRequest:
+  flec_blog_internal_dto.LoginRequest:
     properties:
       email:
         type: string
@@ -863,7 +870,7 @@ definitions:
     - email
     - password
     type: object
-  dto.LoginResponse:
+  flec_blog_internal_dto.LoginResponse:
     properties:
       access_token:
         type: string
@@ -871,10 +878,10 @@ definitions:
         type: string
       user:
         allOf:
-        - $ref: '#/definitions/dto.UserResponse'
+        - $ref: '#/definitions/flec_blog_internal_dto.UserResponse'
         description: 刷新token时为空
     type: object
-  dto.MenuCreateRequest:
+  flec_blog_internal_dto.MenuCreateRequest:
     properties:
       icon:
         description: 图标
@@ -911,7 +918,7 @@ definitions:
     - title
     - type
     type: object
-  dto.MenuDeleteRequest:
+  flec_blog_internal_dto.MenuDeleteRequest:
     properties:
       children_action:
         description: 子菜单处理方式：delete-删除子菜单，upgrade-升级为主菜单
@@ -920,7 +927,7 @@ definitions:
         - upgrade
         type: string
     type: object
-  dto.MenuResponse:
+  flec_blog_internal_dto.MenuResponse:
     properties:
       icon:
         type: string
@@ -939,12 +946,12 @@ definitions:
       url:
         type: string
     type: object
-  dto.MenuTreeNode:
+  flec_blog_internal_dto.MenuTreeNode:
     properties:
       children:
         description: 子菜单列表
         items:
-          $ref: '#/definitions/dto.MenuTreeNode'
+          $ref: '#/definitions/flec_blog_internal_dto.MenuTreeNode'
         type: array
       icon:
         type: string
@@ -963,7 +970,7 @@ definitions:
       url:
         type: string
     type: object
-  dto.MenuUpdateRequest:
+  flec_blog_internal_dto.MenuUpdateRequest:
     properties:
       icon:
         description: 图标
@@ -1000,7 +1007,7 @@ definitions:
     - title
     - type
     type: object
-  dto.MomentContent:
+  flec_blog_internal_dto.MomentContent:
     properties:
       book:
         additionalProperties: {}
@@ -1013,7 +1020,7 @@ definitions:
         type: array
       link:
         allOf:
-        - $ref: '#/definitions/dto.MomentLink'
+        - $ref: '#/definitions/flec_blog_internal_dto.MomentLink'
         description: 外链
       location:
         description: 位置信息
@@ -1024,7 +1031,7 @@ definitions:
         type: object
       music:
         allOf:
-        - $ref: '#/definitions/dto.MomentMusic'
+        - $ref: '#/definitions/flec_blog_internal_dto.MomentMusic'
         description: 音乐（基于MetingJS）
       tags:
         description: 标签
@@ -1034,10 +1041,10 @@ definitions:
         type: string
       video:
         allOf:
-        - $ref: '#/definitions/dto.MomentVideo'
+        - $ref: '#/definitions/flec_blog_internal_dto.MomentVideo'
         description: 视频（本地或在线）
     type: object
-  dto.MomentLink:
+  flec_blog_internal_dto.MomentLink:
     properties:
       favicon:
         type: string
@@ -1046,18 +1053,18 @@ definitions:
       url:
         type: string
     type: object
-  dto.MomentListResponse:
+  flec_blog_internal_dto.MomentListResponse:
     properties:
       content:
-        $ref: '#/definitions/dto.MomentContent'
+        $ref: '#/definitions/flec_blog_internal_dto.MomentContent'
       id:
         type: integer
       is_publish:
         type: boolean
       publish_time:
-        $ref: '#/definitions/utils.JSONTime'
+        $ref: '#/definitions/flec_blog_pkg_utils.JSONTime'
     type: object
-  dto.MomentMusic:
+  flec_blog_internal_dto.MomentMusic:
     properties:
       id:
         description: 音乐ID
@@ -1069,7 +1076,7 @@ definitions:
         description: 类型：song, playlist, album, search, artist
         type: string
     type: object
-  dto.MomentVideo:
+  flec_blog_internal_dto.MomentVideo:
     properties:
       platform:
         description: 平台：bilibili, youtube（本地视频为空）
@@ -1081,11 +1088,11 @@ definitions:
         description: 视频ID（在线视频的ID，本地视频为空）
         type: string
     type: object
-  dto.NotificationListResponse:
+  flec_blog_internal_dto.NotificationListResponse:
     properties:
       list:
         items:
-          $ref: '#/definitions/dto.NotificationResponse'
+          $ref: '#/definitions/flec_blog_internal_dto.NotificationResponse'
         type: array
       page:
         type: integer
@@ -1097,13 +1104,13 @@ definitions:
         description: 未读数量
         type: integer
     type: object
-  dto.NotificationResponse:
+  flec_blog_internal_dto.NotificationResponse:
     properties:
       content:
         description: 通知内容
         type: string
       created_at:
-        $ref: '#/definitions/utils.JSONTime'
+        $ref: '#/definitions/flec_blog_pkg_utils.JSONTime'
       data:
         description: 结构化数据（JSON 对象）
         type: object
@@ -1115,7 +1122,7 @@ definitions:
         description: 跳转链接
         type: string
       read_at:
-        $ref: '#/definitions/utils.JSONTime'
+        $ref: '#/definitions/flec_blog_pkg_utils.JSONTime'
       sender:
         description: 发送者昵称
         type: string
@@ -1132,14 +1139,14 @@ definitions:
         description: 类型中文文本（前端直接显示）
         type: string
     type: object
-  dto.RefreshTokenRequest:
+  flec_blog_internal_dto.RefreshTokenRequest:
     properties:
       refresh_token:
         type: string
     required:
     - refresh_token
     type: object
-  dto.RegisterRequest:
+  flec_blog_internal_dto.RegisterRequest:
     properties:
       email:
         type: string
@@ -1159,7 +1166,7 @@ definitions:
     - nickname
     - password
     type: object
-  dto.ResetPasswordRequest:
+  flec_blog_internal_dto.ResetPasswordRequest:
     properties:
       code:
         type: string
@@ -1174,7 +1181,7 @@ definitions:
     - email
     - password
     type: object
-  dto.SetPasswordRequest:
+  flec_blog_internal_dto.SetPasswordRequest:
     properties:
       confirm_password:
         maxLength: 32
@@ -1188,23 +1195,23 @@ definitions:
     - confirm_password
     - password
     type: object
-  dto.SettingGroupResponse:
+  flec_blog_internal_dto.SettingGroupResponse:
     properties:
       group:
         type: string
       settings:
         items:
-          $ref: '#/definitions/dto.SettingItemResponse'
+          $ref: '#/definitions/flec_blog_internal_dto.SettingItemResponse'
         type: array
     type: object
-  dto.SettingItemResponse:
+  flec_blog_internal_dto.SettingItemResponse:
     properties:
       key:
         type: string
       value:
         type: string
     type: object
-  dto.SiteStatsResponse:
+  flec_blog_internal_dto.SiteStatsResponse:
     properties:
       month_pageviews:
         description: 本月访问
@@ -1252,7 +1259,7 @@ definitions:
         description: 昨日访客
         type: integer
     type: object
-  dto.SubmitFeedbackRequest:
+  flec_blog_internal_dto.SubmitFeedbackRequest:
     properties:
       attachmentFiles:
         description: 附件文件URL数组
@@ -1281,20 +1288,20 @@ definitions:
     - reportType
     - reportUrl
     type: object
-  dto.SubscriberResponse:
+  flec_blog_internal_dto.SubscriberResponse:
     properties:
       active:
         type: boolean
       created_at:
-        $ref: '#/definitions/utils.JSONTime'
+        $ref: '#/definitions/flec_blog_pkg_utils.JSONTime'
       email:
         type: string
       id:
         type: integer
       updated_at:
-        $ref: '#/definitions/utils.JSONTime'
+        $ref: '#/definitions/flec_blog_pkg_utils.JSONTime'
     type: object
-  dto.TagForWebResponse:
+  flec_blog_internal_dto.TagForWebResponse:
     properties:
       count:
         type: integer
@@ -1309,7 +1316,7 @@ definitions:
       url:
         type: string
     type: object
-  dto.TagStats:
+  flec_blog_internal_dto.TagStats:
     properties:
       count:
         description: 文章数量
@@ -1318,7 +1325,7 @@ definitions:
         description: 标签名称
         type: string
     type: object
-  dto.TrendData:
+  flec_blog_internal_dto.TrendData:
     properties:
       date:
         description: 日期
@@ -1330,7 +1337,7 @@ definitions:
         description: 访客量
         type: integer
     type: object
-  dto.UpdateArticleRequest:
+  flec_blog_internal_dto.UpdateArticleRequest:
     properties:
       ai_summary:
         description: AI 总结
@@ -1357,7 +1364,10 @@ definitions:
         description: 发布地点
         type: string
       publish_time:
-        $ref: '#/definitions/utils.JSONTime'
+        $ref: '#/definitions/flec_blog_pkg_utils.JSONTime'
+      slug:
+        description: 自定义 URL slug
+        type: string
       summary:
         type: string
       tag_ids:
@@ -1367,9 +1377,9 @@ definitions:
       title:
         type: string
       update_time:
-        $ref: '#/definitions/utils.JSONTime'
+        $ref: '#/definitions/flec_blog_pkg_utils.JSONTime'
     type: object
-  dto.UpdateCategoryRequest:
+  flec_blog_internal_dto.UpdateCategoryRequest:
     properties:
       description:
         maxLength: 200
@@ -1382,7 +1392,7 @@ definitions:
     required:
     - name
     type: object
-  dto.UpdateCommentRequest:
+  flec_blog_internal_dto.UpdateCommentRequest:
     properties:
       content:
         maxLength: 500
@@ -1391,7 +1401,7 @@ definitions:
     required:
     - content
     type: object
-  dto.UpdateFeedbackRequest:
+  flec_blog_internal_dto.UpdateFeedbackRequest:
     properties:
       admin_reply:
         type: string
@@ -1404,7 +1414,7 @@ definitions:
     required:
     - status
     type: object
-  dto.UpdateFriendRequest:
+  flec_blog_internal_dto.UpdateFriendRequest:
     properties:
       accessible:
         description: 可访问性状态
@@ -1444,7 +1454,7 @@ definitions:
     - name
     - url
     type: object
-  dto.UpdateFriendTypeRequest:
+  flec_blog_internal_dto.UpdateFriendTypeRequest:
     properties:
       is_visible:
         type: boolean
@@ -1456,21 +1466,21 @@ definitions:
     required:
     - name
     type: object
-  dto.UpdateMomentRequest:
+  flec_blog_internal_dto.UpdateMomentRequest:
     properties:
       content:
-        $ref: '#/definitions/dto.MomentContent'
+        $ref: '#/definitions/flec_blog_internal_dto.MomentContent'
       is_publish:
         description: 是否发布
         type: boolean
       publish_time:
         allOf:
-        - $ref: '#/definitions/utils.JSONTime'
+        - $ref: '#/definitions/flec_blog_pkg_utils.JSONTime'
         description: 发布时间（可编辑）
     required:
     - content
     type: object
-  dto.UpdateSettingGroupRequest:
+  flec_blog_internal_dto.UpdateSettingGroupRequest:
     properties:
       settings:
         additionalProperties:
@@ -1479,7 +1489,7 @@ definitions:
     required:
     - settings
     type: object
-  dto.UpdateTagRequest:
+  flec_blog_internal_dto.UpdateTagRequest:
     properties:
       description:
         maxLength: 200
@@ -1490,7 +1500,7 @@ definitions:
     required:
     - name
     type: object
-  dto.UpdateUserRequest:
+  flec_blog_internal_dto.UpdateUserRequest:
     properties:
       avatar:
         maxLength: 255
@@ -1508,14 +1518,14 @@ definitions:
         maxLength: 255
         type: string
     type: object
-  dto.UserResponse:
+  flec_blog_internal_dto.UserResponse:
     properties:
       avatar:
         type: string
       badge:
         type: string
       created_at:
-        $ref: '#/definitions/utils.JSONTime'
+        $ref: '#/definitions/flec_blog_pkg_utils.JSONTime'
       email:
         type: string
       email_hash:
@@ -1529,7 +1539,7 @@ definitions:
         description: 是否为虚拟邮箱（需绑定真实邮箱）
         type: boolean
       last_login:
-        $ref: '#/definitions/utils.JSONTime'
+        $ref: '#/definitions/flec_blog_pkg_utils.JSONTime'
       linked_oauths:
         description: '["github", "google", "qq"]'
         items:
@@ -1538,11 +1548,11 @@ definitions:
       nickname:
         type: string
       role:
-        $ref: '#/definitions/model.UserRole'
+        $ref: '#/definitions/flec_blog_internal_model.UserRole'
       website:
         type: string
     type: object
-  dto.WeChatExportResult:
+  flec_blog_internal_dto.WeChatExportResult:
     properties:
       html:
         description: 公众号 HTML（失败时）
@@ -1559,10 +1569,8 @@ definitions:
           type: string
         type: array
     type: object
-  model.Category:
+  flec_blog_internal_model.Category:
     properties:
-      count:
-        type: integer
       created_at:
         type: string
       description:
@@ -1578,28 +1586,8 @@ definitions:
       updated_at:
         type: string
     type: object
-  model.Moment:
+  flec_blog_internal_model.Tag:
     properties:
-      content:
-        description: 内容（JSON）- 包含text、images、location、link、music、video等
-        type: string
-      created_at:
-        type: string
-      id:
-        type: integer
-      is_publish:
-        description: 是否发布
-        type: boolean
-      publish_time:
-        description: 发布时间
-        type: string
-      updated_at:
-        type: string
-    type: object
-  model.Tag:
-    properties:
-      count:
-        type: integer
       created_at:
         type: string
       description:
@@ -1613,7 +1601,7 @@ definitions:
       updated_at:
         type: string
     type: object
-  model.UserRole:
+  flec_blog_internal_model.UserRole:
     enum:
     - super_admin
     - admin
@@ -1635,7 +1623,7 @@ definitions:
     - RoleAdmin
     - RoleUser
     - RoleGuest
-  response.PageResult:
+  flec_blog_pkg_response.PageResult:
     properties:
       list: {}
       page:
@@ -1645,7 +1633,7 @@ definitions:
       total:
         type: integer
     type: object
-  response.Response:
+  flec_blog_pkg_response.Response:
     properties:
       code:
         type: integer
@@ -1653,7 +1641,7 @@ definitions:
       message:
         type: string
     type: object
-  utils.JSONTime:
+  flec_blog_pkg_utils.JSONTime:
     properties:
       time.Time:
         type: string
@@ -1680,7 +1668,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.AIAISummaryRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.AIAISummaryRequest'
       produces:
       - application/json
       responses:
@@ -1688,23 +1676,23 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.AIAISummaryResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.AIAISummaryResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 生成AI摘要
@@ -1721,7 +1709,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.AISummaryRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.AISummaryRequest'
       produces:
       - application/json
       responses:
@@ -1729,23 +1717,23 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.AISummaryResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.AISummaryResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 生成文章摘要
@@ -1762,22 +1750,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.AITestRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.AITestRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 测试AI配置
@@ -1794,7 +1782,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.AITitleRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.AITitleRequest'
       produces:
       - application/json
       responses:
@@ -1802,23 +1790,23 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.AITitleResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.AITitleResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 生成标题建议
@@ -1845,19 +1833,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/response.PageResult'
+                  $ref: '#/definitions/flec_blog_pkg_response.PageResult'
               type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 文章列表（管理）
@@ -1873,7 +1861,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.CreateArticleRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.CreateArticleRequest'
       produces:
       - application/json
       responses:
@@ -1881,23 +1869,23 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.ArticleAdminDetailResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.ArticleAdminDetailResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 新建文章
@@ -1920,23 +1908,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 删除文章
@@ -1959,27 +1947,27 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.ArticleAdminDetailResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.ArticleAdminDetailResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 文章详情（管理）
@@ -2000,7 +1988,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.UpdateArticleRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.UpdateArticleRequest'
       produces:
       - application/json
       responses:
@@ -2008,27 +1996,27 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.ArticleAdminDetailResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.ArticleAdminDetailResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 更新文章
@@ -2055,15 +2043,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 下载为 Markdown
@@ -2087,23 +2075,23 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.WeChatExportResult'
+                  $ref: '#/definitions/flec_blog_internal_dto.WeChatExportResult'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 导出到微信公众号
@@ -2113,15 +2101,20 @@ paths:
     post:
       consumes:
       - multipart/form-data
-      description: 从Hexo等静态博客系统导入文章数据，上传Markdown文件（支持多文件）
+      description: 从Hexo或Markdown格式导入文章数据，支持多文件
       parameters:
-      - description: 来源类型，目前支持：hexo
+      - description: 来源类型，支持：hexo, markdown
         enum:
         - hexo
+        - markdown
         in: formData
         name: source_type
         required: true
         type: string
+      - description: 是否上传文章中的图片（默认false）
+        in: formData
+        name: upload_images
+        type: boolean
       - collectionFormat: csv
         description: 文章文件（.md或.markdown格式，支持多文件）
         in: formData
@@ -2137,23 +2130,23 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.ImportArticlesResult'
+                  $ref: '#/definitions/flec_blog_internal_dto.ImportArticlesResult'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 导入文章数据
@@ -2179,15 +2172,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 分类列表（管理）
@@ -2203,7 +2196,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.CreateCategoryRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.CreateCategoryRequest'
       produces:
       - application/json
       responses:
@@ -2211,23 +2204,23 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/model.Category'
+                  $ref: '#/definitions/flec_blog_internal_model.Category'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 创建分类
@@ -2250,23 +2243,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 删除分类
@@ -2288,23 +2281,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 分类详情（管理）
@@ -2325,7 +2318,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.UpdateCategoryRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.UpdateCategoryRequest'
       produces:
       - application/json
       responses:
@@ -2333,27 +2326,27 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/model.Category'
+                  $ref: '#/definitions/flec_blog_internal_model.Category'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 更新分类
@@ -2384,23 +2377,23 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/response.PageResult'
+                  $ref: '#/definitions/flec_blog_pkg_response.PageResult'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 评论列表（管理）
@@ -2416,7 +2409,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.CreateCommentRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.CreateCommentRequest'
       produces:
       - application/json
       responses:
@@ -2424,23 +2417,23 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.CommentResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.CommentResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 创建评论
@@ -2463,23 +2456,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 删除评论（管理）
@@ -2502,27 +2495,27 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.CommentListResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.CommentListResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 评论详情（管理）
@@ -2545,23 +2538,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 恢复评论
@@ -2584,23 +2577,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 显示/隐藏
@@ -2631,23 +2624,23 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.ImportCommentsResult'
+                  $ref: '#/definitions/flec_blog_internal_dto.ImportCommentsResult'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 导入评论数据
@@ -2679,15 +2672,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 文件列表（管理）
@@ -2715,19 +2708,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.FileResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.FileResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 文件上传（管理）
@@ -2750,23 +2743,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 删除文件
@@ -2788,23 +2781,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 文件详情（管理）
@@ -2830,15 +2823,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 友链列表
@@ -2854,26 +2847,26 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.CreateFriendRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.CreateFriendRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 创建友链
@@ -2896,23 +2889,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 删除友链
@@ -2934,23 +2927,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 友链详情
@@ -2971,30 +2964,30 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.UpdateFriendRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.UpdateFriendRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 更新友链
@@ -3018,15 +3011,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 友链类型列表 [类型]
@@ -3042,26 +3035,26 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.CreateFriendTypeRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.CreateFriendTypeRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 创建友链类型 [类型]
@@ -3082,23 +3075,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 删除友链类型 [类型]
@@ -3118,23 +3111,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 友链类型详情 [类型]
@@ -3155,30 +3148,30 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.UpdateFriendTypeRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.UpdateFriendTypeRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 更新友链类型 [类型]
@@ -3200,11 +3193,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/dto.MenuTreeNode'
+                    $ref: '#/definitions/flec_blog_internal_dto.MenuTreeNode'
                   type: array
               type: object
       security:
@@ -3221,7 +3214,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.MenuCreateRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.MenuCreateRequest'
       produces:
       - application/json
       responses:
@@ -3229,10 +3222,10 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.MenuResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.MenuResponse'
               type: object
       security:
       - BearerAuth: []
@@ -3253,14 +3246,14 @@ paths:
         in: body
         name: request
         schema:
-          $ref: '#/definitions/dto.MenuDeleteRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.MenuDeleteRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 删除菜单
@@ -3282,10 +3275,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.MenuResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.MenuResponse'
               type: object
       security:
       - BearerAuth: []
@@ -3306,7 +3299,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.MenuUpdateRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.MenuUpdateRequest'
       produces:
       - application/json
       responses:
@@ -3314,10 +3307,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.MenuResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.MenuResponse'
               type: object
       security:
       - BearerAuth: []
@@ -3345,19 +3338,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/response.PageResult'
+                  $ref: '#/definitions/flec_blog_pkg_response.PageResult'
               type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 动态列表（管理）
@@ -3373,7 +3366,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.CreateMomentRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.CreateMomentRequest'
       produces:
       - application/json
       responses:
@@ -3381,23 +3374,23 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/model.Moment'
+                  $ref: '#/definitions/flec_blog_internal_dto.MomentListResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 创建动态
@@ -3420,23 +3413,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 删除动态
@@ -3459,27 +3452,27 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.MomentListResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.MomentListResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 动态详情（管理）
@@ -3500,30 +3493,30 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.UpdateMomentRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.UpdateMomentRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 更新动态
@@ -3547,15 +3540,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: RSS文章列表
@@ -3576,23 +3569,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 标记文章已读
@@ -3607,15 +3600,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 全部标记已读
@@ -3647,19 +3640,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.SettingGroupResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.SettingGroupResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 获取配置分组
@@ -3688,22 +3681,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.UpdateSettingGroupRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.UpdateSettingGroupRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 更新配置分组
@@ -3721,11 +3714,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/dto.CategoryStats'
+                    $ref: '#/definitions/flec_blog_internal_dto.CategoryStats'
                   type: array
               type: object
       security:
@@ -3756,11 +3749,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/dto.ArticleContribution'
+                    $ref: '#/definitions/flec_blog_internal_dto.ArticleContribution'
                   type: array
               type: object
       security:
@@ -3780,10 +3773,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.DashboardStats'
+                  $ref: '#/definitions/flec_blog_internal_dto.DashboardStats'
               type: object
       security:
       - BearerAuth: []
@@ -3802,11 +3795,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/dto.TagStats'
+                    $ref: '#/definitions/flec_blog_internal_dto.TagStats'
                   type: array
               type: object
       security:
@@ -3848,11 +3841,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/dto.TrendData'
+                    $ref: '#/definitions/flec_blog_internal_dto.TrendData'
                   type: array
               type: object
       security:
@@ -3886,10 +3879,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/response.PageResult'
+                  $ref: '#/definitions/flec_blog_pkg_response.PageResult'
               type: object
       security:
       - BearerAuth: []
@@ -3916,15 +3909,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 标签列表（管理）
@@ -3940,7 +3933,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.CreateTagRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.CreateTagRequest'
       produces:
       - application/json
       responses:
@@ -3948,23 +3941,23 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/model.Tag'
+                  $ref: '#/definitions/flec_blog_internal_model.Tag'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 创建标签
@@ -3987,23 +3980,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 删除标签
@@ -4025,23 +4018,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 标签详情（管理）
@@ -4062,7 +4055,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.UpdateTagRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.UpdateTagRequest'
       produces:
       - application/json
       responses:
@@ -4070,27 +4063,27 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/model.Tag'
+                  $ref: '#/definitions/flec_blog_internal_model.Tag'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 更新标签
@@ -4119,23 +4112,23 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/response.PageResult'
+                  $ref: '#/definitions/flec_blog_pkg_response.PageResult'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 用户列表（管理）
@@ -4151,30 +4144,30 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.AdminCreateUserRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.AdminCreateUserRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 创建用户
@@ -4197,19 +4190,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 删除用户
@@ -4232,23 +4225,23 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.UserResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.UserResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 用户详情（管理）
@@ -4269,26 +4262,26 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.AdminUpdateUserRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.AdminUpdateUserRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 更新用户
@@ -4316,15 +4309,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
                   allOf:
-                  - $ref: '#/definitions/response.PageResult'
+                  - $ref: '#/definitions/flec_blog_pkg_response.PageResult'
                   - properties:
                       list:
                         items:
-                          $ref: '#/definitions/dto.FeedbackResponse'
+                          $ref: '#/definitions/flec_blog_internal_dto.FeedbackResponse'
                         type: array
                     type: object
               type: object
@@ -4347,7 +4340,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       summary: 删除反馈
       tags:
       - 反馈管理
@@ -4367,10 +4360,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.FeedbackResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.FeedbackResponse'
               type: object
       summary: 获取反馈详情
       tags:
@@ -4389,14 +4382,14 @@ paths:
         name: feedback
         required: true
         schema:
-          $ref: '#/definitions/dto.UpdateFeedbackRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.UpdateFeedbackRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       summary: 更新反馈
       tags:
       - 反馈管理
@@ -4423,19 +4416,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.NotificationListResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.NotificationListResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 获取后台管理员通知列表
@@ -4463,15 +4456,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
                   allOf:
-                  - $ref: '#/definitions/response.PageResult'
+                  - $ref: '#/definitions/flec_blog_pkg_response.PageResult'
                   - properties:
                       list:
                         items:
-                          $ref: '#/definitions/dto.SubscriberResponse'
+                          $ref: '#/definitions/flec_blog_internal_dto.SubscriberResponse'
                         type: array
                     type: object
               type: object
@@ -4494,7 +4487,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       summary: 删除订阅者
       tags:
       - 订阅管理
@@ -4508,7 +4501,7 @@ paths:
         name: feedback
         required: true
         schema:
-          $ref: '#/definitions/dto.SubmitFeedbackRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.SubmitFeedbackRequest'
       produces:
       - application/json
       responses:
@@ -4516,10 +4509,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.FeedbackResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.FeedbackResponse'
               type: object
       summary: 提交反馈投诉
       tags:
@@ -4541,10 +4534,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.FeedbackResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.FeedbackResponse'
               type: object
       summary: 根据工单号查询反馈
       tags:
@@ -4572,19 +4565,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.NotificationListResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.NotificationListResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 获取前台用户通知列表
@@ -4607,15 +4600,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 标记通知为已读
@@ -4632,15 +4625,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 标记所有通知为已读
@@ -4666,7 +4659,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       summary: 邮件订阅
       tags:
       - 订阅
@@ -4686,7 +4679,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       summary: 退订
       tags:
       - 订阅
@@ -4727,15 +4720,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/response.PageResult'
+                  $ref: '#/definitions/flec_blog_pkg_response.PageResult'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       summary: 文章列表
       tags:
       - 文章
@@ -4757,15 +4750,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.ArticleDetailResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.ArticleDetailResponse'
               type: object
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       summary: 文章详情
       tags:
       - 文章
@@ -4795,15 +4788,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/response.PageResult'
+                  $ref: '#/definitions/flec_blog_pkg_response.PageResult'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       summary: 搜索
       tags:
       - 文章
@@ -4871,22 +4864,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.ForgotPasswordRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.ForgotPasswordRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       summary: 忘记密码
       tags:
       - 认证
@@ -4901,7 +4894,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.LoginRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.LoginRequest'
       produces:
       - application/json
       responses:
@@ -4909,19 +4902,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.LoginResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.LoginResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       summary: 登录
       tags:
       - 认证
@@ -4936,11 +4929,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 登出
@@ -4957,7 +4950,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.RefreshTokenRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.RefreshTokenRequest'
       produces:
       - application/json
       responses:
@@ -4965,19 +4958,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.LoginResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.LoginResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       summary: 刷新token
       tags:
       - 认证
@@ -4992,7 +4985,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.RegisterRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.RegisterRequest'
       produces:
       - application/json
       responses:
@@ -5000,19 +4993,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.LoginResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.LoginResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       summary: 注册
       tags:
       - 认证
@@ -5027,22 +5020,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.ResetPasswordRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.ResetPasswordRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       summary: 重置密码
       tags:
       - 认证
@@ -5066,7 +5059,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       summary: 分类列表
       tags:
       - 分类
@@ -5088,15 +5081,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.CategoryForWebResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.CategoryForWebResponse'
               type: object
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       summary: 分类详情
       tags:
       - 分类
@@ -5111,7 +5104,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/dto.CollectRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.CollectRequest'
       produces:
       - application/json
       responses:
@@ -5151,15 +5144,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/response.PageResult'
+                  $ref: '#/definitions/flec_blog_pkg_response.PageResult'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       summary: 评论列表
       tags:
       - 评论
@@ -5173,7 +5166,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.CreateCommentRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.CreateCommentRequest'
       produces:
       - application/json
       responses:
@@ -5181,15 +5174,15 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.CommentResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.CommentResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       summary: 发表评论
       tags:
       - 评论
@@ -5210,23 +5203,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 删除评论
@@ -5247,7 +5240,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.UpdateCommentRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.UpdateCommentRequest'
       produces:
       - application/json
       responses:
@@ -5255,27 +5248,27 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.CommentResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.CommentResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 修改评论
@@ -5291,10 +5284,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.GroupedFriendsResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.GroupedFriendsResponse'
               type: object
       summary: 友链列表
       tags:
@@ -5310,22 +5303,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.ApplyFriendRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.ApplyFriendRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 申请友链
@@ -5347,11 +5340,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/dto.MenuTreeNode'
+                    $ref: '#/definitions/flec_blog_internal_dto.MenuTreeNode'
                   type: array
               type: object
       summary: 获取菜单树
@@ -5378,14 +5371,29 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/response.PageResult'
+                  $ref: '#/definitions/flec_blog_pkg_response.PageResult'
               type: object
       summary: 动态列表
       tags:
       - 动态
+  /rss.xml:
+    get:
+      consumes:
+      - application/json
+      description: 生成博客文章的RSS 2.0订阅源
+      produces:
+      - text/xml
+      responses:
+        "200":
+          description: RSS XML 订阅内容
+          schema:
+            type: string
+      summary: RSS 2.0订阅
+      tags:
+      - 订阅
   /settings/{group}:
     get:
       consumes:
@@ -5412,7 +5420,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
                   additionalProperties:
@@ -5422,11 +5430,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       summary: 获取配置分组
       tags:
       - 配置
@@ -5442,10 +5450,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.ArchivesResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.ArchivesResponse'
               type: object
       summary: 文章归档
       tags:
@@ -5462,10 +5470,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.SiteStatsResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.SiteStatsResponse'
               type: object
       summary: 网站统计
       tags:
@@ -5490,7 +5498,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       summary: 标签列表
       tags:
       - 标签
@@ -5512,15 +5520,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.TagForWebResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.TagForWebResponse'
               type: object
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       summary: 标签详情
       tags:
       - 标签
@@ -5547,15 +5555,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.FileUploadForWebResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.FileUploadForWebResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       summary: 文件上传
       tags:
       - 文件
@@ -5570,22 +5578,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.DeactivateAccountRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.DeactivateAccountRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 注销账号
@@ -5608,15 +5616,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 解绑第三方账号
@@ -5633,22 +5641,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.SetPasswordRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.SetPasswordRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 设置密码
@@ -5664,22 +5672,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.ChangePasswordRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.ChangePasswordRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 修改密码
@@ -5697,15 +5705,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.UserResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.UserResponse'
               type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 个人资料
@@ -5721,7 +5729,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.UpdateUserRequest'
+          $ref: '#/definitions/flec_blog_internal_dto.UpdateUserRequest'
       produces:
       - application/json
       responses:
@@ -5729,19 +5737,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/flec_blog_pkg_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/dto.UserResponse'
+                  $ref: '#/definitions/flec_blog_internal_dto.UserResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/flec_blog_pkg_response.Response'
       security:
       - BearerAuth: []
       summary: 更新资料

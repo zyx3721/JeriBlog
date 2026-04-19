@@ -47,7 +47,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.AIAISummaryRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.AIAISummaryRequest"
                         }
                     }
                 ],
@@ -57,13 +57,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.AIAISummaryResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.AIAISummaryResponse"
                                         }
                                     }
                                 }
@@ -73,19 +73,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -116,7 +116,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.AISummaryRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.AISummaryRequest"
                         }
                     }
                 ],
@@ -126,13 +126,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.AISummaryResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.AISummaryResponse"
                                         }
                                     }
                                 }
@@ -142,19 +142,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -185,7 +185,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.AITestRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.AITestRequest"
                         }
                     }
                 ],
@@ -193,19 +193,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -236,7 +236,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.AITitleRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.AITitleRequest"
                         }
                     }
                 ],
@@ -246,13 +246,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.AITitleResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.AITitleResponse"
                                         }
                                     }
                                 }
@@ -262,19 +262,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -318,13 +318,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.PageResult"
+                                            "$ref": "#/definitions/flec_blog_pkg_response.PageResult"
                                         }
                                     }
                                 }
@@ -334,13 +334,13 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -369,7 +369,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateArticleRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.CreateArticleRequest"
                         }
                     }
                 ],
@@ -379,13 +379,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.ArticleAdminDetailResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.ArticleAdminDetailResponse"
                                         }
                                     }
                                 }
@@ -395,19 +395,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -420,7 +420,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "从Hexo等静态博客系统导入文章数据，上传Markdown文件（支持多文件）",
+                "description": "从Hexo或Markdown格式导入文章数据，支持多文件",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -434,13 +434,20 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "enum": [
-                            "hexo"
+                            "hexo",
+                            "markdown"
                         ],
                         "type": "string",
-                        "description": "来源类型，目前支持：hexo",
+                        "description": "来源类型，支持：hexo, markdown",
                         "name": "source_type",
                         "in": "formData",
                         "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否上传文章中的图片（默认false）",
+                        "name": "upload_images",
+                        "in": "formData"
                     },
                     {
                         "type": "array",
@@ -460,13 +467,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.ImportArticlesResult"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.ImportArticlesResult"
                                         }
                                     }
                                 }
@@ -476,19 +483,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -527,13 +534,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.ArticleAdminDetailResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.ArticleAdminDetailResponse"
                                         }
                                     }
                                 }
@@ -543,25 +550,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -597,7 +604,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateArticleRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.UpdateArticleRequest"
                         }
                     }
                 ],
@@ -607,13 +614,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.ArticleAdminDetailResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.ArticleAdminDetailResponse"
                                         }
                                     }
                                 }
@@ -623,25 +630,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -676,31 +683,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -743,19 +750,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -794,13 +801,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.WeChatExportResult"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.WeChatExportResult"
                                         }
                                     }
                                 }
@@ -810,19 +817,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -864,19 +871,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -905,7 +912,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateCategoryRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.CreateCategoryRequest"
                         }
                     }
                 ],
@@ -915,13 +922,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Category"
+                                            "$ref": "#/definitions/flec_blog_internal_model.Category"
                                         }
                                     }
                                 }
@@ -931,19 +938,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -980,31 +987,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1040,7 +1047,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateCategoryRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.UpdateCategoryRequest"
                         }
                     }
                 ],
@@ -1050,13 +1057,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Category"
+                                            "$ref": "#/definitions/flec_blog_internal_model.Category"
                                         }
                                     }
                                 }
@@ -1066,25 +1073,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1119,31 +1126,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1193,13 +1200,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.PageResult"
+                                            "$ref": "#/definitions/flec_blog_pkg_response.PageResult"
                                         }
                                     }
                                 }
@@ -1209,19 +1216,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1250,7 +1257,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateCommentRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.CreateCommentRequest"
                         }
                     }
                 ],
@@ -1260,13 +1267,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.CommentResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.CommentResponse"
                                         }
                                     }
                                 }
@@ -1276,19 +1283,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1337,13 +1344,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.ImportCommentsResult"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.ImportCommentsResult"
                                         }
                                     }
                                 }
@@ -1353,19 +1360,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1404,13 +1411,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.CommentListResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.CommentListResponse"
                                         }
                                     }
                                 }
@@ -1420,25 +1427,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1473,31 +1480,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1534,31 +1541,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1595,31 +1602,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1669,19 +1676,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1725,13 +1732,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.FileResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.FileResponse"
                                         }
                                     }
                                 }
@@ -1741,13 +1748,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1784,31 +1791,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1843,31 +1850,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1909,19 +1916,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1950,7 +1957,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateFriendRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.CreateFriendRequest"
                         }
                     }
                 ],
@@ -1958,25 +1965,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2015,19 +2022,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2056,7 +2063,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateFriendTypeRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.CreateFriendTypeRequest"
                         }
                     }
                 ],
@@ -2064,25 +2071,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2116,31 +2123,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2176,7 +2183,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateFriendTypeRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.UpdateFriendTypeRequest"
                         }
                     }
                 ],
@@ -2184,31 +2191,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2240,31 +2247,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2301,31 +2308,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2361,7 +2368,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateFriendRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.UpdateFriendRequest"
                         }
                     }
                 ],
@@ -2369,31 +2376,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2428,31 +2435,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2489,7 +2496,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
@@ -2497,7 +2504,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/dto.MenuTreeNode"
+                                                "$ref": "#/definitions/flec_blog_internal_dto.MenuTreeNode"
                                             }
                                         }
                                     }
@@ -2530,7 +2537,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.MenuCreateRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.MenuCreateRequest"
                         }
                     }
                 ],
@@ -2540,13 +2547,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.MenuResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.MenuResponse"
                                         }
                                     }
                                 }
@@ -2588,13 +2595,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.MenuResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.MenuResponse"
                                         }
                                     }
                                 }
@@ -2633,7 +2640,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.MenuUpdateRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.MenuUpdateRequest"
                         }
                     }
                 ],
@@ -2643,13 +2650,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.MenuResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.MenuResponse"
                                         }
                                     }
                                 }
@@ -2687,7 +2694,7 @@ const docTemplate = `{
                         "name": "request",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/dto.MenuDeleteRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.MenuDeleteRequest"
                         }
                     }
                 ],
@@ -2695,7 +2702,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2739,13 +2746,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.PageResult"
+                                            "$ref": "#/definitions/flec_blog_pkg_response.PageResult"
                                         }
                                     }
                                 }
@@ -2755,13 +2762,13 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2790,7 +2797,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateMomentRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.CreateMomentRequest"
                         }
                     }
                 ],
@@ -2800,13 +2807,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Moment"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.MomentListResponse"
                                         }
                                     }
                                 }
@@ -2816,19 +2823,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2867,13 +2874,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.MomentListResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.MomentListResponse"
                                         }
                                     }
                                 }
@@ -2883,25 +2890,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2937,7 +2944,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateMomentRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.UpdateMomentRequest"
                         }
                     }
                 ],
@@ -2945,31 +2952,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3004,31 +3011,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3067,19 +3074,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3104,19 +3111,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3150,31 +3157,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3222,13 +3229,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.SettingGroupResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.SettingGroupResponse"
                                         }
                                     }
                                 }
@@ -3238,13 +3245,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3289,7 +3296,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateSettingGroupRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.UpdateSettingGroupRequest"
                         }
                     }
                 ],
@@ -3297,19 +3304,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3339,7 +3346,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
@@ -3347,7 +3354,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/dto.CategoryStats"
+                                                "$ref": "#/definitions/flec_blog_internal_dto.CategoryStats"
                                             }
                                         }
                                     }
@@ -3398,7 +3405,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
@@ -3406,7 +3413,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/dto.ArticleContribution"
+                                                "$ref": "#/definitions/flec_blog_internal_dto.ArticleContribution"
                                             }
                                         }
                                     }
@@ -3441,13 +3448,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.DashboardStats"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.DashboardStats"
                                         }
                                     }
                                 }
@@ -3481,7 +3488,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
@@ -3489,7 +3496,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/dto.TagStats"
+                                                "$ref": "#/definitions/flec_blog_internal_dto.TagStats"
                                             }
                                         }
                                     }
@@ -3554,7 +3561,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
@@ -3562,7 +3569,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/dto.TrendData"
+                                                "$ref": "#/definitions/flec_blog_internal_dto.TrendData"
                                             }
                                         }
                                     }
@@ -3616,13 +3623,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.PageResult"
+                                            "$ref": "#/definitions/flec_blog_pkg_response.PageResult"
                                         }
                                     }
                                 }
@@ -3668,19 +3675,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3709,7 +3716,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateTagRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.CreateTagRequest"
                         }
                     }
                 ],
@@ -3719,13 +3726,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Tag"
+                                            "$ref": "#/definitions/flec_blog_internal_model.Tag"
                                         }
                                     }
                                 }
@@ -3735,19 +3742,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3784,31 +3791,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3844,7 +3851,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateTagRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.UpdateTagRequest"
                         }
                     }
                 ],
@@ -3854,13 +3861,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.Tag"
+                                            "$ref": "#/definitions/flec_blog_internal_model.Tag"
                                         }
                                     }
                                 }
@@ -3870,25 +3877,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3923,31 +3930,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3993,13 +4000,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.PageResult"
+                                            "$ref": "#/definitions/flec_blog_pkg_response.PageResult"
                                         }
                                     }
                                 }
@@ -4009,19 +4016,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4050,7 +4057,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.AdminCreateUserRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.AdminCreateUserRequest"
                         }
                     }
                 ],
@@ -4058,31 +4065,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4121,13 +4128,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.UserResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.UserResponse"
                                         }
                                     }
                                 }
@@ -4137,19 +4144,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4185,7 +4192,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.AdminUpdateUserRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.AdminUpdateUserRequest"
                         }
                     }
                 ],
@@ -4193,25 +4200,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4246,25 +4253,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4304,7 +4311,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
@@ -4312,7 +4319,7 @@ const docTemplate = `{
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.PageResult"
+                                                    "$ref": "#/definitions/flec_blog_pkg_response.PageResult"
                                                 },
                                                 {
                                                     "type": "object",
@@ -4320,7 +4327,7 @@ const docTemplate = `{
                                                         "list": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/dto.FeedbackResponse"
+                                                                "$ref": "#/definitions/flec_blog_internal_dto.FeedbackResponse"
                                                             }
                                                         }
                                                     }
@@ -4362,13 +4369,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.FeedbackResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.FeedbackResponse"
                                         }
                                     }
                                 }
@@ -4402,7 +4409,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateFeedbackRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.UpdateFeedbackRequest"
                         }
                     }
                 ],
@@ -4410,7 +4417,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4439,7 +4446,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4485,13 +4492,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.NotificationListResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.NotificationListResponse"
                                         }
                                     }
                                 }
@@ -4501,13 +4508,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4547,7 +4554,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
@@ -4555,7 +4562,7 @@ const docTemplate = `{
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.PageResult"
+                                                    "$ref": "#/definitions/flec_blog_pkg_response.PageResult"
                                                 },
                                                 {
                                                     "type": "object",
@@ -4563,7 +4570,7 @@ const docTemplate = `{
                                                         "list": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/dto.SubscriberResponse"
+                                                                "$ref": "#/definitions/flec_blog_internal_dto.SubscriberResponse"
                                                             }
                                                         }
                                                     }
@@ -4603,7 +4610,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4628,7 +4635,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.SubmitFeedbackRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.SubmitFeedbackRequest"
                         }
                     }
                 ],
@@ -4638,13 +4645,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.FeedbackResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.FeedbackResponse"
                                         }
                                     }
                                 }
@@ -4681,13 +4688,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.FeedbackResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.FeedbackResponse"
                                         }
                                     }
                                 }
@@ -4737,13 +4744,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.NotificationListResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.NotificationListResponse"
                                         }
                                     }
                                 }
@@ -4753,13 +4760,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4787,19 +4794,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4836,19 +4843,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4886,7 +4893,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4917,7 +4924,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4980,13 +4987,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.PageResult"
+                                            "$ref": "#/definitions/flec_blog_pkg_response.PageResult"
                                         }
                                     }
                                 }
@@ -4996,7 +5003,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5042,13 +5049,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.PageResult"
+                                            "$ref": "#/definitions/flec_blog_pkg_response.PageResult"
                                         }
                                     }
                                 }
@@ -5058,7 +5065,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5092,13 +5099,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.ArticleDetailResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.ArticleDetailResponse"
                                         }
                                     }
                                 }
@@ -5108,7 +5115,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5157,7 +5164,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.ForgotPasswordRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.ForgotPasswordRequest"
                         }
                     }
                 ],
@@ -5165,19 +5172,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5203,7 +5210,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.LoginRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.LoginRequest"
                         }
                     }
                 ],
@@ -5213,13 +5220,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.LoginResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.LoginResponse"
                                         }
                                     }
                                 }
@@ -5229,13 +5236,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5263,13 +5270,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5295,7 +5302,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.RefreshTokenRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.RefreshTokenRequest"
                         }
                     }
                 ],
@@ -5305,13 +5312,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.LoginResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.LoginResponse"
                                         }
                                     }
                                 }
@@ -5321,13 +5328,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5353,7 +5360,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.RegisterRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.RegisterRequest"
                         }
                     }
                 ],
@@ -5363,13 +5370,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.LoginResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.LoginResponse"
                                         }
                                     }
                                 }
@@ -5379,13 +5386,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5411,7 +5418,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.ResetPasswordRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.ResetPasswordRequest"
                         }
                     }
                 ],
@@ -5419,19 +5426,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5524,7 +5531,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5558,13 +5565,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.CategoryForWebResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.CategoryForWebResponse"
                                         }
                                     }
                                 }
@@ -5574,7 +5581,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5600,7 +5607,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CollectRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.CollectRequest"
                         }
                     }
                 ],
@@ -5658,13 +5665,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.PageResult"
+                                            "$ref": "#/definitions/flec_blog_pkg_response.PageResult"
                                         }
                                     }
                                 }
@@ -5674,7 +5681,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5698,7 +5705,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateCommentRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.CreateCommentRequest"
                         }
                     }
                 ],
@@ -5708,13 +5715,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.CommentResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.CommentResponse"
                                         }
                                     }
                                 }
@@ -5724,7 +5731,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5762,7 +5769,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateCommentRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.UpdateCommentRequest"
                         }
                     }
                 ],
@@ -5772,13 +5779,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.CommentResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.CommentResponse"
                                         }
                                     }
                                 }
@@ -5788,25 +5795,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5841,31 +5848,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5887,13 +5894,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.GroupedFriendsResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.GroupedFriendsResponse"
                                         }
                                     }
                                 }
@@ -5928,7 +5935,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.ApplyFriendRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.ApplyFriendRequest"
                         }
                     }
                 ],
@@ -5936,19 +5943,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5980,7 +5987,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
@@ -5988,7 +5995,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/dto.MenuTreeNode"
+                                                "$ref": "#/definitions/flec_blog_internal_dto.MenuTreeNode"
                                             }
                                         }
                                     }
@@ -6032,17 +6039,40 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.PageResult"
+                                            "$ref": "#/definitions/flec_blog_pkg_response.PageResult"
                                         }
                                     }
                                 }
                             ]
+                        }
+                    }
+                }
+            }
+        },
+        "/rss.xml": {
+            "get": {
+                "description": "生成博客文章的RSS 2.0订阅源",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/xml"
+                ],
+                "tags": [
+                    "订阅"
+                ],
+                "summary": "RSS 2.0订阅",
+                "responses": {
+                    "200": {
+                        "description": "RSS XML 订阅内容",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -6085,7 +6115,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
@@ -6104,13 +6134,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -6135,13 +6165,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.ArchivesResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.ArchivesResponse"
                                         }
                                     }
                                 }
@@ -6170,13 +6200,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.SiteStatsResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.SiteStatsResponse"
                                         }
                                     }
                                 }
@@ -6217,7 +6247,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -6251,13 +6281,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.TagForWebResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.TagForWebResponse"
                                         }
                                     }
                                 }
@@ -6267,7 +6297,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -6308,13 +6338,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.FileUploadForWebResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.FileUploadForWebResponse"
                                         }
                                     }
                                 }
@@ -6324,7 +6354,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -6355,7 +6385,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.DeactivateAccountRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.DeactivateAccountRequest"
                         }
                     }
                 ],
@@ -6363,19 +6393,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -6412,19 +6442,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -6455,7 +6485,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.ChangePasswordRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.ChangePasswordRequest"
                         }
                     }
                 ],
@@ -6463,19 +6493,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -6504,7 +6534,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.SetPasswordRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.SetPasswordRequest"
                         }
                     }
                 ],
@@ -6512,19 +6542,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -6554,13 +6584,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.UserResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.UserResponse"
                                         }
                                     }
                                 }
@@ -6570,7 +6600,7 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -6599,7 +6629,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateUserRequest"
+                            "$ref": "#/definitions/flec_blog_internal_dto.UpdateUserRequest"
                         }
                     }
                 ],
@@ -6609,13 +6639,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/dto.UserResponse"
+                                            "$ref": "#/definitions/flec_blog_internal_dto.UserResponse"
                                         }
                                     }
                                 }
@@ -6625,13 +6655,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -6639,7 +6669,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "dto.AIAISummaryRequest": {
+        "flec_blog_internal_dto.AIAISummaryRequest": {
             "type": "object",
             "required": [
                 "content"
@@ -6651,7 +6681,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.AIAISummaryResponse": {
+        "flec_blog_internal_dto.AIAISummaryResponse": {
             "type": "object",
             "properties": {
                 "summary": {
@@ -6660,7 +6690,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.AISummaryRequest": {
+        "flec_blog_internal_dto.AISummaryRequest": {
             "type": "object",
             "required": [
                 "content"
@@ -6672,7 +6702,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.AISummaryResponse": {
+        "flec_blog_internal_dto.AISummaryResponse": {
             "type": "object",
             "properties": {
                 "summary": {
@@ -6681,7 +6711,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.AITestRequest": {
+        "flec_blog_internal_dto.AITestRequest": {
             "type": "object",
             "required": [
                 "api_key",
@@ -6700,7 +6730,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.AITitleRequest": {
+        "flec_blog_internal_dto.AITitleRequest": {
             "type": "object",
             "required": [
                 "content"
@@ -6712,7 +6742,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.AITitleResponse": {
+        "flec_blog_internal_dto.AITitleResponse": {
             "type": "object",
             "properties": {
                 "title": {
@@ -6721,7 +6751,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.AdminCreateUserRequest": {
+        "flec_blog_internal_dto.AdminCreateUserRequest": {
             "type": "object",
             "required": [
                 "email",
@@ -6760,7 +6790,7 @@ const docTemplate = `{
                     ],
                     "allOf": [
                         {
-                            "$ref": "#/definitions/model.UserRole"
+                            "$ref": "#/definitions/flec_blog_internal_model.UserRole"
                         }
                     ]
                 },
@@ -6770,7 +6800,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.AdminUpdateUserRequest": {
+        "flec_blog_internal_dto.AdminUpdateUserRequest": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -6808,7 +6838,7 @@ const docTemplate = `{
                     ],
                     "allOf": [
                         {
-                            "$ref": "#/definitions/model.UserRole"
+                            "$ref": "#/definitions/flec_blog_internal_model.UserRole"
                         }
                     ]
                 },
@@ -6818,7 +6848,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ApplyFriendRequest": {
+        "flec_blog_internal_dto.ApplyFriendRequest": {
             "type": "object",
             "required": [
                 "avatar",
@@ -6854,7 +6884,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ArchiveItem": {
+        "flec_blog_internal_dto.ArchiveItem": {
             "type": "object",
             "properties": {
                 "count": {
@@ -6871,19 +6901,19 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ArchivesResponse": {
+        "flec_blog_internal_dto.ArchivesResponse": {
             "type": "object",
             "properties": {
                 "archives": {
                     "description": "归档列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.ArchiveItem"
+                        "$ref": "#/definitions/flec_blog_internal_dto.ArchiveItem"
                     }
                 }
             }
         },
-        "dto.ArticleAdminDetailResponse": {
+        "flec_blog_internal_dto.ArticleAdminDetailResponse": {
             "type": "object",
             "properties": {
                 "ai_summary": {
@@ -6925,7 +6955,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "publish_time": {
-                    "$ref": "#/definitions/utils.JSONTime"
+                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
+                },
+                "slug": {
+                    "type": "string"
                 },
                 "summary": {
                     "type": "string"
@@ -6948,11 +6981,11 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "update_time": {
-                    "$ref": "#/definitions/utils.JSONTime"
+                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
                 }
             }
         },
-        "dto.ArticleContribution": {
+        "flec_blog_internal_dto.ArticleContribution": {
             "type": "object",
             "properties": {
                 "count": {
@@ -6965,7 +6998,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ArticleDetailResponse": {
+        "flec_blog_internal_dto.ArticleDetailResponse": {
             "type": "object",
             "properties": {
                 "ai_summary": {
@@ -7032,7 +7065,7 @@ const docTemplate = `{
                     }
                 },
                 "publish_time": {
-                    "$ref": "#/definitions/utils.JSONTime"
+                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
                 },
                 "slug": {
                     "type": "string"
@@ -7061,7 +7094,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "update_time": {
-                    "$ref": "#/definitions/utils.JSONTime"
+                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
                 },
                 "url": {
                     "type": "string"
@@ -7071,7 +7104,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CategoryForWebResponse": {
+        "flec_blog_internal_dto.CategoryForWebResponse": {
             "type": "object",
             "properties": {
                 "count": {
@@ -7097,7 +7130,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CategoryStats": {
+        "flec_blog_internal_dto.CategoryStats": {
             "type": "object",
             "properties": {
                 "count": {
@@ -7110,7 +7143,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ChangePasswordRequest": {
+        "flec_blog_internal_dto.ChangePasswordRequest": {
             "type": "object",
             "required": [
                 "new_password",
@@ -7127,7 +7160,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CollectRequest": {
+        "flec_blog_internal_dto.CollectRequest": {
             "type": "object",
             "properties": {
                 "article_id": {
@@ -7181,17 +7214,17 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CommentListResponse": {
+        "flec_blog_internal_dto.CommentListResponse": {
             "type": "object",
             "properties": {
                 "content": {
                     "type": "string"
                 },
                 "created_at": {
-                    "$ref": "#/definitions/utils.JSONTime"
+                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
                 },
                 "deleted_at": {
-                    "$ref": "#/definitions/utils.JSONTime"
+                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
                 },
                 "id": {
                     "type": "integer"
@@ -7240,7 +7273,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CommentResponse": {
+        "flec_blog_internal_dto.CommentResponse": {
             "type": "object",
             "properties": {
                 "browser": {
@@ -7251,10 +7284,13 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "created_at": {
-                    "$ref": "#/definitions/utils.JSONTime"
+                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
                 },
                 "id": {
                     "type": "integer"
+                },
+                "is_deleted": {
+                    "type": "boolean"
                 },
                 "location": {
                     "description": "地理位置",
@@ -7270,7 +7306,7 @@ const docTemplate = `{
                 "replies": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.CommentResponse"
+                        "$ref": "#/definitions/flec_blog_internal_dto.CommentResponse"
                     }
                 },
                 "reply_user": {
@@ -7335,7 +7371,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateArticleRequest": {
+        "flec_blog_internal_dto.CreateArticleRequest": {
             "type": "object",
             "required": [
                 "content",
@@ -7371,6 +7407,10 @@ const docTemplate = `{
                     "description": "发布地点",
                     "type": "string"
                 },
+                "slug": {
+                    "description": "自定义 URL slug",
+                    "type": "string"
+                },
                 "summary": {
                     "type": "string"
                 },
@@ -7385,7 +7425,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateCategoryRequest": {
+        "flec_blog_internal_dto.CreateCategoryRequest": {
             "type": "object",
             "required": [
                 "name"
@@ -7404,7 +7444,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateCommentRequest": {
+        "flec_blog_internal_dto.CreateCommentRequest": {
             "type": "object",
             "required": [
                 "content",
@@ -7445,7 +7485,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateFriendRequest": {
+        "flec_blog_internal_dto.CreateFriendRequest": {
             "type": "object",
             "required": [
                 "name",
@@ -7487,7 +7527,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateFriendTypeRequest": {
+        "flec_blog_internal_dto.CreateFriendTypeRequest": {
             "type": "object",
             "required": [
                 "name"
@@ -7505,14 +7545,14 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateMomentRequest": {
+        "flec_blog_internal_dto.CreateMomentRequest": {
             "type": "object",
             "required": [
                 "content"
             ],
             "properties": {
                 "content": {
-                    "$ref": "#/definitions/dto.MomentContent"
+                    "$ref": "#/definitions/flec_blog_internal_dto.MomentContent"
                 },
                 "is_publish": {
                     "description": "是否发布，默认true",
@@ -7522,13 +7562,13 @@ const docTemplate = `{
                     "description": "发布时间（可选，不填则使用创建时间）",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/utils.JSONTime"
+                            "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
                         }
                     ]
                 }
             }
         },
-        "dto.CreateTagRequest": {
+        "flec_blog_internal_dto.CreateTagRequest": {
             "type": "object",
             "required": [
                 "name"
@@ -7544,7 +7584,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.DashboardStats": {
+        "flec_blog_internal_dto.DashboardStats": {
             "type": "object",
             "properties": {
                 "comments_growth": {
@@ -7609,7 +7649,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.DeactivateAccountRequest": {
+        "flec_blog_internal_dto.DeactivateAccountRequest": {
             "type": "object",
             "required": [
                 "password"
@@ -7620,7 +7660,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.FeedbackResponse": {
+        "flec_blog_internal_dto.FeedbackResponse": {
             "type": "object",
             "properties": {
                 "admin_reply": {
@@ -7634,7 +7674,7 @@ const docTemplate = `{
                     "description": "反馈时间",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/utils.JSONTime"
+                            "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
                         }
                     ]
                 },
@@ -7651,7 +7691,7 @@ const docTemplate = `{
                     "description": "回复时间",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/utils.JSONTime"
+                            "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
                         }
                     ]
                 },
@@ -7673,7 +7713,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.FileResponse": {
+        "flec_blog_internal_dto.FileResponse": {
             "type": "object",
             "properties": {
                 "file_name": {
@@ -7699,7 +7739,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "upload_time": {
-                    "$ref": "#/definitions/utils.JSONTime"
+                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
                 },
                 "upload_type": {
                     "type": "string"
@@ -7709,7 +7749,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.FileUploadForWebResponse": {
+        "flec_blog_internal_dto.FileUploadForWebResponse": {
             "type": "object",
             "properties": {
                 "file_url": {
@@ -7720,7 +7760,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ForgotPasswordRequest": {
+        "flec_blog_internal_dto.ForgotPasswordRequest": {
             "type": "object",
             "required": [
                 "email"
@@ -7731,14 +7771,14 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.FriendGroupResponse": {
+        "flec_blog_internal_dto.FriendGroupResponse": {
             "type": "object",
             "properties": {
                 "friends": {
                     "description": "该类型下的友链（已排序）",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.FriendInGroupResponse"
+                        "$ref": "#/definitions/flec_blog_internal_dto.FriendInGroupResponse"
                     }
                 },
                 "type_id": {
@@ -7755,7 +7795,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.FriendInGroupResponse": {
+        "flec_blog_internal_dto.FriendInGroupResponse": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -7785,14 +7825,14 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.GroupedFriendsResponse": {
+        "flec_blog_internal_dto.GroupedFriendsResponse": {
             "type": "object",
             "properties": {
                 "groups": {
                     "description": "友链分组列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.FriendGroupResponse"
+                        "$ref": "#/definitions/flec_blog_internal_dto.FriendGroupResponse"
                     }
                 },
                 "total_friends": {
@@ -7805,7 +7845,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ImportArticleError": {
+        "flec_blog_internal_dto.ImportArticleError": {
             "type": "object",
             "properties": {
                 "error": {
@@ -7819,7 +7859,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ImportArticlesResult": {
+        "flec_blog_internal_dto.ImportArticlesResult": {
             "type": "object",
             "properties": {
                 "categories_added": {
@@ -7829,7 +7869,7 @@ const docTemplate = `{
                 "errors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.ImportArticleError"
+                        "$ref": "#/definitions/flec_blog_internal_dto.ImportArticleError"
                     }
                 },
                 "failed": {
@@ -7847,7 +7887,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ImportCommentError": {
+        "flec_blog_internal_dto.ImportCommentError": {
             "type": "object",
             "properties": {
                 "content": {
@@ -7861,13 +7901,13 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ImportCommentsResult": {
+        "flec_blog_internal_dto.ImportCommentsResult": {
             "type": "object",
             "properties": {
                 "errors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.ImportCommentError"
+                        "$ref": "#/definitions/flec_blog_internal_dto.ImportCommentError"
                     }
                 },
                 "failed": {
@@ -7884,7 +7924,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.LoginRequest": {
+        "flec_blog_internal_dto.LoginRequest": {
             "type": "object",
             "required": [
                 "email",
@@ -7899,7 +7939,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.LoginResponse": {
+        "flec_blog_internal_dto.LoginResponse": {
             "type": "object",
             "properties": {
                 "access_token": {
@@ -7912,13 +7952,13 @@ const docTemplate = `{
                     "description": "刷新token时为空",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/dto.UserResponse"
+                            "$ref": "#/definitions/flec_blog_internal_dto.UserResponse"
                         }
                     ]
                 }
             }
         },
-        "dto.MenuCreateRequest": {
+        "flec_blog_internal_dto.MenuCreateRequest": {
             "type": "object",
             "required": [
                 "title",
@@ -7966,7 +8006,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.MenuDeleteRequest": {
+        "flec_blog_internal_dto.MenuDeleteRequest": {
             "type": "object",
             "properties": {
                 "children_action": {
@@ -7979,7 +8019,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.MenuResponse": {
+        "flec_blog_internal_dto.MenuResponse": {
             "type": "object",
             "properties": {
                 "icon": {
@@ -8008,14 +8048,14 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.MenuTreeNode": {
+        "flec_blog_internal_dto.MenuTreeNode": {
             "type": "object",
             "properties": {
                 "children": {
                     "description": "子菜单列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.MenuTreeNode"
+                        "$ref": "#/definitions/flec_blog_internal_dto.MenuTreeNode"
                     }
                 },
                 "icon": {
@@ -8044,7 +8084,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.MenuUpdateRequest": {
+        "flec_blog_internal_dto.MenuUpdateRequest": {
             "type": "object",
             "required": [
                 "title",
@@ -8092,7 +8132,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.MomentContent": {
+        "flec_blog_internal_dto.MomentContent": {
             "type": "object",
             "properties": {
                 "book": {
@@ -8111,7 +8151,7 @@ const docTemplate = `{
                     "description": "外链",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/dto.MomentLink"
+                            "$ref": "#/definitions/flec_blog_internal_dto.MomentLink"
                         }
                     ]
                 },
@@ -8128,7 +8168,7 @@ const docTemplate = `{
                     "description": "音乐（基于MetingJS）",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/dto.MomentMusic"
+                            "$ref": "#/definitions/flec_blog_internal_dto.MomentMusic"
                         }
                     ]
                 },
@@ -8144,13 +8184,13 @@ const docTemplate = `{
                     "description": "视频（本地或在线）",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/dto.MomentVideo"
+                            "$ref": "#/definitions/flec_blog_internal_dto.MomentVideo"
                         }
                     ]
                 }
             }
         },
-        "dto.MomentLink": {
+        "flec_blog_internal_dto.MomentLink": {
             "type": "object",
             "properties": {
                 "favicon": {
@@ -8164,11 +8204,11 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.MomentListResponse": {
+        "flec_blog_internal_dto.MomentListResponse": {
             "type": "object",
             "properties": {
                 "content": {
-                    "$ref": "#/definitions/dto.MomentContent"
+                    "$ref": "#/definitions/flec_blog_internal_dto.MomentContent"
                 },
                 "id": {
                     "type": "integer"
@@ -8177,11 +8217,11 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "publish_time": {
-                    "$ref": "#/definitions/utils.JSONTime"
+                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
                 }
             }
         },
-        "dto.MomentMusic": {
+        "flec_blog_internal_dto.MomentMusic": {
             "type": "object",
             "properties": {
                 "id": {
@@ -8198,7 +8238,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.MomentVideo": {
+        "flec_blog_internal_dto.MomentVideo": {
             "type": "object",
             "properties": {
                 "platform": {
@@ -8215,13 +8255,13 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.NotificationListResponse": {
+        "flec_blog_internal_dto.NotificationListResponse": {
             "type": "object",
             "properties": {
                 "list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.NotificationResponse"
+                        "$ref": "#/definitions/flec_blog_internal_dto.NotificationResponse"
                     }
                 },
                 "page": {
@@ -8239,7 +8279,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.NotificationResponse": {
+        "flec_blog_internal_dto.NotificationResponse": {
             "type": "object",
             "properties": {
                 "content": {
@@ -8247,7 +8287,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "created_at": {
-                    "$ref": "#/definitions/utils.JSONTime"
+                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
                 },
                 "data": {
                     "description": "结构化数据（JSON 对象）",
@@ -8264,7 +8304,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "read_at": {
-                    "$ref": "#/definitions/utils.JSONTime"
+                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
                 },
                 "sender": {
                     "description": "发送者昵称",
@@ -8288,7 +8328,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.RefreshTokenRequest": {
+        "flec_blog_internal_dto.RefreshTokenRequest": {
             "type": "object",
             "required": [
                 "refresh_token"
@@ -8299,7 +8339,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.RegisterRequest": {
+        "flec_blog_internal_dto.RegisterRequest": {
             "type": "object",
             "required": [
                 "email",
@@ -8326,7 +8366,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ResetPasswordRequest": {
+        "flec_blog_internal_dto.ResetPasswordRequest": {
             "type": "object",
             "required": [
                 "code",
@@ -8347,7 +8387,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.SetPasswordRequest": {
+        "flec_blog_internal_dto.SetPasswordRequest": {
             "type": "object",
             "required": [
                 "confirm_password",
@@ -8366,7 +8406,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.SettingGroupResponse": {
+        "flec_blog_internal_dto.SettingGroupResponse": {
             "type": "object",
             "properties": {
                 "group": {
@@ -8375,12 +8415,12 @@ const docTemplate = `{
                 "settings": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.SettingItemResponse"
+                        "$ref": "#/definitions/flec_blog_internal_dto.SettingItemResponse"
                     }
                 }
             }
         },
-        "dto.SettingItemResponse": {
+        "flec_blog_internal_dto.SettingItemResponse": {
             "type": "object",
             "properties": {
                 "key": {
@@ -8391,7 +8431,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.SiteStatsResponse": {
+        "flec_blog_internal_dto.SiteStatsResponse": {
             "type": "object",
             "properties": {
                 "month_pageviews": {
@@ -8456,7 +8496,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.SubmitFeedbackRequest": {
+        "flec_blog_internal_dto.SubmitFeedbackRequest": {
             "type": "object",
             "required": [
                 "description",
@@ -8496,14 +8536,14 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.SubscriberResponse": {
+        "flec_blog_internal_dto.SubscriberResponse": {
             "type": "object",
             "properties": {
                 "active": {
                     "type": "boolean"
                 },
                 "created_at": {
-                    "$ref": "#/definitions/utils.JSONTime"
+                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
                 },
                 "email": {
                     "type": "string"
@@ -8512,11 +8552,11 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "updated_at": {
-                    "$ref": "#/definitions/utils.JSONTime"
+                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
                 }
             }
         },
-        "dto.TagForWebResponse": {
+        "flec_blog_internal_dto.TagForWebResponse": {
             "type": "object",
             "properties": {
                 "count": {
@@ -8539,7 +8579,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.TagStats": {
+        "flec_blog_internal_dto.TagStats": {
             "type": "object",
             "properties": {
                 "count": {
@@ -8552,7 +8592,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.TrendData": {
+        "flec_blog_internal_dto.TrendData": {
             "type": "object",
             "properties": {
                 "date": {
@@ -8569,7 +8609,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateArticleRequest": {
+        "flec_blog_internal_dto.UpdateArticleRequest": {
             "type": "object",
             "properties": {
                 "ai_summary": {
@@ -8606,7 +8646,11 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "publish_time": {
-                    "$ref": "#/definitions/utils.JSONTime"
+                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
+                },
+                "slug": {
+                    "description": "自定义 URL slug",
+                    "type": "string"
                 },
                 "summary": {
                     "type": "string"
@@ -8621,11 +8665,11 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "update_time": {
-                    "$ref": "#/definitions/utils.JSONTime"
+                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
                 }
             }
         },
-        "dto.UpdateCategoryRequest": {
+        "flec_blog_internal_dto.UpdateCategoryRequest": {
             "type": "object",
             "required": [
                 "name"
@@ -8644,7 +8688,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateCommentRequest": {
+        "flec_blog_internal_dto.UpdateCommentRequest": {
             "type": "object",
             "required": [
                 "content"
@@ -8657,7 +8701,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateFeedbackRequest": {
+        "flec_blog_internal_dto.UpdateFeedbackRequest": {
             "type": "object",
             "required": [
                 "status"
@@ -8676,7 +8720,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateFriendRequest": {
+        "flec_blog_internal_dto.UpdateFriendRequest": {
             "type": "object",
             "required": [
                 "name",
@@ -8730,7 +8774,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateFriendTypeRequest": {
+        "flec_blog_internal_dto.UpdateFriendTypeRequest": {
             "type": "object",
             "required": [
                 "name"
@@ -8748,14 +8792,14 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateMomentRequest": {
+        "flec_blog_internal_dto.UpdateMomentRequest": {
             "type": "object",
             "required": [
                 "content"
             ],
             "properties": {
                 "content": {
-                    "$ref": "#/definitions/dto.MomentContent"
+                    "$ref": "#/definitions/flec_blog_internal_dto.MomentContent"
                 },
                 "is_publish": {
                     "description": "是否发布",
@@ -8765,13 +8809,13 @@ const docTemplate = `{
                     "description": "发布时间（可编辑）",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/utils.JSONTime"
+                            "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
                         }
                     ]
                 }
             }
         },
-        "dto.UpdateSettingGroupRequest": {
+        "flec_blog_internal_dto.UpdateSettingGroupRequest": {
             "type": "object",
             "required": [
                 "settings"
@@ -8785,7 +8829,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateTagRequest": {
+        "flec_blog_internal_dto.UpdateTagRequest": {
             "type": "object",
             "required": [
                 "name"
@@ -8801,7 +8845,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateUserRequest": {
+        "flec_blog_internal_dto.UpdateUserRequest": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -8826,7 +8870,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UserResponse": {
+        "flec_blog_internal_dto.UserResponse": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -8836,7 +8880,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "created_at": {
-                    "$ref": "#/definitions/utils.JSONTime"
+                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
                 },
                 "email": {
                     "type": "string"
@@ -8856,7 +8900,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "last_login": {
-                    "$ref": "#/definitions/utils.JSONTime"
+                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
                 },
                 "linked_oauths": {
                     "description": "[\"github\", \"google\", \"qq\"]",
@@ -8869,14 +8913,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "role": {
-                    "$ref": "#/definitions/model.UserRole"
+                    "$ref": "#/definitions/flec_blog_internal_model.UserRole"
                 },
                 "website": {
                     "type": "string"
                 }
             }
         },
-        "dto.WeChatExportResult": {
+        "flec_blog_internal_dto.WeChatExportResult": {
             "type": "object",
             "properties": {
                 "html": {
@@ -8900,12 +8944,9 @@ const docTemplate = `{
                 }
             }
         },
-        "model.Category": {
+        "flec_blog_internal_model.Category": {
             "type": "object",
             "properties": {
-                "count": {
-                    "type": "integer"
-                },
                 "created_at": {
                     "type": "string"
                 },
@@ -8929,38 +8970,9 @@ const docTemplate = `{
                 }
             }
         },
-        "model.Moment": {
+        "flec_blog_internal_model.Tag": {
             "type": "object",
             "properties": {
-                "content": {
-                    "description": "内容（JSON）- 包含text、images、location、link、music、video等",
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "is_publish": {
-                    "description": "是否发布",
-                    "type": "boolean"
-                },
-                "publish_time": {
-                    "description": "发布时间",
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.Tag": {
-            "type": "object",
-            "properties": {
-                "count": {
-                    "type": "integer"
-                },
                 "created_at": {
                     "type": "string"
                 },
@@ -8981,7 +8993,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.UserRole": {
+        "flec_blog_internal_model.UserRole": {
             "type": "string",
             "enum": [
                 "super_admin",
@@ -9008,7 +9020,7 @@ const docTemplate = `{
                 "RoleGuest"
             ]
         },
-        "response.PageResult": {
+        "flec_blog_pkg_response.PageResult": {
             "type": "object",
             "properties": {
                 "list": {},
@@ -9023,7 +9035,7 @@ const docTemplate = `{
                 }
             }
         },
-        "response.Response": {
+        "flec_blog_pkg_response.Response": {
             "type": "object",
             "properties": {
                 "code": {
@@ -9035,7 +9047,7 @@ const docTemplate = `{
                 }
             }
         },
-        "utils.JSONTime": {
+        "flec_blog_pkg_utils.JSONTime": {
             "type": "object",
             "properties": {
                 "time.Time": {
