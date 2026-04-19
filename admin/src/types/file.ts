@@ -12,7 +12,7 @@
 // 文件信息
 export interface FileInfo {
   id: number
-  filename: string
+  file_name: string
   original_name: string
   file_url: string
   file_type: string
