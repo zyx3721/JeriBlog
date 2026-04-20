@@ -137,6 +137,12 @@ func (r *RssFeedRepository) DeleteOrphaned(ctx context.Context) (int64, error) {
 	return result.RowsAffected, result.Error
 }
 
+// DeleteByFriendID 删除指定友链的所有RSS文章
+func (r *RssFeedRepository) DeleteByFriendID(ctx context.Context, friendID uint) (int64, error) {
+	result := r.db.WithContext(ctx).Where("friend_id = ?", friendID).Delete(&model.RssArticle{})
+	return result.RowsAffected, result.Error
+}
+
 // ExistsByLink 检查链接是否已存在
 func (r *RssFeedRepository) ExistsByLink(ctx context.Context, link string) (bool, error) {
 	var count int64
