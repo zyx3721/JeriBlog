@@ -24,6 +24,7 @@ type RssArticle struct {
 	Link        string     `gorm:"size:1000;not null;unique" json:"link"`
 	PublishedAt *time.Time `json:"published_at"`
 	IsRead      bool       `gorm:"default:false" json:"is_read"`
+	IsDeleted   bool       `gorm:"default:false" json:"is_deleted"`
 	CreatedAt   time.Time  `json:"created_at"`
 	UpdatedAt   time.Time  `json:"updated_at"`
 }
