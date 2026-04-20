@@ -3122,6 +3122,43 @@
                 }
             }
         },
+        "/admin/rssfeed/refresh": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "手动触发刷新所有RSS订阅源（仅超级管理员可操作）",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "RSS订阅管理"
+                ],
+                "summary": "立即刷新RSS",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/rssfeed/{id}/read": {
             "put": {
                 "security": [
