@@ -291,6 +291,7 @@ CREATE TABLE IF NOT EXISTS rss_articles (
     link VARCHAR(1000) NOT NULL,
     published_at TIMESTAMP,
     is_read BOOLEAN DEFAULT FALSE,
+    is_deleted BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_rss_article_friend FOREIGN KEY (friend_id) REFERENCES friends(id) ON DELETE CASCADE
@@ -299,6 +300,7 @@ CREATE TABLE IF NOT EXISTS rss_articles (
 CREATE INDEX IF NOT EXISTS idx_rss_articles_friend_id ON rss_articles(friend_id);
 CREATE INDEX IF NOT EXISTS idx_rss_articles_published_at ON rss_articles(published_at DESC);
 CREATE INDEX IF NOT EXISTS idx_rss_articles_is_read ON rss_articles(is_read);
+CREATE INDEX IF NOT EXISTS idx_rss_articles_is_deleted ON rss_articles(is_deleted);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_rss_articles_link ON rss_articles(link);
 
 
