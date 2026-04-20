@@ -22,7 +22,6 @@ type RssArticle struct {
 	Friend      *Friend    `gorm:"foreignKey:FriendID" json:"friend"`
 	Title       string     `gorm:"size:500;not null;uniqueIndex:idx_friend_title" json:"title"`
 	Link        string     `gorm:"size:1000;not null" json:"link"`
-	Description string     `gorm:"type:text" json:"description"`
 	PublishedAt *time.Time `json:"published_at"`
 	IsRead      bool       `gorm:"default:false" json:"is_read"`
 	IsDeleted   bool       `gorm:"default:false" json:"is_deleted"`
