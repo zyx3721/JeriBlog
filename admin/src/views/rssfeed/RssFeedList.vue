@@ -286,7 +286,7 @@ const handleMarkRead = async (article: RssArticle) => {
     await markRssArticleRead(article.id)
     // 在列表中找到对应文章并更新
     const index = articleList.value.findIndex(a => a.id === article.id)
-    if (index !== -1) {
+    if (index !== -1 && articleList.value[index]) {
       articleList.value[index].is_read = true
       articleList.value[index].update_type = ''
     }
