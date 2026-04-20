@@ -155,6 +155,19 @@ func (s *RssFeedService) refreshFriendFeed(ctx context.Context, friend *model.Fr
 			continue
 		}
 
+		// 解析发布时间
+		var publishedAt *time.Time
+		if item.PublishedParsed != nil {
+			publishedAt = item.PublishedParsed
+		} else if item.UpdatedParsed != nil {
+			publishedAt = item.UpdatedParsed
+		} else if item.Published != "" {
+			// Fallback: try to parse non-standard pubDate formats
+			if t, err := parseRSSDate(item.Published); err == nil {
+				publishedAt = &t
+			}
+		}
+
 		// 检查文章是否存在
 		existingArticle, err := s.repo.GetByLink(ctx, item.Link)
 		if err != nil {
@@ -169,19 +182,11 @@ func (s *RssFeedService) refreshFriendFeed(ctx context.Context, friend *model.Fr
 					continue
 				}
 			}
-			continue
-		}
-
-		var publishedAt *time.Time
-		if item.PublishedParsed != nil {
-			publishedAt = item.PublishedParsed
-		} else if item.UpdatedParsed != nil {
-			publishedAt = item.UpdatedParsed
-		} else if item.Published != "" {
-			// Fallback: try to parse non-standard pubDate formats
-			if t, err := parseRSSDate(item.Published); err == nil {
-				publishedAt = &t
+			// 更新文章内容（标题、链接、发布时间），保持已读状态不变
+			if err := s.repo.UpdateArticle(ctx, existingArticle.ID, item.Title, item.Link, publishedAt); err != nil {
+				continue
 			}
+			continue
 		}
 
 		article := model.RssArticle{
