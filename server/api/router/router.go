@@ -443,6 +443,7 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 			rssFeedManagement.GET("", rssFeedController.List)                                            // 获取RSS文章列表
 			rssFeedManagement.PUT("/:id/read", middleware.IsSuperAdmin(), rssFeedController.MarkRead)    // 标记文章已读（仅超级管理员）
 			rssFeedManagement.PUT("/read-all", middleware.IsSuperAdmin(), rssFeedController.MarkAllRead) // 全部标记已读（仅超级管理员）
+			rssFeedManagement.POST("/refresh", middleware.IsSuperAdmin(), rssFeedController.RefreshAll)  // 立即刷新RSS订阅源（仅超级管理员）
 		}
 
 		// ==================== 邮件订阅者管理 ====================
