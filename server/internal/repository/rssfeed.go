@@ -315,9 +315,7 @@ func (r *RssFeedRepository) DeleteDuplicatesByTitleOrLink(ctx context.Context, f
 
 	// 删除所有重复的文章
 	for _, dup := range duplicates {
-		if err := r.DeleteArticle(ctx, dup.ID); err != nil {
-			logger.Error("删除重复文章失败 (ID: %d): %v", dup.ID, err)
-		}
+		_ = r.DeleteArticle(ctx, dup.ID)
 	}
 
 	return nil
