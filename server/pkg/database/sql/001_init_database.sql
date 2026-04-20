@@ -581,7 +581,7 @@ WHERE NOT EXISTS (SELECT 1 FROM friend_types WHERE name = '友情链接');
 
 -- 插入示例友链
 INSERT INTO friends (name, url, description, avatar, screenshot, sort, is_invalid, is_pending, type)
-SELECT '爱吃猫的鱼', 'https://blog.jerion.cn/', '初心如磐 奋楫笃行', 'https://jerionblog-1324292238.cos.ap-guangzhou.myqcloud.com/blog-icon.png', 'https://jerionblog-1324292238.cos.ap-guangzhou.myqcloud.com/blog-backend.png', 5, FALSE, FALSE, 1
+SELECT 'Jerion', 'https://blog.jerion.cn/', '初心如磐 奋楫笃行', 'https://jerionblog-1324292238.cos.ap-guangzhou.myqcloud.com/blog-icon.png', 'https://jerionblog-1324292238.cos.ap-guangzhou.myqcloud.com/blog-backend.png', 5, FALSE, FALSE, 1
 WHERE NOT EXISTS (SELECT 1 FROM friends WHERE url = 'https://blog.jerion.cn/');
 
 -- 插入 settings 初始数据

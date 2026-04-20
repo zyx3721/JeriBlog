@@ -1037,7 +1037,12 @@ server {
     
     # 健康检查
     location = /health {
-        proxy_pass http://127.0.0.1:8090/api/v1/health;
+        proxy_pass http://127.0.0.1:8080/api/v1/health;
+    }
+    
+    # RSS 订阅
+    location = /atom.xml {
+        proxy_pass http://127.0.0.1:8080/atom.xml;
     }
     
     # 后端 API 反向代理（其余 /api/* 请求）
@@ -1146,7 +1151,12 @@ server {
     
     # 健康检查
     location = /health {
-        proxy_pass http://127.0.0.1:8090/api/v1/health;
+        proxy_pass http://127.0.0.1:8080/api/v1/health;
+    }
+    
+    # RSS 订阅
+    location = /atom.xml {
+        proxy_pass http://127.0.0.1:8080/atom.xml;
     }
     
     # 后端 API 反向代理（其余 /api/* 请求）
