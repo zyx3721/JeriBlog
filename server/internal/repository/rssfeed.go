@@ -280,7 +280,7 @@ func (r *RssFeedRepository) RestoreArticle(ctx context.Context, id uint) error {
 }
 
 // UpdateArticleWithChangeDetection 更新文章并检测变更类型
-func (r *RssFeedRepository) UpdateArticleWithChangeDetection(ctx context.Context, id uint, title, link, description string, publishedAt *time.Time) (string, error) {
+func (r *RssFeedRepository) UpdateArticleWithChangeDetection(ctx context.Context, id uint, link string, publishedAt *time.Time) (string, error) {
 	// 先获取旧数据
 	var oldArticle model.RssArticle
 	if err := r.db.WithContext(ctx).First(&oldArticle, id).Error; err != nil {
@@ -289,17 +289,14 @@ func (r *RssFeedRepository) UpdateArticleWithChangeDetection(ctx context.Context
 
 	// 检测变更类型
 	var updateType string
-	if oldArticle.Description != description {
-		updateType = "content"
-	} else if oldArticle.Link != link {
-		updateType = "content" // 链接变化也视为内容更新
+	if oldArticle.Link != link {
+		updateType = "link" // 链接变化
 	} else if publishedAt != nil && oldArticle.PublishedAt != nil && !oldArticle.PublishedAt.Equal(*publishedAt) {
 		updateType = "published_at"
 	}
 
 	updates := map[string]interface{}{
-		"link":        link,
-		"description": description,
+		"link": link,
 	}
 	if publishedAt != nil {
 		updates["published_at"] = publishedAt
