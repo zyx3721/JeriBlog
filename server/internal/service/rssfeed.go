@@ -168,13 +168,25 @@ func (s *RssFeedService) refreshFriendFeed(ctx context.Context, friend *model.Fr
 			}
 		}
 
-		// 检查文章是否存在（使用链接+友链ID作为唯一标识）
-		existingArticle, err := s.repo.GetByFriendIDAndLink(ctx, friend.ID, item.Link)
+		// 检查文章是否存在：先用 title 查询，找不到再用 link 查询
+		// 如果标题和链接都变了，就当作新文章处理
+		var existingArticle *model.RssArticle
+
+		// 先用标题查询
+		existingArticle, err = s.repo.GetByFriendIDAndTitle(ctx, friend.ID, item.Title)
 		if err != nil {
 			continue
 		}
 
-		// 如果文章已存在
+		// 如果标题没找到，再用链接查询
+		if existingArticle == nil {
+			existingArticle, err = s.repo.GetByFriendIDAndLink(ctx, friend.ID, item.Link)
+			if err != nil {
+				continue
+			}
+		}
+
+		// 如果文章已存在（通过标题或链接找到）
 		if existingArticle != nil {
 			// 如果文章之前被标记为已删除，现在恢复为未读
 			if existingArticle.IsDeleted {
