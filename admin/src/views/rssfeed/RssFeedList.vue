@@ -18,6 +18,12 @@
       <el-button type="primary" @click="openSubscriberDialog">
         本站订阅
       </el-button>
+      <el-button type="warning" :loading="refreshing" @click="handleRefreshRss" v-if="isSuperAdmin">
+        <el-icon v-if="!refreshing">
+          <Download />
+        </el-icon>
+        {{ refreshing ? '抓取中...' : '立即抓取RSS' }}
+      </el-button>
       <el-badge :value="unreadCount" :hidden="unreadCount === 0" :max="99" class="unread-badge">
         <el-button type="success" :disabled="unreadCount === 0" @click="handleMarkAllRead"
           v-if="isSuperAdmin">
@@ -119,12 +125,12 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Message } from '@element-plus/icons-vue'
+import { Message, Download } from '@element-plus/icons-vue'
 import CommonList from '@/components/common/CommonList.vue'
 import type { RssArticle, RssArticleQuery } from '@/types/rssfeed'
 import type { User } from '@/types/user'
 import type { Subscriber } from '@/types/subscriber'
-import { getRssArticles, markRssArticleRead, markAllRssArticlesRead } from '@/api/rssfeed'
+import { getRssArticles, markRssArticleRead, markAllRssArticlesRead, refreshAllRssFeeds } from '@/api/rssfeed'
 import { getSubscribers, deleteSubscriber } from '@/api/subscriber'
 import { formatDateTime } from '@/utils/date'
 
@@ -139,6 +145,7 @@ const userInfo = computed(() => {
 const isSuperAdmin = computed(() => userInfo.value?.role === 'super_admin')
 
 const loading = ref(false)
+const refreshing = ref(false)
 const articleList = ref<RssArticle[]>([])
 const total = ref(0)
 const unreadCount = ref(0)
@@ -188,6 +195,32 @@ const handleMarkAllRead = async () => {
     if (error !== 'cancel' && error instanceof Error) {
       ElMessage.error(error.message)
     }
+  }
+}
+
+/**
+ * 立即刷新RSS订阅源
+ */
+const handleRefreshRss = async () => {
+  try {
+    await ElMessageBox.confirm('确定要立即抓取所有友链的RSS订阅内容吗？', '提示', {
+      type: 'info',
+      confirmButtonText: '立即抓取',
+      cancelButtonText: '取消'
+    })
+    refreshing.value = true
+    await refreshAllRssFeeds()
+    ElMessage.success('RSS订阅源刷新成功，正在重新加载列表...')
+    // 延迟1秒后刷新列表，确保数据已入库
+    setTimeout(() => {
+      fetchArticles()
+    }, 1000)
+  } catch (error) {
+    if (error !== 'cancel' && error instanceof Error) {
+      ElMessage.error(error.message)
+    }
+  } finally {
+    refreshing.value = false
   }
 }
 
