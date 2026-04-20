@@ -72,7 +72,7 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 	notificationService := service.NewNotificationService(notificationRepo, notificationSvc)
 	commentService := service.NewCommentService(commentRepo, articleRepo, userRepo, notificationService, fileService)
 	statsService := service.NewStatsService(statsRepo, conf)
-	friendService := service.NewFriendService(friendRepo, fileService, notificationService)
+	friendService := service.NewFriendService(friendRepo, rssFeedRepo, fileService, notificationService)
 	momentService := service.NewMomentService(momentRepo, fileService)
 	menuService := service.NewMenuService(menuRepo, fileService)
 	feedbackService := service.NewFeedbackService(feedbackRepo, notificationService, fileService)
