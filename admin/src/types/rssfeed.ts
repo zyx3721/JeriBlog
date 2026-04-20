@@ -27,6 +27,9 @@ export interface RssArticle {
 export interface RssArticleQuery {
   page?: number
   page_size?: number
+  keyword?: string
+  is_read?: boolean | string
+  friend_id?: number
 }
 
 // RSS文章列表响应数据
