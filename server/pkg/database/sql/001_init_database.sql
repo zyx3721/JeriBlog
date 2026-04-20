@@ -302,9 +302,10 @@ CREATE INDEX IF NOT EXISTS idx_rss_articles_friend_id ON rss_articles(friend_id)
 CREATE INDEX IF NOT EXISTS idx_rss_articles_published_at ON rss_articles(published_at DESC);
 CREATE INDEX IF NOT EXISTS idx_rss_articles_is_read ON rss_articles(is_read);
 CREATE INDEX IF NOT EXISTS idx_rss_articles_is_deleted ON rss_articles(is_deleted);
-CREATE UNIQUE INDEX IF NOT EXISTS idx_rss_articles_friend_title ON rss_articles(friend_id, title);
+CREATE INDEX IF NOT EXISTS idx_rss_articles_friend_title ON rss_articles(friend_id, title);
+CREATE INDEX IF NOT EXISTS idx_rss_articles_friend_link ON rss_articles(friend_id, link);
 
-COMMENT ON COLUMN rss_articles.update_type IS '更新类型：link-链接已更新, published_at-发布时间已更新';
+COMMENT ON COLUMN rss_articles.update_type IS '更新类型：title-标题已更新, link-链接已更新, published_at-发布时间已更新（多个用逗号分隔）';
 
 
 -- 动态表
