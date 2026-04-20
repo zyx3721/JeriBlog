@@ -94,14 +94,20 @@ func (r *RssFeedRepository) CreateBatch(ctx context.Context, articles []model.Rs
 }
 
 
-// MarkRead 标记文章已读
+// MarkRead 标记文章已读并清空更新标签
 func (r *RssFeedRepository) MarkRead(ctx context.Context, id uint) error {
-	return r.db.WithContext(ctx).Model(&model.RssArticle{}).Where("id = ?", id).Update("is_read", true).Error
+	return r.db.WithContext(ctx).Model(&model.RssArticle{}).Where("id = ?", id).Updates(map[string]interface{}{
+		"is_read":     true,
+		"update_type": "",
+	}).Error
 }
 
-// MarkAllRead 全部标记已读
+// MarkAllRead 全部标记已读并清空更新标签
 func (r *RssFeedRepository) MarkAllRead(ctx context.Context) (int64, error) {
-	result := r.db.WithContext(ctx).Model(&model.RssArticle{}).Where("is_read = ?", false).Update("is_read", true)
+	result := r.db.WithContext(ctx).Model(&model.RssArticle{}).Where("is_read = ?", false).Updates(map[string]interface{}{
+		"is_read":     true,
+		"update_type": "",
+	})
 	return result.RowsAffected, result.Error
 }
 
@@ -288,4 +294,9 @@ func (r *RssFeedRepository) GetByFriendIDAndTitle(ctx context.Context, friendID 
 		return nil, err
 	}
 	return &article, nil
+}
+
+// DeleteArticle 物理删除文章
+func (r *RssFeedRepository) DeleteArticle(ctx context.Context, id uint) error {
+	return r.db.WithContext(ctx).Unscoped().Delete(&model.RssArticle{}, id).Error
 }
