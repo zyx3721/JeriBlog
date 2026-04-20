@@ -31,11 +31,26 @@ func NewRssFeedRepository(db *gorm.DB) *RssFeedRepository {
 }
 
 // List 获取RSS文章列表
-func (r *RssFeedRepository) List(ctx context.Context, page, pageSize int) ([]model.RssArticle, int64, error) {
+func (r *RssFeedRepository) List(ctx context.Context, page, pageSize int, keyword string, isRead *bool, friendID *uint) ([]model.RssArticle, int64, error) {
 	var articles []model.RssArticle
 	var total int64
 
 	query := r.db.WithContext(ctx).Model(&model.RssArticle{}).Preload("Friend")
+
+	// 关键词搜索（标题）
+	if keyword != "" {
+		query = query.Where("title LIKE ?", "%"+keyword+"%")
+	}
+
+	// 已读状态筛选
+	if isRead != nil {
+		query = query.Where("is_read = ?", *isRead)
+	}
+
+	// 来源筛选
+	if friendID != nil {
+		query = query.Where("friend_id = ?", *friendID)
+	}
 
 	if err := query.Count(&total).Error; err != nil {
 		return nil, 0, err
