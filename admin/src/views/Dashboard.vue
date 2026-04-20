@@ -415,8 +415,11 @@ const renderTrendChart = () => {
   const unit = trendType.value === 'daily' ? 'day' : 'month'
   const allDates = generateDateSeries(startDate, endDate, unit, format, 7)
 
+  // 确保数据为数组，即使为空也显示趋势图
+  const chartData = trendData.value || []
+
   const dataMap = new Map<string, { pv: number; uv: number }>()
-  trendData.value.forEach(item => {
+  chartData.forEach(item => {
     dataMap.set(item.date, { pv: item.pv_count, uv: item.uv_count })
   })
 
