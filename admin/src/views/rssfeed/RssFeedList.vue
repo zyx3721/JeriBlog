@@ -88,9 +88,20 @@
 
     <el-table-column label="文章标题" min-width="300" align="center">
       <template #default="{ row }">
-        <a :href="row.link" target="_blank" class="article-link" :class="{ read: row.is_read }">
-          {{ row.title }}
-        </a>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <a :href="row.link" target="_blank" class="article-link" :class="{ read: row.is_read }">
+            {{ row.title }}
+          </a>
+          <el-tag v-if="row.update_type === 'content'" type="warning" size="small">
+            内容已更新
+          </el-tag>
+          <el-tag v-else-if="row.update_type === 'title'" type="success" size="small">
+            标题已更新
+          </el-tag>
+          <el-tag v-else-if="row.update_type === 'published_at'" type="info" size="small">
+            发布时间已更新
+          </el-tag>
+        </div>
       </template>
     </el-table-column>
 
