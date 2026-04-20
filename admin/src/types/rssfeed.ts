@@ -17,7 +17,6 @@ export interface RssArticle {
   friend_url: string
   title: string
   link: string
-  description: string
   published_at?: string
   is_read: boolean
   is_deleted: boolean
