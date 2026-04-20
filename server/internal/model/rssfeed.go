@@ -20,11 +20,13 @@ type RssArticle struct {
 	ID          uint       `gorm:"primarykey" json:"id"`
 	FriendID    uint       `gorm:"not null;index" json:"friend_id"`
 	Friend      *Friend    `gorm:"foreignKey:FriendID" json:"friend"`
-	Title       string     `gorm:"size:500;not null" json:"title"`
-	Link        string     `gorm:"size:1000;not null;unique" json:"link"`
+	Title       string     `gorm:"size:500;not null;uniqueIndex:idx_friend_title" json:"title"`
+	Link        string     `gorm:"size:1000;not null" json:"link"`
+	Description string     `gorm:"type:text" json:"description"`
 	PublishedAt *time.Time `json:"published_at"`
 	IsRead      bool       `gorm:"default:false" json:"is_read"`
 	IsDeleted   bool       `gorm:"default:false" json:"is_deleted"`
+	UpdateType  string     `gorm:"size:20;default:''" json:"update_type"`
 	CreatedAt   time.Time  `json:"created_at"`
 	UpdatedAt   time.Time  `json:"updated_at"`
 }
