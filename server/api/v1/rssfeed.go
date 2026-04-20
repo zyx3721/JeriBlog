@@ -109,3 +109,23 @@ func (c *RssFeedController) MarkAllRead(ctx *gin.Context) {
 
 	response.Success(ctx, gin.H{"affected": affected})
 }
+
+// RefreshAll 立即刷新所有RSS订阅源
+//
+//	@Summary		立即刷新RSS
+//	@Description	手动触发刷新所有RSS订阅源（仅超级管理员可操作）
+//	@Tags			RSS订阅管理
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Success		200	{object}	response.Response
+//	@Failure		401	{object}	response.Response
+//	@Failure		403	{object}	response.Response
+//	@Router			/admin/rssfeed/refresh [post]
+func (c *RssFeedController) RefreshAll(ctx *gin.Context) {
+	if err := c.rssFeedService.RefreshAllFeeds(); err != nil {
+		response.Failed(ctx, "刷新RSS订阅源失败: "+err.Error())
+		return
+	}
+
+	response.Success(ctx, gin.H{"message": "RSS订阅源刷新成功"})
+}
