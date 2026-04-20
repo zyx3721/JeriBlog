@@ -284,8 +284,12 @@ const handleReset = () => {
 const handleMarkRead = async (article: RssArticle) => {
   try {
     await markRssArticleRead(article.id)
-    article.is_read = true
-    article.update_type = '' // 清空更新标签
+    // 在列表中找到对应文章并更新
+    const index = articleList.value.findIndex(a => a.id === article.id)
+    if (index !== -1) {
+      articleList.value[index].is_read = true
+      articleList.value[index].update_type = ''
+    }
     unreadCount.value = Math.max(0, unreadCount.value - 1)
     ElMessage.success('已标记为已读')
   } catch {
