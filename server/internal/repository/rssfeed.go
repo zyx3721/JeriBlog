@@ -31,7 +31,7 @@ func NewRssFeedRepository(db *gorm.DB) *RssFeedRepository {
 }
 
 // List 获取RSS文章列表
-func (r *RssFeedRepository) List(ctx context.Context, page, pageSize int, keyword string, isRead *bool, friendID *uint) ([]model.RssArticle, int64, error) {
+func (r *RssFeedRepository) List(ctx context.Context, page, pageSize int, keyword string, isRead *bool, isDeleted *bool, friendID *uint) ([]model.RssArticle, int64, error) {
 	var articles []model.RssArticle
 	var total int64
 
@@ -45,6 +45,11 @@ func (r *RssFeedRepository) List(ctx context.Context, page, pageSize int, keywor
 	// 已读状态筛选
 	if isRead != nil {
 		query = query.Where("is_read = ?", *isRead)
+	}
+
+	// 已删除状态筛选
+	if isDeleted != nil {
+		query = query.Where("is_deleted = ?", *isDeleted)
 	}
 
 	// 来源筛选
@@ -169,4 +174,45 @@ func (r *RssFeedRepository) GetLatestPublishedTime(ctx context.Context, friendID
 		return nil, nil
 	}
 	return article.PublishedAt, nil
+}
+
+// GetByLink 根据链接获取RSS文章
+func (r *RssFeedRepository) GetByLink(ctx context.Context, link string) (*model.RssArticle, error) {
+	var article model.RssArticle
+	err := r.db.WithContext(ctx).Where("link = ?", link).First(&article).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &article, nil
+}
+
+// MarkDeletedByFriendAndLinks 标记指定友链中不在RSS源的文章为已删除
+func (r *RssFeedRepository) MarkDeletedByFriendAndLinks(ctx context.Context, friendID uint, rssLinks map[string]bool) error {
+	// 获取该友链的所有文章
+	var articles []model.RssArticle
+	if err := r.db.WithContext(ctx).Where("friend_id = ?", friendID).Find(&articles).Error; err != nil {
+		return err
+	}
+
+	// 标记不在RSS源中的文章为已删除
+	for _, article := range articles {
+		if !rssLinks[article.Link] && !article.IsDeleted {
+			if err := r.db.WithContext(ctx).Model(&model.RssArticle{}).Where("id = ?", article.ID).Update("is_deleted", true).Error; err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// RestoreArticle 恢复已删除的文章为未读状态
+func (r *RssFeedRepository) RestoreArticle(ctx context.Context, id uint) error {
+	return r.db.WithContext(ctx).Model(&model.RssArticle{}).Where("id = ?", id).Updates(map[string]interface{}{
+		"is_deleted": false,
+		"is_read":    false,
+	}).Error
 }
