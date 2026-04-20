@@ -15,8 +15,11 @@ import "jeri_blog/pkg/utils"
 
 // ListRssArticleRequest RSS文章列表请求
 type ListRssArticleRequest struct {
-	Page     int `form:"page" binding:"omitempty,min=1"`
-	PageSize int `form:"page_size" binding:"omitempty,min=1,max=100"`
+	Page     int    `form:"page" binding:"omitempty,min=1"`
+	PageSize int    `form:"page_size" binding:"omitempty,min=1,max=100"`
+	Keyword  string `form:"keyword"`
+	IsRead   *bool  `form:"is_read"`
+	FriendID *uint  `form:"friend_id"`
 }
 
 // RssArticleResponse RSS文章响应
