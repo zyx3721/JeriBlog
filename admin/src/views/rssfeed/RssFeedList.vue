@@ -35,6 +35,16 @@
           <el-option label="已读" :value="true" />
         </el-select>
         <el-select
+          v-model="queryParams.is_deleted"
+          placeholder="删除状态"
+          clearable
+          style="width: 120px"
+          @change="handleSearch"
+        >
+          <el-option label="正常" :value="false" />
+          <el-option label="已删除" :value="true" />
+        </el-select>
+        <el-select
           v-model="queryParams.friend_id"
           placeholder="来源"
           clearable
@@ -76,7 +86,10 @@
     <!-- 表格列 -->
     <el-table-column label="状态" width="80" align="center">
       <template #default="{ row }">
-        <el-tag :type="row.is_read ? 'info' : 'danger'" size="small">
+        <el-tag v-if="row.is_deleted" type="danger" size="small">
+          已删除
+        </el-tag>
+        <el-tag v-else :type="row.is_read ? 'info' : 'warning'" size="small">
           {{ row.is_read ? '已读' : '未读' }}
         </el-tag>
       </template>
