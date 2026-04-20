@@ -92,6 +92,18 @@ func (r *RssFeedRepository) CreateBatch(ctx context.Context, articles []model.Rs
 	return r.db.WithContext(ctx).CreateInBatches(articles, 100).Error
 }
 
+// UpdateArticle 更新RSS文章内容（保持已读状态不变）
+func (r *RssFeedRepository) UpdateArticle(ctx context.Context, id uint, title, link string, publishedAt *time.Time) error {
+	updates := map[string]interface{}{
+		"title": title,
+		"link":  link,
+	}
+	if publishedAt != nil {
+		updates["published_at"] = publishedAt
+	}
+	return r.db.WithContext(ctx).Model(&model.RssArticle{}).Where("id = ?", id).Updates(updates).Error
+}
+
 // MarkRead 标记文章已读
 func (r *RssFeedRepository) MarkRead(ctx context.Context, id uint) error {
 	return r.db.WithContext(ctx).Model(&model.RssArticle{}).Where("id = ?", id).Update("is_read", true).Error
