@@ -20,6 +20,7 @@ export interface RssArticle {
   description: string
   published_at?: string
   is_read: boolean
+  is_deleted: boolean
   created_at: string
 }
 
@@ -29,6 +30,7 @@ export interface RssArticleQuery {
   page_size?: number
   keyword?: string
   is_read?: boolean | string
+  is_deleted?: boolean | string
   friend_id?: number
 }
 
