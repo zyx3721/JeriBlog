@@ -14,8 +14,8 @@ package notification
 import (
 	"fmt"
 
-	"flec_blog/config"
-	"flec_blog/pkg/email"
+	"jeri_blog/config"
+	"jeri_blog/pkg/email"
 )
 
 // EmailNotifier 邮件通知器

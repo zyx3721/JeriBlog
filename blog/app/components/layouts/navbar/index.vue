@@ -45,18 +45,18 @@ const toggleDrawer = () => {
 
 <style lang="scss">
 @mixin text-color {
-  color: var(--flec-nav-font);
+  color: var(--jeri-nav-font);
 
   &:hover {
-    color: var(--flec-nav-font-hover);
+    color: var(--jeri-nav-font-hover);
   }
 }
 
 @mixin fixed-text-color {
-  color: var(--flec-nav-fixed-font);
+  color: var(--jeri-nav-fixed-font);
 
   &:hover {
-    color: var(--flec-nav-fixed-font-hover);
+    color: var(--jeri-nav-fixed-font-hover);
   }
 }
 
@@ -82,7 +82,7 @@ const toggleDrawer = () => {
   }
 
   &.no-header {
-    background-color: var(--flec-nav-bg);
+    background-color: var(--jeri-nav-bg);
 
     .brighten {
       @include fixed-text-color;
@@ -101,7 +101,7 @@ const toggleDrawer = () => {
       left: 50%;
       width: 90%;
       height: 1px;
-      background-color: var(--flec-nav-focus);
+      background-color: var(--jeri-nav-focus);
       transform: translateX(-50%) scaleX(0);
       transform-origin: center;
       transition: transform 0.3s ease;
@@ -114,7 +114,7 @@ const toggleDrawer = () => {
   }
 
   &.fixed {
-    background-color: var(--flec-nav-bg);
+    background-color: var(--jeri-nav-bg);
     opacity: 1;
 
     .brighten {

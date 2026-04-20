@@ -129,7 +129,7 @@ onMounted(loadEmojis)
 .emoji-picker {
   width: 420px;
   height: 240px;
-  background: var(--flec-card-bg);
+  background: var(--jeri-card-bg);
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   display: flex;
@@ -157,8 +157,8 @@ onMounted(loadEmojis)
 
 .emoji-tabs {
   display: flex;
-  border-bottom: 1px solid var(--flec-border-color);
-  background: var(--flec-heavy-bg);
+  border-bottom: 1px solid var(--jeri-border-color);
+  background: var(--jeri-heavy-bg);
   overflow-x: auto;
 
   &::-webkit-scrollbar {
@@ -198,7 +198,7 @@ onMounted(loadEmojis)
   }
 
   &::-webkit-scrollbar-thumb {
-    background: var(--flec-border-color);
+    background: var(--jeri-border-color);
     border-radius: 3px;
   }
 }
@@ -261,7 +261,7 @@ onMounted(loadEmojis)
   }
 
   &:hover {
-    background: var(--flec-heavy-bg);
+    background: var(--jeri-heavy-bg);
     transform: scale(1.1);
   }
 }

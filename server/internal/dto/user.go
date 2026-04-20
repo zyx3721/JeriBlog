@@ -12,8 +12,8 @@
 package dto
 
 import (
-	"flec_blog/internal/model"
-	"flec_blog/pkg/utils"
+	"jeri_blog/internal/model"
+	"jeri_blog/pkg/utils"
 )
 
 // ============ 通用用户响应 ============

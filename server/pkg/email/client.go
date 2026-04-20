@@ -13,8 +13,8 @@ package email
 
 import (
 	"crypto/tls"
-	"flec_blog/config"
-	"flec_blog/pkg/logger"
+	"jeri_blog/config"
+	"jeri_blog/pkg/logger"
 	"fmt"
 	"sync"
 	"time"

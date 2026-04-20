@@ -338,7 +338,7 @@ onUnmounted(() => { removeEventListener('contextmenu', showMenu); rmListeners() 
     &.line {
         padding: 7px 6px;
         flex-direction: column;
-        border-top: 1px solid var(--flec-border);
+        border-top: 1px solid var(--jeri-border);
     }
 
     /* 横向按钮组样式 */
@@ -368,7 +368,7 @@ onUnmounted(() => { removeEventListener('contextmenu', showMenu); rmListeners() 
     }
 
     &:hover {
-        background: var(--flec-btn);
+        background: var(--jeri-btn);
         color: #fff;
     }
 

@@ -730,7 +730,7 @@ const formatDate = (date?: string) => {
     .textarea {
       width: 100%;
       padding: 0.6rem;
-      border: 1px solid var(--flec-border);
+      border: 1px solid var(--jeri-border);
       border-radius: 4px;
       color: var(--font-color);
       background-color: transparent;
@@ -771,7 +771,7 @@ const formatDate = (date?: string) => {
       align-items: center;
       gap: 0.5rem;
       padding: 0.6rem;
-      border: 1px solid var(--flec-border);
+      border: 1px solid var(--jeri-border);
       border-radius: 4px;
       cursor: pointer;
 
@@ -804,14 +804,14 @@ const formatDate = (date?: string) => {
         justify-content: center;
         gap: 0.5rem;
         padding: 1.5rem;
-        border: 1px solid var(--flec-border);
+        border: 1px solid var(--jeri-border);
         border-radius: 4px;
         background-color: transparent;
         cursor: pointer;
         text-align: center;
 
         &:hover:not(.uploading) {
-          border-color: var(--flec-btn);
+          border-color: var(--jeri-btn);
         }
 
         &.uploading {
@@ -856,11 +856,11 @@ const formatDate = (date?: string) => {
       gap: 0.5rem;
       padding: 0.5rem;
       background-color: transparent;
-      border: 1px solid var(--flec-border);
+      border: 1px solid var(--jeri-border);
       border-radius: 4px;
 
       i {
-        color: var(--flec-btn);
+        color: var(--jeri-btn);
         font-size: 0.9rem;
       }
 
@@ -884,7 +884,7 @@ const formatDate = (date?: string) => {
         cursor: pointer;
 
         &:hover {
-          background-color: var(--flec-heavy-bg);
+          background-color: var(--jeri-heavy-bg);
           opacity: 1;
         }
 
@@ -921,11 +921,11 @@ const formatDate = (date?: string) => {
     }
 
     .submit-btn {
-      background: var(--flec-btn);
+      background: var(--jeri-btn);
       color: white;
 
       &:hover:not(:disabled) {
-        background: var(--flec-btn-hover);
+        background: var(--jeri-btn-hover);
       }
 
       &:disabled {
@@ -936,11 +936,11 @@ const formatDate = (date?: string) => {
 
     .query-btn {
       background: transparent;
-      color: var(--flec-btn);
-      border: 1px solid var(--flec-btn);
+      color: var(--jeri-btn);
+      border: 1px solid var(--jeri-btn);
 
       &:hover {
-        background: var(--flec-btn);
+        background: var(--jeri-btn);
         color: white;
       }
     }
@@ -988,7 +988,7 @@ const formatDate = (date?: string) => {
       align-items: center;
       gap: 0.5rem;
       padding: 0.75rem 2rem;
-      background: var(--flec-btn);
+      background: var(--jeri-btn);
       color: white;
       border: none;
       border-radius: 4px;
@@ -998,7 +998,7 @@ const formatDate = (date?: string) => {
       transition: background 0.2s;
 
       &:hover {
-        background: var(--flec-btn-hover);
+        background: var(--jeri-btn-hover);
       }
 
       i {
@@ -1036,7 +1036,7 @@ const formatDate = (date?: string) => {
     align-items: center;
     justify-content: space-between;
     padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid var(--flec-border);
+    border-bottom: 1px solid var(--jeri-border);
 
     h3 {
       font-size: 1.2rem;
@@ -1060,7 +1060,7 @@ const formatDate = (date?: string) => {
       transition: all 0.2s;
 
       &:hover {
-        background: var(--flec-heavy-bg);
+        background: var(--jeri-heavy-bg);
         opacity: 1;
       }
 
@@ -1083,7 +1083,7 @@ const formatDate = (date?: string) => {
     .query-input {
       flex: 1;
       padding: 0.75rem;
-      border: 1px solid var(--flec-border);
+      border: 1px solid var(--jeri-border);
       border-radius: 4px;
       background: transparent;
       color: var(--font-color);
@@ -1091,7 +1091,7 @@ const formatDate = (date?: string) => {
 
       &:focus {
         outline: none;
-        border-color: var(--flec-btn);
+        border-color: var(--jeri-btn);
       }
 
       &::placeholder {
@@ -1105,7 +1105,7 @@ const formatDate = (date?: string) => {
       align-items: center;
       gap: 0.5rem;
       padding: 0.75rem 1.5rem;
-      background: var(--flec-btn);
+      background: var(--jeri-btn);
       color: white;
       border: none;
       border-radius: 4px;
@@ -1116,7 +1116,7 @@ const formatDate = (date?: string) => {
       transition: all 0.2s;
 
       &:hover:not(:disabled) {
-        background: var(--flec-btn-hover);
+        background: var(--jeri-btn-hover);
       }
 
       &:disabled {
@@ -1131,8 +1131,8 @@ const formatDate = (date?: string) => {
   }
 
   .query-result {
-    background: var(--flec-light-bg);
-    border: 1px solid var(--flec-border);
+    background: var(--jeri-light-bg);
+    border: 1px solid var(--jeri-border);
     border-radius: 8px;
     padding: 1.5rem;
 
@@ -1142,7 +1142,7 @@ const formatDate = (date?: string) => {
       justify-content: space-between;
       margin-bottom: 1.5rem;
       padding-bottom: 1rem;
-      border-bottom: 1px solid var(--flec-border);
+      border-bottom: 1px solid var(--jeri-border);
 
       .result-ticket {
         font-size: 1rem;

@@ -191,7 +191,7 @@ provideCommentContext({
 .comments-section {
   margin-top: 40px;
   padding-top: 30px;
-  border-top: 1px solid var(--flec-border-color);
+  border-top: 1px solid var(--jeri-border-color);
 }
 
 .comments-header {
@@ -212,7 +212,7 @@ provideCommentContext({
 
     .comments-count {
       font-size: 1rem;
-      color: var(--flec-lightText);
+      color: var(--jeri-lightText);
       font-weight: normal;
     }
   }

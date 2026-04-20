@@ -2,7 +2,7 @@
  * Cloudflare Worker - OAuth 代理
  * 用于代理 GitHub、Google 和 Microsoft 的 OAuth API 请求
  *
- * 部署地址: https://proxy.flec.top
+ * 部署地址: https://jeriblog-oauth-proxy.whizhzl.workers.dev
  *
  * 路由映射:
  *   /github-api/*  -> https://api.github.com/*

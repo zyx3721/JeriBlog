@@ -14,8 +14,8 @@ package notification
 import (
 	"context"
 	"encoding/json"
-	"flec_blog/config"
-	"flec_blog/pkg/feishu"
+	"jeri_blog/config"
+	"jeri_blog/pkg/feishu"
 )
 
 // FeishuNotifier 飞书通知器

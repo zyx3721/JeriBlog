@@ -12,7 +12,7 @@
 package ai
 
 import (
-	"flec_blog/config"
+	"jeri_blog/config"
 	"fmt"
 )
 

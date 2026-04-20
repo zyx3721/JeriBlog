@@ -12,7 +12,7 @@
 package repository
 
 import (
-	"flec_blog/internal/model"
+	"jeri_blog/internal/model"
 	"time"
 
 	"gorm.io/gorm"

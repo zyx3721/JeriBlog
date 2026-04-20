@@ -9,7 +9,7 @@ blog/.output/
 blog/.nuxt/
 
 # Go 构建产物
-server/flec_blog
+server/jeri_blog
 
 # 环境变量文件（含敏感信息，禁止打包进镜像）
 .env
@@ -27,3 +27,10 @@ server/flec_blog
 # IDE
 .vscode/
 .idea/
+
+# 文档文件（不参与构建）
+*.md
+**/*.md
+README.md
+CHANGELOG.md
+other/

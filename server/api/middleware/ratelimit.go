@@ -12,8 +12,8 @@
 package middleware
 
 import (
-	"flec_blog/pkg/errcode"
-	"flec_blog/pkg/response"
+	"jeri_blog/pkg/errcode"
+	"jeri_blog/pkg/response"
 	"fmt"
 	"time"
 

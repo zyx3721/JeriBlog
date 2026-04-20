@@ -12,11 +12,11 @@
 package v1
 
 import (
-	_ "flec_blog/internal/dto" // swagger 类型引用
-	"flec_blog/internal/model"
-	"flec_blog/internal/service"
-	"flec_blog/pkg/response"
-	"flec_blog/pkg/upload"
+	_ "jeri_blog/internal/dto" // swagger 类型引用
+	"jeri_blog/internal/model"
+	"jeri_blog/internal/service"
+	"jeri_blog/pkg/response"
+	"jeri_blog/pkg/upload"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"

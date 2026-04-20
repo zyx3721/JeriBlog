@@ -69,7 +69,7 @@ const getTagSize = (count: number) => {
         line-height: 1.8;
 
         &:hover {
-            color: var(--flec-btn-hover);
+            color: var(--jeri-btn-hover);
         }
     }
 
@@ -106,7 +106,7 @@ const getTagSize = (count: number) => {
     transition: color 0.3s;
 
     &:hover {
-        color: var(--flec-btn-hover);
+        color: var(--jeri-btn-hover);
     }
 }
 

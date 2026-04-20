@@ -19,9 +19,9 @@ export default defineEventHandler(async (event) => {
     const blog = processConfig(blogConfig, 'blog')
 
     const manifest = {
-      name: blog.title || 'Flec Blog',
-      short_name: blog.title?.substring(0, 12) || 'Flec',
-      description: blog.description || 'Flec 个人博客',
+      name: blog.title || 'Jeri Blog',
+      short_name: blog.title?.substring(0, 12) || 'Jeri',
+      description: blog.description || 'Jeri 个人博客',
       theme_color: '#f7f7f7',
       background_color: '#ffffff',
       display: 'standalone',
@@ -44,8 +44,8 @@ export default defineEventHandler(async (event) => {
     return manifest
   } catch (error) {
     return {
-      name: 'Flec Blog',
-      short_name: 'Flec',
+      name: 'Jeri Blog',
+      short_name: 'Jeri',
       theme_color: '#f7f7f7',
       background_color: '#ffffff',
       display: 'standalone',

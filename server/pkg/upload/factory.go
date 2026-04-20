@@ -17,8 +17,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"flec_blog/config"
-	"flec_blog/pkg/upload/storage"
+	"jeri_blog/config"
+	"jeri_blog/pkg/upload/storage"
 )
 
 // StorageType 存储类型常量

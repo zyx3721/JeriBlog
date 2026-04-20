@@ -14,9 +14,9 @@ package service
 import (
 	"errors"
 
-	"flec_blog/internal/dto"
-	"flec_blog/internal/model"
-	"flec_blog/internal/repository"
+	"jeri_blog/internal/dto"
+	"jeri_blog/internal/model"
+	"jeri_blog/internal/repository"
 
 	"gorm.io/gorm"
 )

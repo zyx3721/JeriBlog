@@ -96,7 +96,7 @@ const isRewardEnabled = computed(() => {
 }
 
 .reward-modal-container {
-  background-color: var(--flec-card-bg);
+  background-color: var(--jeri-card-bg);
   border-radius: 1rem;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   max-width: 500px;
@@ -109,7 +109,7 @@ const isRewardEnabled = computed(() => {
   align-items: center;
   justify-content: space-between;
   padding: 1.5rem;
-  border-bottom: 1px solid var(--flec-border-color);
+  border-bottom: 1px solid var(--jeri-border-color);
 
   h3 {
     font-size: 1.25rem;

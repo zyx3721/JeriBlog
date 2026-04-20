@@ -51,7 +51,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .footer-column {
   margin-top: 1rem;
-  background: var(--flec-card-bg);
+  background: var(--jeri-card-bg);
   display: flex;
   overflow: hidden;
   transition: 0.3s;
@@ -74,7 +74,7 @@ onMounted(() => {
 
       a {
         margin: 0 4px;
-        color: var(--flec-footer-font);
+        color: var(--jeri-footer-font);
         font-weight: 700;
         white-space: nowrap;
         padding: 8px;
@@ -85,8 +85,8 @@ onMounted(() => {
         gap: 4px;
 
         &:hover {
-          color: var(--flec-footer-font-hover);
-          background: var(--flec-footer-font-bg-hover);
+          color: var(--jeri-footer-font-hover);
+          background: var(--jeri-footer-font-bg-hover);
         }
       }
     }
@@ -99,7 +99,7 @@ onMounted(() => {
       a {
         font-size: 0.9rem;
         font-weight: 400;
-        color: var(--flec-footer-font);
+        color: var(--jeri-footer-font);
         padding: 0;
         margin: 0;
         display: flex;
@@ -118,7 +118,7 @@ onMounted(() => {
 
     .links {
       margin: 0 4px;
-      color: var(--flec-footer-font);
+      color: var(--jeri-footer-font);
       font-weight: 700;
       white-space: nowrap;
       padding: 8px;
@@ -129,8 +129,8 @@ onMounted(() => {
       gap: 4px;
 
       &:hover {
-        color: var(--flec-footer-font-hover);
-        background: var(--flec-footer-font-bg-hover)
+        color: var(--jeri-footer-font-hover);
+        background: var(--jeri-footer-font-bg-hover)
       }
     }
   }

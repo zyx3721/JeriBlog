@@ -24,9 +24,9 @@ import (
 	"sync"
 	"time"
 
-	"flec_blog/pkg/email"
-	feishupkg "flec_blog/pkg/feishu"
-	"flec_blog/pkg/upload"
+	"jeri_blog/pkg/email"
+	feishupkg "jeri_blog/pkg/feishu"
+	"jeri_blog/pkg/upload"
 
 	"github.com/shirou/gopsutil/v4/cpu"
 	"github.com/shirou/gopsutil/v4/disk"
@@ -37,7 +37,7 @@ import (
 	"gorm.io/gorm"
 )
 
-const githubLatestReleaseAPI = "https://api.github.com/repos/talen8/FlecBlog/releases/latest"
+const githubLatestReleaseAPI = "https://api.github.com/repos/zyx3721/JeriBlog/releases/latest"
 
 // AppVersion 由构建参数注入，默认 dev。
 var AppVersion = "dev"
@@ -283,7 +283,7 @@ func (s *SystemService) fetchManifest(ctx context.Context) (*versionManifest, er
 		return nil, err
 	}
 	req.Header.Set("Accept", "application/vnd.github+json")
-	req.Header.Set("User-Agent", "FlecBlog-VersionChecker")
+	req.Header.Set("User-Agent", "JeriBlog-VersionChecker")
 
 	resp, err := s.httpClient.Do(req)
 	if err != nil {

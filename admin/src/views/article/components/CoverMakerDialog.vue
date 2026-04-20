@@ -260,7 +260,7 @@ const canvasStyle = computed(() => {
   }
 })
 
-const IMAGE_API_URL = 'https://pixhub.flec.top'
+const IMAGE_API_URL = import.meta.env.VITE_IMAGE_API_URL || 'https://pixhub.flec.top'
 
 function handleClose() {
   visible.value = false

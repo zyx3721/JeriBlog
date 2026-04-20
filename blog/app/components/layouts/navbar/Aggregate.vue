@@ -95,13 +95,13 @@ const isImageIcon = (icon: string) => {
 
             .group-title {
                 padding: 6px 10px;
-                color: var(--flec-nav-fixed-font);
+                color: var(--jeri-nav-fixed-font);
                 font-weight: bold;
                 font-size: 0.8rem;
                 transition: color 0.2s ease;
 
                 &:hover {
-                    color: var(--flec-nav-fixed-font-hover);
+                    color: var(--jeri-nav-fixed-font-hover);
                 }
             }
 
@@ -115,18 +115,18 @@ const isImageIcon = (icon: string) => {
                     display: flex;
                     align-items: center;
                     padding: 8px 10px;
-                    color: var(--flec-nav-fixed-font);
+                    color: var(--jeri-nav-fixed-font);
                     font-size: 0.9rem;
                     opacity: 0;
                     transform: translateY(-5px);
                     transition: all 0.2s ease;
 
                     &:hover {
-                        background: var(--flec-nav-menu-bg-hover);
+                        background: var(--jeri-nav-menu-bg-hover);
                         border-radius: 8px;
 
                         span {
-                            color: var(--flec-nav-fixed-font-hover);
+                            color: var(--jeri-nav-fixed-font-hover);
                         }
                     }
 
@@ -143,7 +143,7 @@ const isImageIcon = (icon: string) => {
                     }
 
                     span {
-                        color: var(--flec-nav-fixed-font);
+                        color: var(--jeri-nav-fixed-font);
                         white-space: nowrap;
                         overflow: hidden;
                         text-overflow: ellipsis;

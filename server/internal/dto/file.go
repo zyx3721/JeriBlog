@@ -12,8 +12,8 @@
 package dto
 
 import (
-	"flec_blog/pkg/upload"
-	"flec_blog/pkg/utils"
+	"jeri_blog/pkg/upload"
+	"jeri_blog/pkg/utils"
 )
 
 // ============ 通用文件请求 ============

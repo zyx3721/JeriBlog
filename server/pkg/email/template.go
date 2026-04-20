@@ -19,7 +19,7 @@ import (
 	"path/filepath"
 	"sync"
 
-	"flec_blog/pkg/logger"
+	"jeri_blog/pkg/logger"
 )
 
 // TemplateManager 邮件模板管理器

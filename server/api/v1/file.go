@@ -15,12 +15,12 @@ import (
 	"strconv"
 	"strings"
 
-	"flec_blog/config"
-	"flec_blog/internal/dto"
-	"flec_blog/internal/service"
-	"flec_blog/pkg/errcode"
-	"flec_blog/pkg/response"
-	"flec_blog/pkg/upload"
+	"jeri_blog/config"
+	"jeri_blog/internal/dto"
+	"jeri_blog/internal/service"
+	"jeri_blog/pkg/errcode"
+	"jeri_blog/pkg/response"
+	"jeri_blog/pkg/upload"
 
 	"github.com/gin-gonic/gin"
 )

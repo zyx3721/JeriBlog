@@ -125,12 +125,12 @@ const goBack = () => {
       }
 
       &.btn-secondary {
-        background: var(--flec-page-bg);
+        background: var(--jeri-page-bg);
         color: var(--font-color);
         border: 1px solid rgba(128, 128, 128, 0.2);
 
         &:hover {
-          background: var(--flec-card-bg);
+          background: var(--jeri-card-bg);
           border-color: var(--theme-color);
         }
       }

@@ -12,8 +12,8 @@
 package auth
 
 import (
-	"flec_blog/config"
-	"flec_blog/pkg/auth/providers/qq"
+	"jeri_blog/config"
+	"jeri_blog/pkg/auth/providers/qq"
 	"net/http"
 	"net/url"
 	"time"
@@ -27,7 +27,7 @@ import (
 )
 
 // workerProxy Cloudflare Worker 的代理地址
-const workerProxy = "https://proxy.flec.top"
+const workerProxy = "https://jeriblog-oauth-proxy.whizhzl.workers.dev"
 
 // UpdateConfig 根据配置动态更新 OAuth 配置
 func UpdateConfig(cfg *config.OAuthConfig) {

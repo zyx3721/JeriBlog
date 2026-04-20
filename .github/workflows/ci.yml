@@ -58,38 +58,38 @@ jobs:
           }
 
           echo "🔨 编译 Linux AMD64..."
-          GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w -X 'flec_blog/internal/service.AppVersion=${VERSION}'" -o flec-server ./cmd/main.go
+          GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w -X 'jeri_blog/internal/service.AppVersion=${VERSION}'" -o jeri-server ./cmd/main.go
           prepare_package "dist/linux_amd64"
-          mv flec-server dist/linux_amd64/
-          tar -czf dist/flec-server_${VERSION}_linux_amd64.tar.gz -C dist linux_amd64
+          mv jeri-server dist/linux_amd64/
+          tar -czf dist/jeri-server_${VERSION}_linux_amd64.tar.gz -C dist linux_amd64
           rm -rf dist/linux_amd64
 
           echo "🔨 编译 Linux ARM64..."
-          GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-s -w -X 'flec_blog/internal/service.AppVersion=${VERSION}'" -o flec-server ./cmd/main.go
+          GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-s -w -X 'jeri_blog/internal/service.AppVersion=${VERSION}'" -o jeri-server ./cmd/main.go
           prepare_package "dist/linux_arm64"
-          mv flec-server dist/linux_arm64/
-          tar -czf dist/flec-server_${VERSION}_linux_arm64.tar.gz -C dist linux_arm64
+          mv jeri-server dist/linux_arm64/
+          tar -czf dist/jeri-server_${VERSION}_linux_arm64.tar.gz -C dist linux_arm64
           rm -rf dist/linux_arm64
 
           echo "🔨 编译 macOS AMD64..."
-          GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w -X 'flec_blog/internal/service.AppVersion=${VERSION}'" -o flec-server ./cmd/main.go
+          GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w -X 'jeri_blog/internal/service.AppVersion=${VERSION}'" -o jeri-server ./cmd/main.go
           prepare_package "dist/darwin_amd64"
-          mv flec-server dist/darwin_amd64/
-          tar -czf dist/flec-server_${VERSION}_darwin_amd64.tar.gz -C dist darwin_amd64
+          mv jeri-server dist/darwin_amd64/
+          tar -czf dist/jeri-server_${VERSION}_darwin_amd64.tar.gz -C dist darwin_amd64
           rm -rf dist/darwin_amd64
 
           echo "🔨 编译 macOS ARM64..."
-          GOOS=darwin GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-s -w -X 'flec_blog/internal/service.AppVersion=${VERSION}'" -o flec-server ./cmd/main.go
+          GOOS=darwin GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-s -w -X 'jeri_blog/internal/service.AppVersion=${VERSION}'" -o jeri-server ./cmd/main.go
           prepare_package "dist/darwin_arm64"
-          mv flec-server dist/darwin_arm64/
-          tar -czf dist/flec-server_${VERSION}_darwin_arm64.tar.gz -C dist darwin_arm64
+          mv jeri-server dist/darwin_arm64/
+          tar -czf dist/jeri-server_${VERSION}_darwin_arm64.tar.gz -C dist darwin_arm64
           rm -rf dist/darwin_arm64
 
           echo "🔨 编译 Windows AMD64..."
-          GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w -X 'flec_blog/internal/service.AppVersion=${VERSION}'" -o flec-server.exe ./cmd/main.go
+          GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w -X 'jeri_blog/internal/service.AppVersion=${VERSION}'" -o jeri-server.exe ./cmd/main.go
           prepare_package "dist/windows_amd64"
-          mv flec-server.exe dist/windows_amd64/
-          cd dist && zip -r flec-server_${VERSION}_windows_amd64.zip windows_amd64 && cd ..
+          mv jeri-server.exe dist/windows_amd64/
+          cd dist && zip -r jeri-server_${VERSION}_windows_amd64.zip windows_amd64 && cd ..
           rm -rf dist/windows_amd64
 
           echo "📝 生成校验和..."
@@ -144,11 +144,11 @@ jobs:
           \`\`\`
 
           ### 📦 二进制下载
-          - Linux AMD64: \`flec-server_${VERSION}_linux_amd64.tar.gz\`
-          - Linux ARM64: \`flec-server_${VERSION}_linux_arm64.tar.gz\`
-          - macOS AMD64: \`flec-server_${VERSION}_darwin_amd64.tar.gz\`
-          - macOS ARM64: \`flec-server_${VERSION}_darwin_arm64.tar.gz\`
-          - Windows AMD64: \`flec-server_${VERSION}_windows_amd64.zip\`
+          - Linux AMD64: \`jeri-server_${VERSION}_linux_amd64.tar.gz\`
+          - Linux ARM64: \`jeri-server_${VERSION}_linux_arm64.tar.gz\`
+          - macOS AMD64: \`jeri-server_${VERSION}_darwin_amd64.tar.gz\`
+          - macOS ARM64: \`jeri-server_${VERSION}_darwin_arm64.tar.gz\`
+          - Windows AMD64: \`jeri-server_${VERSION}_windows_amd64.zip\`
 
           ### 🔐 校验和
           请下载 \`checksums.txt\` 验证文件完整性。

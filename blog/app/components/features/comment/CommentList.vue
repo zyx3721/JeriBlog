@@ -89,7 +89,7 @@ const groupedComments = computed(() => {
 }
 
 .comment-card {
-  background: var(--flec-card-bg);
+  background: var(--jeri-card-bg);
   border-radius: 8px;
   padding: 16px;
 }

@@ -24,9 +24,9 @@ import (
 	"sync"
 	"time"
 
-	"flec_blog/config"
-	"flec_blog/pkg/random"
-	"flec_blog/pkg/upload/storage"
+	"jeri_blog/config"
+	"jeri_blog/pkg/random"
+	"jeri_blog/pkg/upload/storage"
 
 	"github.com/gin-gonic/gin"
 )

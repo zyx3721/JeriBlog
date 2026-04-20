@@ -12,9 +12,9 @@
 package v1
 
 import (
-	"flec_blog/pkg/linkparser"
-	"flec_blog/pkg/response"
-	"flec_blog/pkg/videoparser"
+	"jeri_blog/pkg/linkparser"
+	"jeri_blog/pkg/response"
+	"jeri_blog/pkg/videoparser"
 	"fmt"
 	"io"
 	"net/http"

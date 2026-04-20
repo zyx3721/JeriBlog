@@ -286,7 +286,7 @@ const handleCommentClick = (moment: Moment) => {
     display: flex;
     align-items: center;
     padding: 0.5rem 1rem;
-    border-bottom: 1px solid var(--flec-moment-divider);
+    border-bottom: 1px solid var(--jeri-moment-divider);
 
     .moment-avatar {
       width: 50px;
@@ -308,12 +308,12 @@ const handleCommentClick = (moment: Moment) => {
 
       .moment-author {
         font-weight: 600;
-        color: var(--flec-moment-title);
+        color: var(--jeri-moment-title);
       }
 
       .moment-time {
         font-size: 0.875rem;
-        color: var(--flec-moment-date);
+        color: var(--jeri-moment-date);
       }
     }
   }
@@ -321,11 +321,11 @@ const handleCommentClick = (moment: Moment) => {
   // 中部分：内容
   .moment-content {
     padding: 15px 20px;
-    border-bottom: 1px solid var(--flec-moment-divider);
+    border-bottom: 1px solid var(--jeri-moment-divider);
 
     .moment-text {
       line-height: 1.7;
-      color: var(--flec-moment-font);
+      color: var(--jeri-moment-font);
       margin-bottom: 12px;
       white-space: pre-wrap;
       word-break: break-word;
@@ -478,10 +478,10 @@ const handleCommentClick = (moment: Moment) => {
       align-items: center;
       margin-top: 12px;
       padding: 12px;
-      background: var(--flec-moment-card-bg);
+      background: var(--jeri-moment-card-bg);
       border-radius: 6px;
       text-decoration: none;
-      color: var(--flec-moment-font);
+      color: var(--jeri-moment-font);
       transition: transform 0.3s ease;
 
       .link-favicon {
@@ -507,7 +507,7 @@ const handleCommentClick = (moment: Moment) => {
 
         .link-url {
           font-size: 0.75rem;
-          color: var(--flec-moment-date);
+          color: var(--jeri-moment-date);
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -517,7 +517,7 @@ const handleCommentClick = (moment: Moment) => {
       i {
         margin-left: 10px;
         font-size: 1.1rem;
-        color: var(--flec-moment-date);
+        color: var(--jeri-moment-date);
       }
 
       &:hover {
@@ -538,7 +538,7 @@ const handleCommentClick = (moment: Moment) => {
       align-items: center;
       gap: 12px;
       font-size: 0.85rem;
-      color: var(--flec-moment-date);
+      color: var(--jeri-moment-date);
 
       .location {
         display: flex;
@@ -564,7 +564,7 @@ const handleCommentClick = (moment: Moment) => {
         height: 32px;
         border: none;
         background: transparent;
-        color: var(--flec-moment-date);
+        color: var(--jeri-moment-date);
         cursor: pointer;
         border-radius: 4px;
         transition: all 0.3s ease;
@@ -574,7 +574,7 @@ const handleCommentClick = (moment: Moment) => {
         }
 
         &:hover {
-          background: var(--flec-moment-card-bg);
+          background: var(--jeri-moment-card-bg);
           color: #49b1f5;
         }
       }

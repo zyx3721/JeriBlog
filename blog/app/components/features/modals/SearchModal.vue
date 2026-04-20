@@ -174,7 +174,7 @@ watch(() => props.modelValue, async (open) => {
 }
 
 .box {
-  background: var(--flec-card-bg);
+  background: var(--jeri-card-bg);
   border-radius: 12px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   width: 100%;
@@ -214,7 +214,7 @@ watch(() => props.modelValue, async (open) => {
   transition: all 0.2s;
 
   &:hover {
-    background: var(--flec-heavy-bg);
+    background: var(--jeri-heavy-bg);
     transform: rotate(90deg);
   }
 }
@@ -224,7 +224,7 @@ watch(() => props.modelValue, async (open) => {
   display: flex;
   align-items: center;
   padding: 8px 12px;
-  background: var(--flec-page-bg);
+  background: var(--jeri-page-bg);
   border: 2px solid transparent;
   border-radius: 8px;
   transition: border-color 0.3s;
@@ -286,7 +286,7 @@ watch(() => props.modelValue, async (open) => {
   display: flex;
   gap: 10px;
   padding: 10px;
-  background: var(--flec-page-bg);
+  background: var(--jeri-page-bg);
   border-radius: 6px;
   margin-bottom: 8px;
   transition: background 0.2s;
@@ -294,7 +294,7 @@ watch(() => props.modelValue, async (open) => {
   text-decoration: none;
 
   &:hover {
-    background: var(--flec-heavy-bg);
+    background: var(--jeri-heavy-bg);
   }
 
   img {
@@ -371,7 +371,7 @@ watch(() => props.modelValue, async (open) => {
     height: 32px;
     border-radius: 6px;
     border: none;
-    background: var(--flec-page-bg);
+    background: var(--jeri-page-bg);
     color: var(--font-color);
     cursor: pointer;
     transition: all 0.2s;
@@ -380,7 +380,7 @@ watch(() => props.modelValue, async (open) => {
     justify-content: center;
 
     &:hover:not(:disabled) {
-      background: var(--flec-btn-hover);
+      background: var(--jeri-btn-hover);
       color: #fff;
     }
 

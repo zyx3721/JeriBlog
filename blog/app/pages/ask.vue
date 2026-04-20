@@ -354,7 +354,7 @@ useSeoMeta({
     blockquote {
       margin: 1.5rem 0;
       padding: 0.75em 1.25em;
-      background: var(--flec-heavy-bg);
+      background: var(--jeri-heavy-bg);
       border-left: 4px solid var(--theme-color);
       border-radius: 0 6px 6px 0;
       font-size: 0.95em;

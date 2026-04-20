@@ -12,9 +12,9 @@
 package notification
 
 import (
-	"flec_blog/config"
-	"flec_blog/pkg/email"
-	"flec_blog/pkg/feishu"
+	"jeri_blog/config"
+	"jeri_blog/pkg/email"
+	"jeri_blog/pkg/feishu"
 )
 
 // Service 通知服务（多渠道）

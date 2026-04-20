@@ -41,7 +41,7 @@ defineProps<{
 .nav-item {
     flex: 1;
     padding: 12px 16px;
-    border: 1px solid var(--flec-border);
+    border: 1px solid var(--jeri-border);
     border-radius: 6px;
     text-decoration: none;
     color: var(--font-color);

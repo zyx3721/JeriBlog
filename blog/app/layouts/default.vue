@@ -50,7 +50,7 @@ const showMomentWidget = computed(() => route.path == '/')
 }
 
 .page-main {
-    background: var(--flec-page-bg);
+    background: var(--jeri-page-bg);
     width: 100%;
     padding: 40px 0;
     flex: 1;

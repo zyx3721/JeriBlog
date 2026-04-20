@@ -1,4 +1,4 @@
-module flec_blog
+module jeri_blog
 
 go 1.25.0
 

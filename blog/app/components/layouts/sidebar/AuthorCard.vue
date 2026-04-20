@@ -117,7 +117,7 @@ onMounted(async () => {
             }
 
             &:hover {
-                color: var(--flec-btn-hover);
+                color: var(--jeri-btn-hover);
             }
         }
     }
@@ -125,13 +125,13 @@ onMounted(async () => {
     .card-info-btn {
         display: block;
         margin-top: 14px;
-        background-color: var(--flec-btn);
+        background-color: var(--jeri-btn);
         color: #fff;
         line-height: 2.4;
         border-radius: 7px;
 
         &:hover {
-            background-color: var(--flec-btn-hover);
+            background-color: var(--jeri-btn-hover);
         }
     }
 

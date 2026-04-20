@@ -17,12 +17,12 @@ import (
 	"errors"
 	"fmt"
 
-	"flec_blog/config"
-	"flec_blog/internal/dto"
-	"flec_blog/internal/model"
-	"flec_blog/internal/repository"
-	"flec_blog/pkg/random"
-	"flec_blog/pkg/utils"
+	"jeri_blog/config"
+	"jeri_blog/internal/dto"
+	"jeri_blog/internal/model"
+	"jeri_blog/internal/repository"
+	"jeri_blog/pkg/random"
+	"jeri_blog/pkg/utils"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"

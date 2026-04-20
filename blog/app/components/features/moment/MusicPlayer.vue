@@ -189,7 +189,7 @@ onMounted(() => fetchMusicData())
 </script>
 
 <template>
-  <div class="flec-music-player">
+  <div class="jeri-music-player">
     <div v-if="isLoading" class="player-status">
       <i class="ri-loader-4-line spin"></i>
       <span>加载中...</span>
@@ -260,8 +260,8 @@ onMounted(() => fetchMusicData())
 </template>
 
 <style lang="scss" scoped>
-.flec-music-player {
-  background: var(--flec-moment-card-bg);
+.jeri-music-player {
+  background: var(--jeri-moment-card-bg);
   border-radius: 6px;
   overflow: hidden;
 }
@@ -272,7 +272,7 @@ onMounted(() => fetchMusicData())
   justify-content: center;
   gap: 8px;
   height: 80px;
-  color: var(--flec-moment-date);
+  color: var(--jeri-moment-date);
   font-size: 0.85rem;
 
   i {
@@ -371,21 +371,21 @@ onMounted(() => fetchMusicData())
   .track-name {
     font-size: 0.9rem;
     font-weight: 500;
-    color: var(--flec-moment-title);
+    color: var(--jeri-moment-title);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   .separator {
-    color: var(--flec-moment-date);
+    color: var(--jeri-moment-date);
     margin: 0 4px;
     flex-shrink: 0;
   }
 
   .track-artist {
     font-size: 0.85rem;
-    color: var(--flec-moment-date);
+    color: var(--jeri-moment-date);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -403,7 +403,7 @@ onMounted(() => fetchMusicData())
   .lyric-line {
     text-align: center;
     font-size: 0.7rem;
-    color: var(--flec-moment-date);
+    color: var(--jeri-moment-date);
     transition: all 0.3s ease;
     line-height: 1.3;
     opacity: 0;
@@ -422,7 +422,7 @@ onMounted(() => fetchMusicData())
     }
 
     &.next {
-      color: var(--flec-moment-date);
+      color: var(--jeri-moment-date);
       opacity: 0.5;
       display: block;
       font-size: 0.65rem;
@@ -438,7 +438,7 @@ onMounted(() => fetchMusicData())
   height: 20px;
   border: none;
   background: transparent;
-  color: var(--flec-moment-date);
+  color: var(--jeri-moment-date);
   cursor: pointer;
   border-radius: 3px;
   transition: all 0.2s;
@@ -475,7 +475,7 @@ onMounted(() => fetchMusicData())
 
   .progress-time {
     font-size: 0.7rem;
-    color: var(--flec-moment-date);
+    color: var(--jeri-moment-date);
     white-space: nowrap;
   }
 }
@@ -483,7 +483,7 @@ onMounted(() => fetchMusicData())
 .player-playlist {
   max-height: 120px;
   overflow-y: auto;
-  border-top: 1px solid var(--flec-moment-divider, rgba(0, 0, 0, 0.06));
+  border-top: 1px solid var(--jeri-moment-divider, rgba(0, 0, 0, 0.06));
   background: rgba(0, 0, 0, 0.02);
 
   &::-webkit-scrollbar {
@@ -524,7 +524,7 @@ onMounted(() => fetchMusicData())
     .item-index {
       width: 18px;
       text-align: center;
-      color: var(--flec-moment-date);
+      color: var(--jeri-moment-date);
       flex-shrink: 0;
       font-size: 0.75rem;
 
@@ -539,11 +539,11 @@ onMounted(() => fetchMusicData())
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      color: var(--flec-moment-font);
+      color: var(--jeri-moment-font);
     }
 
     .item-artist {
-      color: var(--flec-moment-date);
+      color: var(--jeri-moment-date);
       font-size: 0.75rem;
       white-space: nowrap;
       max-width: 100px;

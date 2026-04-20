@@ -76,7 +76,7 @@ const isArticlePage = computed(() => route.meta.typeHeader === 'post')
 
             &:hover {
                 opacity: 1;
-                color: var(--flec-btn-hover);
+                color: var(--jeri-btn-hover);
             }
         }
     }
@@ -95,7 +95,7 @@ const isArticlePage = computed(() => route.meta.typeHeader === 'post')
 
             &:hover {
                 padding: 2px 12px;
-                background-color: var(--flec-btn-hover);
+                background-color: var(--jeri-btn-hover);
                 color: #fff;
             }
 

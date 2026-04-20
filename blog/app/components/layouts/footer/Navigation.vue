@@ -135,7 +135,7 @@ const refreshFriends = () => {
     gap: 16px;
 
     .item-title {
-      color: var(--flec-footer-font);
+      color: var(--jeri-footer-font);
       margin-left: 8px;
       margin-top: 0;
       margin-bottom: 0;
@@ -152,7 +152,7 @@ const refreshFriends = () => {
         font-size: 1.1em;
 
         &:hover {
-          color: var(--flec-footer-font-hover);
+          color: var(--jeri-footer-font-hover);
         }
 
         &.is-loading {
@@ -177,7 +177,7 @@ const refreshFriends = () => {
       gap: 8px;
 
       .content_link {
-        color: var(--flec-footer-font);
+        color: var(--jeri-footer-font);
         line-height: 0.6rem;
         margin-right: auto;
         overflow: hidden;
@@ -189,8 +189,8 @@ const refreshFriends = () => {
         border-radius: 12px;
 
         &:hover {
-          color: var(--flec-footer-font-hover);
-          background: var(--flec-footer-font-bg-hover);
+          color: var(--jeri-footer-font-hover);
+          background: var(--jeri-footer-font-bg-hover);
         }
       }
     }

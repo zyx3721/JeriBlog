@@ -17,9 +17,9 @@ import (
 	"sync"
 	"time"
 
-	"flec_blog/config"
-	"flec_blog/internal/dto"
-	"flec_blog/pkg/logger"
+	"jeri_blog/config"
+	"jeri_blog/internal/dto"
+	"jeri_blog/pkg/logger"
 
 	lark "github.com/larksuite/oapi-sdk-go/v3"
 	larkcore "github.com/larksuite/oapi-sdk-go/v3/core"

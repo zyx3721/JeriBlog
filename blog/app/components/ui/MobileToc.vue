@@ -183,14 +183,14 @@ watch(() => props.visible, (newVal) => {
   align-items: center;
   justify-content: space-between;
   padding: 16px;
-  border-bottom: 1px solid var(--flec-border);
+  border-bottom: 1px solid var(--jeri-border);
   flex-shrink: 0;
 
   h3 {
     margin: 0;
     font-size: 16px;
     font-weight: 600;
-    color: var(--flec-text);
+    color: var(--jeri-text);
   }
 
   .close-btn {
@@ -198,7 +198,7 @@ watch(() => props.visible, (newVal) => {
     height: 32px;
     border: none;
     background: transparent;
-    color: var(--flec-text);
+    color: var(--jeri-text);
     font-size: 20px;
     cursor: pointer;
     display: flex;
@@ -208,11 +208,11 @@ watch(() => props.visible, (newVal) => {
     transition: background 0.2s;
 
     &:hover {
-      background: var(--flec-hover);
+      background: var(--jeri-hover);
     }
 
     &:active {
-      background: var(--flec-active);
+      background: var(--jeri-active);
     }
   }
 }
@@ -230,7 +230,7 @@ watch(() => props.visible, (newVal) => {
   align-items: center;
   justify-content: center;
   padding: 60px 20px;
-  color: var(--flec-text-secondary);
+  color: var(--jeri-text-secondary);
 
   i {
     font-size: 48px;
@@ -254,7 +254,7 @@ watch(() => props.visible, (newVal) => {
   padding: 10px 16px;
   cursor: pointer;
   transition: all 0.2s;
-  color: var(--flec-text-secondary);
+  color: var(--jeri-text-secondary);
   font-size: 14px;
   line-height: 1.6;
   border-left: 3px solid transparent;
@@ -285,18 +285,18 @@ watch(() => props.visible, (newVal) => {
   }
 
   &:hover {
-    background: var(--flec-hover);
-    color: var(--flec-text);
+    background: var(--jeri-hover);
+    color: var(--jeri-text);
   }
 
   &:active {
-    background: var(--flec-active);
+    background: var(--jeri-active);
   }
 
   &.active {
-    color: var(--flec-primary);
-    border-left-color: var(--flec-primary);
-    background: var(--flec-primary-bg);
+    color: var(--jeri-primary);
+    border-left-color: var(--jeri-primary);
+    background: var(--jeri-primary-bg);
 
     .toc-text {
       font-weight: 500;
@@ -341,11 +341,11 @@ watch(() => props.visible, (newVal) => {
   }
 
   &::-webkit-scrollbar-thumb {
-    background: var(--flec-border);
+    background: var(--jeri-border);
     border-radius: 2px;
 
     &:hover {
-      background: var(--flec-text-secondary);
+      background: var(--jeri-text-secondary);
     }
   }
 }

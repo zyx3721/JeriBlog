@@ -140,7 +140,7 @@ onUnmounted(() => {
 .float-button {
   width: 35px;
   height: 35px;
-  background: var(--flec-btn);
+  background: var(--jeri-btn);
   border-radius: 5px;
   display: flex;
   align-items: center;
@@ -151,7 +151,7 @@ onUnmounted(() => {
   font-size: 16px;
 
   &:hover {
-    background: var(--flec-btn-hover);
+    background: var(--jeri-btn-hover);
   }
 
   &.scroll-to-top {
@@ -196,7 +196,7 @@ onUnmounted(() => {
   justify-content: center;
   width: 80px;
   height: 50px;
-  background: var(--flec-btn);
+  background: var(--jeri-btn);
   color: #ffffff;
   border-radius: 5px;
   cursor: pointer;
@@ -204,7 +204,7 @@ onUnmounted(() => {
   transition: all 0.3s ease;
 
   &:hover {
-    background: var(--flec-btn-hover);
+    background: var(--jeri-btn-hover);
   }
 
   i {

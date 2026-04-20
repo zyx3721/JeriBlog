@@ -281,8 +281,8 @@ const visitCards = computed(() => [
   .panel-block {
     padding: 24px;
     border-radius: 22px;
-    background: linear-gradient(180deg, rgba(73, 177, 245, 0.08), transparent 120px), var(--flec-card-bg);
-    border: 1px solid var(--flec-border-color);
+    background: linear-gradient(180deg, rgba(73, 177, 245, 0.08), transparent 120px), var(--jeri-card-bg);
+    border: 1px solid var(--jeri-border-color);
   }
 
   .section-head {
@@ -306,8 +306,8 @@ const visitCards = computed(() => [
     min-width: 0;
     padding: 20px;
     border-radius: 20px;
-    background: var(--flec-card-bg);
-    border: 1px solid var(--flec-border-color);
+    background: var(--jeri-card-bg);
+    border: 1px solid var(--jeri-border-color);
   }
 
   .stat-card__icon {
@@ -360,7 +360,7 @@ const visitCards = computed(() => [
   .runtime-card {
     padding: 18px;
     border-radius: 18px;
-    background: var(--flec-heavy-bg);
+    background: var(--jeri-heavy-bg);
   }
 
   .runtime-card {

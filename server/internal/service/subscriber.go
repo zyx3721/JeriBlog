@@ -19,13 +19,13 @@ import (
 	"fmt"
 	"sync"
 
-	"flec_blog/config"
-	"flec_blog/internal/dto"
-	"flec_blog/internal/model"
-	"flec_blog/internal/repository"
-	"flec_blog/pkg/email"
-	"flec_blog/pkg/logger"
-	"flec_blog/pkg/utils"
+	"jeri_blog/config"
+	"jeri_blog/internal/dto"
+	"jeri_blog/internal/model"
+	"jeri_blog/internal/repository"
+	"jeri_blog/pkg/email"
+	"jeri_blog/pkg/logger"
+	"jeri_blog/pkg/utils"
 
 	"gorm.io/gorm"
 )

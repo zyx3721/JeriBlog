@@ -140,7 +140,7 @@ watch(() => props.modelValue, (val) => {
   position: relative;
   width: 100%;
   max-width: 400px;
-  background: var(--flec-card-bg);
+  background: var(--jeri-card-bg);
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
   overflow: hidden;
@@ -241,9 +241,9 @@ watch(() => props.modelValue, (val) => {
 .form-input {
   width: 100%;
   padding: 12px 14px;
-  border: 1px solid var(--flec-border);
+  border: 1px solid var(--jeri-border);
   border-radius: 8px;
-  background: var(--flec-card-bg);
+  background: var(--jeri-card-bg);
   color: var(--font-color);
   font-size: 0.95rem;
   transition: all 0.2s;
@@ -293,7 +293,7 @@ watch(() => props.modelValue, (val) => {
   }
 
   .btn-secondary {
-    border: 1px solid var(--flec-border);
+    border: 1px solid var(--jeri-border);
     background: transparent;
     color: var(--theme-meta-color);
 

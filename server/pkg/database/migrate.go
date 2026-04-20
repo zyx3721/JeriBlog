@@ -20,7 +20,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"flec_blog/pkg/logger"
+	"jeri_blog/pkg/logger"
 )
 
 //go:embed sql/*.sql

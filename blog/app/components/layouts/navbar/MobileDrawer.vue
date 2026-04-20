@@ -170,7 +170,7 @@ watch(() => props.modelValue, (isOpen) => {
   bottom: 0;
   width: 350px;
   max-width: 80vw;
-  background-color: var(--flec-card-bg);
+  background-color: var(--jeri-card-bg);
   box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
   overflow-y: auto;
   transition: transform 0.3s ease-in;
@@ -213,7 +213,7 @@ watch(() => props.modelValue, (isOpen) => {
   .sidebar-menu {
     margin: 20px;
     padding: 15px;
-    background: var(--flec-card-bg);
+    background: var(--jeri-card-bg);
     box-shadow: 0 0 1px 1px rgba(7, 17, 27, .05);
     border-radius: 10px;
 
@@ -284,7 +284,7 @@ watch(() => props.modelValue, (isOpen) => {
       }
 
       &:hover {
-        background: var(--flec-nav-menu-bg-hover);
+        background: var(--jeri-nav-menu-bg-hover);
         color: #fff;
       }
 
@@ -326,7 +326,7 @@ watch(() => props.modelValue, (isOpen) => {
         transition: all 0.3s;
 
         &:hover {
-          background: var(--flec-nav-menu-bg-hover);
+          background: var(--jeri-nav-menu-bg-hover);
 
           span {
             color: #fff;

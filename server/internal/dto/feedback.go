@@ -11,7 +11,7 @@
 
 package dto
 
-import "flec_blog/pkg/utils"
+import "jeri_blog/pkg/utils"
 
 // SubmitFeedbackRequest 提交反馈请求
 type SubmitFeedbackRequest struct {

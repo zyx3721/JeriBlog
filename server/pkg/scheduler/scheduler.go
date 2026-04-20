@@ -16,7 +16,7 @@ import (
 
 	"github.com/robfig/cron/v3"
 
-	"flec_blog/pkg/logger"
+	"jeri_blog/pkg/logger"
 )
 
 // Job 定时任务接口

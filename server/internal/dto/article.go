@@ -12,7 +12,7 @@
 package dto
 
 import (
-	"flec_blog/pkg/utils"
+	"jeri_blog/pkg/utils"
 )
 
 // ============ 通用文章请求 ============

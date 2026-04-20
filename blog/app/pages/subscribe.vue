@@ -244,15 +244,15 @@ const closeUnsubscribeDialog = () => {
   }
 
   &.subscribe-wechat {
-    background: var(--flec-subscribe-wechat);
+    background: var(--jeri-subscribe-wechat);
   }
 
   &.subscribe-mail {
-    background: var(--flec-subscribe-mail);
+    background: var(--jeri-subscribe-mail);
   }
 
   &.subscribe-rss {
-    background: var(--flec-subscribe-rss);
+    background: var(--jeri-subscribe-rss);
   }
 
   &:hover {
@@ -337,9 +337,9 @@ const closeUnsubscribeDialog = () => {
       width: 100%;
       height: 44px;
       padding: 0 16px;
-      border: 2px solid var(--flec-border);
+      border: 2px solid var(--jeri-border);
       border-radius: 8px;
-      background: var(--flec-card-bg);
+      background: var(--jeri-card-bg);
       color: var(--font-color);
       font-size: 0.95rem;
       transition: all 0.2s;

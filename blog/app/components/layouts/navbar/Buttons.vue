@@ -183,7 +183,7 @@ const handleLogout = () => {
       left: 50%;
       width: 90%;
       height: 1px;
-      background-color: var(--flec-nav-focus);
+      background-color: var(--jeri-nav-focus);
       transform: translateX(-50%) scaleX(0);
       transform-origin: center;
       transition: transform 0.3s ease;
@@ -206,7 +206,7 @@ const handleLogout = () => {
       position: absolute;
       top: calc(100% + 0.75rem);
       right: 0;
-      background-color: var(--flec-card-bg);
+      background-color: var(--jeri-card-bg);
       backdrop-filter: blur(3px);
       border-radius: 0.75rem;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
@@ -282,7 +282,7 @@ const handleLogout = () => {
         }
 
         &:hover {
-          background-color: var(--flec-nav-menu-bg-hover);
+          background-color: var(--jeri-nav-menu-bg-hover);
           color: #fff;
         }
 

@@ -16,12 +16,12 @@ import (
 	"strings"
 	"sync"
 
-	"flec_blog/config"
-	"flec_blog/internal/model"
-	"flec_blog/internal/repository"
-	"flec_blog/pkg/auth"
-	"flec_blog/pkg/feishu"
-	"flec_blog/pkg/random"
+	"jeri_blog/config"
+	"jeri_blog/internal/model"
+	"jeri_blog/internal/repository"
+	"jeri_blog/pkg/auth"
+	"jeri_blog/pkg/feishu"
+	"jeri_blog/pkg/random"
 
 	"gorm.io/gorm"
 )

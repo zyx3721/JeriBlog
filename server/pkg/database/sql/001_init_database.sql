@@ -521,11 +521,11 @@ WHERE NOT EXISTS (SELECT 1 FROM tags WHERE slug = 'PostgreSQL');
 
 -- 插入示例文章
 INSERT INTO articles (title, slug, content, summary, cover, is_publish, is_top, view_count, category_id, publish_time, update_time, created_at, updated_at)
-SELECT 
-  'FLEC 博客系统使用指南',
+SELECT
+  'JERI 博客系统使用指南',
   'a7k9m2x5',
-  E'# FLEC 博客系统使用指南\n\n## 简介\n\n欢迎使用 FLEC 博客系统！这是一个基于 Go + Vue 3 开发的现代化博客平台。\n\n## 主要特性\n\n### 1. 技术栈\n- **后端**: Go + Gin + GORM + PostgreSQL\n- **前端**: Vue 3 + TypeScript + Vite\n- **缓存**: Redis（推荐）\n\n### 2. 核心功能\n- ✅ 文章管理（支持 Markdown）\n- ✅ 分类和标签\n- ✅ 多态评论系统\n- ✅ 文件上传\n- ✅ 友链管理\n- ✅ 动态发布\n- ✅ 访问统计\n- ✅ 全文搜索\n\n### 3. 性能优化\n- 全文搜索使用 PostgreSQL GIN 索引\n- 合理的索引设计\n- 支持 Redis 缓存\n\n## 快速开始\n\n### 默认管理员账号\n- 邮箱: `admin@example.com`\n- 密码: `123456`\n- **重要**: 请在首次登录后立即修改密码！\n\n### 使用建议\n1. 先完善个人资料\n2. 创建分类和标签\n3. 开始写作\n4. 配置 Redis 提升性能\n\n## 技术亮点\n\n本系统在数据库层面做了大量优化：\n- CHECK 约束保证数据完整性\n- 外键级联操作\n- 部分索引减少存储空间\n- 复合索引优化查询性能\n- 全文搜索 GIN 索引\n\n祝您使用愉快！',
-  '欢迎使用 FLEC 博客系统，这是一个现代化的博客平台，支持 Markdown、全文搜索、多态评论等功能。',
+  E'# JERI 博客系统使用指南\n\n## 简介\n\n欢迎使用 JERI 博客系统！这是一个基于 Go + Vue 3 开发的现代化博客平台。\n\n## 主要特性\n\n### 1. 技术栈\n- **后端**: Go + Gin + GORM + PostgreSQL\n- **前端**: Vue 3 + TypeScript + Vite\n- **缓存**: Redis（推荐）\n\n### 2. 核心功能\n- ✅ 文章管理（支持 Markdown）\n- ✅ 分类和标签\n- ✅ 多态评论系统\n- ✅ 文件上传\n- ✅ 友链管理\n- ✅ 动态发布\n- ✅ 访问统计\n- ✅ 全文搜索\n\n### 3. 性能优化\n- 全文搜索使用 PostgreSQL GIN 索引\n- 合理的索引设计\n- 支持 Redis 缓存\n\n## 快速开始\n\n### 默认管理员账号\n- 邮箱: `admin@example.com`\n- 密码: `123456`\n- **重要**: 请在首次登录后立即修改密码！\n\n### 使用建议\n1. 先完善个人资料\n2. 创建分类和标签\n3. 开始写作\n4. 配置 Redis 提升性能\n\n## 技术亮点\n\n本系统在数据库层面做了大量优化：\n- CHECK 约束保证数据完整性\n- 外键级联操作\n- 部分索引减少存储空间\n- 复合索引优化查询性能\n- 全文搜索 GIN 索引\n\n祝您使用愉快！',
+  '欢迎使用 JERI 博客系统，这是一个现代化的博客平台，支持 Markdown、全文搜索、多态评论等功能。',
   '',
   TRUE,
   TRUE,
@@ -554,8 +554,8 @@ AND NOT EXISTS (SELECT 1 FROM article_tags WHERE article_id = a.id AND tag_id = 
 
 -- 插入示例评论
 INSERT INTO comments (content, target_type, target_key, user_id, parent_id, root_id, reply_to, status, created_at, updated_at)
-SELECT 
-  '欢迎使用 FLEC 博客系统！如有问题请随时反馈。',
+SELECT
+  '欢迎使用 JERI 博客系统！如有问题请随时反馈。',
   'article',
   a.slug,
   u.id,
@@ -602,10 +602,10 @@ ON CONFLICT (key) DO NOTHING;
 
 -- 博客配置
 INSERT INTO settings (key, value, "group", is_public) VALUES
-('blog.title', 'FlecBLOG', 'blog', TRUE),
-('blog.subtitle', 'FlecBLOG', 'blog', TRUE),
+('blog.title', 'JeriBLOG', 'blog', TRUE),
+('blog.subtitle', 'JeriBLOG', 'blog', TRUE),
 ('blog.slogan', '分享技术，记录生活', 'blog', TRUE),
-('blog.description', 'FlecBLOG - 基于 Go + Vue 的现代化博客系统', 'blog', TRUE),
+('blog.description', 'JeriBLOG - 基于 Go + Vue 的现代化博客系统', 'blog', TRUE),
 ('blog.keywords', '博客,技术,编程,Go,Vue', 'blog', TRUE),
 ('blog.established', '2025-01-01', 'blog', TRUE),
 ('blog.favicon', '', 'blog', TRUE),
@@ -624,7 +624,7 @@ INSERT INTO settings (key, value, "group", is_public) VALUES
 ('blog.about_motto_sub', '用代码和文字记录生活，分享知识。', 'blog', TRUE),
 ('blog.about_socialize', '[{"name":"GitHub","url":"https://github.com"},{"name":"Email","url":"mailto:contact@example.com"}]', 'blog', TRUE),
 ('blog.about_creation', '[{"name":"掘金","url":"https://juejin.cn"},{"name":"知乎","url":"https://zhihu.com"}]', 'blog', TRUE),
-('blog.about_versions', '[{"name":"FlecBLOG","version":"x.y.z"},{"name":"Vue","version":"3.5.0"},{"name":"Go","version":"1.25.0"}]', 'blog', TRUE),
+('blog.about_versions', '[{"name":"JeriBLOG","version":"x.y.z"},{"name":"Vue","version":"3.5.0"},{"name":"Go","version":"1.25.0"}]', 'blog', TRUE),
 ('blog.about_unions', '[{"name":"BlogFinder","url":"https://bf.zzxworld.com"},{"name":"个站商店","url":"https://storeweb.cn"},{"name":"博友圈","url":"https://www.boyouquan.com"}]', 'blog', TRUE),
 ('blog.about_story', '欢迎来到我的个人博客！这里是我分享技术、记录生活、积累知识的小天地。希望这些内容能对你有所帮助。如果你有任何想法或建议，欢迎随时与我交流！', 'blog', TRUE),
 ('blog.custom_head', '', 'blog', TRUE),
@@ -696,8 +696,8 @@ ON CONFLICT (key) DO NOTHING;
 
 -- 插入示例动态
 INSERT INTO moments (content, is_publish, publish_time, created_at)
-SELECT '{"text":"欢迎使用 FLEC 博客系统！这是一条示例动态。"}'::jsonb, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
-WHERE NOT EXISTS (SELECT 1 FROM moments WHERE content->>'text' LIKE '%欢迎使用 FLEC 博客系统%');
+SELECT '{"text":"欢迎使用 JERI 博客系统！这是一条示例动态。"}'::jsonb, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+WHERE NOT EXISTS (SELECT 1 FROM moments WHERE content->>'text' LIKE '%欢迎使用 JERI 博客系统%');
 
 -- 插入示例菜单
 DO $$
@@ -786,7 +786,7 @@ END $$;
 DO $$
 BEGIN
   RAISE NOTICE '==============================================';
-  RAISE NOTICE 'FlecBLOG 系统数据库初始化完成！';
+  RAISE NOTICE 'JeriBLOG 系统数据库初始化完成！';
   RAISE NOTICE '==============================================';
   RAISE NOTICE '默认管理员账号:';
   RAISE NOTICE '  邮箱: admin@example.com';

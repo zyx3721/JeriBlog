@@ -15,8 +15,8 @@ import (
 	"fmt"
 	"time"
 
-	"flec_blog/config"
-	"flec_blog/internal/model"
+	"jeri_blog/config"
+	"jeri_blog/internal/model"
 
 	"github.com/golang-jwt/jwt/v4"
 )

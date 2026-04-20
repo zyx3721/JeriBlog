@@ -253,7 +253,7 @@ const isEmpty = computed(() => {
     font-size: 14px;
     color: var(--theme-meta-color);
     text-decoration: line-through;
-    background: var(--flec-card-bg);
+    background: var(--jeri-card-bg);
     border-radius: 4px;
   }
 }

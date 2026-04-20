@@ -22,7 +22,7 @@ tmp/
 .nuxt/
 .nitro/
 .cache/
-flec_blog
+jeri_blog
 
 # 日志
 logs/

@@ -12,9 +12,9 @@
 package middleware
 
 import (
-	"flec_blog/internal/model"
-	"flec_blog/pkg/errcode"
-	"flec_blog/pkg/response"
+	"jeri_blog/internal/model"
+	"jeri_blog/pkg/errcode"
+	"jeri_blog/pkg/response"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

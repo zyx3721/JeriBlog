@@ -775,7 +775,7 @@ onMounted(async () => {
 // 信息卡片
 .info-card {
   padding: 25px;
-  background: var(--flec-card-bg);
+  background: var(--jeri-card-bg);
   border-radius: 8px;
 
 
@@ -785,7 +785,7 @@ onMounted(async () => {
     align-items: center;
     margin-bottom: 20px;
     padding-bottom: 10px;
-    border-bottom: 2px solid var(--flec-border);
+    border-bottom: 2px solid var(--jeri-border);
 
     .card-title {
       margin: 0;
@@ -797,7 +797,7 @@ onMounted(async () => {
   .card-title {
     margin: 0 0 20px;
     padding-bottom: 10px;
-    border-bottom: 2px solid var(--flec-border);
+    border-bottom: 2px solid var(--jeri-border);
     font-weight: 600;
     color: var(--font-color);
   }
@@ -837,11 +837,11 @@ onMounted(async () => {
         height: 50px;
         border-radius: 50%;
         object-fit: cover;
-        border: 2px solid var(--flec-border);
+        border: 2px solid var(--jeri-border);
       }
 
       .badge-text {
-        background: var(--flec-card-bg);
+        background: var(--jeri-card-bg);
         border: 1px solid var(--theme-color);
         color: var(--theme-color);
         padding: 2px 8px;
@@ -861,7 +861,7 @@ onMounted(async () => {
         align-items: center;
 
         &:hover {
-          background: var(--flec-border);
+          background: var(--jeri-border);
           color: var(--theme-color);
         }
       }
@@ -978,8 +978,8 @@ onMounted(async () => {
 
 .btn-secondary {
   @include btn-base;
-  border: 1px solid var(--flec-border);
-  background: var(--flec-card-bg);
+  border: 1px solid var(--jeri-border);
+  background: var(--jeri-card-bg);
   color: var(--font-color);
 
   &:hover {
@@ -1026,9 +1026,9 @@ onMounted(async () => {
 .form-input {
   width: 100%;
   padding: 10px 14px;
-  border: 1px solid var(--flec-border);
+  border: 1px solid var(--jeri-border);
   border-radius: 8px;
-  background: var(--flec-card-bg);
+  background: var(--jeri-card-bg);
   color: var(--font-color);
   font-size: 0.95rem;
   transition: all 0.2s;
@@ -1073,14 +1073,14 @@ onMounted(async () => {
     height: 70px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid var(--flec-border);
+    border: 2px solid var(--jeri-border);
   }
 
   button {
     padding: 8px 16px;
-    border: 1px solid var(--flec-border);
+    border: 1px solid var(--jeri-border);
     border-radius: 8px;
-    background: var(--flec-card-bg);
+    background: var(--jeri-card-bg);
     color: var(--font-color);
     cursor: pointer;
     transition: all 0.2s;
@@ -1118,7 +1118,7 @@ onMounted(async () => {
 .warning {
   padding: 16px;
   background: #8080800d;
-  border: 1px solid var(--flec-border);
+  border: 1px solid var(--jeri-border);
   border-radius: 8px;
 
   .warning-title {

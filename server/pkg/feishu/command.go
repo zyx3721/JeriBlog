@@ -18,8 +18,8 @@ import (
 	"strings"
 	"sync"
 
-	"flec_blog/internal/dto"
-	"flec_blog/pkg/logger"
+	"jeri_blog/internal/dto"
+	"jeri_blog/pkg/logger"
 
 	larkim "github.com/larksuite/oapi-sdk-go/v3/service/im/v1"
 )

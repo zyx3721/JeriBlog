@@ -12,10 +12,10 @@
 package v1
 
 import (
-	"flec_blog/internal/dto"
-	"flec_blog/internal/service"
-	"flec_blog/pkg/ai"
-	"flec_blog/pkg/response"
+	"jeri_blog/internal/dto"
+	"jeri_blog/internal/service"
+	"jeri_blog/pkg/ai"
+	"jeri_blog/pkg/response"
 
 	"github.com/gin-gonic/gin"
 )

@@ -14,7 +14,7 @@ package response
 import (
 	"net/http"
 
-	"flec_blog/pkg/errcode"
+	"jeri_blog/pkg/errcode"
 
 	"github.com/gin-gonic/gin"
 )

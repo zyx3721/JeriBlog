@@ -6,23 +6,23 @@ import (
 
 	"github.com/subosito/gotenv"
 
-	"flec_blog/api/middleware"
-	"flec_blog/api/router"
-	"flec_blog/config"
-	"flec_blog/internal/service"
-	"flec_blog/pkg/database"
-	"flec_blog/pkg/logger"
-	"flec_blog/pkg/utils"
+	"jeri_blog/api/middleware"
+	"jeri_blog/api/router"
+	"jeri_blog/config"
+	"jeri_blog/internal/service"
+	"jeri_blog/pkg/database"
+	"jeri_blog/pkg/logger"
+	"jeri_blog/pkg/utils"
 
-	_ "flec_blog/docs" // swagger docs
+	_ "jeri_blog/docs" // swagger docs
 )
 
-// @title           Flec-Server
+// @title           Jeri-Server
 // @version         v1
 // @description     一个基于 Go 语言的现代化博客后端服务
 
-// @contact.name   M.Talen
-// @contact.email  talen2004@163.com
+// @contact.name   Jerion
+// @contact.email  416685476@qq.com
 
 // @license.name  MIT
 // @license.url   https://opensource.org/licenses/MIT

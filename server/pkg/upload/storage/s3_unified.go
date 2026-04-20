@@ -23,7 +23,7 @@ import (
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 
-	"flec_blog/config"
+	"jeri_blog/config"
 )
 
 // S3UnifiedStorage 基于MinIO SDK的统一S3存储

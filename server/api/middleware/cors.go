@@ -12,7 +12,7 @@
 package middleware
 
 import (
-	"flec_blog/config"
+	"jeri_blog/config"
 
 	"github.com/gin-gonic/gin"
 )

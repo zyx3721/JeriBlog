@@ -11,7 +11,7 @@
 
 package dto
 
-import "flec_blog/pkg/utils"
+import "jeri_blog/pkg/utils"
 
 // ============ 通用评论请求 ============
 

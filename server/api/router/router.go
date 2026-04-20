@@ -1,18 +1,18 @@
 package router
 
 import (
-	"flec_blog/api/middleware"
-	v1 "flec_blog/api/v1"
-	"flec_blog/api/v1/feeds"
-	"flec_blog/config"
-	"flec_blog/internal/repository"
-	"flec_blog/internal/service"
-	"flec_blog/pkg/database"
-	"flec_blog/pkg/email"
-	"flec_blog/pkg/feishu"
-	"flec_blog/pkg/notification"
-	"flec_blog/pkg/scheduler"
-	"flec_blog/pkg/upload"
+	"jeri_blog/api/middleware"
+	v1 "jeri_blog/api/v1"
+	"jeri_blog/api/v1/feeds"
+	"jeri_blog/config"
+	"jeri_blog/internal/repository"
+	"jeri_blog/internal/service"
+	"jeri_blog/pkg/database"
+	"jeri_blog/pkg/email"
+	"jeri_blog/pkg/feishu"
+	"jeri_blog/pkg/notification"
+	"jeri_blog/pkg/scheduler"
+	"jeri_blog/pkg/upload"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -54,7 +54,7 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 	r.Use(middleware.Recovery())              // 错误恢复
 
 	// 根路径欢迎页面
-	r.GET("/", func(c *gin.Context) { c.String(200, "Flec-Server 运行成功") })
+	r.GET("/", func(c *gin.Context) { c.String(200, "Jeri-Server 运行成功") })
 
 	// Swagger API文档
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

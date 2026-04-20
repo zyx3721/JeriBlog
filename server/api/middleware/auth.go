@@ -14,9 +14,9 @@ package middleware
 import (
 	"strings"
 
-	"flec_blog/internal/service"
-	"flec_blog/pkg/errcode"
-	"flec_blog/pkg/response"
+	"jeri_blog/internal/service"
+	"jeri_blog/pkg/errcode"
+	"jeri_blog/pkg/response"
 
 	"github.com/gin-gonic/gin"
 )

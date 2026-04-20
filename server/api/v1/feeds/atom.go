@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"flec_blog/config"
-	"flec_blog/internal/dto"
-	"flec_blog/internal/service"
+	"jeri_blog/config"
+	"jeri_blog/internal/dto"
+	"jeri_blog/internal/service"
 
 	"github.com/gin-gonic/gin"
 )

@@ -13,7 +13,7 @@ package dto
 
 import (
 	"encoding/json"
-	"flec_blog/pkg/utils"
+	"jeri_blog/pkg/utils"
 )
 
 // ============ 通知请求 ============

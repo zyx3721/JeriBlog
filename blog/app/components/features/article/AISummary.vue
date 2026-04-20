@@ -60,7 +60,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .ai-summary {
   font-size: .9rem;
-  background: var(--flec-card-bg);
+  background: var(--jeri-card-bg);
   border-radius: 12px;
   padding: 8px 8px 12px;
   margin-bottom: 16px;

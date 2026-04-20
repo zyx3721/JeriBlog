@@ -182,13 +182,13 @@ const displayTitle = computed(() => {
             padding: 4px 14px;
             margin: 0;
             width: 100%;
-            color: var(--flec-nav-fixed-font);
+            color: var(--jeri-nav-fixed-font);
             text-shadow: none !important;
             transition: all 0.2s ease;
 
             &:hover {
-              color: var(--flec-nav-fixed-font-hover);
-              background: var(--flec-nav-menu-bg-hover);
+              color: var(--jeri-nav-fixed-font-hover);
+              background: var(--jeri-nav-menu-bg-hover);
               border-radius: 12px;
             }
 

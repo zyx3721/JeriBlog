@@ -193,7 +193,7 @@ const isEllipsis = (page: number | string): page is string => {
   .pagination-btn {
     min-width: 40px;
     height: 40px;
-    background: var(--flec-card-bg);
+    background: var(--jeri-card-bg);
     color: var(--font-color);
     border-radius: 6px;
     cursor: pointer;
@@ -205,11 +205,11 @@ const isEllipsis = (page: number | string): page is string => {
     
     &:hover:not(.disabled):not(.active) {
       color: #fff;
-      background: var(--flec-btn-hover);
+      background: var(--jeri-btn-hover);
     }
     
     &.active {
-      background: var(--flec-btn);
+      background: var(--jeri-btn);
       color: #fff;
       font-weight: 600;
       cursor: default;

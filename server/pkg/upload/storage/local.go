@@ -19,7 +19,7 @@ import (
 	"strings"
 	"time"
 
-	"flec_blog/pkg/random"
+	"jeri_blog/pkg/random"
 )
 
 // ============================================

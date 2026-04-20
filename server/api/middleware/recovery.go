@@ -13,7 +13,7 @@ package middleware
 
 import (
 	"bytes"
-	"flec_blog/pkg/logger"
+	"jeri_blog/pkg/logger"
 	"fmt"
 	"io"
 	"net/http"
@@ -196,8 +196,8 @@ func formatStackTrace(stack string, simplified bool) string {
 
 		// 如果是简化模式，跳过非项目代码
 		if simplified {
-			// 只保留包含 flec_blog 的行（项目代码）
-			if !strings.Contains(trimmedLine, "flec_blog") {
+			// 只保留包含 jeri_blog 的行（项目代码）
+			if !strings.Contains(trimmedLine, "jeri_blog") {
 				continue
 			}
 			// 跳过 middleware 自身的行（recovery.go）
@@ -249,14 +249,14 @@ func extractKeyStack(stack string) string {
 	for i := 0; i < len(lines)-1; i++ {
 		line := strings.TrimSpace(lines[i])
 		// 找到项目代码
-		if strings.Contains(line, "flec_blog") && !strings.Contains(line, "middleware/recovery.go") {
+		if strings.Contains(line, "jeri_blog") && !strings.Contains(line, "middleware/recovery.go") {
 			// 下一行通常是文件位置
 			if i+1 < len(lines) {
 				locationLine := strings.TrimSpace(lines[i+1])
 				// 提取文件路径和行号
 				if strings.Contains(locationLine, ".go:") {
 					// 简化路径：只保留相对路径
-					parts := strings.Split(locationLine, "flec_blog/server/")
+					parts := strings.Split(locationLine, "jeri_blog/server/")
 					if len(parts) > 1 {
 						return parts[1]
 					}

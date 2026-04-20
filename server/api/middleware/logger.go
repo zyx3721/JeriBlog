@@ -14,7 +14,7 @@ package middleware
 import (
 	"time"
 
-	"flec_blog/pkg/logger"
+	"jeri_blog/pkg/logger"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"

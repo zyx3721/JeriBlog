@@ -15,7 +15,7 @@ import (
 	"fmt"
 	"time"
 
-	"flec_blog/config"
+	"jeri_blog/config"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

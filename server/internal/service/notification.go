@@ -16,12 +16,12 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"flec_blog/internal/dto"
-	"flec_blog/internal/model"
-	"flec_blog/internal/repository"
-	"flec_blog/pkg/logger"
-	notifier "flec_blog/pkg/notification"
-	"flec_blog/pkg/utils"
+	"jeri_blog/internal/dto"
+	"jeri_blog/internal/model"
+	"jeri_blog/internal/repository"
+	"jeri_blog/pkg/logger"
+	notifier "jeri_blog/pkg/notification"
+	"jeri_blog/pkg/utils"
 )
 
 // NotificationService 通知服务

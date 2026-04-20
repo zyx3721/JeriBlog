@@ -11,7 +11,7 @@
 
 package dto
 
-import "flec_blog/pkg/utils"
+import "jeri_blog/pkg/utils"
 
 // SubscriberQueryRequest 订阅者查询请求
 type SubscriberQueryRequest struct {

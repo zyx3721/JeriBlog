@@ -357,8 +357,8 @@ export function useSysConfig() {
   }))
 
   const blogConfig = useState<Record<string, string>>('sysconfig-blog', () => ({
-    'title': 'FlecBLOG',
-    'subtitle': 'FlecBLOG',
+    'title': 'JeriBLOG',
+    'subtitle': 'JeriBLOG',
     'slogan': '',
     'description': '',
     'keywords': '',

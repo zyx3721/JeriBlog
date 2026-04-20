@@ -408,7 +408,7 @@ ol {
     gap: 8px;
     margin-bottom: 12px;
     padding-bottom: 12px;
-    border-bottom: 1px solid var(--flec-heavy-bg);
+    border-bottom: 1px solid var(--jeri-heavy-bg);
 
     button {
       padding: 6px 14px;
@@ -421,7 +421,7 @@ ol {
       transition: all 0.2s;
 
       &:hover {
-        background: var(--flec-heavy-bg);
+        background: var(--jeri-heavy-bg);
       }
 
       &.active {
@@ -434,7 +434,7 @@ ol {
   .tab-content {
     .code-block {
       position: relative;
-      background: var(--flec-heavy-bg);
+      background: var(--jeri-heavy-bg);
       border-radius: 4px;
 
       .copy-btn {
@@ -442,7 +442,7 @@ ol {
         top: 8px;
         right: 8px;
         padding: 4px 10px;
-        background: var(--flec-card-bg);
+        background: var(--jeri-card-bg);
         border-radius: 4px;
         color: var(--theme-meta-color);
         font-size: 0.85rem;
@@ -476,7 +476,7 @@ ol {
     }
 
     .table-content {
-      background: var(--flec-heavy-bg);
+      background: var(--jeri-heavy-bg);
       border-radius: 4px;
       overflow: hidden;
 
@@ -486,7 +486,7 @@ ol {
 
         tr {
           &:not(:last-child) td {
-            border-bottom: 1px solid var(--flec-card-bg);
+            border-bottom: 1px solid var(--jeri-card-bg);
           }
         }
 
@@ -743,9 +743,9 @@ ol {
   textarea {
     width: 100%;
     padding: 12px;
-    border: 1px solid var(--flec-border);
+    border: 1px solid var(--jeri-border);
     border-radius: 6px;
-    background: var(--flec-card-bg);
+    background: var(--jeri-card-bg);
     color: var(--font-color);
     font-size: 0.95rem;
     transition: border-color 0.2s ease;

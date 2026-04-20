@@ -16,11 +16,11 @@ import (
 	"encoding/json"
 	"errors"
 
-	"flec_blog/internal/dto"
-	"flec_blog/internal/model"
-	"flec_blog/internal/repository"
-	"flec_blog/pkg/utils"
-	"flec_blog/pkg/videoparser"
+	"jeri_blog/internal/dto"
+	"jeri_blog/internal/model"
+	"jeri_blog/internal/repository"
+	"jeri_blog/pkg/utils"
+	"jeri_blog/pkg/videoparser"
 
 	"gorm.io/gorm"
 )

@@ -394,7 +394,7 @@ const handleSubmit = async () => {
 }
 
 .modal-container {
-  background-color: var(--flec-card-bg);
+  background-color: var(--jeri-card-bg);
   border-radius: 1rem;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   width: 100%;
@@ -438,35 +438,35 @@ const handleSubmit = async () => {
       font-size: 1.8rem;
 
       &.github {
-        color: var(--flec-github-icon, #202328);
+        color: var(--jeri-github-icon, #202328);
       }
 
       &.google {
-        color: var(--flec-google-icon, #5383ec);
+        color: var(--jeri-google-icon, #5383ec);
       }
 
       &.qq {
-        color: var(--flec-qq-icon, #12b7f5);
+        color: var(--jeri-qq-icon, #12b7f5);
       }
 
       &.microsoft {
-        color: var(--flec-microsoft-icon, #00a4ef);
+        color: var(--jeri-microsoft-icon, #00a4ef);
       }
     }
   }
 }
 
 :global([data-theme='light']) {
-  --flec-github-icon: #202328;
-  --flec-google-icon: #5383ec;
-  --flec-qq-icon: #12b7f5;
+  --jeri-github-icon: #202328;
+  --jeri-google-icon: #5383ec;
+  --jeri-qq-icon: #12b7f5;
 }
 
 :global([data-theme='dark']) {
-  --flec-github-icon: #f0f0f0;
-  --flec-google-icon: #8fb4ff;
-  --flec-qq-icon: #5cd9ff;
-  --flec-microsoft-icon: #41bce9;
+  --jeri-github-icon: #f0f0f0;
+  --jeri-google-icon: #8fb4ff;
+  --jeri-qq-icon: #5cd9ff;
+  --jeri-microsoft-icon: #41bce9;
 }
 
 .close-btn {
@@ -486,7 +486,7 @@ const handleSubmit = async () => {
   font-size: 1.25rem;
 
   &:hover {
-    background-color: var(--flec-heavy-bg);
+    background-color: var(--jeri-heavy-bg);
     transform: rotate(90deg);
   }
 }
@@ -546,11 +546,11 @@ const handleSubmit = async () => {
     input {
       width: 100%;
       padding: 0.75rem 1rem;
-      border: 2px solid var(--flec-border);
+      border: 2px solid var(--jeri-border);
       border-radius: 0.5rem;
       font-size: 1rem;
       color: var(--font-color);
-      background-color: var(--flec-heavy-bg);
+      background-color: var(--jeri-heavy-bg);
       transition: all 0.3s ease;
 
       &:focus {
@@ -785,7 +785,7 @@ const handleSubmit = async () => {
     }
 
     &::-webkit-scrollbar-thumb {
-      background: var(--flec-border, #e5e7eb);
+      background: var(--jeri-border, #e5e7eb);
       border-radius: 2px;
     }
   }

@@ -225,22 +225,22 @@ const scrollToTop = () => {
   .contact_link {
     display: flex;
     margin: 14px 27px;
-    color: var(--flec-footer-icon);
+    color: var(--jeri-footer-icon);
     border-radius: 20%;
     width: 38px;
     height: 38px;
-    background: var(--flec-card-bg);
+    background: var(--jeri-card-bg);
     justify-content: center;
     align-items: center;
     transition: 0.3s;
     cursor: pointer;
 
     &:hover {
-      background: var(--flec-footer-icon-bg-hover);
+      background: var(--jeri-footer-icon-bg-hover);
       transform: scale(1.1);
 
       i {
-        color: var(--flec-footer-icon-hover);
+        color: var(--jeri-footer-icon-hover);
       }
     }
 
@@ -279,7 +279,7 @@ const scrollToTop = () => {
     }
 
     &:focus {
-      outline: 2px solid var(--flec-btn);
+      outline: 2px solid var(--jeri-btn);
       outline-offset: 2px;
     }
   }

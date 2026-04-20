@@ -457,7 +457,7 @@ onUnmounted(() => {
 
 .comment-input {
   margin-bottom: 30px;
-  background: var(--flec-card-bg);
+  background: var(--jeri-card-bg);
   border-radius: 8px;
   padding: 16px;
   display: flex;
@@ -465,7 +465,7 @@ onUnmounted(() => {
   gap: 10px;
 
   &.reply-mode {
-    background: var(--flec-heavy-bg);
+    background: var(--jeri-heavy-bg);
     margin-bottom: 0;
   }
 }
@@ -529,7 +529,7 @@ textarea {
   width: 24px;
   height: 24px;
   padding: 0;
-  border: 1px solid var(--flec-border-color);
+  border: 1px solid var(--jeri-border-color);
   border-radius: 999px;
   background: transparent;
   color: var(--theme-meta-color);
@@ -760,10 +760,10 @@ textarea {
   align-items: center;
   gap: 6px;
   padding: 4px 8px 4px 12px;
-  background: var(--flec-card-bg);
+  background: var(--jeri-card-bg);
   border-radius: 6px;
   margin-right: 8px;
-  border: 1px solid var(--flec-border-color);
+  border: 1px solid var(--jeri-border-color);
 
   &-text {
     font-size: 0.85rem;
@@ -789,7 +789,7 @@ textarea {
     }
 
     &:hover:not(:disabled) {
-      background: var(--flec-card-bg);
+      background: var(--jeri-card-bg);
       color: var(--font-color);
     }
 
@@ -846,7 +846,7 @@ textarea {
   gap: 5px;
   border: none;
   border-radius: 6px;
-  background: var(--flec-btn);
+  background: var(--jeri-btn);
   color: var(--font-light-color);
   font-size: 0.9rem;
   font-weight: 500;
@@ -858,7 +858,7 @@ textarea {
   }
 
   &:hover:not(:disabled) {
-    background: var(--flec-btn-hover);
+    background: var(--jeri-btn-hover);
   }
 
   &:disabled {

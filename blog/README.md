@@ -1,4 +1,4 @@
-# Flec-Blog
+# Jeri-Blog
 
 > 基于 Nuxt 4 + Vue 3 的现代化博客前端应用
 

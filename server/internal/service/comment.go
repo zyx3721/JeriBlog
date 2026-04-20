@@ -20,10 +20,10 @@ import (
 	"strings"
 	"time"
 
-	"flec_blog/internal/dto"
-	"flec_blog/internal/model"
-	"flec_blog/internal/repository"
-	"flec_blog/pkg/utils"
+	"jeri_blog/internal/dto"
+	"jeri_blog/internal/model"
+	"jeri_blog/internal/repository"
+	"jeri_blog/pkg/utils"
 
 	"gorm.io/gorm"
 )

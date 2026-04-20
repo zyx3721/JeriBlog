@@ -10,8 +10,8 @@ const docTemplate = `{
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {
-            "name": "M.Talen",
-            "email": "talen2004@163.com"
+            "name": "Jerion",
+            "email": "416685476@qq.com"
         },
         "license": {
             "name": "MIT",
@@ -47,7 +47,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.AIAISummaryRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.AIAISummaryRequest"
                         }
                     }
                 ],
@@ -57,13 +57,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.AIAISummaryResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.AIAISummaryResponse"
                                         }
                                     }
                                 }
@@ -73,19 +73,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -116,7 +116,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.AISummaryRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.AISummaryRequest"
                         }
                     }
                 ],
@@ -126,13 +126,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.AISummaryResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.AISummaryResponse"
                                         }
                                     }
                                 }
@@ -142,19 +142,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -185,7 +185,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.AITestRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.AITestRequest"
                         }
                     }
                 ],
@@ -193,19 +193,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -236,7 +236,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.AITitleRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.AITitleRequest"
                         }
                     }
                 ],
@@ -246,13 +246,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.AITitleResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.AITitleResponse"
                                         }
                                     }
                                 }
@@ -262,19 +262,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -318,13 +318,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_pkg_response.PageResult"
+                                            "$ref": "#/definitions/jeri_blog_pkg_response.PageResult"
                                         }
                                     }
                                 }
@@ -334,13 +334,13 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -369,7 +369,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.CreateArticleRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.CreateArticleRequest"
                         }
                     }
                 ],
@@ -379,13 +379,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.ArticleAdminDetailResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.ArticleAdminDetailResponse"
                                         }
                                     }
                                 }
@@ -395,19 +395,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -467,13 +467,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.ImportArticlesResult"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.ImportArticlesResult"
                                         }
                                     }
                                 }
@@ -483,19 +483,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -534,13 +534,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.ArticleAdminDetailResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.ArticleAdminDetailResponse"
                                         }
                                     }
                                 }
@@ -550,25 +550,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -604,7 +604,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.UpdateArticleRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.UpdateArticleRequest"
                         }
                     }
                 ],
@@ -614,13 +614,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.ArticleAdminDetailResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.ArticleAdminDetailResponse"
                                         }
                                     }
                                 }
@@ -630,25 +630,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -683,31 +683,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -750,19 +750,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -801,13 +801,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.WeChatExportResult"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.WeChatExportResult"
                                         }
                                     }
                                 }
@@ -817,19 +817,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -871,19 +871,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -912,7 +912,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.CreateCategoryRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.CreateCategoryRequest"
                         }
                     }
                 ],
@@ -922,13 +922,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_model.Category"
+                                            "$ref": "#/definitions/jeri_blog_internal_model.Category"
                                         }
                                     }
                                 }
@@ -938,19 +938,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -987,31 +987,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1047,7 +1047,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.UpdateCategoryRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.UpdateCategoryRequest"
                         }
                     }
                 ],
@@ -1057,13 +1057,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_model.Category"
+                                            "$ref": "#/definitions/jeri_blog_internal_model.Category"
                                         }
                                     }
                                 }
@@ -1073,25 +1073,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1126,31 +1126,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1200,13 +1200,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_pkg_response.PageResult"
+                                            "$ref": "#/definitions/jeri_blog_pkg_response.PageResult"
                                         }
                                     }
                                 }
@@ -1216,19 +1216,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1257,7 +1257,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.CreateCommentRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.CreateCommentRequest"
                         }
                     }
                 ],
@@ -1267,13 +1267,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.CommentResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.CommentResponse"
                                         }
                                     }
                                 }
@@ -1283,19 +1283,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1344,13 +1344,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.ImportCommentsResult"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.ImportCommentsResult"
                                         }
                                     }
                                 }
@@ -1360,19 +1360,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1411,13 +1411,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.CommentListResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.CommentListResponse"
                                         }
                                     }
                                 }
@@ -1427,25 +1427,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1480,31 +1480,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1541,31 +1541,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1602,31 +1602,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1676,19 +1676,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1732,13 +1732,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.FileResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.FileResponse"
                                         }
                                     }
                                 }
@@ -1748,13 +1748,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1791,31 +1791,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1850,31 +1850,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1916,19 +1916,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -1957,7 +1957,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.CreateFriendRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.CreateFriendRequest"
                         }
                     }
                 ],
@@ -1965,25 +1965,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2022,19 +2022,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2063,7 +2063,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.CreateFriendTypeRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.CreateFriendTypeRequest"
                         }
                     }
                 ],
@@ -2071,25 +2071,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2123,31 +2123,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2183,7 +2183,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.UpdateFriendTypeRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.UpdateFriendTypeRequest"
                         }
                     }
                 ],
@@ -2191,31 +2191,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2247,31 +2247,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2308,31 +2308,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2368,7 +2368,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.UpdateFriendRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.UpdateFriendRequest"
                         }
                     }
                 ],
@@ -2376,31 +2376,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2435,31 +2435,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2496,7 +2496,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
@@ -2504,7 +2504,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/flec_blog_internal_dto.MenuTreeNode"
+                                                "$ref": "#/definitions/jeri_blog_internal_dto.MenuTreeNode"
                                             }
                                         }
                                     }
@@ -2537,7 +2537,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.MenuCreateRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.MenuCreateRequest"
                         }
                     }
                 ],
@@ -2547,13 +2547,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.MenuResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.MenuResponse"
                                         }
                                     }
                                 }
@@ -2595,13 +2595,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.MenuResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.MenuResponse"
                                         }
                                     }
                                 }
@@ -2640,7 +2640,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.MenuUpdateRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.MenuUpdateRequest"
                         }
                     }
                 ],
@@ -2650,13 +2650,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.MenuResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.MenuResponse"
                                         }
                                     }
                                 }
@@ -2694,7 +2694,7 @@ const docTemplate = `{
                         "name": "request",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.MenuDeleteRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.MenuDeleteRequest"
                         }
                     }
                 ],
@@ -2702,7 +2702,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2746,13 +2746,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_pkg_response.PageResult"
+                                            "$ref": "#/definitions/jeri_blog_pkg_response.PageResult"
                                         }
                                     }
                                 }
@@ -2762,13 +2762,13 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2797,7 +2797,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.CreateMomentRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.CreateMomentRequest"
                         }
                     }
                 ],
@@ -2807,13 +2807,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.MomentListResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.MomentListResponse"
                                         }
                                     }
                                 }
@@ -2823,19 +2823,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2874,13 +2874,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.MomentListResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.MomentListResponse"
                                         }
                                     }
                                 }
@@ -2890,25 +2890,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -2944,7 +2944,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.UpdateMomentRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.UpdateMomentRequest"
                         }
                     }
                 ],
@@ -2952,31 +2952,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3011,31 +3011,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3074,19 +3074,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3111,19 +3111,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3157,31 +3157,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3229,13 +3229,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.SettingGroupResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.SettingGroupResponse"
                                         }
                                     }
                                 }
@@ -3245,13 +3245,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3296,7 +3296,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.UpdateSettingGroupRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.UpdateSettingGroupRequest"
                         }
                     }
                 ],
@@ -3304,19 +3304,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3346,7 +3346,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
@@ -3354,7 +3354,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/flec_blog_internal_dto.CategoryStats"
+                                                "$ref": "#/definitions/jeri_blog_internal_dto.CategoryStats"
                                             }
                                         }
                                     }
@@ -3405,7 +3405,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
@@ -3413,7 +3413,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/flec_blog_internal_dto.ArticleContribution"
+                                                "$ref": "#/definitions/jeri_blog_internal_dto.ArticleContribution"
                                             }
                                         }
                                     }
@@ -3448,13 +3448,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.DashboardStats"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.DashboardStats"
                                         }
                                     }
                                 }
@@ -3488,7 +3488,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
@@ -3496,7 +3496,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/flec_blog_internal_dto.TagStats"
+                                                "$ref": "#/definitions/jeri_blog_internal_dto.TagStats"
                                             }
                                         }
                                     }
@@ -3561,7 +3561,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
@@ -3569,7 +3569,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/flec_blog_internal_dto.TrendData"
+                                                "$ref": "#/definitions/jeri_blog_internal_dto.TrendData"
                                             }
                                         }
                                     }
@@ -3623,13 +3623,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_pkg_response.PageResult"
+                                            "$ref": "#/definitions/jeri_blog_pkg_response.PageResult"
                                         }
                                     }
                                 }
@@ -3675,19 +3675,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3716,7 +3716,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.CreateTagRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.CreateTagRequest"
                         }
                     }
                 ],
@@ -3726,13 +3726,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_model.Tag"
+                                            "$ref": "#/definitions/jeri_blog_internal_model.Tag"
                                         }
                                     }
                                 }
@@ -3742,19 +3742,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3791,31 +3791,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3851,7 +3851,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.UpdateTagRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.UpdateTagRequest"
                         }
                     }
                 ],
@@ -3861,13 +3861,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_model.Tag"
+                                            "$ref": "#/definitions/jeri_blog_internal_model.Tag"
                                         }
                                     }
                                 }
@@ -3877,25 +3877,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3930,31 +3930,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4000,13 +4000,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_pkg_response.PageResult"
+                                            "$ref": "#/definitions/jeri_blog_pkg_response.PageResult"
                                         }
                                     }
                                 }
@@ -4016,19 +4016,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4057,7 +4057,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.AdminCreateUserRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.AdminCreateUserRequest"
                         }
                     }
                 ],
@@ -4065,31 +4065,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4128,13 +4128,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.UserResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.UserResponse"
                                         }
                                     }
                                 }
@@ -4144,19 +4144,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4192,7 +4192,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.AdminUpdateUserRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.AdminUpdateUserRequest"
                         }
                     }
                 ],
@@ -4200,25 +4200,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4253,25 +4253,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4311,7 +4311,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
@@ -4319,7 +4319,7 @@ const docTemplate = `{
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/flec_blog_pkg_response.PageResult"
+                                                    "$ref": "#/definitions/jeri_blog_pkg_response.PageResult"
                                                 },
                                                 {
                                                     "type": "object",
@@ -4327,7 +4327,7 @@ const docTemplate = `{
                                                         "list": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/flec_blog_internal_dto.FeedbackResponse"
+                                                                "$ref": "#/definitions/jeri_blog_internal_dto.FeedbackResponse"
                                                             }
                                                         }
                                                     }
@@ -4369,13 +4369,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.FeedbackResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.FeedbackResponse"
                                         }
                                     }
                                 }
@@ -4409,7 +4409,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.UpdateFeedbackRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.UpdateFeedbackRequest"
                         }
                     }
                 ],
@@ -4417,7 +4417,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4446,7 +4446,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4492,13 +4492,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.NotificationListResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.NotificationListResponse"
                                         }
                                     }
                                 }
@@ -4508,13 +4508,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4554,7 +4554,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
@@ -4562,7 +4562,7 @@ const docTemplate = `{
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/flec_blog_pkg_response.PageResult"
+                                                    "$ref": "#/definitions/jeri_blog_pkg_response.PageResult"
                                                 },
                                                 {
                                                     "type": "object",
@@ -4570,7 +4570,7 @@ const docTemplate = `{
                                                         "list": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/flec_blog_internal_dto.SubscriberResponse"
+                                                                "$ref": "#/definitions/jeri_blog_internal_dto.SubscriberResponse"
                                                             }
                                                         }
                                                     }
@@ -4610,7 +4610,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4635,7 +4635,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.SubmitFeedbackRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.SubmitFeedbackRequest"
                         }
                     }
                 ],
@@ -4645,13 +4645,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.FeedbackResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.FeedbackResponse"
                                         }
                                     }
                                 }
@@ -4688,13 +4688,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.FeedbackResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.FeedbackResponse"
                                         }
                                     }
                                 }
@@ -4744,13 +4744,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.NotificationListResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.NotificationListResponse"
                                         }
                                     }
                                 }
@@ -4760,13 +4760,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4794,19 +4794,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4843,19 +4843,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4893,7 +4893,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4924,7 +4924,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -4987,13 +4987,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_pkg_response.PageResult"
+                                            "$ref": "#/definitions/jeri_blog_pkg_response.PageResult"
                                         }
                                     }
                                 }
@@ -5003,7 +5003,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5049,13 +5049,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_pkg_response.PageResult"
+                                            "$ref": "#/definitions/jeri_blog_pkg_response.PageResult"
                                         }
                                     }
                                 }
@@ -5065,7 +5065,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5099,13 +5099,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.ArticleDetailResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.ArticleDetailResponse"
                                         }
                                     }
                                 }
@@ -5115,7 +5115,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5164,7 +5164,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.ForgotPasswordRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.ForgotPasswordRequest"
                         }
                     }
                 ],
@@ -5172,19 +5172,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5210,7 +5210,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.LoginRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.LoginRequest"
                         }
                     }
                 ],
@@ -5220,13 +5220,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.LoginResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.LoginResponse"
                                         }
                                     }
                                 }
@@ -5236,13 +5236,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5270,13 +5270,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5302,7 +5302,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.RefreshTokenRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.RefreshTokenRequest"
                         }
                     }
                 ],
@@ -5312,13 +5312,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.LoginResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.LoginResponse"
                                         }
                                     }
                                 }
@@ -5328,13 +5328,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5360,7 +5360,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.RegisterRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.RegisterRequest"
                         }
                     }
                 ],
@@ -5370,13 +5370,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.LoginResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.LoginResponse"
                                         }
                                     }
                                 }
@@ -5386,13 +5386,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5418,7 +5418,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.ResetPasswordRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.ResetPasswordRequest"
                         }
                     }
                 ],
@@ -5426,19 +5426,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5531,7 +5531,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5565,13 +5565,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.CategoryForWebResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.CategoryForWebResponse"
                                         }
                                     }
                                 }
@@ -5581,7 +5581,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5607,7 +5607,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.CollectRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.CollectRequest"
                         }
                     }
                 ],
@@ -5665,13 +5665,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_pkg_response.PageResult"
+                                            "$ref": "#/definitions/jeri_blog_pkg_response.PageResult"
                                         }
                                     }
                                 }
@@ -5681,7 +5681,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5705,7 +5705,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.CreateCommentRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.CreateCommentRequest"
                         }
                     }
                 ],
@@ -5715,13 +5715,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.CommentResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.CommentResponse"
                                         }
                                     }
                                 }
@@ -5731,7 +5731,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5769,7 +5769,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.UpdateCommentRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.UpdateCommentRequest"
                         }
                     }
                 ],
@@ -5779,13 +5779,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.CommentResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.CommentResponse"
                                         }
                                     }
                                 }
@@ -5795,25 +5795,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5848,31 +5848,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5894,13 +5894,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.GroupedFriendsResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.GroupedFriendsResponse"
                                         }
                                     }
                                 }
@@ -5935,7 +5935,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.ApplyFriendRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.ApplyFriendRequest"
                         }
                     }
                 ],
@@ -5943,19 +5943,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -5987,7 +5987,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
@@ -5995,7 +5995,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/flec_blog_internal_dto.MenuTreeNode"
+                                                "$ref": "#/definitions/jeri_blog_internal_dto.MenuTreeNode"
                                             }
                                         }
                                     }
@@ -6039,13 +6039,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_pkg_response.PageResult"
+                                            "$ref": "#/definitions/jeri_blog_pkg_response.PageResult"
                                         }
                                     }
                                 }
@@ -6115,7 +6115,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
@@ -6134,13 +6134,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -6165,13 +6165,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.ArchivesResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.ArchivesResponse"
                                         }
                                     }
                                 }
@@ -6200,13 +6200,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.SiteStatsResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.SiteStatsResponse"
                                         }
                                     }
                                 }
@@ -6247,7 +6247,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -6281,13 +6281,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.TagForWebResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.TagForWebResponse"
                                         }
                                     }
                                 }
@@ -6297,7 +6297,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -6338,13 +6338,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.FileUploadForWebResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.FileUploadForWebResponse"
                                         }
                                     }
                                 }
@@ -6354,7 +6354,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -6385,7 +6385,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.DeactivateAccountRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.DeactivateAccountRequest"
                         }
                     }
                 ],
@@ -6393,19 +6393,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -6442,19 +6442,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -6485,7 +6485,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.ChangePasswordRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.ChangePasswordRequest"
                         }
                     }
                 ],
@@ -6493,19 +6493,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -6534,7 +6534,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.SetPasswordRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.SetPasswordRequest"
                         }
                     }
                 ],
@@ -6542,19 +6542,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -6584,13 +6584,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.UserResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.UserResponse"
                                         }
                                     }
                                 }
@@ -6600,7 +6600,7 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -6629,7 +6629,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_internal_dto.UpdateUserRequest"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.UpdateUserRequest"
                         }
                     }
                 ],
@@ -6639,13 +6639,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/flec_blog_internal_dto.UserResponse"
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.UserResponse"
                                         }
                                     }
                                 }
@@ -6655,13 +6655,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/flec_blog_pkg_response.Response"
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -6669,7 +6669,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "flec_blog_internal_dto.AIAISummaryRequest": {
+        "jeri_blog_internal_dto.AIAISummaryRequest": {
             "type": "object",
             "required": [
                 "content"
@@ -6681,7 +6681,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.AIAISummaryResponse": {
+        "jeri_blog_internal_dto.AIAISummaryResponse": {
             "type": "object",
             "properties": {
                 "summary": {
@@ -6690,7 +6690,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.AISummaryRequest": {
+        "jeri_blog_internal_dto.AISummaryRequest": {
             "type": "object",
             "required": [
                 "content"
@@ -6702,7 +6702,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.AISummaryResponse": {
+        "jeri_blog_internal_dto.AISummaryResponse": {
             "type": "object",
             "properties": {
                 "summary": {
@@ -6711,7 +6711,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.AITestRequest": {
+        "jeri_blog_internal_dto.AITestRequest": {
             "type": "object",
             "required": [
                 "api_key",
@@ -6730,7 +6730,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.AITitleRequest": {
+        "jeri_blog_internal_dto.AITitleRequest": {
             "type": "object",
             "required": [
                 "content"
@@ -6742,7 +6742,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.AITitleResponse": {
+        "jeri_blog_internal_dto.AITitleResponse": {
             "type": "object",
             "properties": {
                 "title": {
@@ -6751,7 +6751,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.AdminCreateUserRequest": {
+        "jeri_blog_internal_dto.AdminCreateUserRequest": {
             "type": "object",
             "required": [
                 "email",
@@ -6790,7 +6790,7 @@ const docTemplate = `{
                     ],
                     "allOf": [
                         {
-                            "$ref": "#/definitions/flec_blog_internal_model.UserRole"
+                            "$ref": "#/definitions/jeri_blog_internal_model.UserRole"
                         }
                     ]
                 },
@@ -6800,7 +6800,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.AdminUpdateUserRequest": {
+        "jeri_blog_internal_dto.AdminUpdateUserRequest": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -6838,7 +6838,7 @@ const docTemplate = `{
                     ],
                     "allOf": [
                         {
-                            "$ref": "#/definitions/flec_blog_internal_model.UserRole"
+                            "$ref": "#/definitions/jeri_blog_internal_model.UserRole"
                         }
                     ]
                 },
@@ -6848,7 +6848,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.ApplyFriendRequest": {
+        "jeri_blog_internal_dto.ApplyFriendRequest": {
             "type": "object",
             "required": [
                 "avatar",
@@ -6884,7 +6884,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.ArchiveItem": {
+        "jeri_blog_internal_dto.ArchiveItem": {
             "type": "object",
             "properties": {
                 "count": {
@@ -6901,19 +6901,19 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.ArchivesResponse": {
+        "jeri_blog_internal_dto.ArchivesResponse": {
             "type": "object",
             "properties": {
                 "archives": {
                     "description": "归档列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/flec_blog_internal_dto.ArchiveItem"
+                        "$ref": "#/definitions/jeri_blog_internal_dto.ArchiveItem"
                     }
                 }
             }
         },
-        "flec_blog_internal_dto.ArticleAdminDetailResponse": {
+        "jeri_blog_internal_dto.ArticleAdminDetailResponse": {
             "type": "object",
             "properties": {
                 "ai_summary": {
@@ -6955,7 +6955,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "publish_time": {
-                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
+                    "$ref": "#/definitions/jeri_blog_pkg_utils.JSONTime"
                 },
                 "slug": {
                     "type": "string"
@@ -6981,11 +6981,11 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "update_time": {
-                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
+                    "$ref": "#/definitions/jeri_blog_pkg_utils.JSONTime"
                 }
             }
         },
-        "flec_blog_internal_dto.ArticleContribution": {
+        "jeri_blog_internal_dto.ArticleContribution": {
             "type": "object",
             "properties": {
                 "count": {
@@ -6998,7 +6998,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.ArticleDetailResponse": {
+        "jeri_blog_internal_dto.ArticleDetailResponse": {
             "type": "object",
             "properties": {
                 "ai_summary": {
@@ -7065,7 +7065,7 @@ const docTemplate = `{
                     }
                 },
                 "publish_time": {
-                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
+                    "$ref": "#/definitions/jeri_blog_pkg_utils.JSONTime"
                 },
                 "slug": {
                     "type": "string"
@@ -7094,7 +7094,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "update_time": {
-                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
+                    "$ref": "#/definitions/jeri_blog_pkg_utils.JSONTime"
                 },
                 "url": {
                     "type": "string"
@@ -7104,7 +7104,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.CategoryForWebResponse": {
+        "jeri_blog_internal_dto.CategoryForWebResponse": {
             "type": "object",
             "properties": {
                 "count": {
@@ -7130,7 +7130,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.CategoryStats": {
+        "jeri_blog_internal_dto.CategoryStats": {
             "type": "object",
             "properties": {
                 "count": {
@@ -7143,7 +7143,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.ChangePasswordRequest": {
+        "jeri_blog_internal_dto.ChangePasswordRequest": {
             "type": "object",
             "required": [
                 "new_password",
@@ -7160,7 +7160,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.CollectRequest": {
+        "jeri_blog_internal_dto.CollectRequest": {
             "type": "object",
             "properties": {
                 "article_id": {
@@ -7214,17 +7214,17 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.CommentListResponse": {
+        "jeri_blog_internal_dto.CommentListResponse": {
             "type": "object",
             "properties": {
                 "content": {
                     "type": "string"
                 },
                 "created_at": {
-                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
+                    "$ref": "#/definitions/jeri_blog_pkg_utils.JSONTime"
                 },
                 "deleted_at": {
-                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
+                    "$ref": "#/definitions/jeri_blog_pkg_utils.JSONTime"
                 },
                 "id": {
                     "type": "integer"
@@ -7273,7 +7273,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.CommentResponse": {
+        "jeri_blog_internal_dto.CommentResponse": {
             "type": "object",
             "properties": {
                 "browser": {
@@ -7284,7 +7284,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "created_at": {
-                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
+                    "$ref": "#/definitions/jeri_blog_pkg_utils.JSONTime"
                 },
                 "id": {
                     "type": "integer"
@@ -7306,7 +7306,7 @@ const docTemplate = `{
                 "replies": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/flec_blog_internal_dto.CommentResponse"
+                        "$ref": "#/definitions/jeri_blog_internal_dto.CommentResponse"
                     }
                 },
                 "reply_user": {
@@ -7371,7 +7371,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.CreateArticleRequest": {
+        "jeri_blog_internal_dto.CreateArticleRequest": {
             "type": "object",
             "required": [
                 "content",
@@ -7425,7 +7425,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.CreateCategoryRequest": {
+        "jeri_blog_internal_dto.CreateCategoryRequest": {
             "type": "object",
             "required": [
                 "name"
@@ -7444,7 +7444,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.CreateCommentRequest": {
+        "jeri_blog_internal_dto.CreateCommentRequest": {
             "type": "object",
             "required": [
                 "content",
@@ -7485,7 +7485,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.CreateFriendRequest": {
+        "jeri_blog_internal_dto.CreateFriendRequest": {
             "type": "object",
             "required": [
                 "name",
@@ -7527,7 +7527,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.CreateFriendTypeRequest": {
+        "jeri_blog_internal_dto.CreateFriendTypeRequest": {
             "type": "object",
             "required": [
                 "name"
@@ -7545,14 +7545,14 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.CreateMomentRequest": {
+        "jeri_blog_internal_dto.CreateMomentRequest": {
             "type": "object",
             "required": [
                 "content"
             ],
             "properties": {
                 "content": {
-                    "$ref": "#/definitions/flec_blog_internal_dto.MomentContent"
+                    "$ref": "#/definitions/jeri_blog_internal_dto.MomentContent"
                 },
                 "is_publish": {
                     "description": "是否发布，默认true",
@@ -7562,13 +7562,13 @@ const docTemplate = `{
                     "description": "发布时间（可选，不填则使用创建时间）",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
+                            "$ref": "#/definitions/jeri_blog_pkg_utils.JSONTime"
                         }
                     ]
                 }
             }
         },
-        "flec_blog_internal_dto.CreateTagRequest": {
+        "jeri_blog_internal_dto.CreateTagRequest": {
             "type": "object",
             "required": [
                 "name"
@@ -7584,7 +7584,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.DashboardStats": {
+        "jeri_blog_internal_dto.DashboardStats": {
             "type": "object",
             "properties": {
                 "comments_growth": {
@@ -7649,7 +7649,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.DeactivateAccountRequest": {
+        "jeri_blog_internal_dto.DeactivateAccountRequest": {
             "type": "object",
             "required": [
                 "password"
@@ -7660,7 +7660,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.FeedbackResponse": {
+        "jeri_blog_internal_dto.FeedbackResponse": {
             "type": "object",
             "properties": {
                 "admin_reply": {
@@ -7674,7 +7674,7 @@ const docTemplate = `{
                     "description": "反馈时间",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
+                            "$ref": "#/definitions/jeri_blog_pkg_utils.JSONTime"
                         }
                     ]
                 },
@@ -7691,7 +7691,7 @@ const docTemplate = `{
                     "description": "回复时间",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
+                            "$ref": "#/definitions/jeri_blog_pkg_utils.JSONTime"
                         }
                     ]
                 },
@@ -7713,7 +7713,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.FileResponse": {
+        "jeri_blog_internal_dto.FileResponse": {
             "type": "object",
             "properties": {
                 "file_name": {
@@ -7739,7 +7739,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "upload_time": {
-                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
+                    "$ref": "#/definitions/jeri_blog_pkg_utils.JSONTime"
                 },
                 "upload_type": {
                     "type": "string"
@@ -7749,7 +7749,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.FileUploadForWebResponse": {
+        "jeri_blog_internal_dto.FileUploadForWebResponse": {
             "type": "object",
             "properties": {
                 "file_url": {
@@ -7760,7 +7760,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.ForgotPasswordRequest": {
+        "jeri_blog_internal_dto.ForgotPasswordRequest": {
             "type": "object",
             "required": [
                 "email"
@@ -7771,14 +7771,14 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.FriendGroupResponse": {
+        "jeri_blog_internal_dto.FriendGroupResponse": {
             "type": "object",
             "properties": {
                 "friends": {
                     "description": "该类型下的友链（已排序）",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/flec_blog_internal_dto.FriendInGroupResponse"
+                        "$ref": "#/definitions/jeri_blog_internal_dto.FriendInGroupResponse"
                     }
                 },
                 "type_id": {
@@ -7795,7 +7795,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.FriendInGroupResponse": {
+        "jeri_blog_internal_dto.FriendInGroupResponse": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -7825,14 +7825,14 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.GroupedFriendsResponse": {
+        "jeri_blog_internal_dto.GroupedFriendsResponse": {
             "type": "object",
             "properties": {
                 "groups": {
                     "description": "友链分组列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/flec_blog_internal_dto.FriendGroupResponse"
+                        "$ref": "#/definitions/jeri_blog_internal_dto.FriendGroupResponse"
                     }
                 },
                 "total_friends": {
@@ -7845,7 +7845,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.ImportArticleError": {
+        "jeri_blog_internal_dto.ImportArticleError": {
             "type": "object",
             "properties": {
                 "error": {
@@ -7859,7 +7859,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.ImportArticlesResult": {
+        "jeri_blog_internal_dto.ImportArticlesResult": {
             "type": "object",
             "properties": {
                 "categories_added": {
@@ -7869,7 +7869,7 @@ const docTemplate = `{
                 "errors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/flec_blog_internal_dto.ImportArticleError"
+                        "$ref": "#/definitions/jeri_blog_internal_dto.ImportArticleError"
                     }
                 },
                 "failed": {
@@ -7887,7 +7887,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.ImportCommentError": {
+        "jeri_blog_internal_dto.ImportCommentError": {
             "type": "object",
             "properties": {
                 "content": {
@@ -7901,13 +7901,13 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.ImportCommentsResult": {
+        "jeri_blog_internal_dto.ImportCommentsResult": {
             "type": "object",
             "properties": {
                 "errors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/flec_blog_internal_dto.ImportCommentError"
+                        "$ref": "#/definitions/jeri_blog_internal_dto.ImportCommentError"
                     }
                 },
                 "failed": {
@@ -7924,7 +7924,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.LoginRequest": {
+        "jeri_blog_internal_dto.LoginRequest": {
             "type": "object",
             "required": [
                 "email",
@@ -7939,7 +7939,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.LoginResponse": {
+        "jeri_blog_internal_dto.LoginResponse": {
             "type": "object",
             "properties": {
                 "access_token": {
@@ -7952,13 +7952,13 @@ const docTemplate = `{
                     "description": "刷新token时为空",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/flec_blog_internal_dto.UserResponse"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.UserResponse"
                         }
                     ]
                 }
             }
         },
-        "flec_blog_internal_dto.MenuCreateRequest": {
+        "jeri_blog_internal_dto.MenuCreateRequest": {
             "type": "object",
             "required": [
                 "title",
@@ -8006,7 +8006,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.MenuDeleteRequest": {
+        "jeri_blog_internal_dto.MenuDeleteRequest": {
             "type": "object",
             "properties": {
                 "children_action": {
@@ -8019,7 +8019,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.MenuResponse": {
+        "jeri_blog_internal_dto.MenuResponse": {
             "type": "object",
             "properties": {
                 "icon": {
@@ -8048,14 +8048,14 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.MenuTreeNode": {
+        "jeri_blog_internal_dto.MenuTreeNode": {
             "type": "object",
             "properties": {
                 "children": {
                     "description": "子菜单列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/flec_blog_internal_dto.MenuTreeNode"
+                        "$ref": "#/definitions/jeri_blog_internal_dto.MenuTreeNode"
                     }
                 },
                 "icon": {
@@ -8084,7 +8084,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.MenuUpdateRequest": {
+        "jeri_blog_internal_dto.MenuUpdateRequest": {
             "type": "object",
             "required": [
                 "title",
@@ -8132,7 +8132,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.MomentContent": {
+        "jeri_blog_internal_dto.MomentContent": {
             "type": "object",
             "properties": {
                 "book": {
@@ -8151,7 +8151,7 @@ const docTemplate = `{
                     "description": "外链",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/flec_blog_internal_dto.MomentLink"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.MomentLink"
                         }
                     ]
                 },
@@ -8168,7 +8168,7 @@ const docTemplate = `{
                     "description": "音乐（基于MetingJS）",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/flec_blog_internal_dto.MomentMusic"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.MomentMusic"
                         }
                     ]
                 },
@@ -8184,13 +8184,13 @@ const docTemplate = `{
                     "description": "视频（本地或在线）",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/flec_blog_internal_dto.MomentVideo"
+                            "$ref": "#/definitions/jeri_blog_internal_dto.MomentVideo"
                         }
                     ]
                 }
             }
         },
-        "flec_blog_internal_dto.MomentLink": {
+        "jeri_blog_internal_dto.MomentLink": {
             "type": "object",
             "properties": {
                 "favicon": {
@@ -8204,11 +8204,11 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.MomentListResponse": {
+        "jeri_blog_internal_dto.MomentListResponse": {
             "type": "object",
             "properties": {
                 "content": {
-                    "$ref": "#/definitions/flec_blog_internal_dto.MomentContent"
+                    "$ref": "#/definitions/jeri_blog_internal_dto.MomentContent"
                 },
                 "id": {
                     "type": "integer"
@@ -8217,11 +8217,11 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "publish_time": {
-                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
+                    "$ref": "#/definitions/jeri_blog_pkg_utils.JSONTime"
                 }
             }
         },
-        "flec_blog_internal_dto.MomentMusic": {
+        "jeri_blog_internal_dto.MomentMusic": {
             "type": "object",
             "properties": {
                 "id": {
@@ -8238,7 +8238,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.MomentVideo": {
+        "jeri_blog_internal_dto.MomentVideo": {
             "type": "object",
             "properties": {
                 "platform": {
@@ -8255,13 +8255,13 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.NotificationListResponse": {
+        "jeri_blog_internal_dto.NotificationListResponse": {
             "type": "object",
             "properties": {
                 "list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/flec_blog_internal_dto.NotificationResponse"
+                        "$ref": "#/definitions/jeri_blog_internal_dto.NotificationResponse"
                     }
                 },
                 "page": {
@@ -8279,7 +8279,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.NotificationResponse": {
+        "jeri_blog_internal_dto.NotificationResponse": {
             "type": "object",
             "properties": {
                 "content": {
@@ -8287,7 +8287,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "created_at": {
-                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
+                    "$ref": "#/definitions/jeri_blog_pkg_utils.JSONTime"
                 },
                 "data": {
                     "description": "结构化数据（JSON 对象）",
@@ -8304,7 +8304,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "read_at": {
-                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
+                    "$ref": "#/definitions/jeri_blog_pkg_utils.JSONTime"
                 },
                 "sender": {
                     "description": "发送者昵称",
@@ -8328,7 +8328,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.RefreshTokenRequest": {
+        "jeri_blog_internal_dto.RefreshTokenRequest": {
             "type": "object",
             "required": [
                 "refresh_token"
@@ -8339,7 +8339,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.RegisterRequest": {
+        "jeri_blog_internal_dto.RegisterRequest": {
             "type": "object",
             "required": [
                 "email",
@@ -8366,7 +8366,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.ResetPasswordRequest": {
+        "jeri_blog_internal_dto.ResetPasswordRequest": {
             "type": "object",
             "required": [
                 "code",
@@ -8387,7 +8387,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.SetPasswordRequest": {
+        "jeri_blog_internal_dto.SetPasswordRequest": {
             "type": "object",
             "required": [
                 "confirm_password",
@@ -8406,7 +8406,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.SettingGroupResponse": {
+        "jeri_blog_internal_dto.SettingGroupResponse": {
             "type": "object",
             "properties": {
                 "group": {
@@ -8415,12 +8415,12 @@ const docTemplate = `{
                 "settings": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/flec_blog_internal_dto.SettingItemResponse"
+                        "$ref": "#/definitions/jeri_blog_internal_dto.SettingItemResponse"
                     }
                 }
             }
         },
-        "flec_blog_internal_dto.SettingItemResponse": {
+        "jeri_blog_internal_dto.SettingItemResponse": {
             "type": "object",
             "properties": {
                 "key": {
@@ -8431,7 +8431,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.SiteStatsResponse": {
+        "jeri_blog_internal_dto.SiteStatsResponse": {
             "type": "object",
             "properties": {
                 "month_pageviews": {
@@ -8496,7 +8496,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.SubmitFeedbackRequest": {
+        "jeri_blog_internal_dto.SubmitFeedbackRequest": {
             "type": "object",
             "required": [
                 "description",
@@ -8536,14 +8536,14 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.SubscriberResponse": {
+        "jeri_blog_internal_dto.SubscriberResponse": {
             "type": "object",
             "properties": {
                 "active": {
                     "type": "boolean"
                 },
                 "created_at": {
-                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
+                    "$ref": "#/definitions/jeri_blog_pkg_utils.JSONTime"
                 },
                 "email": {
                     "type": "string"
@@ -8552,11 +8552,11 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "updated_at": {
-                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
+                    "$ref": "#/definitions/jeri_blog_pkg_utils.JSONTime"
                 }
             }
         },
-        "flec_blog_internal_dto.TagForWebResponse": {
+        "jeri_blog_internal_dto.TagForWebResponse": {
             "type": "object",
             "properties": {
                 "count": {
@@ -8579,7 +8579,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.TagStats": {
+        "jeri_blog_internal_dto.TagStats": {
             "type": "object",
             "properties": {
                 "count": {
@@ -8592,7 +8592,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.TrendData": {
+        "jeri_blog_internal_dto.TrendData": {
             "type": "object",
             "properties": {
                 "date": {
@@ -8609,7 +8609,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.UpdateArticleRequest": {
+        "jeri_blog_internal_dto.UpdateArticleRequest": {
             "type": "object",
             "properties": {
                 "ai_summary": {
@@ -8646,7 +8646,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "publish_time": {
-                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
+                    "$ref": "#/definitions/jeri_blog_pkg_utils.JSONTime"
                 },
                 "slug": {
                     "description": "自定义 URL slug",
@@ -8665,11 +8665,11 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "update_time": {
-                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
+                    "$ref": "#/definitions/jeri_blog_pkg_utils.JSONTime"
                 }
             }
         },
-        "flec_blog_internal_dto.UpdateCategoryRequest": {
+        "jeri_blog_internal_dto.UpdateCategoryRequest": {
             "type": "object",
             "required": [
                 "name"
@@ -8688,7 +8688,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.UpdateCommentRequest": {
+        "jeri_blog_internal_dto.UpdateCommentRequest": {
             "type": "object",
             "required": [
                 "content"
@@ -8701,7 +8701,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.UpdateFeedbackRequest": {
+        "jeri_blog_internal_dto.UpdateFeedbackRequest": {
             "type": "object",
             "required": [
                 "status"
@@ -8720,7 +8720,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.UpdateFriendRequest": {
+        "jeri_blog_internal_dto.UpdateFriendRequest": {
             "type": "object",
             "required": [
                 "name",
@@ -8774,7 +8774,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.UpdateFriendTypeRequest": {
+        "jeri_blog_internal_dto.UpdateFriendTypeRequest": {
             "type": "object",
             "required": [
                 "name"
@@ -8792,14 +8792,14 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.UpdateMomentRequest": {
+        "jeri_blog_internal_dto.UpdateMomentRequest": {
             "type": "object",
             "required": [
                 "content"
             ],
             "properties": {
                 "content": {
-                    "$ref": "#/definitions/flec_blog_internal_dto.MomentContent"
+                    "$ref": "#/definitions/jeri_blog_internal_dto.MomentContent"
                 },
                 "is_publish": {
                     "description": "是否发布",
@@ -8809,13 +8809,13 @@ const docTemplate = `{
                     "description": "发布时间（可编辑）",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
+                            "$ref": "#/definitions/jeri_blog_pkg_utils.JSONTime"
                         }
                     ]
                 }
             }
         },
-        "flec_blog_internal_dto.UpdateSettingGroupRequest": {
+        "jeri_blog_internal_dto.UpdateSettingGroupRequest": {
             "type": "object",
             "required": [
                 "settings"
@@ -8829,7 +8829,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.UpdateTagRequest": {
+        "jeri_blog_internal_dto.UpdateTagRequest": {
             "type": "object",
             "required": [
                 "name"
@@ -8845,7 +8845,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.UpdateUserRequest": {
+        "jeri_blog_internal_dto.UpdateUserRequest": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -8870,7 +8870,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_dto.UserResponse": {
+        "jeri_blog_internal_dto.UserResponse": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -8880,7 +8880,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "created_at": {
-                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
+                    "$ref": "#/definitions/jeri_blog_pkg_utils.JSONTime"
                 },
                 "email": {
                     "type": "string"
@@ -8900,7 +8900,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "last_login": {
-                    "$ref": "#/definitions/flec_blog_pkg_utils.JSONTime"
+                    "$ref": "#/definitions/jeri_blog_pkg_utils.JSONTime"
                 },
                 "linked_oauths": {
                     "description": "[\"github\", \"google\", \"qq\"]",
@@ -8913,14 +8913,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "role": {
-                    "$ref": "#/definitions/flec_blog_internal_model.UserRole"
+                    "$ref": "#/definitions/jeri_blog_internal_model.UserRole"
                 },
                 "website": {
                     "type": "string"
                 }
             }
         },
-        "flec_blog_internal_dto.WeChatExportResult": {
+        "jeri_blog_internal_dto.WeChatExportResult": {
             "type": "object",
             "properties": {
                 "html": {
@@ -8944,7 +8944,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_model.Category": {
+        "jeri_blog_internal_model.Category": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -8970,7 +8970,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_model.Tag": {
+        "jeri_blog_internal_model.Tag": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -8993,7 +8993,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_internal_model.UserRole": {
+        "jeri_blog_internal_model.UserRole": {
             "type": "string",
             "enum": [
                 "super_admin",
@@ -9020,7 +9020,7 @@ const docTemplate = `{
                 "RoleGuest"
             ]
         },
-        "flec_blog_pkg_response.PageResult": {
+        "jeri_blog_pkg_response.PageResult": {
             "type": "object",
             "properties": {
                 "list": {},
@@ -9035,7 +9035,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_pkg_response.Response": {
+        "jeri_blog_pkg_response.Response": {
             "type": "object",
             "properties": {
                 "code": {
@@ -9047,7 +9047,7 @@ const docTemplate = `{
                 }
             }
         },
-        "flec_blog_pkg_utils.JSONTime": {
+        "jeri_blog_pkg_utils.JSONTime": {
             "type": "object",
             "properties": {
                 "time.Time": {
@@ -9072,7 +9072,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "Flec-Server",
+	Title:            "Jeri-Server",
 	Description:      "一个基于 Go 语言的现代化博客后端服务",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

@@ -89,7 +89,7 @@ const handleConfirm = () => {
 }
 
 .dialog-container {
-  background-color: var(--flec-card-bg);
+  background-color: var(--jeri-card-bg);
   border-radius: 12px;
   width: 100%;
   max-width: var(--dialog-width, 480px);
@@ -105,7 +105,7 @@ const handleConfirm = () => {
   align-items: center;
   justify-content: space-between;
   padding: 20px 24px;
-  border-bottom: 1px solid var(--flec-border);
+  border-bottom: 1px solid var(--jeri-border);
 
   .dialog-title {
     margin: 0;
@@ -134,7 +134,7 @@ const handleConfirm = () => {
     }
 
     &:hover:not(:disabled) {
-      background: var(--flec-heavy-bg);
+      background: var(--jeri-heavy-bg);
       color: var(--font-color);
     }
 
@@ -153,7 +153,7 @@ const handleConfirm = () => {
 
 .dialog-footer {
   padding: 16px 24px;
-  border-top: 1px solid var(--flec-border);
+  border-top: 1px solid var(--jeri-border);
   display: flex;
   justify-content: flex-end;
   gap: 12px;

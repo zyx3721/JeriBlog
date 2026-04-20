@@ -162,7 +162,7 @@ onMounted(() => {
   }
 
   &::-webkit-scrollbar-thumb {
-    background: var(--flec-btn-hover);
+    background: var(--jeri-btn-hover);
     border-radius: 4px;
   }
 
@@ -189,13 +189,13 @@ onMounted(() => {
 
   &:hover {
     background-color: rgba(73, 177, 245, 0.1);
-    border-left-color: var(--flec-btn-hover);
+    border-left-color: var(--jeri-btn-hover);
   }
 
   &.active {
-    background-color: var(--flec-btn-hover);
+    background-color: var(--jeri-btn-hover);
     color: #fff;
-    border-left-color: var(--flec-btn-hover);
+    border-left-color: var(--jeri-btn-hover);
 
     .toc-text {
       font-weight: 500;

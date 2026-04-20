@@ -15,7 +15,7 @@ import (
 	"context"
 	"time"
 
-	"flec_blog/internal/model"
+	"jeri_blog/internal/model"
 
 	"gorm.io/gorm"
 )
