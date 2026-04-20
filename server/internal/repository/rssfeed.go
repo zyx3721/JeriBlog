@@ -247,11 +247,12 @@ func (r *RssFeedRepository) UpdateArticleWithChangeDetection(ctx context.Context
 	}
 
 	// 检测变更类型
-	var updateType string
+	var updateTypes []string
 	if oldArticle.Link != link {
-		updateType = "link" // 链接变化
-	} else if publishedAt != nil && oldArticle.PublishedAt != nil && !oldArticle.PublishedAt.Equal(*publishedAt) {
-		updateType = "published_at"
+		updateTypes = append(updateTypes, "link")
+	}
+	if publishedAt != nil && oldArticle.PublishedAt != nil && !oldArticle.PublishedAt.Equal(*publishedAt) {
+		updateTypes = append(updateTypes, "published_at")
 	}
 
 	updates := map[string]interface{}{
@@ -262,9 +263,9 @@ func (r *RssFeedRepository) UpdateArticleWithChangeDetection(ctx context.Context
 	}
 
 	// 如果有变更，标记为未读并记录变更类型
-	if updateType != "" {
+	if len(updateTypes) > 0 {
 		updates["is_read"] = false
-		updates["update_type"] = updateType
+		updates["update_type"] = strings.Join(updateTypes, ",")
 	}
 
 	return updateType, r.db.WithContext(ctx).Model(&model.RssArticle{}).Where("id = ?", id).Updates(updates).Error
