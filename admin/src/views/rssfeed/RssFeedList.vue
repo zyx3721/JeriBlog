@@ -13,6 +13,47 @@
   <common-list title="RSS订阅" :data="articleList" :loading="loading" :total="total" v-model:page="queryParams.page"
     v-model:page-size="queryParams.page_size" :show-create="false" @refresh="fetchArticles"
     @update:page="fetchArticles" @update:pageSize="fetchArticles">
+    <!-- 搜索表单 -->
+    <template #toolbar-before>
+      <div class="search-form">
+        <el-input
+          v-model="queryParams.keyword"
+          placeholder="搜索文章标题..."
+          clearable
+          style="width: 240px"
+          @keyup.enter="handleSearch"
+          @clear="handleSearch"
+        />
+        <el-select
+          v-model="queryParams.is_read"
+          placeholder="状态"
+          clearable
+          style="width: 120px"
+          @change="handleSearch"
+        >
+          <el-option label="未读" :value="false" />
+          <el-option label="已读" :value="true" />
+        </el-select>
+        <el-select
+          v-model="queryParams.friend_id"
+          placeholder="来源"
+          clearable
+          filterable
+          style="width: 180px"
+          @change="handleSearch"
+        >
+          <el-option
+            v-for="friend in friendList"
+            :key="friend.id"
+            :label="friend.name"
+            :value="friend.id"
+          />
+        </el-select>
+        <el-button type="primary" @click="handleSearch">搜索</el-button>
+        <el-button @click="handleReset">重置</el-button>
+      </div>
+    </template>
+
     <!-- 额外按钮 -->
     <template #toolbar-after>
       <el-button type="primary" @click="openSubscriberDialog">
@@ -41,7 +82,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="文章标题" min-width="300">
+    <el-table-column label="文章标题" min-width="300" align="center">
       <template #default="{ row }">
         <a :href="row.link" target="_blank" class="article-link" :class="{ read: row.is_read }">
           {{ row.title }}
@@ -49,7 +90,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="来源" width="180">
+    <el-table-column label="来源" width="180" align="center">
       <template #default="{ row }">
         <a :href="row.friend_url" target="_blank" class="friend-link">
           {{ row.friend_name }}
@@ -130,8 +171,10 @@ import CommonList from '@/components/common/CommonList.vue'
 import type { RssArticle, RssArticleQuery } from '@/types/rssfeed'
 import type { User } from '@/types/user'
 import type { Subscriber } from '@/types/subscriber'
+import type { Friend } from '@/types/friend'
 import { getRssArticles, markRssArticleRead, markAllRssArticlesRead, refreshAllRssFeeds } from '@/api/rssfeed'
 import { getSubscribers, deleteSubscriber } from '@/api/subscriber'
+import { getFriends } from '@/api/friend'
 import { formatDateTime } from '@/utils/date'
 
 const userInfo = computed(() => {
@@ -150,6 +193,20 @@ const articleList = ref<RssArticle[]>([])
 const total = ref(0)
 const unreadCount = ref(0)
 const queryParams = ref<RssArticleQuery>({ page: 1, page_size: 20 })
+const friendList = ref<Friend[]>([])
+
+/**
+ * 获取友链列表（用于来源筛选）
+ */
+const fetchFriends = async () => {
+  try {
+    const result = await getFriends({ page: 1, page_size: 1000 })
+    // 只显示配置了RSS的友链
+    friendList.value = result.list.filter(f => f.rss_url && f.rss_url.trim() !== '')
+  } catch {
+    // 静默失败，不影响主功能
+  }
+}
 
 /**
  * 获取RSS文章列表
@@ -166,6 +223,22 @@ const fetchArticles = async () => {
   } finally {
     loading.value = false
   }
+}
+
+/**
+ * 搜索
+ */
+const handleSearch = () => {
+  queryParams.value.page = 1
+  fetchArticles()
+}
+
+/**
+ * 重置搜索
+ */
+const handleReset = () => {
+  queryParams.value = { page: 1, page_size: 20 }
+  fetchArticles()
 }
 
 /**
@@ -270,10 +343,20 @@ const handleDeleteSubscriber = async (id: number) => {
   }
 }
 
-onMounted(fetchArticles)
+onMounted(() => {
+  fetchFriends()
+  fetchArticles()
+})
 </script>
 
 <style scoped>
+.search-form {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .article-link {
   color: var(--el-color-primary);
   text-decoration: none;
