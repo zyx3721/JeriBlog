@@ -218,6 +218,10 @@ func (s *RssFeedService) refreshFriendFeed(ctx context.Context, friend *model.Fr
 			if err := s.repo.UpdateArticleWithChangeDetection(ctx, existingArticle, item.Title, item.Link, publishedAt); err != nil {
 				continue
 			}
+			// 更新后检查是否有重复文章（标题或链接相同的旧文章），删除重复项
+			if err := s.repo.DeleteDuplicatesByTitleOrLink(ctx, friend.ID, item.Title, item.Link, existingArticle.ID); err != nil {
+				logger.Error("删除重复文章失败: %v", err)
+			}
 			continue
 		}
 
@@ -236,6 +240,19 @@ func (s *RssFeedService) refreshFriendFeed(ctx context.Context, friend *model.Fr
 	if len(articlesToCreate) > 0 {
 		if err := s.repo.CreateBatch(ctx, articlesToCreate); err != nil {
 			return err
+		}
+
+		// 创建新文章后，检查并删除重复文章
+		for _, article := range articlesToCreate {
+			// 需要重新查询获取新创建文章的ID
+			newArticle, err := s.repo.GetByFriendIDAndLink(ctx, article.FriendID, article.Link)
+			if err != nil || newArticle == nil {
+				continue
+			}
+			// 删除与新文章标题或链接重复的旧文章
+			if err := s.repo.DeleteDuplicatesByTitleOrLink(ctx, article.FriendID, article.Title, article.Link, newArticle.ID); err != nil {
+				logger.Error("删除重复文章失败: %v", err)
+			}
 		}
 	}
 

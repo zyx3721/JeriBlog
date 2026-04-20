@@ -300,3 +300,25 @@ func (r *RssFeedRepository) GetByFriendIDAndTitle(ctx context.Context, friendID 
 func (r *RssFeedRepository) DeleteArticle(ctx context.Context, id uint) error {
 	return r.db.WithContext(ctx).Unscoped().Delete(&model.RssArticle{}, id).Error
 }
+
+// DeleteDuplicatesByTitleOrLink 删除与指定文章标题或链接重复的旧文章（保留最新的）
+func (r *RssFeedRepository) DeleteDuplicatesByTitleOrLink(ctx context.Context, friendID uint, title, link string, keepID uint) error {
+	// 查找所有标题或链接相同的文章（排除要保留的文章）
+	var duplicates []model.RssArticle
+	err := r.db.WithContext(ctx).
+		Where("friend_id = ? AND id != ? AND (title = ? OR link = ?)", friendID, keepID, title, link).
+		Find(&duplicates).Error
+
+	if err != nil {
+		return err
+	}
+
+	// 删除所有重复的文章
+	for _, dup := range duplicates {
+		if err := r.DeleteArticle(ctx, dup.ID); err != nil {
+			logger.Error("删除重复文章失败 (ID: %d): %v", dup.ID, err)
+		}
+	}
+
+	return nil
+}
