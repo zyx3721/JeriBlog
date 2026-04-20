@@ -21,6 +21,7 @@ export interface RssArticle {
   published_at?: string
   is_read: boolean
   is_deleted: boolean
+  update_type: string
   created_at: string
 }
 
