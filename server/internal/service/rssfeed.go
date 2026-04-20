@@ -51,7 +51,7 @@ func (s *RssFeedService) List(ctx context.Context, req *dto.ListRssArticleReques
 		req.PageSize = 20
 	}
 
-	articles, total, err := s.repo.List(ctx, req.Page, req.PageSize)
+	articles, total, err := s.repo.List(ctx, req.Page, req.PageSize, req.Keyword, req.IsRead, req.FriendID)
 	if err != nil {
 		return nil, err
 	}
