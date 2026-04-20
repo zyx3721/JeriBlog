@@ -70,6 +70,7 @@ func (s *RssFeedService) List(ctx context.Context, req *dto.ListRssArticleReques
 			Link:        article.Link,
 			IsRead:      article.IsRead,
 			IsDeleted:   article.IsDeleted,
+			UpdateType:  article.UpdateType,
 			PublishedAt: utils.ToJSONTime(article.PublishedAt),
 			CreatedAt:   utils.ToJSONTime(&article.CreatedAt),
 		}
