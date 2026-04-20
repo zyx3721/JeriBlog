@@ -26,14 +26,16 @@ import (
 // FriendService 友链服务
 type FriendService struct {
 	repo                *repository.FriendRepository
+	rssFeedRepo         *repository.RssFeedRepository
 	fileService         *FileService
 	notificationService *NotificationService
 }
 
 // NewFriendService 创建友链服务实例
-func NewFriendService(repo *repository.FriendRepository, fileService *FileService, notificationService *NotificationService) *FriendService {
+func NewFriendService(repo *repository.FriendRepository, rssFeedRepo *repository.RssFeedRepository, fileService *FileService, notificationService *NotificationService) *FriendService {
 	return &FriendService{
 		repo:                repo,
+		rssFeedRepo:         rssFeedRepo,
 		fileService:         fileService,
 		notificationService: notificationService,
 	}
@@ -296,9 +298,10 @@ func (s *FriendService) Update(ctx context.Context, id uint, req *dto.UpdateFrie
 		}
 	}
 
-	// 保存旧文件
+	// 保存旧文件和旧RSS地址
 	oldAvatar := existingFriend.Avatar
 	oldScreenshot := existingFriend.Screenshot
+	oldRSSUrl := existingFriend.RSSUrl
 
 	// 更新字段
 	existingFriend.Name = req.Name
@@ -328,6 +331,12 @@ func (s *FriendService) Update(ctx context.Context, id uint, req *dto.UpdateFrie
 
 	if err := s.repo.Update(ctx, existingFriend); err != nil {
 		return err
+	}
+
+	// 检测RSS地址变化，如果变化则清理原有RSS文章
+	if s.rssFeedRepo != nil && oldRSSUrl != req.RSSUrl {
+		// RSS地址发生变化（删除、修改或清空），清理该友链的所有RSS文章
+		_, _ = s.rssFeedRepo.DeleteByFriendID(ctx, id)
 	}
 
 	// 处理文件变化
