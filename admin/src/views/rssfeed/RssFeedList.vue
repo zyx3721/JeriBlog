@@ -25,24 +25,15 @@
           @clear="handleSearch"
         />
         <el-select
-          v-model="queryParams.is_read"
+          v-model="statusFilter"
           placeholder="状态"
           clearable
           style="width: 120px"
-          @change="handleSearch"
+          @change="handleStatusChange"
         >
-          <el-option label="未读" :value="false" />
-          <el-option label="已读" :value="true" />
-        </el-select>
-        <el-select
-          v-model="queryParams.is_deleted"
-          placeholder="删除状态"
-          clearable
-          style="width: 120px"
-          @change="handleSearch"
-        >
-          <el-option label="正常" :value="false" />
-          <el-option label="已删除" :value="true" />
+          <el-option label="未读" value="unread" />
+          <el-option label="已读" value="read" />
+          <el-option label="已删除" value="deleted" />
         </el-select>
         <el-select
           v-model="queryParams.friend_id"
@@ -207,6 +198,7 @@ const total = ref(0)
 const unreadCount = ref(0)
 const queryParams = ref<RssArticleQuery>({ page: 1, page_size: 20 })
 const friendList = ref<Friend[]>([])
+const statusFilter = ref<string>('')
 
 /**
  * 获取友链列表（用于来源筛选）
@@ -239,6 +231,26 @@ const fetchArticles = async () => {
 }
 
 /**
+ * 状态筛选变化处理
+ */
+const handleStatusChange = () => {
+  if (statusFilter.value === 'unread') {
+    queryParams.value.is_read = false
+    queryParams.value.is_deleted = false
+  } else if (statusFilter.value === 'read') {
+    queryParams.value.is_read = true
+    queryParams.value.is_deleted = false
+  } else if (statusFilter.value === 'deleted') {
+    queryParams.value.is_read = undefined
+    queryParams.value.is_deleted = true
+  } else {
+    queryParams.value.is_read = undefined
+    queryParams.value.is_deleted = undefined
+  }
+  handleSearch()
+}
+
+/**
  * 搜索
  */
 const handleSearch = () => {
@@ -251,6 +263,7 @@ const handleSearch = () => {
  */
 const handleReset = () => {
   queryParams.value = { page: 1, page_size: 20 }
+  statusFilter.value = ''
   fetchArticles()
 }
 
