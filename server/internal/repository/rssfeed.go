@@ -92,47 +92,6 @@ func (r *RssFeedRepository) CreateBatch(ctx context.Context, articles []model.Rs
 	return r.db.WithContext(ctx).CreateInBatches(articles, 100).Error
 }
 
-// UpdateArticle 更新RSS文章内容（保持已读状态不变）
-// UpdateArticleWithChangeDetection 更新文章并检测变更类型
-func (r *RssFeedRepository) UpdateArticleWithChangeDetection(ctx context.Context, id uint, title, link, description string, publishedAt *time.Time) (string, error) {
-	// 先获取原文章
-	var oldArticle model.RssArticle
-	if err := r.db.WithContext(ctx).Where("id = ?", id).First(&oldArticle).Error; err != nil {
-		return "", err
-	}
-
-	// 检测变更类型
-	var updateType string
-	if oldArticle.Description != description {
-		updateType = "content"
-	} else if oldArticle.Title != title {
-		updateType = "title"
-	} else if publishedAt != nil && oldArticle.PublishedAt != nil && !oldArticle.PublishedAt.Equal(*publishedAt) {
-		updateType = "published_at"
-	}
-
-	// 如果有变更，更新文章并标记为未读
-	if updateType != "" {
-		updates := map[string]interface{}{
-			"title":       title,
-			"link":        link,
-			"description": description,
-			"update_type": updateType,
-			"is_read":     false, // 有变更时标记为未读
-		}
-		if publishedAt != nil {
-			updates["published_at"] = publishedAt
-		}
-		return updateType, r.db.WithContext(ctx).Model(&model.RssArticle{}).Where("id = ?", id).Updates(updates).Error
-	}
-
-	// 无变更，只更新链接（地址可能变化）
-	updates := map[string]interface{}{
-		"link":        link,
-		"update_type": "", // 清空变更类型
-	}
-	return "", r.db.WithContext(ctx).Model(&model.RssArticle{}).Where("id = ?", id).Updates(updates).Error
-}
 
 // MarkRead 标记文章已读
 func (r *RssFeedRepository) MarkRead(ctx context.Context, id uint) error {
