@@ -32,3 +32,10 @@ export const markRssArticleRead = async (id: number): Promise<void> => {
 export const markAllRssArticlesRead = async (): Promise<{ affected: number }> => {
   return request.put('/admin/rssfeed/read-all')
 }
+
+/**
+ * 立即刷新所有RSS订阅源
+ */
+export const refreshAllRssFeeds = async (): Promise<{ message: string }> => {
+  return request.post('/admin/rssfeed/refresh')
+}
