@@ -86,9 +86,9 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="文章标题" min-width="300">
+    <el-table-column label="文章标题" min-width="300" align="center">
       <template #default="{ row }">
-        <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
           <a :href="row.link" target="_blank" class="article-link" :class="{ read: row.is_read }">
             {{ row.title }}
           </a>
