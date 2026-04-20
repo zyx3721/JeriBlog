@@ -289,7 +289,6 @@ CREATE TABLE IF NOT EXISTS rss_articles (
     friend_id BIGINT NOT NULL,
     title VARCHAR(500) NOT NULL,
     link VARCHAR(1000) NOT NULL,
-    description TEXT,
     published_at TIMESTAMP,
     is_read BOOLEAN DEFAULT FALSE,
     is_deleted BOOLEAN DEFAULT FALSE,
@@ -305,7 +304,7 @@ CREATE INDEX IF NOT EXISTS idx_rss_articles_is_read ON rss_articles(is_read);
 CREATE INDEX IF NOT EXISTS idx_rss_articles_is_deleted ON rss_articles(is_deleted);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_rss_articles_friend_title ON rss_articles(friend_id, title);
 
-COMMENT ON COLUMN rss_articles.update_type IS '更新类型：content-内容已更新, title-标题已更新, published_at-发布时间已更新';
+COMMENT ON COLUMN rss_articles.update_type IS '更新类型：link-链接已更新, published_at-发布时间已更新';
 
 
 -- 动态表
