@@ -12,7 +12,7 @@
 package v1
 
 import (
-	"flec_blog/internal/dto"
+	_ "flec_blog/internal/dto" // swagger 类型引用
 	"flec_blog/internal/model"
 	"flec_blog/internal/service"
 	"flec_blog/pkg/response"
