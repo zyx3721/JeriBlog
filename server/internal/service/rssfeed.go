@@ -170,7 +170,6 @@ func (s *RssFeedService) refreshFriendFeed(ctx context.Context, friend *model.Fr
 		}
 
 		// 检查文章是否存在：先用 title 查询，找不到再用 link 查询
-		// 如果标题和链接都变了，就当作新文章处理
 		var existingArticle *model.RssArticle
 		var foundByTitle *model.RssArticle
 		var foundByLink *model.RssArticle
@@ -187,23 +186,23 @@ func (s *RssFeedService) refreshFriendFeed(ctx context.Context, friend *model.Fr
 			continue
 		}
 
-		// 判断是否为同一篇文章
+		// 判断匹配情况
 		if foundByTitle != nil && foundByLink != nil && foundByTitle.ID == foundByLink.ID {
-			// 标题和链接都匹配同一篇文章，说明是同一篇
+			// 情况1：标题和链接都匹配同一篇文章 → 更新这篇文章
 			existingArticle = foundByTitle
 		} else if foundByTitle != nil && foundByLink == nil {
-			// 只有标题匹配，链接变了
+			// 情况2：只有标题匹配 → 更新这篇文章（链接变了）
 			existingArticle = foundByTitle
 		} else if foundByTitle == nil && foundByLink != nil {
-			// 只有链接匹配，标题变了
+			// 情况3：只有链接匹配 → 更新这篇文章（标题变了）
 			existingArticle = foundByLink
 		} else if foundByTitle != nil && foundByLink != nil && foundByTitle.ID != foundByLink.ID {
-			// 标题和链接都变了，但分别匹配到不同的文章
-			// 这种情况视为新文章，删除旧的标题文章
+			// 情况4：标题和链接分别匹配到不同的文章
+			// 优先保留链接匹配的文章（因为链接更稳定），删除标题匹配的旧文章
+			existingArticle = foundByLink
 			if err := s.repo.DeleteArticle(ctx, foundByTitle.ID); err != nil {
-				logger.Error("删除旧文章失败: %v", err)
+				logger.Error("删除旧文章失败 (ID: %d): %v", foundByTitle.ID, err)
 			}
-			existingArticle = nil
 		}
 
 		// 如果文章已存在（通过标题或链接找到）
