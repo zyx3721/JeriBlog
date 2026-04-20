@@ -51,7 +51,7 @@ func (s *RssFeedService) List(ctx context.Context, req *dto.ListRssArticleReques
 		req.PageSize = 20
 	}
 
-	articles, total, err := s.repo.List(ctx, req.Page, req.PageSize, req.Keyword, req.IsRead, req.FriendID)
+	articles, total, err := s.repo.List(ctx, req.Page, req.PageSize, req.Keyword, req.IsRead, req.IsDeleted, req.FriendID)
 	if err != nil {
 		return nil, err
 	}
@@ -69,6 +69,7 @@ func (s *RssFeedService) List(ctx context.Context, req *dto.ListRssArticleReques
 			Title:       article.Title,
 			Link:        article.Link,
 			IsRead:      article.IsRead,
+			IsDeleted:   article.IsDeleted,
 			PublishedAt: utils.ToJSONTime(article.PublishedAt),
 			CreatedAt:   utils.ToJSONTime(&article.CreatedAt),
 		}
@@ -134,6 +135,19 @@ func (s *RssFeedService) refreshFriendFeed(ctx context.Context, friend *model.Fr
 
 	isFirstSubscribe := friend.RSSLatime == nil
 
+	// 收集RSS源中的所有链接
+	rssLinks := make(map[string]bool)
+	for _, item := range feed.Items {
+		if item.Link != "" {
+			rssLinks[item.Link] = true
+		}
+	}
+
+	// 标记数据库中已不存在于RSS源的文章为已删除
+	if err := s.repo.MarkDeletedByFriendAndLinks(ctx, friend.ID, rssLinks); err != nil {
+		return err
+	}
+
 	var articlesToCreate []model.RssArticle
 
 	for _, item := range feed.Items {
@@ -141,8 +155,20 @@ func (s *RssFeedService) refreshFriendFeed(ctx context.Context, friend *model.Fr
 			continue
 		}
 
-		exists, err := s.repo.ExistsByLink(ctx, item.Link)
-		if err != nil || exists {
+		// 检查文章是否存在
+		existingArticle, err := s.repo.GetByLink(ctx, item.Link)
+		if err != nil {
+			continue
+		}
+
+		// 如果文章已存在
+		if existingArticle != nil {
+			// 如果文章之前被标记为已删除，现在恢复为未读
+			if existingArticle.IsDeleted {
+				if err := s.repo.RestoreArticle(ctx, existingArticle.ID); err != nil {
+					continue
+				}
+			}
 			continue
 		}
 
@@ -164,6 +190,7 @@ func (s *RssFeedService) refreshFriendFeed(ctx context.Context, friend *model.Fr
 			Link:        item.Link,
 			PublishedAt: publishedAt,
 			IsRead:      isFirstSubscribe,
+			IsDeleted:   false,
 		}
 
 		articlesToCreate = append(articlesToCreate, article)
