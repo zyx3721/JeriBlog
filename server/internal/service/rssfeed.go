@@ -168,8 +168,8 @@ func (s *RssFeedService) refreshFriendFeed(ctx context.Context, friend *model.Fr
 			}
 		}
 
-		// 检查文章是否存在（改用标题+友链ID作为唯一标识）
-		existingArticle, err := s.repo.GetByFriendIDAndTitle(ctx, friend.ID, item.Title)
+		// 检查文章是否存在（使用链接+友链ID作为唯一标识）
+		existingArticle, err := s.repo.GetByFriendIDAndLink(ctx, friend.ID, item.Link)
 		if err != nil {
 			continue
 		}
@@ -182,9 +182,8 @@ func (s *RssFeedService) refreshFriendFeed(ctx context.Context, friend *model.Fr
 					continue
 				}
 			}
-			// 更新文章并检测变更类型（只检测链接和发布时间）
-			_, err := s.repo.UpdateArticleWithChangeDetection(ctx, existingArticle.ID, item.Link, publishedAt)
-			if err != nil {
+			// 更新文章并检测变更类型（检测标题、链接和发布时间）
+			if err := s.repo.UpdateArticleWithChangeDetection(ctx, existingArticle, item.Title, item.Link, publishedAt); err != nil {
 				continue
 			}
 			continue
