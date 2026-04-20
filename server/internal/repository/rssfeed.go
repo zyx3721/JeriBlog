@@ -93,15 +93,45 @@ func (r *RssFeedRepository) CreateBatch(ctx context.Context, articles []model.Rs
 }
 
 // UpdateArticle 更新RSS文章内容（保持已读状态不变）
-func (r *RssFeedRepository) UpdateArticle(ctx context.Context, id uint, title, link string, publishedAt *time.Time) error {
+// UpdateArticleWithChangeDetection 更新文章并检测变更类型
+func (r *RssFeedRepository) UpdateArticleWithChangeDetection(ctx context.Context, id uint, title, link, description string, publishedAt *time.Time) (string, error) {
+	// 先获取原文章
+	var oldArticle model.RssArticle
+	if err := r.db.WithContext(ctx).Where("id = ?", id).First(&oldArticle).Error; err != nil {
+		return "", err
+	}
+
+	// 检测变更类型
+	var updateType string
+	if oldArticle.Description != description {
+		updateType = "content"
+	} else if oldArticle.Title != title {
+		updateType = "title"
+	} else if publishedAt != nil && oldArticle.PublishedAt != nil && !oldArticle.PublishedAt.Equal(*publishedAt) {
+		updateType = "published_at"
+	}
+
+	// 如果有变更，更新文章并标记为未读
+	if updateType != "" {
+		updates := map[string]interface{}{
+			"title":       title,
+			"link":        link,
+			"description": description,
+			"update_type": updateType,
+			"is_read":     false, // 有变更时标记为未读
+		}
+		if publishedAt != nil {
+			updates["published_at"] = publishedAt
+		}
+		return updateType, r.db.WithContext(ctx).Model(&model.RssArticle{}).Where("id = ?", id).Updates(updates).Error
+	}
+
+	// 无变更，只更新链接（地址可能变化）
 	updates := map[string]interface{}{
-		"title": title,
-		"link":  link,
+		"link":        link,
+		"update_type": "", // 清空变更类型
 	}
-	if publishedAt != nil {
-		updates["published_at"] = publishedAt
-	}
-	return r.db.WithContext(ctx).Model(&model.RssArticle{}).Where("id = ?", id).Updates(updates).Error
+	return "", r.db.WithContext(ctx).Model(&model.RssArticle{}).Where("id = ?", id).Updates(updates).Error
 }
 
 // MarkRead 标记文章已读
@@ -207,6 +237,19 @@ func (r *RssFeedRepository) GetByLink(ctx context.Context, link string) (*model.
 	return &article, nil
 }
 
+// GetByFriendIDAndTitle 根据友链ID和标题获取文章
+func (r *RssFeedRepository) GetByFriendIDAndTitle(ctx context.Context, friendID uint, title string) (*model.RssArticle, error) {
+	var article model.RssArticle
+	err := r.db.WithContext(ctx).Where("friend_id = ? AND title = ?", friendID, title).First(&article).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &article, nil
+}
+
 // MarkDeletedByFriendAndLinks 标记指定友链中不在RSS源的文章为已删除
 func (r *RssFeedRepository) MarkDeletedByFriendAndLinks(ctx context.Context, friendID uint, rssLinks map[string]bool) error {
 	// 获取该友链的所有文章
@@ -230,7 +273,43 @@ func (r *RssFeedRepository) MarkDeletedByFriendAndLinks(ctx context.Context, fri
 // RestoreArticle 恢复已删除的文章为未读状态
 func (r *RssFeedRepository) RestoreArticle(ctx context.Context, id uint) error {
 	return r.db.WithContext(ctx).Model(&model.RssArticle{}).Where("id = ?", id).Updates(map[string]interface{}{
-		"is_deleted": false,
-		"is_read":    false,
+		"is_deleted":  false,
+		"is_read":     false,
+		"update_type": "",
 	}).Error
+}
+
+// UpdateArticleWithChangeDetection 更新文章并检测变更类型
+func (r *RssFeedRepository) UpdateArticleWithChangeDetection(ctx context.Context, id uint, title, link, description string, publishedAt *time.Time) (string, error) {
+	// 先获取旧数据
+	var oldArticle model.RssArticle
+	if err := r.db.WithContext(ctx).First(&oldArticle, id).Error; err != nil {
+		return "", err
+	}
+
+	// 检测变更类型
+	var updateType string
+	if oldArticle.Description != description {
+		updateType = "content"
+	} else if oldArticle.Link != link {
+		updateType = "content" // 链接变化也视为内容更新
+	} else if publishedAt != nil && oldArticle.PublishedAt != nil && !oldArticle.PublishedAt.Equal(*publishedAt) {
+		updateType = "published_at"
+	}
+
+	updates := map[string]interface{}{
+		"link":        link,
+		"description": description,
+	}
+	if publishedAt != nil {
+		updates["published_at"] = publishedAt
+	}
+
+	// 如果有变更，标记为未读并记录变更类型
+	if updateType != "" {
+		updates["is_read"] = false
+		updates["update_type"] = updateType
+	}
+
+	return updateType, r.db.WithContext(ctx).Model(&model.RssArticle{}).Where("id = ?", id).Updates(updates).Error
 }
