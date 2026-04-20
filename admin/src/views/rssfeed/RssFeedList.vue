@@ -92,11 +92,8 @@
           <a :href="row.link" target="_blank" class="article-link" :class="{ read: row.is_read }">
             {{ row.title }}
           </a>
-          <el-tag v-if="row.update_type === 'content'" type="warning" size="small">
-            内容已更新
-          </el-tag>
-          <el-tag v-else-if="row.update_type === 'title'" type="success" size="small">
-            标题已更新
+          <el-tag v-if="row.update_type === 'link'" type="warning" size="small">
+            链接已更新
           </el-tag>
           <el-tag v-else-if="row.update_type === 'published_at'" type="info" size="small">
             发布时间已更新
