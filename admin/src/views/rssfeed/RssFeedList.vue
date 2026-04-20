@@ -285,6 +285,7 @@ const handleMarkRead = async (article: RssArticle) => {
   try {
     await markRssArticleRead(article.id)
     article.is_read = true
+    article.update_type = '' // 清空更新标签
     unreadCount.value = Math.max(0, unreadCount.value - 1)
     ElMessage.success('已标记为已读')
   } catch {
