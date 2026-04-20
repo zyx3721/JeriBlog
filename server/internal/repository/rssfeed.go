@@ -13,6 +13,7 @@ package repository
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"jeri_blog/internal/model"
@@ -196,10 +197,10 @@ func (r *RssFeedRepository) GetByLink(ctx context.Context, link string) (*model.
 	return &article, nil
 }
 
-// GetByFriendIDAndTitle 根据友链ID和标题获取文章
-func (r *RssFeedRepository) GetByFriendIDAndTitle(ctx context.Context, friendID uint, title string) (*model.RssArticle, error) {
+// GetByFriendIDAndLink 根据友链ID和链接获取文章
+func (r *RssFeedRepository) GetByFriendIDAndLink(ctx context.Context, friendID uint, link string) (*model.RssArticle, error) {
 	var article model.RssArticle
-	err := r.db.WithContext(ctx).Where("friend_id = ? AND title = ?", friendID, title).First(&article).Error
+	err := r.db.WithContext(ctx).Where("friend_id = ? AND link = ?", friendID, link).First(&article).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, nil
@@ -239,27 +240,32 @@ func (r *RssFeedRepository) RestoreArticle(ctx context.Context, id uint) error {
 }
 
 // UpdateArticleWithChangeDetection 更新文章并检测变更类型
-func (r *RssFeedRepository) UpdateArticleWithChangeDetection(ctx context.Context, id uint, link string, publishedAt *time.Time) (string, error) {
-	// 先获取旧数据
-	var oldArticle model.RssArticle
-	if err := r.db.WithContext(ctx).First(&oldArticle, id).Error; err != nil {
-		return "", err
-	}
-
+func (r *RssFeedRepository) UpdateArticleWithChangeDetection(ctx context.Context, article *model.RssArticle, newTitle, newLink string, newPublishedAt *time.Time) error {
 	// 检测变更类型
 	var updateTypes []string
-	if oldArticle.Link != link {
+
+	// 检测标题变化
+	if article.Title != newTitle {
+		updateTypes = append(updateTypes, "title")
+	}
+
+	// 检测链接变化
+	if article.Link != newLink {
 		updateTypes = append(updateTypes, "link")
 	}
-	if publishedAt != nil && oldArticle.PublishedAt != nil && !oldArticle.PublishedAt.Equal(*publishedAt) {
+
+	// 检测发布时间变化
+	if newPublishedAt != nil && article.PublishedAt != nil && !article.PublishedAt.Equal(*newPublishedAt) {
 		updateTypes = append(updateTypes, "published_at")
 	}
 
+	// 准备更新字段
 	updates := map[string]interface{}{
-		"link": link,
+		"title": newTitle,
+		"link":  newLink,
 	}
-	if publishedAt != nil {
-		updates["published_at"] = publishedAt
+	if newPublishedAt != nil {
+		updates["published_at"] = newPublishedAt
 	}
 
 	// 如果有变更，标记为未读并记录变更类型
@@ -268,5 +274,18 @@ func (r *RssFeedRepository) UpdateArticleWithChangeDetection(ctx context.Context
 		updates["update_type"] = strings.Join(updateTypes, ",")
 	}
 
-	return updateType, r.db.WithContext(ctx).Model(&model.RssArticle{}).Where("id = ?", id).Updates(updates).Error
+	return r.db.WithContext(ctx).Model(&model.RssArticle{}).Where("id = ?", article.ID).Updates(updates).Error
+}
+
+// GetByFriendIDAndTitle 根据友链ID和标题获取文章
+func (r *RssFeedRepository) GetByFriendIDAndTitle(ctx context.Context, friendID uint, title string) (*model.RssArticle, error) {
+	var article model.RssArticle
+	err := r.db.WithContext(ctx).Where("friend_id = ? AND title = ?", friendID, title).First(&article).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &article, nil
 }
