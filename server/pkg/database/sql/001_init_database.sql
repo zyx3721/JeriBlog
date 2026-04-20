@@ -581,16 +581,16 @@ WHERE NOT EXISTS (SELECT 1 FROM friend_types WHERE name = '友情链接');
 
 -- 插入示例友链
 INSERT INTO friends (name, url, description, avatar, screenshot, sort, is_invalid, is_pending, type)
-SELECT '爱吃猫的鱼', 'https://talen.top/', '前景可待 未来可期', 'https://image.talen.top/20251229184705_wgsva7g9.png', 'https://image.talen.top/20251229175030_heptu6ds.png', 5, FALSE, FALSE, 1
-WHERE NOT EXISTS (SELECT 1 FROM friends WHERE url = 'https://blog.talen.top/');
+SELECT '爱吃猫的鱼', 'https://blog.jerion.cn/', '初心如磐 奋楫笃行', 'https://jerionblog-1324292238.cos.ap-guangzhou.myqcloud.com/blog-icon.png', 'https://jerionblog-1324292238.cos.ap-guangzhou.myqcloud.com/blog-backend.png', 5, FALSE, FALSE, 1
+WHERE NOT EXISTS (SELECT 1 FROM friends WHERE url = 'https://blog.jerion.cn/');
 
 -- 插入 settings 初始数据
 
 -- 基本配置
 INSERT INTO settings (key, value, "group", is_public) VALUES
-('basic.author', 'talen8', 'basic', TRUE),
+('basic.author', 'jerion', 'basic', TRUE),
 ('basic.author_email', 'your-email@example.com', 'basic', TRUE),
-('basic.author_desc', '前景可待 未来可期', 'basic', TRUE),
+('basic.author_desc', '初心如磐 奋楫笃行', 'basic', TRUE),
 ('basic.author_avatar', '', 'basic', TRUE),
 ('basic.author_photo', '', 'basic', TRUE),
 ('basic.icp', '', 'basic', TRUE),
@@ -611,7 +611,7 @@ INSERT INTO settings (key, value, "group", is_public) VALUES
 ('blog.favicon', '', 'blog', TRUE),
 ('blog.background_image', '', 'blog', TRUE),
 ('blog.screenshot', '', 'blog', TRUE),
-('blog.typing_texts', '["前景可待 未来可期","笔耕不辍 文思不竭","笔学不怠 精进不休"]', 'blog', TRUE),
+('blog.typing_texts', '["初心如磐 奋楫笃行","脚踏实地 行稳致远","凝心聚力 砥砺前行"]', 'blog', TRUE),
 ('blog.sidebar_social', '[{"name":"GitHub","url":"","icon":"github-line"},{"name":"Email","url":"","icon":"mail-line"},{"name":"X","url":"","icon":"twitter-x-line"}]', 'blog', TRUE),
 ('blog.footer_social', '[{"name":"Email","url":"","icon":"mail-line","position":"left"},{"name":"X","url":"","icon":"twitter-x-line","position":"left"},{"name":"GitHub","url":"","icon":"github-line","position":"right"},{"name":"Bilibili","url":"","icon":"bilibili-line","position":"right"}]', 'blog', TRUE),
 -- 关于页面配置
@@ -715,9 +715,9 @@ BEGIN
     RETURNING id INTO aggregate_id;
     
     INSERT INTO menus (type, parent_id, title, url, icon, sort, is_enabled) VALUES
-    ('aggregate', aggregate_id, '主页', 'https://talen.top', 'ri-home-line', 1, TRUE),
-    ('aggregate', aggregate_id, '博客', 'https://blog.talen.top', 'ri-article-line', 2, TRUE),
-    ('aggregate', aggregate_id, 'GitHub', 'https://github.com/talen8', 'ri-github-fill', 3, TRUE);
+    ('aggregate', aggregate_id, '主页', 'https://blog.jerion.cn', 'ri-home-line', 1, TRUE),
+    ('aggregate', aggregate_id, '博客', 'https://blog.jerion.cn', 'ri-article-line', 2, TRUE),
+    ('aggregate', aggregate_id, 'GitHub', 'https://github.com/zyx3721', 'ri-github-fill', 3, TRUE);
 
     -- 顶部导航菜单 (navigation)
     INSERT INTO menus (type, parent_id, title, url, icon, sort, is_enabled) VALUES
