@@ -31,9 +31,11 @@ type RssArticleResponse struct {
 	FriendURL   string          `json:"friend_url"`
 	Title       string          `json:"title"`
 	Link        string          `json:"link"`
+	Description string          `json:"description"`
 	PublishedAt *utils.JSONTime `json:"published_at,omitempty"`
 	IsRead      bool            `json:"is_read"`
 	IsDeleted   bool            `json:"is_deleted"`
+	UpdateType  string          `json:"update_type"`
 	CreatedAt   *utils.JSONTime `json:"created_at"`
 }
 
