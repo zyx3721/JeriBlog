@@ -168,12 +168,6 @@ func (s *RssFeedService) refreshFriendFeed(ctx context.Context, friend *model.Fr
 			}
 		}
 
-		// 获取文章描述/内容
-		description := item.Description
-		if description == "" && item.Content != "" {
-			description = item.Content
-		}
-
 		// 检查文章是否存在（改用标题+友链ID作为唯一标识）
 		existingArticle, err := s.repo.GetByFriendIDAndTitle(ctx, friend.ID, item.Title)
 		if err != nil {
@@ -188,8 +182,8 @@ func (s *RssFeedService) refreshFriendFeed(ctx context.Context, friend *model.Fr
 					continue
 				}
 			}
-			// 更新文章内容并检测变更类型
-			_, err := s.repo.UpdateArticleWithChangeDetection(ctx, existingArticle.ID, item.Title, item.Link, description, publishedAt)
+			// 更新文章并检测变更类型（只检测链接和发布时间）
+			_, err := s.repo.UpdateArticleWithChangeDetection(ctx, existingArticle.ID, item.Link, publishedAt)
 			if err != nil {
 				continue
 			}
@@ -200,7 +194,6 @@ func (s *RssFeedService) refreshFriendFeed(ctx context.Context, friend *model.Fr
 			FriendID:    friend.ID,
 			Title:       item.Title,
 			Link:        item.Link,
-			Description: description,
 			PublishedAt: publishedAt,
 			IsRead:      isFirstSubscribe,
 			IsDeleted:   false,
