@@ -201,11 +201,24 @@ func (s *SettingService) GetAIConfig() (*config.AIConfig, error) {
 
 // UpdateGroup 更新某个分组的配置（patch 方式），更新后自动重载
 func (s *SettingService) UpdateGroup(group string, updates map[string]string) error {
-	// 处理基本配置中的图片文件状态切换
-	if group == model.SettingGroupBasic && s.fileService != nil {
-		// 获取旧的配置值
-		oldSettings, err := s.repo.GetByGroup(group)
-		if err == nil {
+	// 先获取旧配置值（在数据库更新之前）
+	var oldSettings map[string]string
+	if (group == model.SettingGroupBasic || group == model.SettingGroupBlog) && s.fileService != nil {
+		var err error
+		oldSettings, err = s.repo.GetByGroup(group)
+		if err != nil {
+			oldSettings = make(map[string]string)
+		}
+	}
+
+	// 更新数据库
+	if err := s.repo.UpdateGroup(updates); err != nil {
+		return err
+	}
+
+	// 数据库更新成功后，再处理文件状态（此时 IsActuallyUsed 检查的是新值）
+	if len(oldSettings) > 0 {
+		if group == model.SettingGroupBasic {
 			// 处理站长头像
 			if newAvatar, ok := updates[KeyBasicAuthorAvatar]; ok {
 				oldAvatar := oldSettings[KeyBasicAuthorAvatar]
@@ -232,13 +245,8 @@ func (s *SettingService) UpdateGroup(group string, updates map[string]string) er
 				}
 			}
 		}
-	}
 
-	// 处理博客配置中的图片文件状态切换
-	if group == model.SettingGroupBlog && s.fileService != nil {
-		// 获取旧的配置值
-		oldSettings, err := s.repo.GetByGroup(group)
-		if err == nil {
+		if group == model.SettingGroupBlog {
 			// 处理网站图标
 			if newFavicon, ok := updates[KeyBlogFavicon]; ok {
 				oldFavicon := oldSettings[KeyBlogFavicon]
@@ -317,11 +325,6 @@ func (s *SettingService) UpdateGroup(group string, updates map[string]string) er
 				}
 			}
 		}
-	}
-
-	// 更新数据库
-	if err := s.repo.UpdateGroup(updates); err != nil {
-		return err
 	}
 
 	// 自动重载配置到内存（热重载）
