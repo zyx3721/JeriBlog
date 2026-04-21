@@ -679,7 +679,8 @@ func (s *UserService) Update(id uint, req *dto.AdminUpdateUserRequest) error {
 
 	oldAvatar := user.Avatar
 
-	if req.Avatar != "" {
+	// 明确处理头像字段（包括删除场景）
+	if req.Avatar != oldAvatar {
 		user.Avatar = req.Avatar
 	}
 
