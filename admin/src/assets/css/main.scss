@@ -102,21 +102,21 @@ html, body {
       min-width: 100%;
     }
 
-    /* 用户管理页面：搜索框和角色选择器同行平分 */
+    /* 用户管理页面：搜索框和角色选择器同行平分，按钮由 CommonList 控制 */
     &.user-search {
       .el-input:nth-of-type(1),
       .el-select:nth-of-type(1) {
         flex: 1 1 calc(50% - 6px);
         min-width: 0;
       }
-      /* 搜索/重置/新增用户按钮同行三等分 */
+      /* 搜索/重置按钮同行平分（新增用户按钮在 toolbar-after 中） */
       .el-button {
-        flex: 1 1 calc(33.333% - 8px);
+        flex: 1 1 calc(50% - 6px);
         min-width: 0;
       }
     }
 
-    /* 文件管理页面：状态和用途选择器同行平分 */
+    /* 文件管理页面：状态和用途选择器同行平分，按钮由 CommonList 控制 */
     &.file-search {
       .el-input {
         flex: 1 1 100%;
@@ -126,7 +126,7 @@ html, body {
         flex: 1 1 calc(50% - 6px);
         min-width: 0;
       }
-      /* 搜索/重置按钮同行平分 */
+      /* 搜索/重置按钮同行平分（上传配置按钮在 toolbar-after 中） */
       .el-button {
         flex: 1 1 calc(50% - 6px);
         min-width: 0;
@@ -140,7 +140,7 @@ html, body {
         flex: 1 1 calc(50% - 6px);
         min-width: 0;
       }
-      /* 搜索/重置按钮同行平分 */
+      /* 搜索/重置按钮同行平分（新增友链和类型管理在 toolbar-after 中） */
       .el-button {
         flex: 1 1 calc(50% - 6px);
         min-width: 0;
@@ -171,7 +171,7 @@ html, body {
         flex: 1 1 calc(50% - 6px);
         min-width: 0;
       }
-      /* 搜索/重置按钮同行平分 */
+      /* 搜索/重置按钮同行平分（其他按钮在 toolbar-after 中） */
       .el-button {
         flex: 1 1 calc(50% - 6px);
         min-width: 0;
@@ -187,7 +187,7 @@ html, body {
         flex: 1 1 calc(33.333% - 8px);
         min-width: 0;
       }
-      /* 搜索/重置按钮同行平分 */
+      /* 搜索/重置按钮同行平分（新增文章、分类管理、标签管理在 toolbar-after 中） */
       .el-button {
         flex: 1 1 calc(50% - 6px);
         min-width: 0;
