@@ -14,10 +14,10 @@
 -- =============================================
 
 -- 1. 添加 reference_count 字段
-ALTER TABLE files ADD COLUMN IF NOT EXISTS reference_count INTEGER DEFAULT 0;
+ALTER TABLE files ADD COLUMN reference_count INTEGER DEFAULT 0;
 
 -- 2. 添加约束检查
-ALTER TABLE files ADD CONSTRAINT IF NOT EXISTS chk_files_reference_count CHECK (reference_count >= 0);
+ALTER TABLE files ADD CONSTRAINT chk_files_reference_count CHECK (reference_count >= 0);
 
 -- 3. 为引用计数字段添加注释
 COMMENT ON COLUMN files.reference_count IS '文件引用计数，用于统计文件在系统中的引用次数';
