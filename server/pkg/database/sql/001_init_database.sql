@@ -208,11 +208,13 @@ CREATE TABLE IF NOT EXISTS files (
     user_id BIGINT,
     file_url VARCHAR(500) DEFAULT '',
     status INTEGER DEFAULT 0,
+    reference_count INTEGER DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_file_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
     CONSTRAINT chk_files_status CHECK (status IN (0, 1)),
-    CONSTRAINT chk_files_file_size CHECK (file_size >= 0)
+    CONSTRAINT chk_files_file_size CHECK (file_size >= 0),
+    CONSTRAINT chk_files_reference_count CHECK (reference_count >= 0)
 );
 
 CREATE INDEX IF NOT EXISTS idx_files_user ON files (user_id);
