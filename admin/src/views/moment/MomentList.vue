@@ -14,7 +14,7 @@
     v-model:page-size="queryParams.page_size" create-text="新增动态" @create="handleCreate" @refresh="fetchMoments"
     @update:page="fetchMoments" @update:pageSize="fetchMoments">
     <!-- 表格列 -->
-    <el-table-column label="内容" min-width="400">
+    <el-table-column label="内容" min-width="400" align="center">
       <template #default="{ row }">
         <div class="moment-content">
           <!-- 文本内容 -->

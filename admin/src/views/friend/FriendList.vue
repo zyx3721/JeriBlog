@@ -62,7 +62,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="友链名称" min-width="130">
+    <el-table-column label="友链名称" min-width="130" align="center">
       <template #default="{ row }">
         <span>{{ row.name }}</span>
         <el-tag v-if="row.is_invalid" type="warning" size="small" style="margin-left: 8px">失效</el-tag>
@@ -71,13 +71,13 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="链接地址" min-width="160">
+    <el-table-column label="链接地址" min-width="160" align="center">
       <template #default="{ row }">
         <span>{{ row.url }}</span>
       </template>
     </el-table-column>
 
-    <el-table-column label="描述" min-width="180">
+    <el-table-column label="描述" min-width="180" align="center">
       <template #default="{ row }">
         <span v-if="row.description">{{ row.description }}</span>
         <span v-else style="color: #999">-</span>

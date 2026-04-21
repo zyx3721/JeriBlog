@@ -13,13 +13,13 @@
   <common-list title="反馈投诉" :data="list" :loading="loading" :total="total" :show-create="false"
     v-model:page="pagination.page" v-model:page-size="pagination.page_size" @refresh="fetchList"
     @update:page="fetchList" @update:pageSize="fetchList">
-    <el-table-column label="工单号" width="150">
+    <el-table-column label="工单号" width="150" align="center">
       <template #default="{ row }">
         <span>{{ row.ticket_no }}</span>
       </template>
     </el-table-column>
 
-    <el-table-column label="类型" width="200">
+    <el-table-column label="类型" width="200" align="center">
       <template #default="{ row }">
         <el-tag :type="getReportTypeTagType(row.report_type)">
           {{ getReportTypeLabel(row.report_type) }}
@@ -27,7 +27,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="投诉地址" min-width="200">
+    <el-table-column label="投诉地址" min-width="200" align="center">
       <template #default="{ row }">
         <span :title="row.report_url">
           {{ truncateUrl(row.report_url) }}
@@ -35,13 +35,13 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="联系方式" width="200">
+    <el-table-column label="联系方式" width="200" align="center">
       <template #default="{ row }">
         <span v-if="row.email">{{ row.email }}</span>
       </template>
     </el-table-column>
 
-    <el-table-column label="状态" width="120">
+    <el-table-column label="状态" width="120" align="center">
       <template #default="{ row }">
         <el-tag :type="getStatusTagType(row.status)">
           {{ getStatusLabel(row.status) }}
@@ -49,7 +49,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="反馈时间" width="180">
+    <el-table-column label="反馈时间" width="180" align="center">
       <template #default="{ row }">
         {{ formatDateTime(row.feedback_time) }}
       </template>

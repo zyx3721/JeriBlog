@@ -90,7 +90,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="标题" min-width="300">
+    <el-table-column label="标题" min-width="300" align="center">
       <template #default="{ row }">
         <span>{{ row.title }}</span>
         <el-tag v-if="row.is_top" type="primary" size="small" style="margin-left: 8px">置顶</el-tag>

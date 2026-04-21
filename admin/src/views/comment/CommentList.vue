@@ -61,7 +61,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="评论内容" min-width="300">
+    <el-table-column label="评论内容" min-width="300" align="center">
       <template #default="{ row }">
         <div style="line-height: 1.6; display: flex; align-items: center; gap: 8px">
           <span>{{ row.content }}</span>
