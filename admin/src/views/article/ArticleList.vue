@@ -15,7 +15,7 @@
     @update:page="fetchArticles" @update:pageSize="fetchArticles">
     <!-- 搜索表单 -->
     <template #toolbar-before>
-      <div class="search-form">
+      <div class="search-form article-search">
         <el-input
           v-model="queryParams.keyword"
           placeholder="搜索文章..."
