@@ -16,7 +16,7 @@
 
     <!-- 搜索表单 -->
     <template #toolbar-before>
-      <div class="search-form">
+      <div class="search-form user-search">
         <el-input
           v-model="queryParams.keyword"
           placeholder="搜索昵称、邮箱、网站..."
