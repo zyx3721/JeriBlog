@@ -15,7 +15,7 @@
     @update:pageSize="loadList" row-key="id">
     <!-- 搜索表单 -->
     <template #toolbar-before>
-      <div class="search-form">
+      <div class="search-form file-search">
         <el-input
           v-model="query.keyword"
           placeholder="搜索文件名、原始文件名..."
