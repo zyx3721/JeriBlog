@@ -150,7 +150,7 @@ func (s *FileService) UploadFromReader(reader io.Reader, originalName, fileType 
 	return file.FileURL, nil
 }
 
-// MarkAsUsed 标记文件为使用中
+// MarkAsUsed 增加文件引用计数
 func (s *FileService) MarkAsUsed(fileUrl string) error {
 	if fileUrl == "" {
 		return nil
@@ -165,10 +165,16 @@ func (s *FileService) MarkAsUsed(fileUrl string) error {
 		return nil
 	}
 
-	return s.fileRepo.UpdateStatus(fileUrl, 1)
+	// 增加引用计数
+	if err := s.fileRepo.IncrementReferenceCount(fileUrl); err != nil {
+		return err
+	}
+
+	// 根据引用计数更新状态
+	return s.fileRepo.UpdateStatusByReferenceCount(fileUrl)
 }
 
-// MarkAsUnused 标记文件为未使用
+// MarkAsUnused 减少文件引用计数
 func (s *FileService) MarkAsUnused(fileUrl string) error {
 	if fileUrl == "" {
 		return nil
@@ -183,7 +189,13 @@ func (s *FileService) MarkAsUnused(fileUrl string) error {
 		return nil
 	}
 
-	return s.fileRepo.UpdateStatus(fileUrl, 0)
+	// 减少引用计数
+	if err := s.fileRepo.DecrementReferenceCount(fileUrl); err != nil {
+		return err
+	}
+
+	// 根据引用计数更新状态
+	return s.fileRepo.UpdateStatusByReferenceCount(fileUrl)
 }
 
 // ============ 前台服务 ============
@@ -251,16 +263,17 @@ func (s *FileService) Upload(req *upload.Request, host string) (*dto.FileRespons
 	}
 
 	return &dto.FileResponse{
-		ID:           file.ID,
-		OriginalName: file.OriginalName,
-		FileName:     file.FileName,
-		FileSize:     file.FileSize,
-		FileType:     file.FileType,
-		FileURL:      file.FileURL,
-		UploadType:   upload.Type(file.UploadType),
-		UserID:       file.UserID,
-		Status:       file.Status,
-		UploadTime:   utils.NewJSONTime(file.CreatedAt),
+		ID:             file.ID,
+		OriginalName:   file.OriginalName,
+		FileName:       file.FileName,
+		FileSize:       file.FileSize,
+		FileType:       file.FileType,
+		FileURL:        file.FileURL,
+		UploadType:     upload.Type(file.UploadType),
+		UserID:         file.UserID,
+		Status:         file.Status,
+		ReferenceCount: file.ReferenceCount,
+		UploadTime:     utils.NewJSONTime(file.CreatedAt),
 	}, nil
 }
 
@@ -278,16 +291,17 @@ func (s *FileService) List(req *dto.ListFilesRequest) ([]dto.FileResponse, int64
 	fileResponses := make([]dto.FileResponse, len(files))
 	for i, file := range files {
 		fileResponses[i] = dto.FileResponse{
-			ID:           file.ID,
-			OriginalName: file.OriginalName,
-			FileName:     file.FileName,
-			FileSize:     file.FileSize,
-			FileType:     file.FileType,
-			FileURL:      file.FileURL,
-			UploadType:   upload.Type(file.UploadType),
-			UserID:       file.UserID,
-			Status:       file.Status,
-			UploadTime:   utils.NewJSONTime(file.CreatedAt),
+			ID:             file.ID,
+			OriginalName:   file.OriginalName,
+			FileName:       file.FileName,
+			FileSize:       file.FileSize,
+			FileType:       file.FileType,
+			FileURL:        file.FileURL,
+			UploadType:     upload.Type(file.UploadType),
+			UserID:         file.UserID,
+			Status:         file.Status,
+			ReferenceCount: file.ReferenceCount,
+			UploadTime:     utils.NewJSONTime(file.CreatedAt),
 		}
 	}
 
@@ -302,16 +316,17 @@ func (s *FileService) Get(id uint) (*dto.FileResponse, error) {
 	}
 
 	return &dto.FileResponse{
-		ID:           file.ID,
-		OriginalName: file.OriginalName,
-		FileName:     file.FileName,
-		FileSize:     file.FileSize,
-		FileType:     file.FileType,
-		FileURL:      file.FileURL,
-		UploadType:   upload.Type(file.UploadType),
-		UserID:       file.UserID,
-		Status:       file.Status,
-		UploadTime:   utils.NewJSONTime(file.CreatedAt),
+		ID:             file.ID,
+		OriginalName:   file.OriginalName,
+		FileName:       file.FileName,
+		FileSize:       file.FileSize,
+		FileType:       file.FileType,
+		FileURL:        file.FileURL,
+		UploadType:     upload.Type(file.UploadType),
+		UserID:         file.UserID,
+		Status:         file.Status,
+		ReferenceCount: file.ReferenceCount,
+		UploadTime:     utils.NewJSONTime(file.CreatedAt),
 	}, nil
 }
 
