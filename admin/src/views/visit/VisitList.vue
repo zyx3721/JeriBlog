@@ -154,9 +154,5 @@ onMounted(fetchVisits)
 </script>
 
 <style scoped>
-.search-form {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 16px;
-}
+/* 搜索表单样式已移至全局样式 main.scss */
 </style>
