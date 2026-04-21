@@ -47,14 +47,15 @@ type ListFilesRequest struct {
 
 // FileResponse 文件信息响应
 type FileResponse struct {
-	ID           uint           `json:"id"`
-	OriginalName string         `json:"original_name"`
-	FileName     string         `json:"file_name"`
-	FileSize     int64          `json:"file_size"`
-	FileType     string         `json:"file_type"`
-	FileURL      string         `json:"file_url"`
-	UploadType   upload.Type    `json:"upload_type"`
-	UserID       *uint          `json:"user_id"`
-	Status       int            `json:"status"` // 文件状态：0=未使用 1=使用中
-	UploadTime   utils.JSONTime `json:"upload_time"`
+	ID             uint           `json:"id"`
+	OriginalName   string         `json:"original_name"`
+	FileName       string         `json:"file_name"`
+	FileSize       int64          `json:"file_size"`
+	FileType       string         `json:"file_type"`
+	FileURL        string         `json:"file_url"`
+	UploadType     upload.Type    `json:"upload_type"`
+	UserID         *uint          `json:"user_id"`
+	Status         int            `json:"status"` // 文件状态：0=未使用 1=使用中
+	ReferenceCount int            `json:"reference_count"`
+	UploadTime     utils.JSONTime `json:"upload_time"`
 }
