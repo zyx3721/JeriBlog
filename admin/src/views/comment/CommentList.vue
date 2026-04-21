@@ -16,7 +16,7 @@
 
     <!-- 搜索表单 -->
     <template #toolbar-before>
-      <div class="search-form">
+      <div class="search-form comment-search">
         <el-input
           v-model="queryParams.keyword"
           placeholder="搜索内容、用户、来源..."
