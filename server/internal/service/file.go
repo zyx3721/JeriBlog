@@ -31,6 +31,8 @@ var reconciledSettingImageKeys = []string{
 	KeyBlogBackgroundImage,
 	KeyBlogAboutExhibition,
 	KeyBlogScreenshot,
+	KeyBlogWechatQrCode,
+	KeyBlogAlipayQrCode,
 }
 
 // FileUsageChecker 文件引用检查器
@@ -90,11 +92,9 @@ func (c *FileUsageChecker) IsActuallyUsed(fileURL string) (bool, string, error) 
 	for _, check := range checks {
 		used, err := check.fn(fileURL)
 		if err != nil {
-			logger.Error("检查文件引用失败 [%s]: %v", check.name, err)
 			return false, "", err
 		}
 		if used {
-			logger.Info("文件被引用 [%s]: %s", check.name, fileURL)
 			return true, check.name, nil
 		}
 	}
@@ -156,25 +156,16 @@ func (s *FileService) MarkAsUsed(fileUrl string) error {
 		return nil
 	}
 
-	// 先检查文件是否存在
 	count, err := s.fileRepo.CountByURL(fileUrl)
 	if err != nil {
-		logger.Error("检查文件是否存在失败: %s, 错误: %v", fileUrl, err)
 		return err
 	}
 
 	if count == 0 {
-		logger.Warn("文件记录不存在,无法更新状态: %s", fileUrl)
 		return nil
 	}
 
-	err = s.fileRepo.UpdateStatus(fileUrl, 1)
-	if err != nil {
-		logger.Error("标记文件为使用中失败: %s, 错误: %v", fileUrl, err)
-		return err
-	}
-	logger.Info("文件状态已更新为使用中: %s (共 %d 条记录)", fileUrl, count)
-	return nil
+	return s.fileRepo.UpdateStatus(fileUrl, 1)
 }
 
 // MarkAsUnused 标记文件为未使用
@@ -183,25 +174,16 @@ func (s *FileService) MarkAsUnused(fileUrl string) error {
 		return nil
 	}
 
-	// 先检查文件是否存在
 	count, err := s.fileRepo.CountByURL(fileUrl)
 	if err != nil {
-		logger.Error("检查文件是否存在失败: %s, 错误: %v", fileUrl, err)
 		return err
 	}
 
 	if count == 0 {
-		logger.Warn("文件记录不存在,无法更新状态: %s", fileUrl)
 		return nil
 	}
 
-	err = s.fileRepo.UpdateStatus(fileUrl, 0)
-	if err != nil {
-		logger.Error("标记文件为未使用失败: %s, 错误: %v", fileUrl, err)
-		return err
-	}
-	logger.Info("文件状态已更新为未使用: %s (共 %d 条记录)", fileUrl, count)
-	return nil
+	return s.fileRepo.UpdateStatus(fileUrl, 0)
 }
 
 // ============ 前台服务 ============
