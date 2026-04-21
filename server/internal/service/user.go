@@ -459,9 +459,8 @@ func (s *UserService) UpdateForWeb(id uint, req *dto.UpdateUserRequest) error {
 	if req.Email != "" {
 		user.Email = req.Email
 	}
-	if req.Avatar != "" {
-		user.Avatar = req.Avatar
-	}
+	// 支持删除头像（空字符串）
+	user.Avatar = req.Avatar
 	if req.Badge != "" {
 		if err := s.validateBadge(req.Badge); err != nil {
 			return err
