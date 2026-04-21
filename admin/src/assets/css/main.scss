@@ -60,7 +60,8 @@ html, body {
   @media (max-width: 768px) {
     /* 输入框和选择器自适应宽度 */
     .el-input,
-    .el-select {
+    .el-select,
+    .el-date-editor {
       flex: 1 1 auto;
       min-width: 0;
     }
@@ -80,29 +81,130 @@ html, body {
       min-width: 100px;
     }
 
+    /* 日期选择器最小宽度 */
+    .el-date-editor {
+      min-width: 280px;
+    }
+
     /* 确保换行后元素左对齐 */
     align-items: stretch;
   }
 
   /* 超小屏幕优化 (手机) */
   @media (max-width: 480px) {
-    /* 输入框和选择器占满宽度 */
+    /* 默认：所有元素占满宽度 */
     .el-input,
-    .el-select {
+    .el-select,
+    .el-date-editor,
+    .el-button {
       flex: 1 1 100%;
       width: 100%;
       min-width: 100%;
     }
 
-    /* 按钮组在同一行,各占一半 */
-    .el-button {
-      flex: 1 1 calc(50% - 6px);
-      min-width: 0;
+    /* 用户管理页面：搜索框和角色选择器同行平分 */
+    &.user-search {
+      .el-input:nth-of-type(1),
+      .el-select:nth-of-type(1) {
+        flex: 1 1 calc(50% - 6px);
+        min-width: 0;
+      }
+      /* 搜索/重置/新增用户按钮同行三等分 */
+      .el-button {
+        flex: 1 1 calc(33.333% - 8px);
+        min-width: 0;
+      }
     }
 
-    /* 如果只有一个按钮,占满宽度 */
-    .el-button:only-of-type {
-      flex: 1 1 100%;
+    /* 文件管理页面：状态和用途选择器同行平分 */
+    &.file-search {
+      .el-input {
+        flex: 1 1 100%;
+      }
+      .el-select:nth-of-type(1),
+      .el-select:nth-of-type(2) {
+        flex: 1 1 calc(50% - 6px);
+        min-width: 0;
+      }
+      /* 搜索/重置按钮同行平分 */
+      .el-button {
+        flex: 1 1 calc(50% - 6px);
+        min-width: 0;
+      }
+    }
+
+    /* 友链管理页面：搜索框和类型选择器同行平分 */
+    &.friend-search {
+      .el-input,
+      .el-select {
+        flex: 1 1 calc(50% - 6px);
+        min-width: 0;
+      }
+      /* 搜索/重置按钮同行平分 */
+      .el-button {
+        flex: 1 1 calc(50% - 6px);
+        min-width: 0;
+      }
+    }
+
+    /* 评论管理页面：搜索框和状态选择器同行平分 */
+    &.comment-search {
+      .el-input,
+      .el-select {
+        flex: 1 1 calc(50% - 6px);
+        min-width: 0;
+      }
+      /* 搜索/重置按钮同行平分 */
+      .el-button {
+        flex: 1 1 calc(50% - 6px);
+        min-width: 0;
+      }
+    }
+
+    /* RSS订阅页面：状态和来源选择器同行平分 */
+    &.rss-search {
+      .el-input {
+        flex: 1 1 100%;
+      }
+      .el-select:nth-of-type(1),
+      .el-select:nth-of-type(2) {
+        flex: 1 1 calc(50% - 6px);
+        min-width: 0;
+      }
+      /* 搜索/重置按钮同行平分 */
+      .el-button {
+        flex: 1 1 calc(50% - 6px);
+        min-width: 0;
+      }
+    }
+
+    /* 文章管理页面：分类/标签/状态同行三等分 */
+    &.article-search {
+      .el-input {
+        flex: 1 1 100%;
+      }
+      .el-select {
+        flex: 1 1 calc(33.333% - 8px);
+        min-width: 0;
+      }
+      /* 搜索/重置按钮同行平分 */
+      .el-button {
+        flex: 1 1 calc(50% - 6px);
+        min-width: 0;
+      }
+    }
+
+    /* 访问日志页面：搜索框和日期选择器各占一行 */
+    &.visit-search {
+      .el-input,
+      .el-date-editor {
+        flex: 1 1 100%;
+      }
+      /* 搜索/重置按钮同行平分 */
+      .el-button {
+        flex: 1 1 calc(50% - 6px);
+        min-width: 0;
+      }
     }
   }
 }
