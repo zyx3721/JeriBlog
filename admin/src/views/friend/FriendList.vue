@@ -15,7 +15,7 @@
     @update:page="fetchFriends" @update:pageSize="fetchFriends">
     <!-- 搜索表单 -->
     <template #toolbar-before>
-      <div class="search-form">
+      <div class="search-form friend-search">
         <el-input
           v-model="queryParams.keyword"
           placeholder="搜索名称、链接、描述..."
