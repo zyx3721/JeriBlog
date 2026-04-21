@@ -49,3 +49,62 @@ html, body {
   }
 }
 
+/* 搜索表单移动端优化 */
+.search-form {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+
+  /* 移动端优化 (平板及以下) */
+  @media (max-width: 768px) {
+    /* 输入框和选择器自适应宽度 */
+    .el-input,
+    .el-select {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    /* 按钮保持原始宽度 */
+    .el-button {
+      flex: 0 0 auto;
+    }
+
+    /* 输入框最小宽度 */
+    .el-input {
+      min-width: 200px;
+    }
+
+    /* 选择器最小宽度 */
+    .el-select {
+      min-width: 100px;
+    }
+
+    /* 确保换行后元素左对齐 */
+    align-items: stretch;
+  }
+
+  /* 超小屏幕优化 (手机) */
+  @media (max-width: 480px) {
+    /* 输入框和选择器占满宽度 */
+    .el-input,
+    .el-select {
+      flex: 1 1 100%;
+      width: 100%;
+      min-width: 100%;
+    }
+
+    /* 按钮组在同一行,各占一半 */
+    .el-button {
+      flex: 1 1 calc(50% - 6px);
+      min-width: 0;
+    }
+
+    /* 如果只有一个按钮,占满宽度 */
+    .el-button:only-of-type {
+      flex: 1 1 100%;
+    }
+  }
+}
+
+
