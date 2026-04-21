@@ -242,12 +242,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.search-form {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  flex-wrap: wrap;
-}
+/* 搜索表单样式已移至全局样式 main.scss */
 
 .rss-warning {
   color: #e6a23c;
