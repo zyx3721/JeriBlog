@@ -277,3 +277,38 @@ func (h *StatsHandler) DeleteVisitLog(c *gin.Context) {
 
 	response.Success(c, nil)
 }
+
+// DeleteVisitLogsByCondition 根据条件批量删除访问日志
+//
+//	@Summary		批量删除访问日志
+//	@Description	根据搜索条件批量删除访问日志
+//	@Tags			统计管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			keyword		query		string	false	"关键词"
+//	@Param			start_date	query		string	false	"开始时间"
+//	@Param			end_date	query		string	false	"结束时间"
+//	@Success		200			{object}	response.Response{data=map[string]int64}
+//	@Router			/admin/stats/visits/batch [delete]
+func (h *StatsHandler) DeleteVisitLogsByCondition(c *gin.Context) {
+	var req dto.GetVisitLogsRequest
+	if err := c.ShouldBindQuery(&req); err != nil {
+		response.ValidateFailed(c, err.Error())
+		return
+	}
+
+	// 验证至少有一个搜索条件
+	if req.Keyword == "" && req.StartDate == "" && req.EndDate == "" {
+		response.ValidateFailed(c, "请至少提供一个搜索条件")
+		return
+	}
+
+	count, err := h.statsService.DeleteVisitLogsByCondition(&req)
+	if err != nil {
+		response.Failed(c, err.Error())
+		return
+	}
+
+	response.Success(c, map[string]int64{"deleted_count": count}, "成功删除 "+strconv.FormatInt(count, 10)+" 条记录")
+}

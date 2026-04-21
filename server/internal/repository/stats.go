@@ -456,3 +456,27 @@ func (r *StatsRepository) GetVisitLogs(req *dto.GetVisitLogsRequest) ([]model.Vi
 func (r *StatsRepository) DeleteVisitLog(id uint) error {
 	return r.db.Delete(&model.Visit{}, id).Error
 }
+
+// DeleteVisitLogsByCondition 根据条件批量删除访问日志
+func (r *StatsRepository) DeleteVisitLogsByCondition(req *dto.GetVisitLogsRequest) (int64, error) {
+	// 构建查询条件
+	query := r.db.Model(&model.Visit{})
+
+	// 关键词搜索
+	if req.Keyword != "" {
+		query = query.Where("visitor_id LIKE ? OR ip LIKE ? OR page_url LIKE ? OR location LIKE ? OR browser LIKE ? OR os LIKE ? OR referer LIKE ?",
+			"%"+req.Keyword+"%", "%"+req.Keyword+"%", "%"+req.Keyword+"%", "%"+req.Keyword+"%", "%"+req.Keyword+"%", "%"+req.Keyword+"%", "%"+req.Keyword+"%")
+	}
+
+	// 时间范围筛选
+	if req.StartDate != "" {
+		query = query.Where("created_at >= ?", req.StartDate)
+	}
+	if req.EndDate != "" {
+		query = query.Where("created_at <= ?", req.EndDate)
+	}
+
+	// 执行删除
+	result := query.Delete(&model.Visit{})
+	return result.RowsAffected, result.Error
+}

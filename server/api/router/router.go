@@ -382,6 +382,7 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 			statsManagement.GET("/tag", statsHandler.GetTagStats)                     // 获取标签统计
 			statsManagement.GET("/contribution", statsHandler.GetArticleContribution) // 获取文章贡献数据
 			statsManagement.GET("/visits", statsHandler.GetVisitLogs)                 // 获取访问日志
+			statsManagement.DELETE("/visits/batch", statsHandler.DeleteVisitLogsByCondition) // 批量删除访问日志
 			statsManagement.DELETE("/visits/:id", statsHandler.DeleteVisitLog)        // 删除访问日志
 		}
 
