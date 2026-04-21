@@ -135,11 +135,13 @@ const canDelete = computed(() => {
 })
 
 const canBatchDelete = computed(() => {
-    return hasSearched.value && (
-        queryParams.value.keyword ||
-        queryParams.value.start_date ||
-        queryParams.value.end_date
-    )
+    return hasSearched.value &&
+        visitList.value.length > 0 &&
+        (
+            queryParams.value.keyword ||
+            queryParams.value.start_date ||
+            queryParams.value.end_date
+        )
 })
 
 const fetchVisits = async () => {

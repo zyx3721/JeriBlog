@@ -145,9 +145,22 @@ func (r *FileRepository) ExistsByURLExcludingID(url string, excludeID uint) (boo
 
 // UpdateStatus 更新文件使用状态
 func (r *FileRepository) UpdateStatus(url string, status int) error {
-	return r.db.Model(&model.File{}).
+	result := r.db.Model(&model.File{}).
 		Where("file_url = ?", url).
-		Update("status", status).Error
+		Update("status", status)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
+}
+
+// CountByURL 统计指定URL的文件记录数量
+func (r *FileRepository) CountByURL(url string) (int64, error) {
+	var count int64
+	err := r.db.Model(&model.File{}).Where("file_url = ?", url).Count(&count).Error
+	return count, err
 }
 
 // UpdateFileStatusByUrls 批量更新文件状态

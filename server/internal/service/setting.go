@@ -651,19 +651,24 @@ func (s *SettingService) safeMarkAsUnused(fileURL string) {
 	}
 
 	// 检查文件是否被其他业务引用
-	used, _, err := s.fileService.usageChecker.IsActuallyUsed(fileURL)
+	used, source, err := s.fileService.usageChecker.IsActuallyUsed(fileURL)
 	if err != nil {
-		// 检查失败时不标记，保持原状态
+		// 检查失败时不标记,保持原状态
+		logger.Warn("检查文件引用失败,保持原状态: %s, 错误: %v", fileURL, err)
 		return
 	}
 
-	// 如果文件仍被引用，不标记为未使用
+	// 如果文件仍被引用,不标记为未使用
 	if used {
-		// 文件仍被其他地方使用，保持使用中状态
+		// 文件仍被其他地方使用,保持使用中状态
+		logger.Info("文件仍被引用,保持使用中状态: %s (来源: %s)", fileURL, source)
 		_ = s.fileService.MarkAsUsed(fileURL)
 		return
 	}
 
-	// 文件未被引用，可以安全标记为未使用
-	_ = s.fileService.MarkAsUnused(fileURL)
+	// 文件未被引用,可以安全标记为未使用
+	logger.Info("文件无引用,标记为未使用: %s", fileURL)
+	if err := s.fileService.MarkAsUnused(fileURL); err != nil {
+		logger.Error("标记文件为未使用失败: %s, 错误: %v", fileURL, err)
+	}
 }
