@@ -21,6 +21,7 @@ import (
 	"jeri_blog/internal/repository"
 	"jeri_blog/pkg/auth"
 	"jeri_blog/pkg/feishu"
+	"jeri_blog/pkg/logger"
 	"jeri_blog/pkg/random"
 
 	"gorm.io/gorm"
