@@ -15,7 +15,7 @@
         @update:page="fetchVisits" @update:pageSize="fetchVisits">
         <!-- 搜索表单 -->
         <template #toolbar-before>
-            <div class="search-form">
+            <div class="search-form visit-search">
                 <el-input
                     v-model="queryParams.keyword"
                     placeholder="搜索访客ID、IP、页面URL、地理位置、浏览器、操作系统、来源..."
