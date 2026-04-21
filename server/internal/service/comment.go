@@ -279,7 +279,7 @@ func (s *CommentService) ToggleStatus(ctx context.Context, id uint) error {
 	return s.repo.UpdateStatus(ctx, id, comment.Status)
 }
 
-// Delete 软删除评论
+// Delete 硬删除评论
 func (s *CommentService) Delete(ctx context.Context, id uint) error {
 	if _, err := s.repo.Get(ctx, id); err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -288,26 +288,8 @@ func (s *CommentService) Delete(ctx context.Context, id uint) error {
 		return err
 	}
 
-	// 只删除评论本身，子评论保留
-	return s.repo.Delete(ctx, id)
-}
-
-// Restore 恢复已删除的评论
-func (s *CommentService) Restore(ctx context.Context, id uint) error {
-	comment, err := s.repo.Get(ctx, id)
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return errors.New("评论不存在")
-		}
-		return err
-	}
-
-	// 检查是否已被删除
-	if !comment.DeletedAt.Valid {
-		return errors.New("该评论未被删除，无需恢复")
-	}
-
-	return s.repo.Restore(ctx, id)
+	// 硬删除评论本身，子评论保留
+	return s.repo.HardDelete(ctx, id)
 }
 
 // ============ 辅助方法 ============

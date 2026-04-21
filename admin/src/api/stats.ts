@@ -63,3 +63,12 @@ export function getArticleContribution(params?: ContributionQuery): Promise<Arti
 export function getVisits(params: VisitQuery): Promise<VisitListData> {
   return request.get("/admin/stats/visits", { params });
 }
+
+/**
+ * 删除访问日志
+ * @param id 访问日志ID
+ * @returns Promise<void>
+ */
+export function deleteVisit(id: number): Promise<void> {
+  return request.delete(`/admin/stats/visits/${id}`);
+}

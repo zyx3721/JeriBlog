@@ -451,3 +451,8 @@ func (r *StatsRepository) GetVisitLogs(req *dto.GetVisitLogsRequest) ([]model.Vi
 
 	return visits, total, err
 }
+
+// DeleteVisitLog 删除访问日志
+func (r *StatsRepository) DeleteVisitLog(id uint) error {
+	return r.db.Delete(&model.Visit{}, id).Error
+}

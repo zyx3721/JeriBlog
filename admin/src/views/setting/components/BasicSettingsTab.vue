@@ -27,13 +27,25 @@
 
     <div class="image-row">
       <el-form-item label="站长头像">
-        <ImageUploader ref="authorAvatarUploaderRef" v-model="form.author_avatar" upload-type="站长头像" width="120px"
-          height="120px" />
+        <div class="image-upload-wrapper">
+          <ImageUploader ref="authorAvatarUploaderRef" v-model="form.author_avatar" upload-type="站长头像" width="120px"
+            height="120px" />
+          <el-button type="success" @click="openFilePicker('author_avatar')" class="select-file-btn">
+            <i class="ri-folder-image-line"></i>
+            选择文件
+          </el-button>
+        </div>
       </el-form-item>
 
       <el-form-item label="站长形象">
-        <ImageUploader ref="authorPhotoUploaderRef" v-model="form.author_photo" upload-type="站长形象" width="80px"
-          height="120px" />
+        <div class="image-upload-wrapper">
+          <ImageUploader ref="authorPhotoUploaderRef" v-model="form.author_photo" upload-type="站长形象" width="80px"
+            height="120px" />
+          <el-button type="success" @click="openFilePicker('author_photo')" class="select-file-btn">
+            <i class="ri-folder-image-line"></i>
+            选择文件
+          </el-button>
+        </div>
       </el-form-item>
     </div>
 
@@ -61,11 +73,17 @@
       <el-input v-model="form.home_url" placeholder="例如 https://your-site.com" :disabled="loading" />
     </el-form-item>
   </el-form>
+
+  <!-- 文件选择对话框 -->
+  <FilePickerDialog v-model="filePickerVisible" file-type="image" @confirm="handleFileSelect" />
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { ElMessage } from 'element-plus'
 import ImageUploader from '@/components/common/ImageUploader.vue'
+import FilePickerDialog from '@/components/common/FilePickerDialog.vue'
+import type { FileInfo } from '@/types/file'
 
 interface BasicForm {
   author: string
@@ -90,6 +108,22 @@ defineProps<{
 const authorAvatarUploaderRef = ref<InstanceType<typeof ImageUploader>>()
 const authorPhotoUploaderRef = ref<InstanceType<typeof ImageUploader>>()
 
+// 文件选择对话框
+const filePickerVisible = ref(false)
+const currentField = ref<'author_avatar' | 'author_photo'>('author_avatar')
+
+// 打开文件选择对话框
+const openFilePicker = (field: 'author_avatar' | 'author_photo') => {
+  currentField.value = field
+  filePickerVisible.value = true
+}
+
+// 处理文件选择
+const handleFileSelect = (file: FileInfo) => {
+  form.value[currentField.value] = file.file_url
+  ElMessage.success('已选择文件')
+}
+
 // 暴露给父组件使用
 defineExpose({
   authorAvatarUploaderRef,
@@ -105,6 +139,20 @@ defineExpose({
 
     .el-form-item {
       margin-bottom: 22px;
+    }
+  }
+
+  .image-upload-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .select-file-btn {
+      width: 120px;
+
+      i {
+        margin-right: 4px;
+      }
     }
   }
 }

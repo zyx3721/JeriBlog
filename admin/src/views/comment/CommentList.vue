@@ -61,7 +61,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="评论内容" min-width="300" align="center">
+    <el-table-column label="评论内容" min-width="300">
       <template #default="{ row }">
         <div style="line-height: 1.6; display: flex; align-items: center; gap: 8px">
           <span>{{ row.content }}</span>
@@ -99,15 +99,12 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="操作" width="220" align="center" fixed="right">
+    <el-table-column label="操作" width="150" align="center" fixed="right">
       <template #default="{ row }">
         <el-button v-if="!row.deleted_at" type="primary" link size="small" @click="openReplyDialog(row)">
           回复
         </el-button>
-        <el-button v-if="row.deleted_at" type="success" link size="small" @click="handleRestore(row.id)">
-          恢复
-        </el-button>
-        <el-button v-else type="danger" link size="small" @click="handleDelete(row.id)">
+        <el-button type="danger" link size="small" @click="handleDelete(row.id)">
           删除
         </el-button>
       </template>
@@ -153,7 +150,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { User } from '@element-plus/icons-vue'
 import CommonList from '@/components/common/CommonList.vue'
 import type { Comment, CommentQuery } from '@/types/comment'
-import { getComments, deleteComment, restoreComment, toggleCommentStatus, createComment } from '@/api/comment'
+import { getComments, deleteComment, toggleCommentStatus, createComment } from '@/api/comment'
 import { formatDateTime } from '@/utils/date'
 
 const loading = ref(false)
@@ -224,20 +221,9 @@ const handleStatusChange = async (comment: Comment) => {
 
 const handleDelete = async (id: number) => {
   try {
-    await ElMessageBox.confirm('确定要删除这条评论吗？', '提示', { type: 'warning' })
+    await ElMessageBox.confirm('确定要永久删除这条评论吗？删除后无法恢复！', '提示', { type: 'warning' })
     await deleteComment(id)
     ElMessage.success('删除成功')
-    fetchComments()
-  } catch (error) {
-    if (error !== 'cancel' && error instanceof Error) ElMessage.error(error.message)
-  }
-}
-
-const handleRestore = async (id: number) => {
-  try {
-    await ElMessageBox.confirm('确定要恢复这条评论吗？', '提示', { type: 'info' })
-    await restoreComment(id)
-    ElMessage.success('恢复成功')
     fetchComments()
   } catch (error) {
     if (error !== 'cancel' && error instanceof Error) ElMessage.error(error.message)

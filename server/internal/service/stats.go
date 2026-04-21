@@ -369,6 +369,11 @@ func (s *StatsService) GetVisitLogs(req *dto.GetVisitLogsRequest) ([]dto.VisitLo
 	return items, total, req.Page, req.PageSize, nil
 }
 
+// DeleteVisitLog 删除访问日志
+func (s *StatsService) DeleteVisitLog(id uint) error {
+	return s.statsRepo.DeleteVisitLog(id)
+}
+
 // ============ 辅助方法 ============
 
 // generateVisitorID 生成访客唯一标识

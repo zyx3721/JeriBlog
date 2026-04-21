@@ -250,3 +250,29 @@ func (h *StatsHandler) GetVisitLogs(c *gin.Context) {
 
 	response.PageSuccess(c, list, total, page, pageSize)
 }
+
+// DeleteVisitLog 删除访问日志
+//
+//	@Summary		删除访问日志
+//	@Description	删除指定的访问日志
+//	@Tags			统计管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id	path		int	true	"访问日志ID"
+//	@Success		200	{object}	response.Response
+//	@Router			/admin/stats/visits/{id} [delete]
+func (h *StatsHandler) DeleteVisitLog(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		response.ValidateFailed(c, "无效的访问日志ID")
+		return
+	}
+
+	if err := h.statsService.DeleteVisitLog(uint(id)); err != nil {
+		response.Failed(c, err.Error())
+		return
+	}
+
+	response.Success(c, nil)
+}

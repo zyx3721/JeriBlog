@@ -358,7 +358,6 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 			commentManagement.GET("", commentController.List)                           // 获取评论列表
 			commentManagement.GET("/:id", commentController.Get)                        // 获取评论详情
 			commentManagement.PUT("/:id/toggle-status", commentController.ToggleStatus) // 切换评论状态
-			commentManagement.PUT("/:id/restore", commentController.Restore)            // 恢复已删除的评论
 			commentManagement.DELETE("/:id", commentController.Delete)                  // 删除评论（管理员）
 
 			// 数据导入
@@ -383,6 +382,7 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 			statsManagement.GET("/tag", statsHandler.GetTagStats)                     // 获取标签统计
 			statsManagement.GET("/contribution", statsHandler.GetArticleContribution) // 获取文章贡献数据
 			statsManagement.GET("/visits", statsHandler.GetVisitLogs)                 // 获取访问日志
+			statsManagement.DELETE("/visits/:id", statsHandler.DeleteVisitLog)        // 删除访问日志
 		}
 
 		// ==================== 菜单管理 ====================

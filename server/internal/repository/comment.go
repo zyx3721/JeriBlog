@@ -228,12 +228,10 @@ func (r *CommentRepository) Delete(ctx context.Context, id uint) error {
 	return r.db.WithContext(ctx).Delete(&model.Comment{}, id).Error
 }
 
-// Restore 恢复已删除的评论
-func (r *CommentRepository) Restore(ctx context.Context, id uint) error {
-	return r.db.WithContext(ctx).Unscoped().
-		Model(&model.Comment{}).
-		Where("id = ?", id).
-		Update("deleted_at", nil).Error
+// HardDelete 硬删除评论
+func (r *CommentRepository) HardDelete(ctx context.Context, id uint) error {
+	// 永久删除评论本身，子评论保留
+	return r.db.WithContext(ctx).Unscoped().Delete(&model.Comment{}, id).Error
 }
 
 // CountByTargetKeys 批量获取多个目标的评论数

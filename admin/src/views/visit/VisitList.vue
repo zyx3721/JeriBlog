@@ -87,15 +87,28 @@
                 {{ formatDateTime(row.created_at) }}
             </template>
         </el-table-column>
+
+        <el-table-column label="操作" width="100" align="center" fixed="right">
+            <template #default="{ row }">
+                <el-button
+                    type="danger"
+                    size="small"
+                    @click="handleDelete(row.id)"
+                    :disabled="!canDelete"
+                >
+                    删除
+                </el-button>
+            </template>
+        </el-table-column>
     </common-list>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ref, computed, onMounted } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import CommonList from '@/components/common/CommonList.vue'
 import type { Visit, VisitQuery } from '@/types/stats'
-import { getVisits } from '@/api/stats'
+import { getVisits, deleteVisit } from '@/api/stats'
 import { formatDateTime } from '@/utils/date'
 
 const loading = ref(false)
@@ -109,6 +122,15 @@ const queryParams = ref<VisitQuery>({
     end_date: undefined
 })
 const dateRange = ref<[string, string] | null>(null)
+const hasSearched = ref(false)
+
+const canDelete = computed(() => {
+    return hasSearched.value && (
+        queryParams.value.keyword ||
+        queryParams.value.start_date ||
+        queryParams.value.end_date
+    )
+})
 
 const fetchVisits = async () => {
     loading.value = true
@@ -138,6 +160,7 @@ const handleDateChange = (value: [string, string] | null) => {
 
 const handleSearch = () => {
     queryParams.value.page = 1
+    hasSearched.value = true
     fetchVisits()
 }
 
@@ -147,7 +170,31 @@ const handleReset = () => {
     queryParams.value.end_date = undefined
     queryParams.value.page = 1
     dateRange.value = null
+    hasSearched.value = false
     fetchVisits()
+}
+
+const handleDelete = async (id: number) => {
+    if (!canDelete.value) {
+        ElMessage.warning('请先搜索后再确认是否删除')
+        return
+    }
+
+    try {
+        await ElMessageBox.confirm('确定要删除这条访问日志吗？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        })
+
+        await deleteVisit(id)
+        ElMessage.success('删除成功')
+        fetchVisits()
+    } catch (error: any) {
+        if (error !== 'cancel') {
+            ElMessage.error(error.message || '删除失败')
+        }
+    }
 }
 
 onMounted(fetchVisits)

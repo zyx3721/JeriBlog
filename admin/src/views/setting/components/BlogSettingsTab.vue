@@ -42,18 +42,36 @@
 
     <div class="image-row">
       <el-form-item label="网站Favicon">
-        <ImageUploader ref="faviconUploaderRef" v-model="form.favicon" upload-type="博客图标" width="120px"
-          height="120px" />
+        <div class="image-upload-wrapper">
+          <ImageUploader ref="faviconUploaderRef" v-model="form.favicon" upload-type="博客图标" width="120px"
+            height="120px" />
+          <el-button type="success" @click="openFilePicker('favicon')" class="select-file-btn">
+            <i class="ri-folder-image-line"></i>
+            选择文件
+          </el-button>
+        </div>
       </el-form-item>
 
       <el-form-item label="背景图片">
-        <ImageUploader ref="backgroundUploaderRef" v-model="form.background_image" upload-type="博客背景" width="213px"
-          height="120px" />
+        <div class="image-upload-wrapper">
+          <ImageUploader ref="backgroundUploaderRef" v-model="form.background_image" upload-type="博客背景" width="213px"
+            height="120px" />
+          <el-button type="success" @click="openFilePicker('background_image')" class="select-file-btn">
+            <i class="ri-folder-image-line"></i>
+            选择文件
+          </el-button>
+        </div>
       </el-form-item>
 
       <el-form-item label="站点截图">
-        <ImageUploader ref="screenshotUploaderRef" v-model="form.screenshot" upload-type="博客截图" width="213px"
-          height="120px" />
+        <div class="image-upload-wrapper">
+          <ImageUploader ref="screenshotUploaderRef" v-model="form.screenshot" upload-type="博客截图" width="213px"
+            height="120px" />
+          <el-button type="success" @click="openFilePicker('screenshot')" class="select-file-btn">
+            <i class="ri-folder-image-line"></i>
+            选择文件
+          </el-button>
+        </div>
       </el-form-item>
     </div>
 
@@ -243,13 +261,19 @@
       <el-input v-model="form.emojis" placeholder='输入表情包配置（JSON文件）' :disabled="loading" />
     </el-form-item>
   </el-form>
+
+  <!-- 文件选择对话框 -->
+  <FilePickerDialog v-model="filePickerVisible" file-type="image" @confirm="handleFileSelect" />
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { ElMessage } from 'element-plus'
 import ImageUploader from '@/components/common/ImageUploader.vue'
 import JsonListEditor from '@/components/common/JsonListEditor.vue'
+import FilePickerDialog from '@/components/common/FilePickerDialog.vue'
 import type { FieldConfig } from '@/components/common/JsonListEditor.vue'
+import type { FileInfo } from '@/types/file'
 
 interface BlogFormData {
   // 博客网站信息
@@ -380,6 +404,22 @@ const versionsFields: FieldConfig[] = [
 // 处理字体网站跳转
 const handleFontSiteCommand = (url: string) => {
   window.open(url, '_blank')
+}
+
+// 文件选择对话框
+const filePickerVisible = ref(false)
+const currentField = ref<'favicon' | 'background_image' | 'screenshot'>('favicon')
+
+// 打开文件选择对话框
+const openFilePicker = (field: 'favicon' | 'background_image' | 'screenshot') => {
+  currentField.value = field
+  filePickerVisible.value = true
+}
+
+// 处理文件选择
+const handleFileSelect = (file: FileInfo) => {
+  form.value[currentField.value] = file.file_url
+  ElMessage.success('已选择文件')
 }
 
 // 暴露上传器引用给父组件
