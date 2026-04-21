@@ -34,8 +34,14 @@
       </el-form-item>
 
       <el-form-item label="头像" prop="avatar">
-        <ImageUploader ref="avatarUploaderRef" v-model="formData.avatar" upload-type="用户头像" width="120px"
-          height="120px" />
+        <div class="image-upload-wrapper">
+          <ImageUploader ref="avatarUploaderRef" v-model="formData.avatar" upload-type="用户头像" width="120px"
+            height="120px" />
+          <el-button type="success" @click="openFilePicker" class="select-file-btn">
+            <i class="ri-folder-image-line"></i>
+            选择文件
+          </el-button>
+        </div>
       </el-form-item>
 
       <el-form-item label="角色" prop="role">
@@ -61,6 +67,9 @@
       </span>
     </template>
   </el-dialog>
+
+  <!-- 文件选择对话框 -->
+  <FilePickerDialog v-model="filePickerVisible" file-type="image" @confirm="handleFileSelect" />
 </template>
 
 <script setup lang="ts">
@@ -69,6 +78,8 @@ import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import type { User, CreateUserRequest, UpdateUserRequest } from '@/types/user'
 import { createUser, updateUser } from '@/api/user'
 import ImageUploader from '@/components/common/ImageUploader.vue'
+import FilePickerDialog from '@/components/common/FilePickerDialog.vue'
+import type { FileInfo } from '@/types/file'
 const props = defineProps<{
   modelValue: boolean
   editUser?: User | null
@@ -87,6 +98,20 @@ const dialogTitle = computed(() => isEdit.value ? '编辑用户' : '新增用户
 const submitLoading = ref(false)
 const formRef = ref<FormInstance>()
 const avatarUploaderRef = ref<InstanceType<typeof ImageUploader>>()
+
+// 文件选择对话框
+const filePickerVisible = ref(false)
+
+// 打开文件选择对话框
+const openFilePicker = () => {
+  filePickerVisible.value = true
+}
+
+// 处理文件选择
+const handleFileSelect = (file: FileInfo) => {
+  formData.value.avatar = file.file_url
+  ElMessage.success('已选择文件')
+}
 
 // 表单数据
 const formData = ref<CreateUserRequest & { is_enabled?: boolean }>({
@@ -235,3 +260,19 @@ const handleSubmit = async () => {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.image-upload-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .select-file-btn {
+    width: 120px;
+
+    i {
+      margin-right: 4px;
+    }
+  }
+}
+</style>
