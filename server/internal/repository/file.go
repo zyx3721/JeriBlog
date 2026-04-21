@@ -194,3 +194,59 @@ func (r *FileRepository) DeleteByIDs(ids []uint) error {
 	}
 	return r.db.Unscoped().Delete(&model.File{}, ids).Error
 }
+
+// ============ 引用计数方法 ============
+
+// IncrementReferenceCount 增加文件引用计数
+func (r *FileRepository) IncrementReferenceCount(url string) error {
+	if url == "" {
+		return nil
+	}
+	return r.db.Model(&model.File{}).
+		Where("file_url = ?", url).
+		UpdateColumn("reference_count", gorm.Expr("reference_count + 1")).Error
+}
+
+// DecrementReferenceCount 减少文件引用计数
+func (r *FileRepository) DecrementReferenceCount(url string) error {
+	if url == "" {
+		return nil
+	}
+	return r.db.Model(&model.File{}).
+		Where("file_url = ? AND reference_count > 0", url).
+		UpdateColumn("reference_count", gorm.Expr("reference_count - 1")).Error
+}
+
+// UpdateStatusByReferenceCount 根据引用计数更新文件状态
+func (r *FileRepository) UpdateStatusByReferenceCount(url string) error {
+	if url == "" {
+		return nil
+	}
+	// 使用子查询根据引用计数更新状态
+	return r.db.Exec(`
+		UPDATE files
+		SET status = CASE
+			WHEN reference_count > 0 THEN 1
+			ELSE 0
+		END,
+		updated_at = NOW()
+		WHERE file_url = ?
+	`, url).Error
+}
+
+// GetReferenceCount 获取文件引用计数
+func (r *FileRepository) GetReferenceCount(url string) (int, error) {
+	if url == "" {
+		return 0, nil
+	}
+	var file model.File
+	err := r.db.Select("reference_count").Where("file_url = ?", url).First(&file).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return 0, nil
+		}
+		return 0, err
+	}
+	return file.ReferenceCount, nil
+}
+
