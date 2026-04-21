@@ -264,11 +264,11 @@ const handleSubmit = async () => {
 <style lang="scss" scoped>
 .image-upload-wrapper {
   display: flex;
-  flex-direction: column;
+  align-items: flex-start;
   gap: 12px;
 
   .select-file-btn {
-    width: 120px;
+    margin-top: 0;
 
     i {
       margin-right: 4px;

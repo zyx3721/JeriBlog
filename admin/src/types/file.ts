@@ -20,6 +20,7 @@ export interface FileInfo {
   upload_type: string
   upload_time: string
   status: number // 0:未使用 1:使用中
+  reference_count?: number // 引用次数
 }
 
 // 文件列表查询

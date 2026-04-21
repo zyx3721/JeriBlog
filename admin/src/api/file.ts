@@ -56,8 +56,28 @@ export function getFileList(params: FileQuery): Promise<FileListData> {
 /**
  * 删除文件
  * @param {number} id - 文件ID
- * @returns {Promise<void>} 
+ * @returns {Promise<void>}
  */
 export function deleteFile(id: number): Promise<void> {
   return request.delete(`/admin/files/${id}`);
+}
+
+/**
+ * 文件引用信息
+ */
+export interface FileReference {
+  type: string // 引用类型：article/user/friend/setting
+  id: number // 引用对象ID
+  title: string // 引用对象标题
+  field: string // 引用字段
+  url?: string // 引用对象链接
+}
+
+/**
+ * 获取文件引用详情
+ * @param {number} id - 文件ID
+ * @returns {Promise<FileReference[]>} 引用列表
+ */
+export function getFileReferences(id: number): Promise<FileReference[]> {
+  return request.get(`/admin/files/${id}/references`);
 }

@@ -72,10 +72,12 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="文件名" min-width="180">
+    <el-table-column label="文件名" min-width="180" align="center">
       <template #default="{ row }">
-        <span style="margin-right: 8px;font-weight: 500">{{ row.file_name }}</span>
-        <span style="font-size: 12px; color: #909399">{{ formatFileSize(row.file_size) }}</span>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+          <span style="font-weight: 500">{{ row.file_name }}</span>
+          <span style="font-size: 12px; color: #909399">{{ formatFileSize(row.file_size) }}</span>
+        </div>
       </template>
     </el-table-column>
 
@@ -88,6 +90,19 @@
         <el-tag :type="getStatusTagType(row.status)" size="small" effect="light">
           {{ getStatusText(row.status) }}
         </el-tag>
+      </template>
+    </el-table-column>
+
+    <el-table-column label="引用数" width="100" align="center">
+      <template #default="{ row }">
+        <el-link
+          type="primary"
+          :underline="false"
+          @click="handleShowReferences(row)"
+          :disabled="!row.reference_count || row.reference_count === 0"
+        >
+          {{ row.reference_count || 0 }}
+        </el-link>
       </template>
     </el-table-column>
 
@@ -108,6 +123,44 @@
     <!-- 额外挂载区域 -->
     <template #extra>
       <upload-config-dialog v-model="uploadDialogVisible" />
+
+      <!-- 文件引用详情抽屉 -->
+      <el-drawer
+        v-model="referencesDrawerVisible"
+        title="文件引用详情"
+        direction="rtl"
+        size="600px"
+      >
+        <div v-loading="referencesLoading" class="references-content">
+          <el-empty v-if="!referencesLoading && references.length === 0" description="暂无引用" />
+
+          <div v-else class="reference-list">
+            <div v-for="(ref, index) in references" :key="index" class="reference-item">
+              <div class="reference-header">
+                <el-tag :type="getReferenceTypeTag(ref.type)" size="small">
+                  {{ getReferenceTypeName(ref.type) }}
+                </el-tag>
+                <span class="reference-field">{{ ref.field }}</span>
+              </div>
+
+              <div class="reference-body">
+                <div class="reference-title">{{ ref.title }}</div>
+                <el-link
+                  v-if="ref.url"
+                  :href="ref.url"
+                  target="_blank"
+                  type="primary"
+                  :underline="false"
+                  class="reference-link"
+                >
+                  <i class="ri-external-link-line"></i>
+                  查看详情
+                </el-link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </el-drawer>
     </template>
   </common-list>
 </template>
@@ -116,7 +169,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import CommonList from '@/components/common/CommonList.vue'
-import { getFileList, deleteFile } from '@/api/file'
+import { getFileList, deleteFile, getFileReferences, type FileReference } from '@/api/file'
 import type { FileInfo, FileQuery } from '@/types/file'
 import { formatDateTime } from '@/utils/date'
 import UploadConfigDialog from '@/views/file/components/UploadConfigDialog.vue'
@@ -132,6 +185,12 @@ const fileList = ref<FileInfo[]>([])
 const total = ref(0)
 const loading = ref(false)
 const uploadDialogVisible = ref(false)
+
+// 引用详情相关
+const referencesDrawerVisible = ref(false)
+const referencesLoading = ref(false)
+const references = ref<FileReference[]>([])
+const currentFile = ref<FileInfo | null>(null)
 
 const loadList = async () => {
   loading.value = true
@@ -182,6 +241,48 @@ const handleDelete = async (id: number) => {
   }
 }
 
+// 显示文件引用详情
+const handleShowReferences = async (file: FileInfo) => {
+  if (!file.reference_count || file.reference_count === 0) {
+    return
+  }
+
+  currentFile.value = file
+  referencesDrawerVisible.value = true
+  referencesLoading.value = true
+  references.value = []
+
+  try {
+    references.value = await getFileReferences(file.id)
+  } catch (error) {
+    ElMessage.error('加载引用详情失败')
+  } finally {
+    referencesLoading.value = false
+  }
+}
+
+// 获取引用类型标签颜色
+const getReferenceTypeTag = (type: string) => {
+  const typeMap: Record<string, string> = {
+    article: 'primary',
+    user: 'success',
+    friend: 'warning',
+    setting: 'info'
+  }
+  return typeMap[type] || 'info'
+}
+
+// 获取引用类型名称
+const getReferenceTypeName = (type: string) => {
+  const nameMap: Record<string, string> = {
+    article: '文章',
+    user: '用户',
+    friend: '友链',
+    setting: '系统设置'
+  }
+  return nameMap[type] || type
+}
+
 const isImage = (file: FileInfo) => file.file_type?.startsWith('image/')
 
 const formatFileSize = (size: number) => {
@@ -201,6 +302,70 @@ const getStatusText = (status: number) => {
 onMounted(loadList)
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 /* 搜索表单样式已移至全局样式 main.scss */
+
+.references-content {
+  min-height: 200px;
+}
+
+.reference-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.reference-item {
+  padding: 16px;
+  border: 1px solid #e4e7ed;
+  border-radius: 8px;
+  background: #fafafa;
+  transition: all 0.3s;
+
+  &:hover {
+    border-color: #409eff;
+    box-shadow: 0 2px 8px rgba(64, 158, 255, 0.1);
+  }
+}
+
+.reference-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+
+  .reference-field {
+    font-size: 13px;
+    color: #909399;
+    padding: 2px 8px;
+    background: #fff;
+    border-radius: 4px;
+  }
+}
+
+.reference-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  .reference-title {
+    flex: 1;
+    font-size: 14px;
+    color: #303133;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .reference-link {
+    flex-shrink: 0;
+    font-size: 13px;
+
+    i {
+      margin-right: 4px;
+    }
+  }
+}
 </style>

@@ -443,6 +443,20 @@ defineExpose({
       margin-bottom: 22px;
     }
   }
+
+  .image-upload-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    .select-file-btn {
+      margin-top: 0;
+
+      i {
+        margin-right: 4px;
+      }
+    }
+  }
 }
 
 .motto-inputs {
