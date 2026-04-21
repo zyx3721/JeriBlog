@@ -262,8 +262,8 @@ const handleShowReferences = async (file: FileInfo) => {
 }
 
 // 获取引用类型标签颜色
-const getReferenceTypeTag = (type: string) => {
-  const typeMap: Record<string, string> = {
+const getReferenceTypeTag = (type: string): 'primary' | 'success' | 'warning' | 'info' | 'danger' => {
+  const typeMap: Record<string, 'primary' | 'success' | 'warning' | 'info' | 'danger'> = {
     article: 'primary',
     user: 'success',
     friend: 'warning',
