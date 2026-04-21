@@ -26,6 +26,6 @@ COMMENT ON COLUMN files.reference_count IS '文件引用计数，用于统计文
 -- 初始化现有数据的引用计数
 -- =============================================
 
--- 根据当前状态初始化引用计数
+-- 根据当前状态初始化引用计数（手动执行）
 -- status = 1 (使用中) 的文件设置为 1，status = 0 (未使用) 的文件保持为 0
-UPDATE files SET reference_count = CASE WHEN status = 1 THEN 1 ELSE 0 END WHERE reference_count = 0;
+-- UPDATE files SET reference_count = CASE WHEN status = 1 THEN 1 ELSE 0 END WHERE reference_count = 0;
