@@ -37,15 +37,27 @@
       <el-row :gutter="20">
         <el-col :span="9">
           <el-form-item label="友链头像" prop="avatar">
-            <ImageUploader ref="avatarUploaderRef" v-model="formData.avatar" upload-type="友情链接A" width="120px"
-              height="120px" />
+            <div class="image-upload-wrapper">
+              <ImageUploader ref="avatarUploaderRef" v-model="formData.avatar" upload-type="友情链接A" width="120px"
+                height="120px" />
+              <el-button class="select-file-btn" @click="handleSelectFile('avatar')">
+                <i class="ri-folder-image-line"></i>
+                选择文件
+              </el-button>
+            </div>
           </el-form-item>
         </el-col>
 
         <el-col :span="15">
           <el-form-item label="网站截图" prop="screenshot">
-            <ImageUploader ref="screenshotUploaderRef" v-model="formData.screenshot" upload-type="友情链接S" width="213px"
-              height="120px" />
+            <div class="image-upload-wrapper">
+              <ImageUploader ref="screenshotUploaderRef" v-model="formData.screenshot" upload-type="友情链接S" width="213px"
+                height="120px" />
+              <el-button class="select-file-btn" @click="handleSelectFile('screenshot')">
+                <i class="ri-folder-image-line"></i>
+                选择文件
+              </el-button>
+            </div>
           </el-form-item>
         </el-col>
       </el-row>
@@ -100,6 +112,9 @@
       </span>
     </template>
   </el-dialog>
+
+  <!-- 文件选择对话框 -->
+  <FilePickerDialog v-model="filePickerVisible" file-type="image" @confirm="handleFileSelect" />
 </template>
 
 <script setup lang="ts">
@@ -110,6 +125,7 @@ import { createFriend, updateFriend, getFriendTypes } from '@/api/friend'
 import { fetchLinkInfo, downloadImage } from '@/api/tools'
 import request from '@/utils/request'
 import ImageUploader from '@/components/common/ImageUploader.vue'
+import FilePickerDialog from '@/components/common/FilePickerDialog.vue'
 const props = defineProps<{
   modelValue: boolean
   editFriend?: Friend | null
@@ -130,6 +146,26 @@ const parseLoading = ref(false)
 const formRef = ref<FormInstance>()
 const avatarUploaderRef = ref<InstanceType<typeof ImageUploader>>()
 const screenshotUploaderRef = ref<InstanceType<typeof ImageUploader>>()
+
+// 文件选择对话框
+const filePickerVisible = ref(false)
+const currentField = ref<'avatar' | 'screenshot'>('avatar')
+
+// 打开文件选择对话框
+const handleSelectFile = (field: 'avatar' | 'screenshot') => {
+  currentField.value = field
+  filePickerVisible.value = true
+}
+
+// 处理文件选择
+const handleFileSelect = (file: any) => {
+  if (currentField.value === 'avatar') {
+    formData.value.avatar = file.file_url
+  } else {
+    formData.value.screenshot = file.file_url
+  }
+  ElMessage.success('已选择文件')
+}
 
 // 友链类型选项
 const friendTypeOptions = ref<FriendType[]>([])
@@ -395,3 +431,19 @@ const handleSubmit = async () => {
   }
 }
 </script>
+
+<style scoped lang="scss">
+.image-upload-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .select-file-btn {
+    width: 100%;
+
+    i {
+      margin-right: 4px;
+    }
+  }
+}
+</style>
