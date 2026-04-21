@@ -53,7 +53,7 @@
 
         <el-table-column label="IP地址" width="140" align="center" prop="ip" />
 
-        <el-table-column label="访问页面" min-width="250" align="center">
+        <el-table-column label="访问页面" min-width="200" align="center">
             <template #default="{ row }">
                 <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
                     <el-tooltip :content="row.page_url" placement="top">
@@ -65,13 +65,13 @@
             </template>
         </el-table-column>
 
-        <el-table-column label="地理位置" width="150" align="center" prop="location" />
+        <el-table-column label="地理位置" width="120" align="center" prop="location" />
 
-        <el-table-column label="浏览器" width="140" align="center" prop="browser" />
+        <el-table-column label="浏览器" width="120" align="center" prop="browser" />
 
-        <el-table-column label="操作系统" width="120" align="center" prop="os" />
+        <el-table-column label="操作系统" width="100" align="center" prop="os" />
 
-        <el-table-column label="来源" width="250" align="center">
+        <el-table-column label="来源" min-width="180" align="center">
             <template #default="{ row }">
                 <el-tooltip v-if="row.referer" :content="row.referer" placement="top">
                     <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
