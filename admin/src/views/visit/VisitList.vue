@@ -37,6 +37,13 @@
                 />
                 <el-button type="primary" @click="handleSearch">搜索</el-button>
                 <el-button @click="handleReset">重置</el-button>
+                <el-button
+                    type="danger"
+                    :disabled="!canBatchDelete"
+                    @click="handleBatchDelete"
+                >
+                    批量删除
+                </el-button>
             </div>
         </template>
 
@@ -92,9 +99,8 @@
             <template #default="{ row }">
                 <el-button
                     type="danger"
-                    size="small"
+                    link
                     @click="handleDelete(row.id)"
-                    :disabled="!canDelete"
                 >
                     删除
                 </el-button>
@@ -108,7 +114,7 @@ import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import CommonList from '@/components/common/CommonList.vue'
 import type { Visit, VisitQuery } from '@/types/stats'
-import { getVisits, deleteVisit } from '@/api/stats'
+import { getVisits, deleteVisit, batchDeleteVisits } from '@/api/stats'
 import { formatDateTime } from '@/utils/date'
 
 const loading = ref(false)
@@ -125,6 +131,10 @@ const dateRange = ref<[string, string] | null>(null)
 const hasSearched = ref(false)
 
 const canDelete = computed(() => {
+    return true
+})
+
+const canBatchDelete = computed(() => {
     return hasSearched.value && (
         queryParams.value.keyword ||
         queryParams.value.start_date ||
@@ -175,11 +185,6 @@ const handleReset = () => {
 }
 
 const handleDelete = async (id: number) => {
-    if (!canDelete.value) {
-        ElMessage.warning('请先搜索后再确认是否删除')
-        return
-    }
-
     try {
         await ElMessageBox.confirm('确定要删除这条访问日志吗？', '提示', {
             confirmButtonText: '确定',
@@ -193,6 +198,32 @@ const handleDelete = async (id: number) => {
     } catch (error: any) {
         if (error !== 'cancel') {
             ElMessage.error(error.message || '删除失败')
+        }
+    }
+}
+
+const handleBatchDelete = async () => {
+    try {
+        await ElMessageBox.confirm(
+            '确定要删除当前搜索条件下的所有访问日志吗？此操作不可恢复！',
+            '批量删除确认',
+            {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }
+        )
+
+        await batchDeleteVisits({
+            keyword: queryParams.value.keyword,
+            start_date: queryParams.value.start_date,
+            end_date: queryParams.value.end_date
+        })
+        ElMessage.success('批量删除成功')
+        fetchVisits()
+    } catch (error: any) {
+        if (error !== 'cancel') {
+            ElMessage.error(error.message || '批量删除失败')
         }
     }
 }
