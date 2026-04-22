@@ -215,6 +215,20 @@ func (r *FriendRepository) ExistsByAvatarOrScreenshot(url string) (bool, error) 
 	return count > 0, err
 }
 
+// FindByAvatar 查找使用该头像的友链列表
+func (r *FriendRepository) FindByAvatar(url string) ([]model.Friend, error) {
+	var friends []model.Friend
+	err := r.db.Where("avatar = ?", url).Find(&friends).Error
+	return friends, err
+}
+
+// FindByScreenshot 查找使用该截图的友链列表
+func (r *FriendRepository) FindByScreenshot(url string) ([]model.Friend, error) {
+	var friends []model.Friend
+	err := r.db.Where("screenshot = ?", url).Find(&friends).Error
+	return friends, err
+}
+
 // UpdateCheckStatus 更新友链检测状态
 func (r *FriendRepository) UpdateCheckStatus(ctx context.Context, id uint, accessible int) error {
 	return r.db.WithContext(ctx).
