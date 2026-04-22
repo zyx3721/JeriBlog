@@ -184,10 +184,21 @@
   <!-- 图片Dialog -->
   <el-dialog v-model="imageDialogVisible" title="动态配图" width="400px">
     <div class="image-form">
-      <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-        <el-input v-model="imageUrlInput" placeholder="输入图片链接或点击右侧上传" @keyup.enter="addImageUrl" style="flex: 1;" />
-        <el-button type="primary" @click="addImageUrl" :disabled="!imageUrlInput.trim()">添加</el-button>
-        <el-button type="primary" @click="handleImageUpload">上传</el-button>
+      <!-- 搜索框单独占一行 -->
+      <el-input
+        v-model="imageUrlInput"
+        placeholder="输入图片链接、上传或选择本地文件"
+        @keyup.enter="addImageUrl"
+        style="margin-bottom: 12px;"
+      />
+
+      <!-- 三个按钮左右对齐布局 -->
+      <div class="button-row">
+        <el-button type="primary" @click="addImageUrl" :disabled="!imageUrlInput.trim()">添加链接</el-button>
+        <div class="button-group">
+          <el-button type="primary" @click="handleImageUpload">上传文件</el-button>
+          <el-button type="primary" @click="handleImagePicker">选择文件</el-button>
+        </div>
       </div>
 
       <div v-if="imageItems.length" class="image-url-list">
@@ -303,6 +314,14 @@
       </div>
     </div>
   </el-dialog>
+
+  <!-- 文件选择器 -->
+  <file-picker-dialog
+    v-model="filePickerVisible"
+    :multiple="filePickerPurpose === 'image'"
+    :accept="filePickerPurpose === 'image' ? 'image/*' : 'video/*'"
+    @select="handleFileSelect"
+  />
 </template>
 
 <script setup lang="ts">
@@ -314,6 +333,8 @@ import { createMoment, updateMoment } from '@/api/moment'
 import { fetchLinkInfo, parseVideo } from '@/api/tools'
 import { uploadFile } from '@/api/file'
 import { formatForBackend } from '@/utils/date'
+import FilePickerDialog from '@/components/common/FilePickerDialog.vue'
+
 const props = defineProps<{
   modelValue: boolean
   editMoment?: Moment | null
@@ -340,6 +361,10 @@ const videoDialogVisible = ref(false)
 const tagDialogVisible = ref(false)
 const locationDialogVisible = ref(false)
 const timeDialogVisible = ref(false)
+
+// 文件选择器状态
+const filePickerVisible = ref(false)
+const filePickerPurpose = ref<'image' | 'video'>('image')
 
 // 其他状态
 const imageUrlInput = ref('')
@@ -564,6 +589,34 @@ const handleImageUpload = () => {
     })
   }
   input.click()
+}
+
+// 打开文件选择器（图片）
+const handleImagePicker = () => {
+  filePickerPurpose.value = 'image'
+  filePickerVisible.value = true
+}
+
+// 文件选择器回调（图片）
+const handleFileSelect = (files: any[]) => {
+  if (filePickerPurpose.value === 'image') {
+    files.forEach(file => {
+      imageItems.value.push({
+        id: `${Date.now()}-${Math.random()}`,
+        type: 'url',
+        url: file.file_url
+      })
+    })
+  } else if (filePickerPurpose.value === 'video') {
+    if (files.length > 0) {
+      cleanupVideoBlob()
+      videoItem.value = {
+        type: 'url',
+        url: files[0].file_url
+      }
+    }
+  }
+  filePickerVisible.value = false
 }
 
 // 添加网络图片
@@ -1082,6 +1135,18 @@ const handleSubmit = async () => {
 }
 
 .image-form {
+  .button-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    .button-group {
+      display: flex;
+      gap: 8px;
+    }
+  }
+
   .image-url-list {
     display: flex;
     flex-direction: column;
