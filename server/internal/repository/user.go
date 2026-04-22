@@ -129,6 +129,14 @@ func (r *UserRepository) ExistsByAvatar(url string) (bool, error) {
 	return count > 0, err
 }
 
+// FindByAvatar 查找使用该头像的用户列表
+func (r *UserRepository) FindByAvatar(url string) ([]model.User, error) {
+	var users []model.User
+	// 只查询未删除的用户
+	err := r.db.Where("avatar = ?", url).Find(&users).Error
+	return users, err
+}
+
 // ============ 辅助方法 ============
 
 // UpdateAvatar 更新用户头像
