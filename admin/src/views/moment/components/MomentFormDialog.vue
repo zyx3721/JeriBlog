@@ -452,11 +452,11 @@ const otherContentPreviews = computed(() => {
     })
   }
   if (videoItem.value) {
-    const { platform, video_id, url, file } = videoItem.value
+    const { platform, video_id, url, file, type } = videoItem.value
     previews.push({
       type: 'video',
       url: platform && video_id ? getVideoIframeSrc(platform, video_id) : url,
-      isLocal: !platform,
+      isLocal: type === 'file' || !platform,
       text: file?.name || '视频'
     })
   }
@@ -621,6 +621,8 @@ const handleFileSelect = (files: any[]) => {
         type: 'url',
         url: files[0].file_url
       }
+      console.log('选择的视频文件:', files[0])
+      console.log('设置的 videoItem:', videoItem.value)
     }
   }
   filePickerVisible.value = false
