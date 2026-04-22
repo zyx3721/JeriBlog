@@ -322,6 +322,7 @@
     :multiple="filePickerPurpose === 'image'"
     :accept="filePickerPurpose === 'image' ? 'image/*' : 'video/*'"
     @select="handleFileSelect"
+    @confirm="handleFileSingleSelect"
   />
 </template>
 
@@ -604,7 +605,7 @@ const handleVideoPicker = () => {
   filePickerVisible.value = true
 }
 
-// 文件选择器回调
+// 文件选择器回调（多选）
 const handleFileSelect = (files: any[]) => {
   if (filePickerPurpose.value === 'image') {
     files.forEach(file => {
@@ -624,6 +625,20 @@ const handleFileSelect = (files: any[]) => {
       console.log('选择的视频文件:', files[0])
       console.log('设置的 videoItem:', videoItem.value)
     }
+  }
+  filePickerVisible.value = false
+}
+
+// 文件选择器回调（单选）
+const handleFileSingleSelect = (file: any) => {
+  if (filePickerPurpose.value === 'video') {
+    cleanupVideoBlob()
+    videoItem.value = {
+      type: 'url',
+      url: file.file_url
+    }
+    console.log('选择的视频文件:', file)
+    console.log('设置的 videoItem:', videoItem.value)
   }
   filePickerVisible.value = false
 }
