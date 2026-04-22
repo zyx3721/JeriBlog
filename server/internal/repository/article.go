@@ -343,6 +343,20 @@ func (r *ArticleRepository) ExistsByContentURL(url string) (bool, error) {
 	return count > 0, err
 }
 
+// FindByCover 查找使用该封面的文章列表
+func (r *ArticleRepository) FindByCover(url string) ([]model.Article, error) {
+	var articles []model.Article
+	err := r.db.Where("cover = ?", url).Find(&articles).Error
+	return articles, err
+}
+
+// FindByContentURL 查找正文引用该文件的文章列表
+func (r *ArticleRepository) FindByContentURL(url string) ([]model.Article, error) {
+	var articles []model.Article
+	err := r.db.Where("content LIKE ?", "%"+url+"%").Find(&articles).Error
+	return articles, err
+}
+
 // ============ 辅助方法 ============
 
 // CheckSlugExists 检查slug是否已存在
