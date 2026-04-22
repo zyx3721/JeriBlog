@@ -21,7 +21,7 @@
           v-model="queryParams.keyword"
           placeholder="搜索昵称、邮箱、网站..."
           clearable
-          style="width: 240px"
+          style="width: 220px"
           @keyup.enter="handleSearch"
           @clear="handleSearch"
         />
@@ -29,7 +29,7 @@
           v-model="queryParams.role"
           placeholder="角色"
           clearable
-          style="width: 140px"
+          style="width: 120px"
           @change="handleSearch"
         >
           <el-option label="超级管理员" value="super_admin" />

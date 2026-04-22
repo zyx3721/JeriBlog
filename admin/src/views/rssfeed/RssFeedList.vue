@@ -20,7 +20,7 @@
           v-model="queryParams.keyword"
           placeholder="搜索文章标题..."
           clearable
-          style="width: 240px"
+          style="width: 200px"
           @keyup.enter="handleSearch"
           @clear="handleSearch"
         />
@@ -28,7 +28,7 @@
           v-model="statusFilter"
           placeholder="状态"
           clearable
-          style="width: 120px"
+          style="width: 100px"
           @change="handleStatusChange"
         >
           <el-option label="未读" value="unread" />
@@ -40,7 +40,7 @@
           placeholder="来源"
           clearable
           filterable
-          style="width: 180px"
+          style="width: 150px"
           @change="handleSearch"
         >
           <el-option

@@ -20,7 +20,7 @@
           v-model="queryParams.keyword"
           placeholder="搜索名称、链接、描述..."
           clearable
-          style="width: 240px"
+          style="width: 220px"
           @keyup.enter="handleSearch"
           @clear="handleSearch"
         />
@@ -28,7 +28,7 @@
           v-model="queryParams.type_id"
           placeholder="类型"
           clearable
-          style="width: 150px"
+          style="width: 120px"
           @change="handleSearch"
         >
           <el-option

@@ -15,14 +15,14 @@
     @update:page="fetchList" @update:pageSize="fetchList">
     <template #toolbar-before>
       <div class="search-form">
-        <el-input v-model="searchKeyword" placeholder="搜索工单号/投诉地址/联系方式" clearable style="width: 280px;" @clear="handleSearch" @keyup.enter="handleSearch" />
-        <el-select v-model="searchReportType" placeholder="类型" clearable style="width: 180px;" @change="handleSearch">
+        <el-input v-model="searchKeyword" placeholder="搜索工单号、投诉地址、联系方式..." clearable style="width: 280px;" @clear="handleSearch" @keyup.enter="handleSearch" />
+        <el-select v-model="searchReportType" placeholder="类型" clearable style="width: 160px;" @change="handleSearch">
           <el-option label="版权侵权内容投诉" value="copyright" />
           <el-option label="不当内容举报投诉" value="inappropriate" />
           <el-option label="文章摘要问题反馈" value="summary" />
           <el-option label="功能建议优化反馈" value="suggestion" />
         </el-select>
-        <el-select v-model="searchStatus" placeholder="状态" clearable style="width: 120px;" @change="handleSearch">
+        <el-select v-model="searchStatus" placeholder="状态" clearable style="width: 100px;" @change="handleSearch">
           <el-option label="待处理" value="pending" />
           <el-option label="已解决" value="resolved" />
           <el-option label="已关闭" value="closed" />

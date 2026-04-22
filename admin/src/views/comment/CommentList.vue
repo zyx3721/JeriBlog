@@ -29,7 +29,7 @@
           v-model="queryParams.status"
           placeholder="状态"
           clearable
-          style="width: 120px"
+          style="width: 100px"
           @change="handleSearch"
         >
           <el-option label="显示" :value="1" />

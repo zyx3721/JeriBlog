@@ -20,20 +20,10 @@
           v-model="query.keyword"
           placeholder="搜索文件名、原始文件名..."
           clearable
-          style="width: 240px"
+          style="width: 220px"
           @keyup.enter="handleSearch"
           @clear="handleSearch"
         />
-        <el-select
-          v-model="query.status"
-          placeholder="状态"
-          clearable
-          style="width: 140px"
-          @change="handleSearch"
-        >
-          <el-option label="未使用" :value="0" />
-          <el-option label="使用中" :value="1" />
-        </el-select>
         <el-select
           v-model="query.upload_type"
           placeholder="用途"
@@ -73,6 +63,16 @@
             <el-option label="菜单图标" value="菜单图标" />
             <el-option label="反馈投诉" value="反馈投诉" />
           </el-option-group>
+        </el-select>
+        <el-select
+          v-model="query.status"
+          placeholder="状态"
+          clearable
+          style="width: 100px"
+          @change="handleSearch"
+        >
+          <el-option label="未使用" :value="0" />
+          <el-option label="使用中" :value="1" />
         </el-select>
         <el-button type="primary" @click="handleSearch">搜索</el-button>
         <el-button @click="handleReset">重置</el-button>
