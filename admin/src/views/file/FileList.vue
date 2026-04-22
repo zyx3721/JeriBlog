@@ -41,21 +41,38 @@
           style="width: 140px"
           @change="handleSearch"
         >
-          <el-option label="用户头像" value="用户头像" />
-          <el-option label="文章封面" value="文章封面" />
-          <el-option label="站长头像" value="站长头像" />
-          <el-option label="站长形象" value="站长形象" />
-          <el-option label="博客图标" value="博客图标" />
-          <el-option label="博客背景" value="博客背景" />
-          <el-option label="博客截图" value="博客截图" />
-          <el-option label="展览图片" value="展览图片" />
-          <el-option label="友情链接A" value="友情链接A" />
-          <el-option label="友情链接S" value="友情链接S" />
-          <el-option label="微信收款码" value="微信收款码" />
-          <el-option label="支付宝收款码" value="支付宝收款码" />
-          <el-option label="动态配图" value="动态配图" />
-          <el-option label="动态视频" value="动态视频" />
-          <el-option label="反馈投诉" value="反馈投诉" />
+          <el-option-group label="用户相关">
+            <el-option label="用户头像" value="用户头像" />
+          </el-option-group>
+          <el-option-group label="文章相关">
+            <el-option label="文章封面" value="文章封面" />
+            <el-option label="文章配图" value="文章配图" />
+          </el-option-group>
+          <el-option-group label="动态相关">
+            <el-option label="动态配图" value="动态配图" />
+            <el-option label="动态视频" value="动态视频" />
+          </el-option-group>
+          <el-option-group label="评论相关">
+            <el-option label="评论贴图" value="评论贴图" />
+          </el-option-group>
+          <el-option-group label="友链相关">
+            <el-option label="友情链接A" value="友情链接A" />
+            <el-option label="友情链接S" value="友情链接S" />
+          </el-option-group>
+          <el-option-group label="系统设置">
+            <el-option label="站长头像" value="站长头像" />
+            <el-option label="站长形象" value="站长形象" />
+            <el-option label="博客图标" value="博客图标" />
+            <el-option label="博客背景" value="博客背景" />
+            <el-option label="博客截图" value="博客截图" />
+            <el-option label="展览图片" value="展览图片" />
+            <el-option label="微信收款码" value="微信收款码" />
+            <el-option label="支付宝收款码" value="支付宝收款码" />
+          </el-option-group>
+          <el-option-group label="其他">
+            <el-option label="菜单图标" value="菜单图标" />
+            <el-option label="反馈投诉" value="反馈投诉" />
+          </el-option-group>
         </el-select>
         <el-button type="primary" @click="handleSearch">搜索</el-button>
         <el-button @click="handleReset">重置</el-button>
