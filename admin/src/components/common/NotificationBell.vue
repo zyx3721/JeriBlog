@@ -22,9 +22,14 @@
         <!-- 上：标题和全部已读 -->
         <div class="notification-header">
           <span class="title">通知消息</span>
-          <el-button type="primary" size="small" text @click="handleMarkAllRead" v-if="unreadCount > 0">
-            全部已读
-          </el-button>
+          <div class="header-actions">
+            <el-button type="primary" size="small" text @click="handleMarkAllRead" v-if="unreadCount > 0">
+              全部已读
+            </el-button>
+            <el-button type="danger" size="small" text @click="handleClearAll" v-if="notifications.length > 0">
+              清空
+            </el-button>
+          </div>
         </div>
 
         <!-- 中：通知列表 -->
@@ -80,9 +85,9 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { Bell, ChatDotRound, QuestionFilled, Warning, Link } from '@element-plus/icons-vue'
-import { getNotifications, markAsRead, markAllAsRead } from '@/api/notification'
+import { getNotifications, markAsRead, markAllAsRead, clearAllNotifications } from '@/api/notification'
 import type { Notification, NotificationType } from '@/types/notification'
 import { formatMomentTime } from '@/utils/date'
 import { notificationManager } from '@/utils/notification'
@@ -160,6 +165,26 @@ const handleMarkAllRead = async () => {
     await loadNotifications(true)
   } catch (error) {
     ElMessage.error('操作失败')
+  }
+}
+
+// 清空所有通知
+const handleClearAll = async () => {
+  try {
+    await ElMessageBox.confirm('确定要清空所有通知吗？', '提示', {
+      type: 'warning',
+      confirmButtonText: '确定',
+      cancelButtonText: '取消'
+    })
+    await clearAllNotifications()
+    ElMessage.success('已清空所有通知')
+    notifications.value = []
+    unreadCount.value = 0
+    hasMore.value = false
+  } catch (error: any) {
+    if (error !== 'cancel') {
+      ElMessage.error('操作失败')
+    }
   }
 }
 
@@ -274,6 +299,11 @@ onUnmounted(() => timer && clearInterval(timer))
 
     .title {
       font-weight: 600;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
     }
   }
 
