@@ -271,7 +271,7 @@ func (ctrl *FileController) Delete(c *gin.Context) {
 			return
 		}
 		if strings.Contains(err.Error(), "正在被使用") {
-			response.Error(c, errcode.FileProcessError.WithDetails(err.Error()))
+			response.Error(c, errcode.FileInUseError.WithDetails(err.Error()))
 			return
 		}
 		response.Error(c, errcode.FileProcessError.WithDetails(err.Error()))
