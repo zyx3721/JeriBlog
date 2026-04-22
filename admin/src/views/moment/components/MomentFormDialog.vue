@@ -264,13 +264,14 @@
   <el-dialog v-model="videoDialogVisible" title="动态视频" width="400px">
     <div class="video-form">
       <div style="display: flex; gap: 8px;">
-        <!-- 未添加视频时：显示输入框和解析/上传按钮 -->
+        <!-- 未添加视频时：显示输入框和解析/上传/选择按钮 -->
         <template v-if="!videoItem">
-          <el-input v-model="videoUrlInput" placeholder="输入视频链接或点击右侧上传" @keyup.enter="addVideoUrl" style="flex: 1;" />
+          <el-input v-model="videoUrlInput" placeholder="输入视频链接或点击右侧上传/选择" @keyup.enter="addVideoUrl" style="flex: 1;" />
           <el-button type="primary" @click="addVideoUrl" :disabled="!videoUrlInput.trim()" :loading="fetchingVideo">
             {{ fetchingVideo ? '解析中...' : '解析' }}
           </el-button>
           <el-button type="primary" @click="handleVideoUpload">上传</el-button>
+          <el-button type="primary" @click="handleVideoPicker">选择</el-button>
         </template>
 
         <!-- 已添加视频时：显示只读输入框和删除按钮 -->
@@ -597,7 +598,13 @@ const handleImagePicker = () => {
   filePickerVisible.value = true
 }
 
-// 文件选择器回调（图片）
+// 打开文件选择器（视频）
+const handleVideoPicker = () => {
+  filePickerPurpose.value = 'video'
+  filePickerVisible.value = true
+}
+
+// 文件选择器回调
 const handleFileSelect = (files: any[]) => {
   if (filePickerPurpose.value === 'image') {
     files.forEach(file => {
