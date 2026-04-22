@@ -145,6 +145,30 @@ func (h *NotificationController) ClearAll(c *gin.Context) {
 	response.Success(c, nil)
 }
 
+// ClearRead 清空已读通知
+//
+//	@Summary		清空已读通知
+//	@Description	删除当前用户的所有已读通知
+//	@Tags			通知管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Success		200	{object}	response.Response
+//	@Failure		400	{object}	response.Response
+//	@Failure		401	{object}	response.Response
+//	@Router			/api/v1/admin/notifications/clear-read [delete]
+func (h *NotificationController) ClearRead(c *gin.Context) {
+	// 从上下文获取用户 ID
+	userID := c.GetUint("user_id")
+
+	if err := h.service.ClearRead(c.Request.Context(), userID); err != nil {
+		response.Failed(c, err.Error())
+		return
+	}
+
+	response.Success(c, nil)
+}
+
 // ============ 后台管理通知接口 ============
 
 // List 获取后台管理员通知列表
