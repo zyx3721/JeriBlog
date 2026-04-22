@@ -228,6 +228,11 @@ func (s *NotificationService) ClearAll(ctx context.Context, userID uint) error {
 	return s.repo.ClearAll(ctx, userID)
 }
 
+// ClearRead 清空已读通知
+func (s *NotificationService) ClearRead(ctx context.Context, userID uint) error {
+	return s.repo.ClearRead(ctx, userID)
+}
+
 // ============ 内部方法 ============
 
 // send 发送通知（站内+邮件）
