@@ -299,28 +299,28 @@ const handleReferenceClick = (ref: FileReference) => {
       break
 
     case 'article':
-      // 跳转到文章前端访问链接
+      // 跳转到文章前端访问链接 /posts/<slug>/
       if (ref.url) {
         window.open(ref.url, '_blank')
       }
       break
 
     case 'moment':
-      // 跳转到动态前端访问地址
+      // 跳转到动态前端访问地址 /moment
       if (ref.url) {
         window.open(ref.url, '_blank')
       }
       break
 
     case 'comment':
-      // 跳转到评论所属文章前端访问链接
+      // 跳转到评论所属文章前端访问链接 /posts/<slug>/
       if (ref.url) {
         window.open(ref.url, '_blank')
       }
       break
 
     case 'friend':
-      // 跳转到友链前端访问地址
+      // 跳转到友链前端访问地址 /friend
       if (ref.url) {
         window.open(ref.url, '_blank')
       }
@@ -339,8 +339,8 @@ const handleReferenceClick = (ref: FileReference) => {
     case 'feedback':
       // 跳转到反馈投诉页面，并根据工单号自动搜索
       router.push({
-        path: '/feedbacks',
-        query: { ticket_no: ref.title }
+        path: '/feedback',
+        query: { keyword: ref.title }
       })
       break
 
