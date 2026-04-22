@@ -244,12 +244,12 @@ func (s *MomentService) markFilesAsUsed(content *dto.MomentContent) {
 
 	// 标记图片
 	for _, imgURL := range content.Images {
-		_ = s.fileService.MarkAsUsed(imgURL)
+		_ = s.fileService.MarkAsUsed(imgURL, "动态配图")
 	}
 
 	// 标记视频（如果是本地视频）
 	if content.Video != nil && content.Video.URL != "" && content.Video.Platform == "" {
-		_ = s.fileService.MarkAsUsed(content.Video.URL)
+		_ = s.fileService.MarkAsUsed(content.Video.URL, "动态视频")
 	}
 }
 
@@ -261,12 +261,12 @@ func (s *MomentService) markFilesAsUnused(content *dto.MomentContent) {
 
 	// 标记图片
 	for _, imgURL := range content.Images {
-		_ = s.fileService.MarkAsUnused(imgURL)
+		_ = s.fileService.MarkAsUnused(imgURL, "动态配图")
 	}
 
 	// 标记视频（如果是本地视频）
 	if content.Video != nil && content.Video.URL != "" && content.Video.Platform == "" {
-		_ = s.fileService.MarkAsUnused(content.Video.URL)
+		_ = s.fileService.MarkAsUnused(content.Video.URL, "动态视频")
 	}
 }
 
@@ -287,14 +287,14 @@ func (s *MomentService) updateFileStatus(oldContent, newContent *dto.MomentConte
 		newImages[img] = true
 		// 新增的图片标记为使用中
 		if !oldImages[img] {
-			_ = s.fileService.MarkAsUsed(img)
+			_ = s.fileService.MarkAsUsed(img, "动态配图")
 		}
 	}
 
 	// 移除的图片标记为未使用
 	for _, img := range oldContent.Images {
 		if !newImages[img] {
-			_ = s.fileService.MarkAsUnused(img)
+			_ = s.fileService.MarkAsUnused(img, "动态配图")
 		}
 	}
 
@@ -311,10 +311,10 @@ func (s *MomentService) updateFileStatus(oldContent, newContent *dto.MomentConte
 
 	if oldVideoURL != newVideoURL {
 		if oldVideoURL != "" {
-			_ = s.fileService.MarkAsUnused(oldVideoURL)
+			_ = s.fileService.MarkAsUnused(oldVideoURL, "动态视频")
 		}
 		if newVideoURL != "" {
-			_ = s.fileService.MarkAsUsed(newVideoURL)
+			_ = s.fileService.MarkAsUsed(newVideoURL, "动态视频")
 		}
 	}
 }

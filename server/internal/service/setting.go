@@ -224,10 +224,10 @@ func (s *SettingService) UpdateGroup(group string, updates map[string]string) er
 				oldAvatar := oldSettings[KeyBasicAuthorAvatar]
 				if oldAvatar != newAvatar {
 					if oldAvatar != "" {
-						_ = s.fileService.MarkAsUnused(oldAvatar)
+						_ = s.fileService.MarkAsUnused(oldAvatar, "站长头像")
 					}
 					if newAvatar != "" {
-						_ = s.fileService.MarkAsUsed(newAvatar)
+						_ = s.fileService.MarkAsUsed(newAvatar, "站长头像")
 					}
 				}
 			}
@@ -237,10 +237,10 @@ func (s *SettingService) UpdateGroup(group string, updates map[string]string) er
 				oldPhoto := oldSettings[KeyBasicAuthorPhoto]
 				if oldPhoto != newPhoto {
 					if oldPhoto != "" {
-						_ = s.fileService.MarkAsUnused(oldPhoto)
+						_ = s.fileService.MarkAsUnused(oldPhoto, "站长形象")
 					}
 					if newPhoto != "" {
-						_ = s.fileService.MarkAsUsed(newPhoto)
+						_ = s.fileService.MarkAsUsed(newPhoto, "站长形象")
 					}
 				}
 			}
@@ -252,10 +252,10 @@ func (s *SettingService) UpdateGroup(group string, updates map[string]string) er
 				oldFavicon := oldSettings[KeyBlogFavicon]
 				if oldFavicon != newFavicon {
 					if oldFavicon != "" {
-						_ = s.fileService.MarkAsUnused(oldFavicon)
+						_ = s.fileService.MarkAsUnused(oldFavicon, "博客图标")
 					}
 					if newFavicon != "" {
-						_ = s.fileService.MarkAsUsed(newFavicon)
+						_ = s.fileService.MarkAsUsed(newFavicon, "博客图标")
 					}
 				}
 			}
@@ -265,10 +265,10 @@ func (s *SettingService) UpdateGroup(group string, updates map[string]string) er
 				oldBg := oldSettings[KeyBlogBackgroundImage]
 				if oldBg != newBg {
 					if oldBg != "" {
-						_ = s.fileService.MarkAsUnused(oldBg)
+						_ = s.fileService.MarkAsUnused(oldBg, "博客背景")
 					}
 					if newBg != "" {
-						_ = s.fileService.MarkAsUsed(newBg)
+						_ = s.fileService.MarkAsUsed(newBg, "博客背景")
 					}
 				}
 			}
@@ -278,10 +278,10 @@ func (s *SettingService) UpdateGroup(group string, updates map[string]string) er
 				oldExhibition := oldSettings[KeyBlogAboutExhibition]
 				if oldExhibition != newExhibition {
 					if oldExhibition != "" {
-						_ = s.fileService.MarkAsUnused(oldExhibition)
+						_ = s.fileService.MarkAsUnused(oldExhibition, "展览图片")
 					}
 					if newExhibition != "" {
-						_ = s.fileService.MarkAsUsed(newExhibition)
+						_ = s.fileService.MarkAsUsed(newExhibition, "展览图片")
 					}
 				}
 			}
@@ -291,10 +291,10 @@ func (s *SettingService) UpdateGroup(group string, updates map[string]string) er
 				oldScreenshot := oldSettings[KeyBlogScreenshot]
 				if oldScreenshot != newScreenshot {
 					if oldScreenshot != "" {
-						_ = s.fileService.MarkAsUnused(oldScreenshot)
+						_ = s.fileService.MarkAsUnused(oldScreenshot, "博客截图")
 					}
 					if newScreenshot != "" {
-						_ = s.fileService.MarkAsUsed(newScreenshot)
+						_ = s.fileService.MarkAsUsed(newScreenshot, "博客截图")
 					}
 				}
 			}
@@ -304,10 +304,10 @@ func (s *SettingService) UpdateGroup(group string, updates map[string]string) er
 				oldWechatQr := oldSettings[KeyBlogWechatQrCode]
 				if oldWechatQr != newWechatQr {
 					if oldWechatQr != "" {
-						_ = s.fileService.MarkAsUnused(oldWechatQr)
+						_ = s.fileService.MarkAsUnused(oldWechatQr, "微信收款码")
 					}
 					if newWechatQr != "" {
-						_ = s.fileService.MarkAsUsed(newWechatQr)
+						_ = s.fileService.MarkAsUsed(newWechatQr, "微信收款码")
 					}
 				}
 			}
@@ -317,10 +317,10 @@ func (s *SettingService) UpdateGroup(group string, updates map[string]string) er
 				oldAlipayQr := oldSettings[KeyBlogAlipayQrCode]
 				if oldAlipayQr != newAlipayQr {
 					if oldAlipayQr != "" {
-						_ = s.fileService.MarkAsUnused(oldAlipayQr)
+						_ = s.fileService.MarkAsUnused(oldAlipayQr, "支付宝收款码")
 					}
 					if newAlipayQr != "" {
-						_ = s.fileService.MarkAsUsed(newAlipayQr)
+						_ = s.fileService.MarkAsUsed(newAlipayQr, "支付宝收款码")
 					}
 				}
 			}
@@ -648,8 +648,8 @@ func (s *SettingService) ApplyDatabaseConfig(cfg *config.Config) error {
 }
 
 // safeMarkAsUnused 安全地标记文件为未使用（检查是否被其他业务引用）
-func (s *SettingService) safeMarkAsUnused(fileURL string) {
-	if fileURL == "" || s.fileService == nil || s.fileService.usageChecker == nil {
+func (s *SettingService) safeMarkAsUnused(fileURL string, uploadType string) {
+	if fileURL == "" || uploadType == "" || s.fileService == nil || s.fileService.usageChecker == nil {
 		return
 	}
 
@@ -661,10 +661,10 @@ func (s *SettingService) safeMarkAsUnused(fileURL string) {
 
 	// 如果文件仍被引用,不标记为未使用
 	if used {
-		_ = s.fileService.MarkAsUsed(fileURL)
+		_ = s.fileService.MarkAsUsed(fileURL, uploadType)
 		return
 	}
 
 	// 文件未被引用,可以安全标记为未使用
-	_ = s.fileService.MarkAsUnused(fileURL)
+	_ = s.fileService.MarkAsUnused(fileURL, uploadType)
 }

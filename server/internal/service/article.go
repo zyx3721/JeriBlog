@@ -487,7 +487,7 @@ func (s *ArticleService) Create(ctx context.Context, req *dto.CreateArticleReque
 
 	// 标记封面为使用中
 	if req.Cover != "" && s.fileService != nil {
-		_ = s.fileService.MarkAsUsed(req.Cover)
+		_ = s.fileService.MarkAsUsed(req.Cover, "文章封面")
 	}
 
 	// 标记内容中的图片为使用中
@@ -590,10 +590,10 @@ func (s *ArticleService) Update(ctx context.Context, id uint, req *dto.UpdateArt
 	// 处理封面变化
 	if s.fileService != nil && oldCover != req.Cover {
 		if oldCover != "" {
-			_ = s.fileService.MarkAsUnused(oldCover)
+			_ = s.fileService.MarkAsUnused(oldCover, "文章封面")
 		}
 		if req.Cover != "" {
-			_ = s.fileService.MarkAsUsed(req.Cover)
+			_ = s.fileService.MarkAsUsed(req.Cover, "文章封面")
 		}
 	}
 
@@ -623,7 +623,7 @@ func (s *ArticleService) Delete(ctx context.Context, id uint) error {
 
 	// 标记封面为未使用
 	if s.fileService != nil && article.Cover != "" {
-		_ = s.fileService.MarkAsUnused(article.Cover)
+		_ = s.fileService.MarkAsUnused(article.Cover, "文章封面")
 	}
 
 	// 标记内容中的图片为未使用
@@ -674,7 +674,7 @@ func (s *ArticleService) markContentImagesAsUsed(content string) {
 		return
 	}
 	for _, url := range extractContentImages(content) {
-		_ = s.fileService.MarkAsUsed(url)
+		_ = s.fileService.MarkAsUsed(url, "文章配图")
 	}
 }
 
@@ -684,7 +684,7 @@ func (s *ArticleService) markContentImagesAsUnused(content string) {
 		return
 	}
 	for _, url := range extractContentImages(content) {
-		_ = s.fileService.MarkAsUnused(url)
+		_ = s.fileService.MarkAsUnused(url, "文章配图")
 	}
 }
 
@@ -704,14 +704,14 @@ func (s *ArticleService) updateContentFileStatus(oldContent, newContent string) 
 		newImages[url] = true
 		// 新增的图片标记为使用中
 		if !oldImages[url] {
-			_ = s.fileService.MarkAsUsed(url)
+			_ = s.fileService.MarkAsUsed(url, "文章配图")
 		}
 	}
 
 	// 移除的图片标记为未使用
 	for url := range oldImages {
 		if !newImages[url] {
-			_ = s.fileService.MarkAsUnused(url)
+			_ = s.fileService.MarkAsUnused(url, "文章配图")
 		}
 	}
 }
@@ -1231,7 +1231,7 @@ func (s *ArticleService) downloadAndUploadSingleImage(ctx context.Context, imgUR
 	}
 
 	// 标记文件为已使用
-	if err := s.fileService.MarkAsUsed(uploadedURL); err != nil {
+	if err := s.fileService.MarkAsUsed(uploadedURL, "文章配图"); err != nil {
 		logger.Warn("标记文件状态失败: %v", err)
 	}
 

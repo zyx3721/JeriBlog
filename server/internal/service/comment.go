@@ -303,13 +303,17 @@ func (s *CommentService) Delete(ctx context.Context, id uint) error {
 
 // createComment 创建评论的通用逻辑
 func (s *CommentService) createComment(ctx context.Context, req *dto.CreateCommentRequest, userID uint) (*dto.CommentResponse, error) {
+	var targetID *uint
+
 	// 验证目标类型
 	switch req.TargetType {
 	case "article":
-		// 文章评论：验证 slug 是否存在
-		if _, err := s.articleRepo.GetBySlug(req.TargetKey); err != nil {
+		// 文章评论：验证 slug 是否存在，并获取文章 ID
+		article, err := s.articleRepo.GetBySlug(req.TargetKey)
+		if err != nil {
 			return nil, errors.New("文章不存在")
 		}
+		targetID = &article.ID // 存储文章 ID
 	case "page":
 		// 页面评论：验证页面key是否在配置中
 		if _, ok := pageTitle[req.TargetKey]; !ok {
@@ -327,6 +331,7 @@ func (s *CommentService) createComment(ctx context.Context, req *dto.CreateComme
 		Content:    req.Content,
 		TargetType: req.TargetType,
 		TargetKey:  req.TargetKey,
+		TargetID:   targetID, // 新增：存储文章 ID
 		UserID:     userID,
 		ParentID:   req.ParentID,
 		Status:     1, // 默认显示
@@ -519,7 +524,7 @@ func (s *CommentService) toDTO(comment *model.Comment) *dto.CommentListResponse 
 	// 填充 Target 信息
 	resp.Target.Type = comment.TargetType
 	resp.Target.Key = comment.TargetKey
-	resp.Target.Title = s.getTargetTitle(comment.TargetType, comment.TargetKey)
+	resp.Target.Title = s.getTargetTitle(comment.TargetType, comment.TargetKey, comment.TargetID)
 
 	// 填充用户信息
 	resp.User.ID = comment.User.ID
@@ -532,10 +537,18 @@ func (s *CommentService) toDTO(comment *model.Comment) *dto.CommentListResponse 
 }
 
 // getTargetTitle 获取目标标题（后台使用）
-func (s *CommentService) getTargetTitle(targetType, targetKey string) string {
+func (s *CommentService) getTargetTitle(targetType, targetKey string, targetID *uint) string {
 	switch targetType {
 	case "article":
-		// 文章：通过 slug 查询数据库获取标题
+		// 文章：优先通过 ID 查询（解决 slug 变更问题），如果 ID 为空则通过 slug 查询（兼容旧数据）
+		if targetID != nil && *targetID > 0 {
+			article, err := s.articleRepo.Get(*targetID)
+			if err == nil {
+				return article.Title
+			}
+		}
+
+		// 兼容旧数据：通过 slug 查询
 		article, err := s.articleRepo.GetBySlug(targetKey)
 		if err != nil {
 			return "文章已删除"
@@ -569,7 +582,7 @@ func (s *CommentService) sendNotifications(ctx context.Context, comment *model.C
 	}
 
 	// 获取目标标题
-	targetTitle := s.getTargetTitle(comment.TargetType, comment.TargetKey)
+	targetTitle := s.getTargetTitle(comment.TargetType, comment.TargetKey, comment.TargetID)
 
 	// 1. 如果是回复评论，通知被回复者
 	if comment.ReplyTo != nil {
@@ -595,7 +608,7 @@ func (s *CommentService) markImagesAsUsed(content string) {
 			imageURL := match[1]
 			// 异步标记，避免阻塞评论创建
 			go func(url string) {
-				_ = s.fileService.MarkAsUsed(url)
+				_ = s.fileService.MarkAsUsed(url, "评论贴图")
 			}(imageURL)
 		}
 	}
@@ -1058,7 +1071,7 @@ func (s *CommentService) markImagesAsUnused(content string) {
 			imageURL := match[1]
 			// 异步标记为未使用，避免阻塞删除操作
 			go func(url string) {
-				_ = s.fileService.MarkAsUnused(url)
+				_ = s.fileService.MarkAsUnused(url, "评论贴图")
 			}(imageURL)
 		}
 	}

@@ -76,7 +76,7 @@ func (s *MenuService) Create(req *dto.MenuCreateRequest) (*dto.MenuResponse, err
 
 	// 标记图标为使用中
 	if s.fileService != nil && req.Icon != "" {
-		_ = s.fileService.MarkAsUsed(req.Icon)
+		_ = s.fileService.MarkAsUsed(req.Icon, "菜单图标")
 	}
 
 	return s.toMenuResponse(menu), nil
@@ -151,10 +151,10 @@ func (s *MenuService) Update(id uint, req *dto.MenuUpdateRequest) (*dto.MenuResp
 	// 处理图标变化
 	if s.fileService != nil && oldIcon != req.Icon {
 		if oldIcon != "" {
-			_ = s.fileService.MarkAsUnused(oldIcon)
+			_ = s.fileService.MarkAsUnused(oldIcon, "菜单图标")
 		}
 		if req.Icon != "" {
-			_ = s.fileService.MarkAsUsed(req.Icon)
+			_ = s.fileService.MarkAsUsed(req.Icon, "菜单图标")
 		}
 	}
 
@@ -203,7 +203,7 @@ func (s *MenuService) Delete(id uint, req *dto.MenuDeleteRequest) error {
 			if s.fileService != nil {
 				for _, child := range children {
 					if child.Icon != "" {
-						_ = s.fileService.MarkAsUnused(child.Icon)
+						_ = s.fileService.MarkAsUnused(child.Icon, "菜单图标")
 					}
 				}
 			}
@@ -226,7 +226,7 @@ func (s *MenuService) Delete(id uint, req *dto.MenuDeleteRequest) error {
 
 	// 标记父菜单的图标为未使用
 	if s.fileService != nil && menu.Icon != "" {
-		_ = s.fileService.MarkAsUnused(menu.Icon)
+		_ = s.fileService.MarkAsUnused(menu.Icon, "菜单图标")
 	}
 
 	return nil

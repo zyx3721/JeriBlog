@@ -86,7 +86,7 @@ func (s *FeedbackService) Submit(ctx context.Context, req *dto.SubmitFeedbackReq
 // List 获取反馈列表
 func (s *FeedbackService) List(ctx context.Context, req *dto.FeedbackQueryRequest) ([]dto.FeedbackResponse, int64, error) {
 	offset := (req.Page - 1) * req.PageSize
-	feedbacks, total, err := s.repo.List(ctx, offset, req.PageSize, req.Keyword, req.Status)
+	feedbacks, total, err := s.repo.List(ctx, offset, req.PageSize, req.Keyword, req.ReportType, req.Status)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -210,7 +210,7 @@ func (s *FeedbackService) Delete(ctx context.Context, id uint) error {
 		var content dto.FeedbackContent
 		if err := json.Unmarshal([]byte(feedback.FormContent), &content); err == nil {
 			for _, fileUrl := range content.AttachmentFiles {
-				_ = s.fileService.MarkAsUnused(fileUrl)
+				_ = s.fileService.MarkAsUnused(fileUrl, "反馈投诉")
 			}
 		}
 	}
@@ -233,7 +233,7 @@ func (s *FeedbackService) markFilesAsUsed(_ context.Context, req *dto.SubmitFeed
 		return
 	}
 	for _, fileUrl := range req.AttachmentFiles {
-		_ = s.fileService.MarkAsUsed(fileUrl)
+		_ = s.fileService.MarkAsUsed(fileUrl, "反馈投诉")
 	}
 }
 

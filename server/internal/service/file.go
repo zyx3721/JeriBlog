@@ -150,8 +150,8 @@ func (s *FileService) UploadFromReader(reader io.Reader, originalName, fileType 
 	return file.FileURL, nil
 }
 
-// MarkAsUsed 增加文件引用计数
-func (s *FileService) MarkAsUsed(fileUrl string) error {
+// MarkAsUsed 增加文件引用计数并添加用途
+func (s *FileService) MarkAsUsed(fileUrl string, usageType string) error {
 	if fileUrl == "" {
 		return nil
 	}
@@ -170,12 +170,19 @@ func (s *FileService) MarkAsUsed(fileUrl string) error {
 		return err
 	}
 
+	// 添加用途到 upload_type 字段
+	if usageType != "" {
+		if err := s.fileRepo.AddUploadType(fileUrl, usageType); err != nil {
+			return err
+		}
+	}
+
 	// 根据引用计数更新状态
 	return s.fileRepo.UpdateStatusByReferenceCount(fileUrl)
 }
 
-// MarkAsUnused 减少文件引用计数
-func (s *FileService) MarkAsUnused(fileUrl string) error {
+// MarkAsUnused 减少文件引用计数并移除用途
+func (s *FileService) MarkAsUnused(fileUrl string, usageType string) error {
 	if fileUrl == "" {
 		return nil
 	}
@@ -192,6 +199,13 @@ func (s *FileService) MarkAsUnused(fileUrl string) error {
 	// 减少引用计数
 	if err := s.fileRepo.DecrementReferenceCount(fileUrl); err != nil {
 		return err
+	}
+
+	// 从 upload_type 字段移除用途
+	if usageType != "" {
+		if err := s.fileRepo.RemoveUploadType(fileUrl, usageType); err != nil {
+			return err
+		}
 	}
 
 	// 根据引用计数更新状态
@@ -408,7 +422,7 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 				ID:    user.ID,
 				Title: user.Nickname,
 				Field: "用户头像",
-				URL:   fmt.Sprintf("/user/%d", user.ID),
+				URL:   "", // 前端通过 Title 搜索，不需要 URL
 			})
 		}
 	}
@@ -432,15 +446,10 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 	moments, err := s.usageChecker.momentRepo.FindByContentURL(file.FileURL)
 	if err == nil {
 		for _, moment := range moments {
-			// 截取动态内容前50个字符作为标题
-			title := moment.Content
-			if len(title) > 50 {
-				title = title[:50] + "..."
-			}
 			references = append(references, dto.FileReferenceResponse{
 				Type:  "moment",
 				ID:    moment.ID,
-				Title: title,
+				Title: "动态", // 只显示 "动态" 文本，不显示内容
 				Field: "动态配图",
 				URL:   "/moment",
 			})
@@ -451,17 +460,51 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 	comments, err := s.usageChecker.commentRepo.FindByContentURL(file.FileURL)
 	if err == nil {
 		for _, comment := range comments {
-			// 截取评论内容前50个字符作为标题
-			title := comment.Content
-			if len(title) > 50 {
-				title = title[:50] + "..."
+			// 根据评论目标类型显示标题
+			var title string
+			var url string
+
+			switch comment.TargetType {
+			case "article":
+				// 优先通过 TargetID 查询文章标题
+				if comment.TargetID != nil && *comment.TargetID > 0 {
+					article, err := s.usageChecker.articleRepo.Get(*comment.TargetID)
+					if err == nil {
+						title = article.Title
+						url = fmt.Sprintf("/posts/%s/", article.Slug)
+					}
+				}
+				// 兼容旧数据：通过 TargetKey（slug）查询
+				if title == "" {
+					article, err := s.usageChecker.articleRepo.GetBySlug(comment.TargetKey)
+					if err == nil {
+						title = article.Title
+						url = fmt.Sprintf("/posts/%s/", article.Slug)
+					} else {
+						title = "文章已删除"
+						url = ""
+					}
+				}
+			case "page":
+				title = "页面评论"
+				url = ""
+			case "moment":
+				title = "动态评论"
+				url = "/moment"
+			case "guestbook":
+				title = "留言评论"
+				url = ""
+			default:
+				title = "未知评论"
+				url = ""
 			}
+
 			references = append(references, dto.FileReferenceResponse{
 				Type:  "comment",
 				ID:    comment.ID,
 				Title: title,
 				Field: "评论贴图",
-				URL:   fmt.Sprintf("/posts/%s/", comment.TargetKey),
+				URL:   url,
 			})
 		}
 	}
@@ -489,7 +532,7 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 				ID:    feedback.ID,
 				Title: feedback.TicketNo,
 				Field: "反馈投诉",
-				URL:   fmt.Sprintf("/feedback?ticket_no=%s", feedback.TicketNo),
+				URL:   "", // 前端通过 Title（工单号）搜索，不需要 URL
 			})
 		}
 	}

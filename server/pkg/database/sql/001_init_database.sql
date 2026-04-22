@@ -203,7 +203,7 @@ CREATE TABLE IF NOT EXISTS files (
     file_path VARCHAR(500) NOT NULL,
     file_size BIGINT DEFAULT 0,
     file_type VARCHAR(100) DEFAULT '',
-    upload_type VARCHAR(20) DEFAULT '',
+    upload_type VARCHAR(500) DEFAULT '',
     storage_type VARCHAR(20) DEFAULT 'local',
     user_id BIGINT,
     file_url VARCHAR(500) DEFAULT '',

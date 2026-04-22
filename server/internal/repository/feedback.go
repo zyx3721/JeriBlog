@@ -41,19 +41,24 @@ func (r *FeedbackRepository) Get(ctx context.Context, id uint) (*model.Feedback,
 }
 
 // List 获取反馈列表（后台）
-func (r *FeedbackRepository) List(ctx context.Context, offset, limit int, keyword string, status *string) ([]model.Feedback, int64, error) {
+func (r *FeedbackRepository) List(ctx context.Context, offset, limit int, keyword string, reportType *string, status *string) ([]model.Feedback, int64, error) {
 	var feedbacks []model.Feedback
 	var total int64
 
 	query := r.db.WithContext(ctx).Model(&model.Feedback{})
 
-	// 关键词搜索
+	// 关键词搜索（包含工单号、投诉地址、联系方式）
 	if keyword != "" {
-		query = query.Where("form_content LIKE ? OR report_url LIKE ? OR email LIKE ?", "%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%")
+		query = query.Where("ticket_no LIKE ? OR report_url LIKE ? OR email LIKE ?", "%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%")
+	}
+
+	// 类型筛选
+	if reportType != nil && *reportType != "" {
+		query = query.Where("report_type = ?", *reportType)
 	}
 
 	// 状态筛选
-	if status != nil {
+	if status != nil && *status != "" {
 		query = query.Where("status = ?", *status)
 	}
 

@@ -19,6 +19,7 @@ type Comment struct {
 	Content    string `gorm:"type:text;not null" json:"content"`
 	TargetType string `gorm:"type:varchar(20);not null;index:idx_target" json:"target_type"` // article/page/moment
 	TargetKey  string `gorm:"type:varchar(50);not null;index:idx_target" json:"target_key"`  // 文章slug或页面key
+	TargetID   *uint  `gorm:"index" json:"target_id"`                                         // 文章ID（新增字段，用于解决slug变更问题）
 	UserID     uint   `gorm:"not null" json:"user_id"`
 	ParentID   *uint  `json:"parent_id"`                       // 直接父评论ID
 	RootID     *uint  `gorm:"column:root_id" json:"root_id"`   // 根评论ID（用于扁平化）

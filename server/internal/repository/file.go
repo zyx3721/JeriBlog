@@ -13,6 +13,8 @@ package repository
 
 import (
 	"jeri_blog/internal/model"
+	"sort"
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
@@ -248,5 +250,83 @@ func (r *FileRepository) GetReferenceCount(url string) (int, error) {
 		return 0, err
 	}
 	return file.ReferenceCount, nil
+}
+
+// AddUploadType 添加用途到 upload_type 字段（逗号分隔，去重）
+func (r *FileRepository) AddUploadType(url string, usageType string) error {
+	if url == "" || usageType == "" {
+		return nil
+	}
+
+	var file model.File
+	if err := r.db.Where("file_url = ?", url).First(&file).Error; err != nil {
+		return err
+	}
+
+	// 解析现有用途
+	existingTypes := make(map[string]bool)
+	if file.UploadType != "" {
+		for _, t := range strings.Split(file.UploadType, ",") {
+			trimmed := strings.TrimSpace(t)
+			if trimmed != "" {
+				existingTypes[trimmed] = true
+			}
+		}
+	}
+
+	// 添加新用途（去重）
+	if !existingTypes[usageType] {
+		existingTypes[usageType] = true
+	}
+
+	// 重新组合用途字符串
+	var types []string
+	for t := range existingTypes {
+		types = append(types, t)
+	}
+	sort.Strings(types) // 排序保证一致性
+
+	return r.db.Model(&model.File{}).
+		Where("file_url = ?", url).
+		Update("upload_type", strings.Join(types, ",")).
+		Error
+}
+
+// RemoveUploadType 从 upload_type 字段移除指定用途
+func (r *FileRepository) RemoveUploadType(url string, usageType string) error {
+	if url == "" || usageType == "" {
+		return nil
+	}
+
+	var file model.File
+	if err := r.db.Where("file_url = ?", url).First(&file).Error; err != nil {
+		return err
+	}
+
+	// 解析现有用途
+	existingTypes := make(map[string]bool)
+	if file.UploadType != "" {
+		for _, t := range strings.Split(file.UploadType, ",") {
+			trimmed := strings.TrimSpace(t)
+			if trimmed != "" {
+				existingTypes[trimmed] = true
+			}
+		}
+	}
+
+	// 移除指定用途
+	delete(existingTypes, usageType)
+
+	// 重新组合用途字符串
+	var types []string
+	for t := range existingTypes {
+		types = append(types, t)
+	}
+	sort.Strings(types) // 排序保证一致性
+
+	return r.db.Model(&model.File{}).
+		Where("file_url = ?", url).
+		Update("upload_type", strings.Join(types, ",")).
+		Error
 }
 

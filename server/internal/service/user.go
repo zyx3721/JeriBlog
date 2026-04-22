@@ -142,7 +142,7 @@ func (s *UserService) Register(req *dto.RegisterRequest, host string) (*dto.Logi
 		if err == nil && avatarURL != "" {
 			_ = s.repo.UpdateAvatar(user.ID, avatarURL)
 			if s.fileService != nil {
-				_ = s.fileService.MarkAsUsed(avatarURL)
+				_ = s.fileService.MarkAsUsed(avatarURL, "用户头像")
 			}
 		}
 	}()
@@ -182,7 +182,7 @@ func (s *UserService) upgradeGuest(guestUser *model.User, req *dto.RegisterReque
 			if err == nil && avatarURL != "" {
 				_ = s.repo.UpdateAvatar(guestUser.ID, avatarURL)
 				if s.fileService != nil {
-					_ = s.fileService.MarkAsUsed(avatarURL)
+					_ = s.fileService.MarkAsUsed(avatarURL, "用户头像")
 				}
 			}
 		}()
@@ -291,7 +291,7 @@ func (s *UserService) downloadSocialAvatar(userID uint, email, avatarURL, host s
 
 	if err == nil && savedURL != "" {
 		_ = s.repo.UpdateAvatar(userID, savedURL)
-		_ = s.fileService.MarkAsUsed(savedURL)
+		_ = s.fileService.MarkAsUsed(savedURL, "用户头像")
 	}
 }
 
@@ -474,10 +474,10 @@ func (s *UserService) UpdateForWeb(id uint, req *dto.UpdateUserRequest) error {
 	// 处理头像变化
 	if s.fileService != nil && oldAvatar != user.Avatar {
 		if oldAvatar != "" {
-			_ = s.fileService.MarkAsUnused(oldAvatar)
+			_ = s.fileService.MarkAsUnused(oldAvatar, "用户头像")
 		}
 		if user.Avatar != "" {
-			_ = s.fileService.MarkAsUsed(user.Avatar)
+			_ = s.fileService.MarkAsUsed(user.Avatar, "用户头像")
 		}
 	}
 
@@ -556,7 +556,7 @@ func (s *UserService) DeactivateAccount(userID uint, password string) error {
 
 	// 标记头像为未使用
 	if s.fileService != nil && user.Avatar != "" {
-		_ = s.fileService.MarkAsUnused(user.Avatar)
+		_ = s.fileService.MarkAsUnused(user.Avatar, "用户头像")
 	}
 
 	// 删除用户账号
@@ -642,14 +642,14 @@ func (s *UserService) Create(req *dto.AdminCreateUserRequest, host string) error
 			if err == nil && avatarURL != "" {
 				_ = s.repo.UpdateAvatar(user.ID, avatarURL)
 				if s.fileService != nil {
-					_ = s.fileService.MarkAsUsed(avatarURL)
+					_ = s.fileService.MarkAsUsed(avatarURL, "用户头像")
 				}
 			}
 		}()
 	} else if user.Avatar != "" {
 		// 标记手动设置的头像为使用中
 		if s.fileService != nil {
-			_ = s.fileService.MarkAsUsed(user.Avatar)
+			_ = s.fileService.MarkAsUsed(user.Avatar, "用户头像")
 		}
 	}
 
@@ -711,10 +711,10 @@ func (s *UserService) Update(id uint, req *dto.AdminUpdateUserRequest) error {
 	// 处理头像变化
 	if s.fileService != nil && oldAvatar != user.Avatar {
 		if oldAvatar != "" {
-			_ = s.fileService.MarkAsUnused(oldAvatar)
+			_ = s.fileService.MarkAsUnused(oldAvatar, "用户头像")
 		}
 		if user.Avatar != "" {
-			_ = s.fileService.MarkAsUsed(user.Avatar)
+			_ = s.fileService.MarkAsUsed(user.Avatar, "用户头像")
 		}
 	}
 
@@ -735,7 +735,7 @@ func (s *UserService) Delete(id uint) error {
 
 	// 标记头像为未使用
 	if s.fileService != nil && user.Avatar != "" {
-		_ = s.fileService.MarkAsUnused(user.Avatar)
+		_ = s.fileService.MarkAsUnused(user.Avatar, "用户头像")
 	}
 
 	return s.repo.Delete(id)
@@ -907,7 +907,7 @@ func (s *UserService) mergeAccounts(primary, secondary *model.User) error {
 	if primary.Avatar == "" && secondary.Avatar != "" {
 		primary.Avatar = secondary.Avatar
 		if s.fileService != nil {
-			_ = s.fileService.MarkAsUsed(primary.Avatar)
+			_ = s.fileService.MarkAsUsed(primary.Avatar, "用户头像")
 		}
 	}
 
