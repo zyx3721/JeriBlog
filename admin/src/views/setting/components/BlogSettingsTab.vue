@@ -45,7 +45,7 @@
         <div class="image-upload-wrapper">
           <ImageUploader ref="faviconUploaderRef" v-model="form.favicon" upload-type="博客图标" width="120px"
             height="120px" />
-          <el-button type="success" @click="openFilePicker('favicon')" class="select-file-btn">
+          <el-button class="select-file-btn" @click="openFilePicker('favicon')">
             <i class="ri-folder-image-line"></i>
             选择文件
           </el-button>
@@ -56,7 +56,7 @@
         <div class="image-upload-wrapper">
           <ImageUploader ref="backgroundUploaderRef" v-model="form.background_image" upload-type="博客背景" width="213px"
             height="120px" />
-          <el-button type="success" @click="openFilePicker('background_image')" class="select-file-btn">
+          <el-button class="select-file-btn" @click="openFilePicker('background_image')">
             <i class="ri-folder-image-line"></i>
             选择文件
           </el-button>
@@ -67,7 +67,7 @@
         <div class="image-upload-wrapper">
           <ImageUploader ref="screenshotUploaderRef" v-model="form.screenshot" upload-type="博客截图" width="213px"
             height="120px" />
-          <el-button type="success" @click="openFilePicker('screenshot')" class="select-file-btn">
+          <el-button class="select-file-btn" @click="openFilePicker('screenshot')">
             <i class="ri-folder-image-line"></i>
             选择文件
           </el-button>
@@ -446,11 +446,11 @@ defineExpose({
 
   .image-upload-wrapper {
     display: flex;
-    align-items: flex-start;
-    gap: 12px;
+    flex-direction: column;
+    gap: 8px;
 
     .select-file-btn {
-      margin-top: 0;
+      width: 100%;
 
       i {
         margin-right: 4px;
