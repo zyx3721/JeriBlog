@@ -97,6 +97,13 @@ func (r *MomentRepository) ExistsByContentURL(url string) (bool, error) {
 	return count > 0, err
 }
 
+// FindByContentURL 查找内容引用该文件的动态列表
+func (r *MomentRepository) FindByContentURL(url string) ([]model.Moment, error) {
+	var moments []model.Moment
+	err := r.db.Where("content LIKE ?", "%"+url+"%").Find(&moments).Error
+	return moments, err
+}
+
 // Delete 删除动态
 func (r *MomentRepository) Delete(ctx context.Context, id uint) error {
 	return r.db.WithContext(ctx).Delete(&model.Moment{}, id).Error
