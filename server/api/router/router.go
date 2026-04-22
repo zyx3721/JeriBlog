@@ -89,7 +89,7 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 	friendService := service.NewFriendService(friendRepo, rssFeedRepo, fileService, notificationService)
 	momentService := service.NewMomentService(momentRepo, fileService)
 	menuService := service.NewMenuService(menuRepo, fileService)
-	feedbackService := service.NewFeedbackService(feedbackRepo, notificationService, fileService)
+	feedbackService := service.NewFeedbackService(feedbackRepo, notificationService, fileService, emailClient)
 	subscriberService := service.NewSubscriberService(subscriberRepo, emailClient, conf)
 	rssFeedService := service.NewRssFeedService(rssFeedRepo, notificationService)
 	systemService := service.NewSystemService(db.DB, uploadManager, emailClient, feishuClient, notificationService)
@@ -427,6 +427,7 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 			notificationManagement.PUT("/:id/read", notificationController.MarkAsRead)       // 标记已读
 			notificationManagement.PUT("/read-all", notificationController.MarkAllAsRead)    // 全部标记已读
 			notificationManagement.DELETE("/clear-all", notificationController.ClearAll)     // 清空所有通知
+			notificationManagement.DELETE("/clear-read", notificationController.ClearRead)   // 清空已读通知
 		}
 
 		// ==================== 配置管理 ====================
