@@ -29,14 +29,20 @@ type FeedbackService struct {
 	repo                *repository.FeedbackRepository
 	notificationService *NotificationService
 	fileService         *FileService
+	emailClient         interface {
+		SendEmail(to, subject, htmlBody, fromName string) error
+	}
 }
 
 // NewFeedbackService 创建反馈服务实例
-func NewFeedbackService(repo *repository.FeedbackRepository, notificationService *NotificationService, fileService *FileService) *FeedbackService {
+func NewFeedbackService(repo *repository.FeedbackRepository, notificationService *NotificationService, fileService *FileService, emailClient interface {
+	SendEmail(to, subject, htmlBody, fromName string) error
+}) *FeedbackService {
 	return &FeedbackService{
 		repo:                repo,
 		notificationService: notificationService,
 		fileService:         fileService,
+		emailClient:         emailClient,
 	}
 }
 
@@ -118,6 +124,9 @@ func (s *FeedbackService) Update(ctx context.Context, id uint, req *dto.UpdateFe
 		return err
 	}
 
+	// 记录是否是首次回复
+	isFirstReply := feedback.AdminReply == "" && req.AdminReply != ""
+
 	feedback.Status = req.Status
 
 	// 如果有管理员回复内容，且之前没有回复时间，则设置回复时间
@@ -127,7 +136,60 @@ func (s *FeedbackService) Update(ctx context.Context, id uint, req *dto.UpdateFe
 	}
 	feedback.AdminReply = req.AdminReply
 
-	return s.repo.Update(ctx, feedback)
+	if err := s.repo.Update(ctx, feedback); err != nil {
+		return err
+	}
+
+	// 如果是首次回复且用户提供了邮箱，发送邮件通知
+	if isFirstReply && feedback.Email != "" && s.emailClient != nil {
+		go s.sendReplyEmail(context.Background(), feedback)
+	}
+
+	return nil
+}
+
+// sendReplyEmail 发送回复邮件给用户
+func (s *FeedbackService) sendReplyEmail(ctx context.Context, feedback *model.Feedback) {
+	if s.emailClient == nil || feedback.Email == "" {
+		return
+	}
+
+	subject := fmt.Sprintf("您的反馈工单 %s 已回复", feedback.TicketNo)
+	htmlBody := fmt.Sprintf(`
+		<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+			<h2 style="color: #333;">反馈回复通知</h2>
+			<p>您好，</p>
+			<p>您提交的反馈工单已收到管理员回复：</p>
+			<div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
+				<p><strong>工单号：</strong>%s</p>
+				<p><strong>投诉地址：</strong><a href="%s" target="_blank">%s</a></p>
+				<p><strong>状态：</strong>%s</p>
+			</div>
+			<div style="background-color: #e8f4fd; padding: 15px; border-radius: 5px; margin: 20px 0;">
+				<p><strong>管理员回复：</strong></p>
+				<p style="white-space: pre-wrap;">%s</p>
+			</div>
+			<p style="color: #666; font-size: 12px;">此邮件由系统自动发送，请勿直接回复。</p>
+		</div>
+	`, feedback.TicketNo, feedback.ReportUrl, feedback.ReportUrl, s.getStatusText(feedback.Status), feedback.AdminReply)
+
+	if err := s.emailClient.SendEmail(feedback.Email, subject, htmlBody, ""); err != nil {
+		// 记录错误但不影响主流程
+		fmt.Printf("发送反馈回复邮件失败: to=%s, err=%v\n", feedback.Email, err)
+	}
+}
+
+// getStatusText 获取状态文本
+func (s *FeedbackService) getStatusText(status string) string {
+	statusMap := map[string]string{
+		"pending":  "待处理",
+		"resolved": "已解决",
+		"closed":   "已关闭",
+	}
+	if text, ok := statusMap[status]; ok {
+		return text
+	}
+	return status
 }
 
 // Delete 删除反馈
