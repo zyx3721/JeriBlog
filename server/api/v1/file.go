@@ -206,6 +206,41 @@ func (ctrl *FileController) Get(c *gin.Context) {
 	response.Success(c, fileInfo)
 }
 
+// GetReferences 获取文件引用详情
+//
+//	@Summary		文件引用详情
+//	@Description	获取文件被哪些地方引用
+//	@Tags			文件管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id	path		int	true	"文件 ID"
+//	@Success		200	{object}	response.Response{data=[]dto.FileReferenceResponse}
+//	@Failure		400	{object}	response.Response
+//	@Failure		401	{object}	response.Response
+//	@Failure		403	{object}	response.Response
+//	@Failure		404	{object}	response.Response
+//	@Router			/admin/files/{id}/references [get]
+func (ctrl *FileController) GetReferences(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		response.Error(c, errcode.InvalidParams.WithDetails(err.Error()))
+		return
+	}
+
+	references, err := ctrl.fileService.GetReferences(uint(id))
+	if err != nil {
+		if strings.Contains(err.Error(), "文件不存在") {
+			response.Error(c, errcode.FileNotFound)
+			return
+		}
+		response.Error(c, errcode.ServerError.WithDetails(err.Error()))
+		return
+	}
+
+	response.Success(c, references)
+}
+
 // Delete 删除文件
 //
 //	@Summary		删除文件
