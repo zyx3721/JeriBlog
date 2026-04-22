@@ -423,9 +423,10 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 		// ==================== 通知管理 ====================
 		notificationManagement := adminAPI.Group("/notifications")
 		{
-			notificationManagement.GET("", notificationController.List)                   // 获取通知列表（含未读数量）
-			notificationManagement.PUT("/:id/read", notificationController.MarkAsRead)    // 标记已读
-			notificationManagement.PUT("/read-all", notificationController.MarkAllAsRead) // 全部标记已读
+			notificationManagement.GET("", notificationController.List)                      // 获取通知列表（含未读数量）
+			notificationManagement.PUT("/:id/read", notificationController.MarkAsRead)       // 标记已读
+			notificationManagement.PUT("/read-all", notificationController.MarkAllAsRead)    // 全部标记已读
+			notificationManagement.DELETE("/clear-all", notificationController.ClearAll)     // 清空所有通知
 		}
 
 		// ==================== 配置管理 ====================
