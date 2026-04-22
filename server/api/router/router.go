@@ -367,10 +367,11 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 		// ==================== 文件管理 ====================
 		fileManagement := adminAPI.Group("/files")
 		{
-			fileManagement.POST("", fileController.Upload)       // 上传文件
-			fileManagement.GET("", fileController.List)          // 获取文件列表
-			fileManagement.GET("/:id", fileController.Get)       // 获取文件详情
-			fileManagement.DELETE("/:id", fileController.Delete) // 删除文件
+			fileManagement.POST("", fileController.Upload)                 // 上传文件
+			fileManagement.GET("", fileController.List)                    // 获取文件列表
+			fileManagement.GET("/:id", fileController.Get)                 // 获取文件详情
+			fileManagement.GET("/:id/references", fileController.GetReferences) // 获取文件引用详情
+			fileManagement.DELETE("/:id", fileController.Delete)           // 删除文件
 		}
 
 		// ==================== 统计管理 ====================
