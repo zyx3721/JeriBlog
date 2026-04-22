@@ -226,6 +226,9 @@ func (s *CommentService) DeleteForWeb(ctx context.Context, id uint, userID uint)
 		return errors.New("无权删除此评论")
 	}
 
+	// 标记评论中的图片为未使用
+	s.markImagesAsUnused(comment.Content)
+
 	// 只删除评论本身，子评论保留
 	return s.repo.Delete(ctx, id)
 }
@@ -281,12 +284,16 @@ func (s *CommentService) ToggleStatus(ctx context.Context, id uint) error {
 
 // Delete 硬删除评论
 func (s *CommentService) Delete(ctx context.Context, id uint) error {
-	if _, err := s.repo.Get(ctx, id); err != nil {
+	comment, err := s.repo.Get(ctx, id)
+	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return errors.New("评论不存在")
 		}
 		return err
 	}
+
+	// 标记评论中的图片为未使用
+	s.markImagesAsUnused(comment.Content)
 
 	// 硬删除评论本身，子评论保留
 	return s.repo.HardDelete(ctx, id)
@@ -1034,4 +1041,25 @@ func (s *CommentService) ReplyCommentFromFeishu(ctx context.Context, commentID u
 
 	_, err = s.Create(ctx, req, user.ID)
 	return err
+}
+
+// markImagesAsUnused 标记评论中的图片为未使用
+func (s *CommentService) markImagesAsUnused(content string) {
+	if s.fileService == nil || content == "" {
+		return
+	}
+
+	// 提取 Markdown 图片链接
+	re := regexp.MustCompile(`!\[.*?\]\((.*?)\)`)
+	matches := re.FindAllStringSubmatch(content, -1)
+
+	for _, match := range matches {
+		if len(match) > 1 {
+			imageURL := match[1]
+			// 异步标记为未使用，避免阻塞删除操作
+			go func(url string) {
+				_ = s.fileService.MarkAsUnused(url)
+			}(imageURL)
+		}
+	}
 }

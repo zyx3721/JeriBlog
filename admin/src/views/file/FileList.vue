@@ -100,7 +100,6 @@
       <template #default="{ row }">
         <el-link
           type="primary"
-          :underline="false"
           @click="handleShowReferences(row)"
           :disabled="!row.reference_count || row.reference_count === 0"
         >
@@ -153,7 +152,6 @@
                   :href="ref.url"
                   target="_blank"
                   type="primary"
-                  :underline="false"
                   class="reference-link"
                 >
                   <i class="ri-external-link-line"></i>
