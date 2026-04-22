@@ -145,10 +145,11 @@ defineExpose({
   .image-upload-wrapper {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     gap: 8px;
 
     .select-file-btn {
-      width: 100%;
+      align-self: stretch;
 
       i {
         margin-right: 4px;
