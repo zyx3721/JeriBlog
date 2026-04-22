@@ -223,6 +223,11 @@ func (s *NotificationService) MarkAllAsRead(ctx context.Context, userID uint) er
 	return s.repo.MarkAllAsRead(ctx, userID)
 }
 
+// ClearAll 清空所有通知
+func (s *NotificationService) ClearAll(ctx context.Context, userID uint) error {
+	return s.repo.ClearAll(ctx, userID)
+}
+
 // ============ 内部方法 ============
 
 // send 发送通知（站内+邮件）
