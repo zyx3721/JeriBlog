@@ -202,6 +202,15 @@ func (r *CommentRepository) ExistsByContentURL(url string) (bool, error) {
 	return count > 0, err
 }
 
+// FindByContentURL 查找内容引用该文件的评论列表
+func (r *CommentRepository) FindByContentURL(url string) ([]model.Comment, error) {
+	var comments []model.Comment
+	err := r.db.Unscoped().
+		Where("status = ? AND content LIKE ?", 1, "%"+url+"%").
+		Find(&comments).Error
+	return comments, err
+}
+
 // ============ 基础CRUD ============
 
 // Create 创建评论
