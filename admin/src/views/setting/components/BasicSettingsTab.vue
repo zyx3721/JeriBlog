@@ -30,7 +30,7 @@
         <div class="image-upload-wrapper">
           <ImageUploader ref="authorAvatarUploaderRef" v-model="form.author_avatar" upload-type="站长头像" width="120px"
             height="120px" />
-          <el-button type="success" @click="openFilePicker('author_avatar')" class="select-file-btn">
+          <el-button class="select-file-btn" @click="openFilePicker('author_avatar')">
             <i class="ri-folder-image-line"></i>
             选择文件
           </el-button>
@@ -41,7 +41,7 @@
         <div class="image-upload-wrapper">
           <ImageUploader ref="authorPhotoUploaderRef" v-model="form.author_photo" upload-type="站长形象" width="80px"
             height="120px" />
-          <el-button type="success" @click="openFilePicker('author_photo')" class="select-file-btn">
+          <el-button class="select-file-btn" @click="openFilePicker('author_photo')">
             <i class="ri-folder-image-line"></i>
             选择文件
           </el-button>
@@ -144,11 +144,11 @@ defineExpose({
 
   .image-upload-wrapper {
     display: flex;
-    align-items: flex-start;
-    gap: 12px;
+    flex-direction: column;
+    gap: 8px;
 
     .select-file-btn {
-      margin-top: 0;
+      width: 100%;
 
       i {
         margin-right: 4px;
