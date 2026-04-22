@@ -20,7 +20,7 @@
           v-model="queryParams.keyword"
           placeholder="搜索文章..."
           clearable
-          style="width: 240px"
+          style="width: 200px"
           @keyup.enter="handleSearch"
           @clear="handleSearch"
         />
@@ -42,7 +42,7 @@
           v-model="queryParams.tag_id"
           placeholder="标签"
           clearable
-          style="width: 150px"
+          style="width: 120px"
           @change="handleSearch"
         >
           <el-option
@@ -56,7 +56,7 @@
           v-model="queryParams.status"
           placeholder="状态"
           clearable
-          style="width: 120px"
+          style="width: 100px"
           @change="handleSearch"
         >
           <el-option label="已发布" value="published" />
