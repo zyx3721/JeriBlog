@@ -330,6 +330,125 @@ func (s *FileService) Get(id uint) (*dto.FileResponse, error) {
 	}, nil
 }
 
+// GetReferences 获取文件引用详情
+func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error) {
+	file, err := s.fileRepo.Get(id)
+	if err != nil {
+		return nil, fmt.Errorf("文件不存在: %w", err)
+	}
+
+	if s.usageChecker == nil {
+		return []dto.FileReferenceResponse{}, nil
+	}
+
+	references := make([]dto.FileReferenceResponse, 0)
+
+	// 检查文章封面
+	articles, err := s.usageChecker.articleRepo.FindByCover(file.FileURL)
+	if err == nil {
+		for _, article := range articles {
+			references = append(references, dto.FileReferenceResponse{
+				Type:  "article",
+				ID:    article.ID,
+				Title: article.Title,
+				Field: "封面图片",
+				URL:   fmt.Sprintf("/article/%d", article.ID),
+			})
+		}
+	}
+
+	// 检查文章正文
+	articles, err = s.usageChecker.articleRepo.FindByContentURL(file.FileURL)
+	if err == nil {
+		for _, article := range articles {
+			references = append(references, dto.FileReferenceResponse{
+				Type:  "article",
+				ID:    article.ID,
+				Title: article.Title,
+				Field: "正文图片",
+				URL:   fmt.Sprintf("/article/%d", article.ID),
+			})
+		}
+	}
+
+	// 检查友链头像
+	friends, err := s.usageChecker.friendRepo.FindByAvatar(file.FileURL)
+	if err == nil {
+		for _, friend := range friends {
+			references = append(references, dto.FileReferenceResponse{
+				Type:  "friend",
+				ID:    friend.ID,
+				Title: friend.Name,
+				Field: "友链头像",
+				URL:   fmt.Sprintf("/friend/%d", friend.ID),
+			})
+		}
+	}
+
+	// 检查友链截图
+	friends, err = s.usageChecker.friendRepo.FindByScreenshot(file.FileURL)
+	if err == nil {
+		for _, friend := range friends {
+			references = append(references, dto.FileReferenceResponse{
+				Type:  "friend",
+				ID:    friend.ID,
+				Title: friend.Name,
+				Field: "网站截图",
+				URL:   fmt.Sprintf("/friend/%d", friend.ID),
+			})
+		}
+	}
+
+	// 检查用户头像
+	users, err := s.usageChecker.userRepo.FindByAvatar(file.FileURL)
+	if err == nil {
+		for _, user := range users {
+			references = append(references, dto.FileReferenceResponse{
+				Type:  "user",
+				ID:    user.ID,
+				Title: user.Username,
+				Field: "用户头像",
+				URL:   fmt.Sprintf("/user/%d", user.ID),
+			})
+		}
+	}
+
+	// 检查系统设置
+	settings, err := s.usageChecker.settingRepo.FindByValueAndKeys(file.FileURL, reconciledSettingImageKeys)
+	if err == nil {
+		for _, setting := range settings {
+			fieldName := getSettingFieldName(setting.Key)
+			references = append(references, dto.FileReferenceResponse{
+				Type:  "setting",
+				ID:    setting.ID,
+				Title: "系统设置",
+				Field: fieldName,
+				URL:   "/admin/settings",
+			})
+		}
+	}
+
+	return references, nil
+}
+
+// getSettingFieldName 获取设置字段的友好名称
+func getSettingFieldName(key string) string {
+	fieldNames := map[string]string{
+		KeyBasicAuthorAvatar:      "站长头像",
+		KeyBasicAuthorPhoto:       "站长形象",
+		KeyBlogFavicon:            "网站Favicon",
+		KeyBlogBackgroundImage:    "背景图片",
+		KeyBlogAboutExhibition:    "关于页展示图",
+		KeyBlogScreenshot:         "站点截图",
+		KeyBlogWechatQrCode:       "微信二维码",
+		KeyBlogAlipayQrCode:       "支付宝二维码",
+	}
+	if name, ok := fieldNames[key]; ok {
+		return name
+	}
+	return key
+}
+
 // Delete 删除文件
 func (s *FileService) Delete(id uint) error {
 	file, err := s.fileRepo.Get(id)
