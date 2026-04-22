@@ -72,8 +72,10 @@ func (c *MomentController) ListForWeb(ctx *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //	@Security		BearerAuth
-//	@Param			page		query		int	false	"页码"
-//	@Param			page_size	query		int	false	"每页数量（不传则返回全部）"
+//	@Param			page		query		int		false	"页码"
+//	@Param			page_size	query		int		false	"每页数量（不传则返回全部）"
+//	@Param			keyword		query		string	false	"搜索关键词（按内容模糊搜索）"
+//	@Param			is_publish	query		bool	false	"状态筛选（true=已发布, false=草稿）"
 //	@Success		200			{object}	response.Response{data=response.PageResult}
 //	@Failure		401			{object}	response.Response
 //	@Failure		403			{object}	response.Response
@@ -85,7 +87,7 @@ func (c *MomentController) List(ctx *gin.Context) {
 		return
 	}
 
-	moments, total, err := c.momentService.List(ctx.Request.Context(), req.Page, req.PageSize)
+	moments, total, err := c.momentService.List(ctx.Request.Context(), req.Page, req.PageSize, req.Keyword, req.IsPublish)
 	if err != nil {
 		response.Failed(ctx, err.Error())
 		return
