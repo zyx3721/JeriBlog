@@ -24,6 +24,7 @@ type Response struct {
 	Code    int         `json:"code"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data,omitempty"`
+	Details []string    `json:"details,omitempty"`
 }
 
 // PageResult 分页结果
@@ -84,6 +85,7 @@ func Error(c *gin.Context, err *errcode.Error) {
 	c.JSON(httpStatus, Response{
 		Code:    err.GetCode(),
 		Message: err.GetMsg(),
+		Details: err.Details,
 	})
 }
 

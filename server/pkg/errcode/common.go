@@ -29,4 +29,5 @@ var (
 	FileUploadError  = NewError(40001, "文件上传失败")
 	FileNotFound     = NewError(40003, "文件不存在")
 	FileProcessError = NewError(40006, "文件处理失败")
+	FileInUseError   = NewError(40007, "文件正在被使用,无法删除")
 )
