@@ -351,7 +351,7 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 				Type:  "article",
 				ID:    article.ID,
 				Title: article.Title,
-				Field: "封面图片",
+				Field: "文章封面",
 				URL:   fmt.Sprintf("/article/%d", article.ID),
 			})
 		}
@@ -365,7 +365,7 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 				Type:  "article",
 				ID:    article.ID,
 				Title: article.Title,
-				Field: "正文图片",
+				Field: "文章配图",
 				URL:   fmt.Sprintf("/article/%d", article.ID),
 			})
 		}
@@ -379,7 +379,7 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 				Type:  "friend",
 				ID:    friend.ID,
 				Title: friend.Name,
-				Field: "友链头像",
+				Field: "友情链接A",
 				URL:   fmt.Sprintf("/friend/%d", friend.ID),
 			})
 		}
@@ -393,7 +393,7 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 				Type:  "friend",
 				ID:    friend.ID,
 				Title: friend.Name,
-				Field: "网站截图",
+				Field: "友情链接S",
 				URL:   fmt.Sprintf("/friend/%d", friend.ID),
 			})
 		}
@@ -424,6 +424,72 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 				Title: "系统设置",
 				Field: fieldName,
 				URL:   "/admin/settings",
+			})
+		}
+	}
+
+	// 检查动态配图
+	moments, err := s.usageChecker.momentRepo.FindByContentURL(file.FileURL)
+	if err == nil {
+		for _, moment := range moments {
+			// 截取动态内容前50个字符作为标题
+			title := moment.Content
+			if len(title) > 50 {
+				title = title[:50] + "..."
+			}
+			references = append(references, dto.FileReferenceResponse{
+				Type:  "moment",
+				ID:    moment.ID,
+				Title: title,
+				Field: "动态配图",
+				URL:   fmt.Sprintf("/moment/%d", moment.ID),
+			})
+		}
+	}
+
+	// 检查评论配图
+	comments, err := s.usageChecker.commentRepo.FindByContentURL(file.FileURL)
+	if err == nil {
+		for _, comment := range comments {
+			// 截取评论内容前50个字符作为标题
+			title := comment.Content
+			if len(title) > 50 {
+				title = title[:50] + "..."
+			}
+			references = append(references, dto.FileReferenceResponse{
+				Type:  "comment",
+				ID:    comment.ID,
+				Title: title,
+				Field: "评论贴图",
+				URL:   fmt.Sprintf("/article/%s#comment-%d", comment.TargetKey, comment.ID),
+			})
+		}
+	}
+
+	// 检查菜单图标
+	menus, err := s.usageChecker.menuRepo.FindByIcon(file.FileURL)
+	if err == nil {
+		for _, menu := range menus {
+			references = append(references, dto.FileReferenceResponse{
+				Type:  "menu",
+				ID:    menu.ID,
+				Title: menu.Name,
+				Field: "菜单图标",
+				URL:   "/admin/menus",
+			})
+		}
+	}
+
+	// 检查反馈附件
+	feedbacks, err := s.usageChecker.feedbackRepo.FindByAttachmentURL(file.FileURL)
+	if err == nil {
+		for _, feedback := range feedbacks {
+			references = append(references, dto.FileReferenceResponse{
+				Type:  "feedback",
+				ID:    feedback.ID,
+				Title: feedback.TicketNo,
+				Field: "反馈投诉",
+				URL:   fmt.Sprintf("/admin/feedbacks?ticket_no=%s", feedback.TicketNo),
 			})
 		}
 	}
