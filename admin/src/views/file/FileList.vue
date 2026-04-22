@@ -163,7 +163,6 @@
               <div class="reference-body">
                 <div class="reference-title">{{ ref.title }}</div>
                 <el-link
-                  v-if="ref.url"
                   type="primary"
                   class="reference-link"
                   @click="handleReferenceClick(ref)"

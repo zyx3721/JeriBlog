@@ -443,7 +443,7 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 		}
 	}
 
-	// 检查动态配图
+	// 检查动态配图和动态视频
 	moments, err := s.usageChecker.momentRepo.FindByContentURL(file.FileURL)
 	if err == nil {
 		for _, moment := range moments {
@@ -456,11 +456,19 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 				}
 			}
 
+			// 判断是配图还是视频
+			fieldName := "动态配图"
+			if err := json.Unmarshal([]byte(moment.Content), &contentData); err == nil {
+				if video, ok := contentData["video"].(string); ok && video == file.FileURL {
+					fieldName = "动态视频"
+				}
+			}
+
 			references = append(references, dto.FileReferenceResponse{
 				Type:  "moment",
 				ID:    moment.ID,
 				Title: title,
-				Field: "动态配图",
+				Field: fieldName,
 				URL:   "/moment",
 			})
 		}
@@ -549,12 +557,12 @@ func getSettingFieldName(key string) string {
 	fieldNames := map[string]string{
 		KeyBasicAuthorAvatar:   "站长头像",
 		KeyBasicAuthorPhoto:    "站长形象",
-		KeyBlogFavicon:         "网站Favicon",
-		KeyBlogBackgroundImage: "背景图片",
-		KeyBlogAboutExhibition: "关于页展示图",
-		KeyBlogScreenshot:      "站点截图",
-		KeyBlogWechatQrCode:    "微信二维码",
-		KeyBlogAlipayQrCode:    "支付宝二维码",
+		KeyBlogFavicon:         "博客图标",
+		KeyBlogBackgroundImage: "博客背景",
+		KeyBlogAboutExhibition: "展览图片",
+		KeyBlogScreenshot:      "博客截图",
+		KeyBlogWechatQrCode:    "微信收款码",
+		KeyBlogAlipayQrCode:    "支付宝收款码",
 	}
 	if name, ok := fieldNames[key]; ok {
 		return name

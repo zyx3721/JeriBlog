@@ -17,7 +17,7 @@
 -- 特性：支持同用途多次引用（如一个文件被 3 篇文章引用，则记录 3 次"文章配图"）
 -- 用途类型：
 --   用户头像、文章封面、文章配图、动态配图、动态视频、评论贴图、
---   友链链接A、友链链接S、站长头像、站长形象、博客图标、博客背景、
+--   友情链接A、友情链接S、站长头像、站长形象、博客图标、博客背景、
 --   博客截图、展览图片、微信收款码、支付宝收款码、菜单图标、反馈投诉
 -- =============================================
 
@@ -144,16 +144,16 @@ WHERE EXISTS (
     AND c.deleted_at IS NULL
 );
 
--- 7. 友链链接A（friends.avatar）- 按引用次数追加
+-- 7. 友情链接A（friends.avatar）- 按引用次数追加
 UPDATE files f
 SET upload_type = CASE
     WHEN upload_type = '' OR upload_type IS NULL THEN (
-        SELECT string_agg('友链链接A', ',' ORDER BY fr.id)
+        SELECT string_agg('友情链接A', ',' ORDER BY fr.id)
         FROM friends fr
         WHERE fr.avatar = f.file_url
     )
     ELSE upload_type || ',' || (
-        SELECT string_agg('友链链接A', ',' ORDER BY fr.id)
+        SELECT string_agg('友情链接A', ',' ORDER BY fr.id)
         FROM friends fr
         WHERE fr.avatar = f.file_url
     )
@@ -163,16 +163,16 @@ WHERE EXISTS (
     WHERE fr.avatar = f.file_url
 );
 
--- 8. 友链链接S（friends.screenshot）- 按引用次数追加
+-- 8. 友情链接S（friends.screenshot）- 按引用次数追加
 UPDATE files f
 SET upload_type = CASE
     WHEN upload_type = '' OR upload_type IS NULL THEN (
-        SELECT string_agg('友链链接S', ',' ORDER BY fr.id)
+        SELECT string_agg('友情链接S', ',' ORDER BY fr.id)
         FROM friends fr
         WHERE fr.screenshot = f.file_url
     )
     ELSE upload_type || ',' || (
-        SELECT string_agg('友链链接S', ',' ORDER BY fr.id)
+        SELECT string_agg('友情链接S', ',' ORDER BY fr.id)
         FROM friends fr
         WHERE fr.screenshot = f.file_url
     )

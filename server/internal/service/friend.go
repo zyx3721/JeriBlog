@@ -272,10 +272,10 @@ func (s *FriendService) Create(ctx context.Context, req *dto.CreateFriendRequest
 	// 标记文件为使用中
 	if s.fileService != nil {
 		if req.Avatar != "" {
-			_ = s.fileService.MarkAsUsed(req.Avatar, "友链链接A")
+			_ = s.fileService.MarkAsUsed(req.Avatar, "友情链接A")
 		}
 		if req.Screenshot != "" {
-			_ = s.fileService.MarkAsUsed(req.Screenshot, "友链链接S")
+			_ = s.fileService.MarkAsUsed(req.Screenshot, "友情链接S")
 		}
 	}
 
@@ -343,18 +343,18 @@ func (s *FriendService) Update(ctx context.Context, id uint, req *dto.UpdateFrie
 	if s.fileService != nil {
 		if oldAvatar != req.Avatar {
 			if oldAvatar != "" {
-				_ = s.fileService.MarkAsUnused(oldAvatar, "友链链接A")
+				_ = s.fileService.MarkAsUnused(oldAvatar, "友情链接A")
 			}
 			if req.Avatar != "" {
-				_ = s.fileService.MarkAsUsed(req.Avatar, "友链链接A")
+				_ = s.fileService.MarkAsUsed(req.Avatar, "友情链接A")
 			}
 		}
 		if oldScreenshot != req.Screenshot {
 			if oldScreenshot != "" {
-				_ = s.fileService.MarkAsUnused(oldScreenshot, "友链链接S")
+				_ = s.fileService.MarkAsUnused(oldScreenshot, "友情链接S")
 			}
 			if req.Screenshot != "" {
-				_ = s.fileService.MarkAsUsed(req.Screenshot, "友链链接S")
+				_ = s.fileService.MarkAsUsed(req.Screenshot, "友情链接S")
 			}
 		}
 	}
@@ -377,10 +377,10 @@ func (s *FriendService) Delete(ctx context.Context, id uint) error {
 	// 标记文件为未使用
 	if s.fileService != nil {
 		if friend.Avatar != "" {
-			_ = s.fileService.MarkAsUnused(friend.Avatar, "友链链接A")
+			_ = s.fileService.MarkAsUnused(friend.Avatar, "友情链接A")
 		}
 		if friend.Screenshot != "" {
-			_ = s.fileService.MarkAsUnused(friend.Screenshot, "友链链接S")
+			_ = s.fileService.MarkAsUnused(friend.Screenshot, "友情链接S")
 		}
 	}
 
