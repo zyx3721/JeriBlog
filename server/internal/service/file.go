@@ -547,14 +547,14 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 // getSettingFieldName 获取设置字段的友好名称
 func getSettingFieldName(key string) string {
 	fieldNames := map[string]string{
-		KeyBasicAuthorAvatar:      "站长头像",
-		KeyBasicAuthorPhoto:       "站长形象",
-		KeyBlogFavicon:            "网站Favicon",
-		KeyBlogBackgroundImage:    "背景图片",
-		KeyBlogAboutExhibition:    "关于页展示图",
-		KeyBlogScreenshot:         "站点截图",
-		KeyBlogWechatQrCode:       "微信二维码",
-		KeyBlogAlipayQrCode:       "支付宝二维码",
+		KeyBasicAuthorAvatar:   "站长头像",
+		KeyBasicAuthorPhoto:    "站长形象",
+		KeyBlogFavicon:         "网站Favicon",
+		KeyBlogBackgroundImage: "背景图片",
+		KeyBlogAboutExhibition: "关于页展示图",
+		KeyBlogScreenshot:      "站点截图",
+		KeyBlogWechatQrCode:    "微信二维码",
+		KeyBlogAlipayQrCode:    "支付宝二维码",
 	}
 	if name, ok := fieldNames[key]; ok {
 		return name

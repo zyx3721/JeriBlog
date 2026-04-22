@@ -377,10 +377,10 @@ func (s *FriendService) Delete(ctx context.Context, id uint) error {
 	// 标记文件为未使用
 	if s.fileService != nil {
 		if friend.Avatar != "" {
-			_ = s.fileService.MarkAsUnused(friend.Avatar, "友链头像")
+			_ = s.fileService.MarkAsUnused(friend.Avatar, "友链链接A")
 		}
 		if friend.Screenshot != "" {
-			_ = s.fileService.MarkAsUnused(friend.Screenshot, "友链截图")
+			_ = s.fileService.MarkAsUnused(friend.Screenshot, "友链链接S")
 		}
 	}
 

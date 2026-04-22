@@ -1225,7 +1225,7 @@ func (s *ArticleService) downloadAndUploadSingleImage(ctx context.Context, imgUR
 
 	// 上传图片
 	reader := bytes.NewReader(data)
-	uploadedURL, err := s.fileService.UploadFromReader(reader, filename, mimeType, "文章图片", 0, host)
+	uploadedURL, err := s.fileService.UploadFromReader(reader, filename, mimeType, "文章配图", 0, host)
 	if err != nil {
 		return imgURL, fmt.Errorf("上传图片失败: %w", err)
 	}

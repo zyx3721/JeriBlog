@@ -716,7 +716,7 @@ const handleImageSelect = async (event: Event) => {
 
   const loading = ElMessage.info({ message: `正在上传 ${files.length} 张图片...`, duration: 0 })
   try {
-    const results = await Promise.all(files.map(f => uploadFile(f, '文章图片')))
+    const results = await Promise.all(files.map(f => uploadFile(f, '文章配图')))
     insertText(results.map(r => `![图片](${r.file_url})`).join('\n'))
     ElMessage.success(`成功上传 ${files.length} 张图片`)
   } catch (error: any) {
@@ -741,7 +741,7 @@ const handlePasteImage = async (files: File[]) => {
 
   const loading = ElMessage.info({ message: `正在上传 ${imageFiles.length} 张图片...`, duration: 0 })
   try {
-    const results = await Promise.all(imageFiles.map(f => uploadFile(f, '文章图片')))
+    const results = await Promise.all(imageFiles.map(f => uploadFile(f, '文章配图')))
     insertText(results.map(r => `![图片](${r.file_url})`).join('\n'))
     ElMessage.success(`成功上传 ${imageFiles.length} 张图片`)
   } catch (error: any) {
@@ -786,7 +786,7 @@ const handleOnlineImageDownload = async () => {
 
     // 创建文件对象并上传
     const file = new File([blob], 'image.jpg', { type: downloadResult.content_type })
-    const uploadResult = await uploadFile(file, '文章图片')
+    const uploadResult = await uploadFile(file, '文章配图')
 
     // 插入到编辑器
     insertText(`![图片](${uploadResult.file_url})`)
