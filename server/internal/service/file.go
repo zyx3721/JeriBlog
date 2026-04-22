@@ -473,7 +473,7 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 			references = append(references, dto.FileReferenceResponse{
 				Type:  "menu",
 				ID:    menu.ID,
-				Title: menu.Name,
+				Title: menu.Title,
 				Field: "菜单图标",
 				URL:   "/admin/menus",
 			})
