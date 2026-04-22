@@ -74,6 +74,13 @@ func (r *FeedbackRepository) ExistsByAttachmentURL(url string) (bool, error) {
 	return count > 0, err
 }
 
+// FindByAttachmentURL 查找附件引用该文件的反馈列表
+func (r *FeedbackRepository) FindByAttachmentURL(url string) ([]model.Feedback, error) {
+	var feedbacks []model.Feedback
+	err := r.db.Where("form_content LIKE ?", "%"+url+"%").Find(&feedbacks).Error
+	return feedbacks, err
+}
+
 // Update 更新反馈
 func (r *FeedbackRepository) Update(ctx context.Context, feedback *model.Feedback) error {
 	return r.db.WithContext(ctx).Save(feedback).Error
