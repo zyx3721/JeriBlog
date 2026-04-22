@@ -121,6 +121,13 @@ func (r *MenuRepository) ExistsByIcon(url string) (bool, error) {
 	return count > 0, err
 }
 
+// FindByIcon 查找使用该图标的菜单列表
+func (r *MenuRepository) FindByIcon(url string) ([]model.Menu, error) {
+	var menus []model.Menu
+	err := r.db.Where("icon = ?", url).Find(&menus).Error
+	return menus, err
+}
+
 // GetChildrenCount 获取子菜单数量
 func (r *MenuRepository) GetChildrenCount(id uint) (int64, error) {
 	var count int64
