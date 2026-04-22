@@ -49,3 +49,11 @@ export function clearAllNotifications(): Promise<void> {
   return request.delete("/admin/notifications/clear-all");
 }
 
+/**
+ * 清空已读通知
+ * @returns Promise<void>
+ */
+export function clearReadNotifications(): Promise<void> {
+  return request.delete("/admin/notifications/clear-read");
+}
+
