@@ -32,7 +32,7 @@ func NewMomentRepository(db *gorm.DB) *MomentRepository {
 // ============ 基础CRUD ============
 
 // List 获取动态列表
-func (r *MomentRepository) List(ctx context.Context, page, pageSize int, isPublish *bool) ([]model.Moment, int64, error) {
+func (r *MomentRepository) List(ctx context.Context, page, pageSize int, isPublish *bool, keyword string) ([]model.Moment, int64, error) {
 	var moments []model.Moment
 	var total int64
 
@@ -41,6 +41,11 @@ func (r *MomentRepository) List(ctx context.Context, page, pageSize int, isPubli
 	// 根据发布状态过滤
 	if isPublish != nil {
 		query = query.Where("is_publish = ?", *isPublish)
+	}
+
+	// 根据关键词搜索（按内容模糊搜索）
+	if keyword != "" {
+		query = query.Where("content LIKE ?", "%"+keyword+"%")
 	}
 
 	err := query.Count(&total).Error
