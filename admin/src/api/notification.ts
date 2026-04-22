@@ -41,4 +41,11 @@ export function markAllAsRead(): Promise<void> {
   return request.put("/admin/notifications/read-all");
 }
 
+/**
+ * 清空所有通知
+ * @returns Promise<void>
+ */
+export function clearAllNotifications(): Promise<void> {
+  return request.delete("/admin/notifications/clear-all");
+}
 
