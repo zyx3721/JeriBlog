@@ -73,7 +73,7 @@ func (r *FileRepository) List(offset, limit int, keyword string, status *int, up
 
 	// 上传类型筛选
 	if uploadType != "" {
-		query = query.Where("upload_type = ?", uploadType)
+		query = query.Where("upload_type LIKE ?", "%"+uploadType+"%")
 	}
 
 	// 统计总数
