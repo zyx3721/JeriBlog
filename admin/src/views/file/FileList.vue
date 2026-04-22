@@ -53,6 +53,9 @@
           <el-option label="友情链接S" value="友情链接S" />
           <el-option label="微信收款码" value="微信收款码" />
           <el-option label="支付宝收款码" value="支付宝收款码" />
+          <el-option label="动态配图" value="动态配图" />
+          <el-option label="动态视频" value="动态视频" />
+          <el-option label="反馈投诉" value="反馈投诉" />
         </el-select>
         <el-button type="primary" @click="handleSearch">搜索</el-button>
         <el-button @click="handleReset">重置</el-button>
