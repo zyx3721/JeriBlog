@@ -84,6 +84,17 @@ func (r *SettingRepository) ExistsByValueAndKeys(value string, keys []string) (b
 	return count > 0, err
 }
 
+// FindByValueAndKeys 查找指定配置键中引用该文件的配置列表
+func (r *SettingRepository) FindByValueAndKeys(value string, keys []string) ([]model.Setting, error) {
+	var settings []model.Setting
+	query := r.db.Where("value = ?", value)
+	if len(keys) > 0 {
+		query = query.Where("\"key\" IN ?", keys)
+	}
+	err := query.Find(&settings).Error
+	return settings, err
+}
+
 // GetByKeys 根据键列表获取配置
 func (r *SettingRepository) GetByKeys(keys []string) (map[string]string, error) {
 	var settings []model.Setting
