@@ -32,8 +32,10 @@ type FeedbackContent struct {
 
 // FeedbackQueryRequest 反馈查询请求
 type FeedbackQueryRequest struct {
-	Page     int `form:"page" binding:"required,min=1"`
-	PageSize int `form:"page_size" binding:"required,min=1,max=100"`
+	Page     int     `form:"page" binding:"required,min=1"`
+	PageSize int     `form:"page_size" binding:"required,min=1,max=100"`
+	Keyword  string  `form:"keyword"`  // 搜索关键词
+	Status   *string `form:"status"`   // 状态筛选: pending/resolved/closed
 }
 
 // FeedbackResponse 反馈响应
