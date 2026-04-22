@@ -352,7 +352,7 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 				ID:    article.ID,
 				Title: article.Title,
 				Field: "文章封面",
-				URL:   fmt.Sprintf("/article/%d", article.ID),
+				URL:   fmt.Sprintf("/posts/%s/", article.Slug),
 			})
 		}
 	}
@@ -366,7 +366,7 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 				ID:    article.ID,
 				Title: article.Title,
 				Field: "文章配图",
-				URL:   fmt.Sprintf("/article/%d", article.ID),
+				URL:   fmt.Sprintf("/posts/%s/", article.Slug),
 			})
 		}
 	}
@@ -380,7 +380,7 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 				ID:    friend.ID,
 				Title: friend.Name,
 				Field: "友情链接A",
-				URL:   fmt.Sprintf("/friend/%d", friend.ID),
+				URL:   "/friend",
 			})
 		}
 	}
@@ -394,7 +394,7 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 				ID:    friend.ID,
 				Title: friend.Name,
 				Field: "友情链接S",
-				URL:   fmt.Sprintf("/friend/%d", friend.ID),
+				URL:   "/friend",
 			})
 		}
 	}
@@ -442,7 +442,7 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 				ID:    moment.ID,
 				Title: title,
 				Field: "动态配图",
-				URL:   fmt.Sprintf("/moment/%d", moment.ID),
+				URL:   "/moment",
 			})
 		}
 	}
@@ -461,7 +461,7 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 				ID:    comment.ID,
 				Title: title,
 				Field: "评论贴图",
-				URL:   fmt.Sprintf("/article/%s#comment-%d", comment.TargetKey, comment.ID),
+				URL:   fmt.Sprintf("/posts/%s/", comment.TargetKey),
 			})
 		}
 	}
@@ -489,7 +489,7 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 				ID:    feedback.ID,
 				Title: feedback.TicketNo,
 				Field: "反馈投诉",
-				URL:   fmt.Sprintf("/admin/feedbacks?ticket_no=%s", feedback.TicketNo),
+				URL:   fmt.Sprintf("/feedback?ticket_no=%s", feedback.TicketNo),
 			})
 		}
 	}
