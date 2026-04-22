@@ -45,7 +45,7 @@ func (r *MomentRepository) List(ctx context.Context, page, pageSize int, isPubli
 
 	// 根据关键词搜索（按内容模糊搜索）
 	if keyword != "" {
-		query = query.Where("content LIKE ?", "%"+keyword+"%")
+		query = query.Where("content::text LIKE ?", "%"+keyword+"%")
 	}
 
 	err := query.Count(&total).Error
@@ -93,14 +93,14 @@ func (r *MomentRepository) Update(ctx context.Context, moment *model.Moment) err
 // ExistsByContentURL 检查是否有动态内容引用该文件
 func (r *MomentRepository) ExistsByContentURL(url string) (bool, error) {
 	var count int64
-	err := r.db.Model(&model.Moment{}).Where("content LIKE ?", "%"+url+"%").Count(&count).Error
+	err := r.db.Model(&model.Moment{}).Where("content::text LIKE ?", "%"+url+"%").Count(&count).Error
 	return count > 0, err
 }
 
 // FindByContentURL 查找内容引用该文件的动态列表
 func (r *MomentRepository) FindByContentURL(url string) ([]model.Moment, error) {
 	var moments []model.Moment
-	err := r.db.Where("content LIKE ?", "%"+url+"%").Find(&moments).Error
+	err := r.db.Where("content::text LIKE ?", "%"+url+"%").Find(&moments).Error
 	return moments, err
 }
 
