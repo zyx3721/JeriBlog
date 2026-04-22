@@ -13,6 +13,32 @@
   <common-list title="动态列表" :data="momentList" :loading="loading" :total="total" v-model:page="queryParams.page"
     v-model:page-size="queryParams.page_size" create-text="新增动态" @create="handleCreate" @refresh="fetchMoments"
     @update:page="fetchMoments" @update:pageSize="fetchMoments">
+    <!-- 搜索表单 -->
+    <template #toolbar-before>
+      <div class="search-form">
+        <el-input
+          v-model="queryParams.keyword"
+          placeholder="搜索动态内容..."
+          clearable
+          style="width: 240px"
+          @keyup.enter="handleSearch"
+          @clear="handleSearch"
+        />
+        <el-select
+          v-model="queryParams.status"
+          placeholder="状态"
+          clearable
+          style="width: 120px"
+          @change="handleSearch"
+        >
+          <el-option label="已发布" value="published" />
+          <el-option label="草稿" value="draft" />
+        </el-select>
+        <el-button type="primary" @click="handleSearch">搜索</el-button>
+        <el-button @click="handleReset">重置</el-button>
+      </div>
+    </template>
+
     <!-- 表格列 -->
     <el-table-column label="内容" min-width="400" align="center">
       <template #default="{ row }">
@@ -110,7 +136,12 @@ import { formatDateTime } from '@/utils/date'
 const loading = ref(false)
 const momentList = ref<Moment[]>([])
 const total = ref(0)
-const queryParams = ref<PaginationQuery>({ page: 1, page_size: 20 })
+const queryParams = ref<PaginationQuery>({
+  page: 1,
+  page_size: 20,
+  keyword: '',
+  status: ''
+})
 const momentDialogVisible = ref(false)
 const editingMoment = ref<Moment | null>(null)
 
@@ -140,8 +171,24 @@ const getMusicLabel = (music: any) => {
 const fetchMoments = async () => {
   loading.value = true
   try {
+    // 构建查询参数
+    const params: any = {
+      page: queryParams.value.page,
+      page_size: queryParams.value.page_size
+    }
+
+    // 添加搜索关键词
+    if (queryParams.value.keyword?.trim()) {
+      params.keyword = queryParams.value.keyword.trim()
+    }
+
+    // 添加状态筛选
+    if (queryParams.value.status) {
+      params.is_publish = queryParams.value.status === 'published'
+    }
+
     const [result] = await Promise.all([
-      getMoments(queryParams.value),
+      getMoments(params),
       new Promise(resolve => setTimeout(resolve, 300))
     ])
     momentList.value = result.list
@@ -151,6 +198,21 @@ const fetchMoments = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const handleSearch = () => {
+  queryParams.value.page = 1
+  fetchMoments()
+}
+
+const handleReset = () => {
+  queryParams.value = {
+    page: 1,
+    page_size: 20,
+    keyword: '',
+    status: ''
+  }
+  fetchMoments()
 }
 
 const handleCreate = () => {
@@ -185,6 +247,13 @@ onMounted(fetchMoments)
 </script>
 
 <style scoped lang="scss">
+.search-form {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
 .moment-content {
   .text-content {
     margin-bottom: 8px;
