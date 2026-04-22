@@ -123,6 +123,13 @@ func (r *NotificationRepository) ClearAll(ctx context.Context, userID uint) erro
 		Delete(&model.UserNotification{}).Error
 }
 
+// ClearRead 清空已读通知
+func (r *NotificationRepository) ClearRead(ctx context.Context, userID uint) error {
+	return r.db.WithContext(ctx).
+		Where("user_id = ? AND is_read = ?", userID, true).
+		Delete(&model.UserNotification{}).Error
+}
+
 // ============ 辅助方法 ============
 
 // GetAllAdmins 获取所有管理员用户 ID
