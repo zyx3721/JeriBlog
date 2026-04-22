@@ -193,8 +193,15 @@ const fetchFileList = async () => {
     const response = await getFileList(params)
 
     // 直接使用后端返回的数据
-    fileList.value = response.list || []
-    total.value = response.total || 0
+    let list = response.list || []
+
+    // 根据 accept 参数进一步过滤文件扩展名
+    if (props.accept) {
+      list = list.filter(file => matchFileType(file.file_type, props.accept))
+    }
+
+    fileList.value = list
+    total.value = list.length
 
     // 如果有搜索关键词，在前端过滤显示
     if (searchKeyword.value.trim()) {
@@ -214,6 +221,25 @@ const fetchFileList = async () => {
   } finally {
     loading.value = false
   }
+}
+
+// 匹配文件类型
+const matchFileType = (fileType: string, accept: string): boolean => {
+  if (!accept) return true
+
+  // 图片类型匹配
+  if (accept.includes('image')) {
+    const imageExts = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg', '.ico']
+    return imageExts.some(ext => fileType.toLowerCase().includes(ext.replace('.', '')))
+  }
+
+  // 视频类型匹配
+  if (accept.includes('video')) {
+    const videoExts = ['.mp4', '.webm', '.ogg', '.avi', '.mov', '.wmv', '.flv', '.mkv']
+    return videoExts.some(ext => fileType.toLowerCase().includes(ext.replace('.', '')))
+  }
+
+  return true
 }
 
 // 判断是否为图片
