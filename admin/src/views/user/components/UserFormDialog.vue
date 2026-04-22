@@ -37,7 +37,7 @@
         <div class="image-upload-wrapper">
           <ImageUploader ref="avatarUploaderRef" v-model="formData.avatar" upload-type="用户头像" width="120px"
             height="120px" />
-          <el-button type="success" @click="openFilePicker" class="select-file-btn">
+          <el-button class="select-file-btn" @click="openFilePicker">
             <i class="ri-folder-image-line"></i>
             选择文件
           </el-button>
@@ -264,11 +264,11 @@ const handleSubmit = async () => {
 <style lang="scss" scoped>
 .image-upload-wrapper {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
+  flex-direction: column;
+  gap: 8px;
 
   .select-file-btn {
-    margin-top: 0;
+    width: 100%;
 
     i {
       margin-right: 4px;
