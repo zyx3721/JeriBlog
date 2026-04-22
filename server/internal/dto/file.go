@@ -59,3 +59,12 @@ type FileResponse struct {
 	ReferenceCount int            `json:"reference_count"`
 	UploadTime     utils.JSONTime `json:"upload_time"`
 }
+
+// FileReferenceResponse 文件引用详情响应
+type FileReferenceResponse struct {
+	Type  string `json:"type"`  // 引用类型：article/friend/moment/setting/user/menu/feedback/comment
+	ID    uint   `json:"id"`    // 引用对象ID
+	Title string `json:"title"` // 引用对象标题
+	Field string `json:"field"` // 引用字段：封面图片/正文图片/头像等
+	URL   string `json:"url"`   // 跳转链接
+}
