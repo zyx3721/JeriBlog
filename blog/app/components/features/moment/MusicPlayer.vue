@@ -92,7 +92,7 @@ const fetchLyrics = async (lrcUrl: string): Promise<string> => {
 const fetchMusicData = async () => {
   try {
     const { server, type, id } = props.music
-    const response = await fetch(`https://api.i-meto.com/meting/api?server=${server}&type=${type}&id=${id}`)
+    const response = await fetch(`https://api.injahow.cn/meting/?server=${server}&type=${type}&id=${id}`)
     const data = await response.json()
     const list = Array.isArray(data) ? data : [data]
 
