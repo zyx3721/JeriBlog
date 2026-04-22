@@ -406,7 +406,7 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 			references = append(references, dto.FileReferenceResponse{
 				Type:  "user",
 				ID:    user.ID,
-				Title: user.Username,
+				Title: user.Nickname,
 				Field: "用户头像",
 				URL:   fmt.Sprintf("/user/%d", user.ID),
 			})
