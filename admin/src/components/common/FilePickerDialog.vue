@@ -36,7 +36,7 @@
             v-for="file in fileList"
             :key="file.id"
             class="file-item"
-            :class="{ selected: selectedFile?.id === file.id }"
+            :class="{ selected: props.multiple ? selectedFiles.some(f => f.id === file.id) : selectedFile?.id === file.id }"
             @click="handleSelectFile(file)"
           >
             <div class="file-preview">
@@ -49,7 +49,7 @@
                 <span>{{ formatFileSize(file.file_size) }}</span>
               </div>
             </div>
-            <div v-if="selectedFile?.id === file.id" class="selected-badge">
+            <div v-if="props.multiple ? selectedFiles.some(f => f.id === file.id) : selectedFile?.id === file.id" class="selected-badge">
               <i class="ri-check-line"></i>
             </div>
           </div>
@@ -83,7 +83,9 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="handleClose">取消</el-button>
-        <el-button type="primary" :disabled="!selectedFile" @click="handleConfirm">确定</el-button>
+        <el-button type="primary" :disabled="props.multiple ? selectedFiles.length === 0 : !selectedFile" @click="handleConfirm">
+          确定{{ props.multiple && selectedFiles.length > 0 ? `（已选${selectedFiles.length}个）` : '' }}
+        </el-button>
       </div>
     </template>
   </el-dialog>
@@ -99,15 +101,20 @@ import { useDebounceFn } from '@vueuse/core'
 interface Props {
   modelValue: boolean
   fileType?: string // 限制文件类型，如 'image'
+  multiple?: boolean // 是否支持多选
+  accept?: string // 文件类型过滤，如 'image/*' 或 'video/*'
 }
 
 interface Emits {
   (e: 'update:modelValue', value: boolean): void
   (e: 'confirm', file: FileInfo): void
+  (e: 'select', files: FileInfo[]): void // 多选时触发
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  fileType: ''
+  fileType: '',
+  multiple: false,
+  accept: ''
 })
 
 const emit = defineEmits<Emits>()
@@ -116,6 +123,7 @@ const dialogVisible = ref(false)
 const loading = ref(false)
 const fileList = ref<FileInfo[]>([])
 const selectedFile = ref<FileInfo | null>(null)
+const selectedFiles = ref<FileInfo[]>([]) // 多选时使用
 const currentPage = ref(1)
 const pageSize = ref(20)
 const total = ref(0)
@@ -138,6 +146,7 @@ watch(
     if (val) {
       // 打开对话框时重置并加载数据
       selectedFile.value = null
+      selectedFiles.value = []
       searchKeyword.value = ''
       currentPage.value = 1
       fetchFileList()
@@ -165,6 +174,15 @@ const fetchFileList = async () => {
     } else {
       // 选择"全部"时，传一个较大的值
       params.page_size = 1000
+    }
+
+    // 根据 accept 参数过滤文件类型
+    if (props.accept) {
+      if (props.accept.includes('image')) {
+        params.file_type = 'image'
+      } else if (props.accept.includes('video')) {
+        params.file_type = 'video'
+      }
     }
 
     // 如果有文件类型限制，添加到参数中
@@ -212,7 +230,18 @@ const formatFileSize = (size: number) => {
 
 // 选择文件
 const handleSelectFile = (file: FileInfo) => {
-  selectedFile.value = file
+  if (props.multiple) {
+    // 多选模式
+    const index = selectedFiles.value.findIndex(f => f.id === file.id)
+    if (index > -1) {
+      selectedFiles.value.splice(index, 1)
+    } else {
+      selectedFiles.value.push(file)
+    }
+  } else {
+    // 单选模式
+    selectedFile.value = file
+  }
 }
 
 // 搜索（使用防抖）
@@ -233,9 +262,16 @@ const handleSizeChange = () => {
 
 // 确认选择
 const handleConfirm = () => {
-  if (selectedFile.value) {
-    emit('confirm', selectedFile.value)
-    handleClose()
+  if (props.multiple) {
+    if (selectedFiles.value.length > 0) {
+      emit('select', selectedFiles.value)
+      handleClose()
+    }
+  } else {
+    if (selectedFile.value) {
+      emit('confirm', selectedFile.value)
+      handleClose()
+    }
   }
 }
 
@@ -243,6 +279,7 @@ const handleConfirm = () => {
 const handleClose = () => {
   dialogVisible.value = false
   selectedFile.value = null
+  selectedFiles.value = []
 }
 </script>
 
