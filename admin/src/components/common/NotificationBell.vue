@@ -87,7 +87,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Bell, ChatDotRound, QuestionFilled, Warning, Link } from '@element-plus/icons-vue'
-import { getNotifications, markAsRead, markAllAsRead, clearAllNotifications } from '@/api/notification'
+import { getNotifications, markAsRead, markAllAsRead, clearAllNotifications, clearReadNotifications } from '@/api/notification'
 import type { Notification, NotificationType } from '@/types/notification'
 import { formatMomentTime } from '@/utils/date'
 import { notificationManager } from '@/utils/notification'
@@ -171,16 +171,17 @@ const handleMarkAllRead = async () => {
 // 清空所有通知
 const handleClearAll = async () => {
   try {
-    await ElMessageBox.confirm('确定要清空所有通知吗？', '提示', {
+    await ElMessageBox.confirm('确定要清空所有已读通知吗？', '提示', {
       type: 'warning',
       confirmButtonText: '确定',
       cancelButtonText: '取消'
     })
-    await clearAllNotifications()
-    ElMessage.success('已清空所有通知')
-    notifications.value = []
-    unreadCount.value = 0
-    hasMore.value = false
+    await clearReadNotifications()
+
+    // 从本地列表中移除已读通知
+    notifications.value = notifications.value.filter(n => !n.is_read)
+
+    ElMessage.success('已清空所有已读通知')
   } catch (error: any) {
     if (error !== 'cancel') {
       ElMessage.error('操作失败')
