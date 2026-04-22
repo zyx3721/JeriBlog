@@ -45,7 +45,7 @@ func NewMomentService(repo *repository.MomentRepository, fileService *FileServic
 func (s *MomentService) ListForWeb(ctx context.Context, page, pageSize int) ([]dto.MomentForWebResponse, int64, error) {
 	// 前台只显示已发布的动态
 	isPublish := true
-	moments, total, err := s.repo.List(ctx, page, pageSize, &isPublish)
+	moments, total, err := s.repo.List(ctx, page, pageSize, &isPublish, "")
 	if err != nil {
 		return nil, 0, err
 	}
@@ -73,8 +73,8 @@ func (s *MomentService) ListForWeb(ctx context.Context, page, pageSize int) ([]d
 // ============ 后台管理服务 ============
 
 // List 获取动态列表（管理）
-func (s *MomentService) List(ctx context.Context, page, pageSize int) ([]dto.MomentListResponse, int64, error) {
-	moments, total, err := s.repo.List(ctx, page, pageSize, nil)
+func (s *MomentService) List(ctx context.Context, page, pageSize int, keyword string, isPublish *bool) ([]dto.MomentListResponse, int64, error) {
+	moments, total, err := s.repo.List(ctx, page, pageSize, isPublish, keyword)
 	if err != nil {
 		return nil, 0, err
 	}
