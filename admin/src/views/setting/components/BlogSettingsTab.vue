@@ -108,8 +108,14 @@
     </el-form-item>
 
     <el-form-item label="展览图片">
-      <ImageUploader ref="aboutExhibitionUploaderRef" v-model="form.about_exhibition" upload-type="展览图片" width="213px"
-        height="120px" />
+      <div class="image-upload-wrapper">
+        <ImageUploader ref="aboutExhibitionUploaderRef" v-model="form.about_exhibition" upload-type="展览图片" width="213px"
+          height="120px" />
+        <el-button class="select-file-btn" @click="openFilePicker('about_exhibition')">
+          <i class="ri-folder-image-line"></i>
+          选择文件
+        </el-button>
+      </div>
     </el-form-item>
 
     <el-form-item label="个人资料">
@@ -408,10 +414,10 @@ const handleFontSiteCommand = (url: string) => {
 
 // 文件选择对话框
 const filePickerVisible = ref(false)
-const currentField = ref<'favicon' | 'background_image' | 'screenshot'>('favicon')
+const currentField = ref<'favicon' | 'background_image' | 'screenshot' | 'about_exhibition'>('favicon')
 
 // 打开文件选择对话框
-const openFilePicker = (field: 'favicon' | 'background_image' | 'screenshot') => {
+const openFilePicker = (field: 'favicon' | 'background_image' | 'screenshot' | 'about_exhibition') => {
   currentField.value = field
   filePickerVisible.value = true
 }

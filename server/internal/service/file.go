@@ -12,6 +12,7 @@
 package service
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"time"
@@ -446,10 +447,19 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 	moments, err := s.usageChecker.momentRepo.FindByContentURL(file.FileURL)
 	if err == nil {
 		for _, moment := range moments {
+			// 解析动态内容 JSON，提取 text 字段
+			var contentData map[string]interface{}
+			title := "动态" // 默认标题
+			if err := json.Unmarshal([]byte(moment.Content), &contentData); err == nil {
+				if text, ok := contentData["text"].(string); ok && text != "" {
+					title = text // 使用动态的纯文本内容
+				}
+			}
+
 			references = append(references, dto.FileReferenceResponse{
 				Type:  "moment",
 				ID:    moment.ID,
-				Title: "动态", // 只显示 "动态" 文本，不显示内容
+				Title: title,
 				Field: "动态配图",
 				URL:   "/moment",
 			})
@@ -460,42 +470,36 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 	comments, err := s.usageChecker.commentRepo.FindByContentURL(file.FileURL)
 	if err == nil {
 		for _, comment := range comments {
-			// 根据评论目标类型显示标题
-			var title string
+			// 显示评论内容作为标题
+			title := comment.Content
 			var url string
 
+			// 根据评论目标类型确定跳转链接
 			switch comment.TargetType {
 			case "article":
-				// 优先通过 TargetID 查询文章标题
+				// 优先通过 TargetID 查询文章
 				if comment.TargetID != nil && *comment.TargetID > 0 {
 					article, err := s.usageChecker.articleRepo.Get(*comment.TargetID)
 					if err == nil {
-						title = article.Title
 						url = fmt.Sprintf("/posts/%s/", article.Slug)
 					}
 				}
 				// 兼容旧数据：通过 TargetKey（slug）查询
-				if title == "" {
+				if url == "" {
 					article, err := s.usageChecker.articleRepo.GetBySlug(comment.TargetKey)
 					if err == nil {
-						title = article.Title
 						url = fmt.Sprintf("/posts/%s/", article.Slug)
 					} else {
-						title = "文章已删除"
-						url = ""
+						url = "" // 文章已删除
 					}
 				}
 			case "page":
-				title = "页面评论"
 				url = ""
 			case "moment":
-				title = "动态评论"
 				url = "/moment"
 			case "guestbook":
-				title = "留言评论"
 				url = ""
 			default:
-				title = "未知评论"
 				url = ""
 			}
 

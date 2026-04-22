@@ -167,6 +167,7 @@ CREATE TABLE IF NOT EXISTS comments (
     content TEXT NOT NULL,
     target_type VARCHAR(20) NOT NULL,
     target_key VARCHAR(50) NOT NULL,
+    target_id INTEGER,
     user_id BIGINT NOT NULL,
     parent_id BIGINT,
     root_id BIGINT,
@@ -193,6 +194,7 @@ CREATE INDEX IF NOT EXISTS idx_comments_reply_to ON comments (reply_to, created_
 CREATE INDEX IF NOT EXISTS idx_comments_status_created ON comments (status, created_at DESC) WHERE deleted_at IS NULL;
 CREATE INDEX IF NOT EXISTS idx_comments_latest ON comments (created_at DESC) WHERE deleted_at IS NULL AND status = 1;
 CREATE INDEX IF NOT EXISTS idx_comments_created_date ON comments (DATE(created_at)) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_comments_target_id ON comments(target_id);
 
 
 -- 文件上传表
@@ -561,11 +563,12 @@ WHERE a.slug = 'a7k9m2x5' AND t.slug = 'PostgreSQL'
 AND NOT EXISTS (SELECT 1 FROM article_tags WHERE article_id = a.id AND tag_id = t.id);
 
 -- 插入示例评论
-INSERT INTO comments (content, target_type, target_key, user_id, parent_id, root_id, reply_to, status, created_at, updated_at)
+INSERT INTO comments (content, target_type, target_key, target_id, user_id, parent_id, root_id, reply_to, status, created_at, updated_at)
 SELECT
   '欢迎使用 JERI 博客系统！如有问题请随时反馈。',
   'article',
   a.slug,
+  a.id,
   u.id,
   NULL,
   NULL,
@@ -576,8 +579,8 @@ SELECT
 FROM articles a, users u
 WHERE a.slug = 'a7k9m2x5' AND u.email = 'admin@example.com'
 AND NOT EXISTS (
-  SELECT 1 FROM comments 
-  WHERE target_type = 'article' 
+  SELECT 1 FROM comments
+  WHERE target_type = 'article'
     AND target_key = a.slug
     AND user_id = u.id
 );

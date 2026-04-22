@@ -252,7 +252,7 @@ func (r *FileRepository) GetReferenceCount(url string) (int, error) {
 	return file.ReferenceCount, nil
 }
 
-// AddUploadType 添加用途到 upload_type 字段（逗号分隔，去重）
+// AddUploadType 添加用途到 upload_type 字段（逗号分隔，不去重，支持同用途多次引用）
 func (r *FileRepository) AddUploadType(url string, usageType string) error {
 	if url == "" || usageType == "" {
 		return nil
@@ -263,27 +263,19 @@ func (r *FileRepository) AddUploadType(url string, usageType string) error {
 		return err
 	}
 
-	// 解析现有用途
-	existingTypes := make(map[string]bool)
+	// 解析现有用途（保留所有记录，不去重）
+	var types []string
 	if file.UploadType != "" {
 		for _, t := range strings.Split(file.UploadType, ",") {
 			trimmed := strings.TrimSpace(t)
 			if trimmed != "" {
-				existingTypes[trimmed] = true
+				types = append(types, trimmed)
 			}
 		}
 	}
 
-	// 添加新用途（去重）
-	if !existingTypes[usageType] {
-		existingTypes[usageType] = true
-	}
-
-	// 重新组合用途字符串
-	var types []string
-	for t := range existingTypes {
-		types = append(types, t)
-	}
+	// 直接添加新用途（允许重复）
+	types = append(types, usageType)
 	sort.Strings(types) // 排序保证一致性
 
 	return r.db.Model(&model.File{}).
@@ -292,7 +284,7 @@ func (r *FileRepository) AddUploadType(url string, usageType string) error {
 		Error
 }
 
-// RemoveUploadType 从 upload_type 字段移除指定用途
+// RemoveUploadType 从 upload_type 字段移除指定用途（仅移除一次，支持同用途多次引用）
 func (r *FileRepository) RemoveUploadType(url string, usageType string) error {
 	if url == "" || usageType == "" {
 		return nil
@@ -303,30 +295,33 @@ func (r *FileRepository) RemoveUploadType(url string, usageType string) error {
 		return err
 	}
 
-	// 解析现有用途
-	existingTypes := make(map[string]bool)
+	// 解析现有用途（保留所有记录）
+	var types []string
 	if file.UploadType != "" {
 		for _, t := range strings.Split(file.UploadType, ",") {
 			trimmed := strings.TrimSpace(t)
 			if trimmed != "" {
-				existingTypes[trimmed] = true
+				types = append(types, trimmed)
 			}
 		}
 	}
 
-	// 移除指定用途
-	delete(existingTypes, usageType)
-
-	// 重新组合用途字符串
-	var types []string
-	for t := range existingTypes {
-		types = append(types, t)
+	// 仅移除第一个匹配的用途（支持同用途多次引用）
+	removed := false
+	var newTypes []string
+	for _, t := range types {
+		if !removed && t == usageType {
+			removed = true
+			continue
+		}
+		newTypes = append(newTypes, t)
 	}
-	sort.Strings(types) // 排序保证一致性
+
+	sort.Strings(newTypes) // 排序保证一致性
 
 	return r.db.Model(&model.File{}).
 		Where("file_url = ?", url).
-		Update("upload_type", strings.Join(types, ",")).
+		Update("upload_type", strings.Join(newTypes, ",")).
 		Error
 }
 
