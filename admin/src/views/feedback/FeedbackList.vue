@@ -13,6 +13,25 @@
   <common-list title="反馈投诉" :data="list" :loading="loading" :total="total" :show-create="false"
     v-model:page="pagination.page" v-model:page-size="pagination.page_size" @refresh="fetchList"
     @update:page="fetchList" @update:pageSize="fetchList">
+    <template #toolbar-before>
+      <el-form :inline="true" class="search-form">
+        <el-form-item label="关键词">
+          <el-input v-model="searchKeyword" placeholder="搜索内容/邮箱/地址" clearable @clear="handleSearch" />
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-select v-model="searchStatus" placeholder="全部状态" clearable @change="handleSearch">
+            <el-option label="待处理" value="pending" />
+            <el-option label="已解决" value="resolved" />
+            <el-option label="已关闭" value="closed" />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="handleSearch">搜索</el-button>
+          <el-button @click="handleReset">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </template>
+
     <el-table-column label="工单号" width="150" align="center">
       <template #default="{ row }">
         <span>{{ row.ticket_no }}</span>
@@ -85,14 +104,26 @@ const pagination = ref({
   page: 1,
   page_size: 10
 })
+const searchKeyword = ref('')
+const searchReportType = ref('')
+const searchStatus = ref('')
 
 // 获取反馈列表
 const fetchList = async () => {
   loading.value = true
   try {
-    const params = {
+    const params: any = {
       page: pagination.value.page,
       page_size: pagination.value.page_size
+    }
+    if (searchKeyword.value) {
+      params.keyword = searchKeyword.value
+    }
+    if (searchReportType.value) {
+      params.report_type = searchReportType.value
+    }
+    if (searchStatus.value) {
+      params.status = searchStatus.value
     }
     const res = await getFeedbackList(params)
     list.value = res.list || []
@@ -104,6 +135,21 @@ const fetchList = async () => {
   } finally {
     loading.value = false
   }
+}
+
+// 搜索
+const handleSearch = () => {
+  pagination.value.page = 1
+  fetchList()
+}
+
+// 重置
+const handleReset = () => {
+  searchKeyword.value = ''
+  searchReportType.value = ''
+  searchStatus.value = ''
+  pagination.value.page = 1
+  fetchList()
 }
 
 const handleView = (id: number) => {
