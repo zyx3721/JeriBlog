@@ -139,8 +139,23 @@ request.interceptors.response.use(
     }
     
     // 其他错误：尝试提取后端返回的错误信息
-    const responseData = error.response?.data as { message?: string } | undefined
-    const message = responseData?.message || error.message || '请求失败'
+    let message = '请求失败'
+
+    // 优先从响应体中提取 message 字段
+    if (error.response?.data) {
+      const responseData = error.response.data as any
+      if (responseData.message) {
+        message = responseData.message
+      } else if (responseData.msg) {
+        message = responseData.msg
+      }
+    }
+
+    // 如果响应体中没有错误信息，使用 axios 的错误信息
+    if (message === '请求失败' && error.message) {
+      message = error.message
+    }
+
     return Promise.reject(new Error(message))
   }
 )
