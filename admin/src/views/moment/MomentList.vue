@@ -259,11 +259,13 @@ onMounted(fetchMoments)
     margin-bottom: 8px;
     line-height: 1.5;
     color: #333;
+    text-align: center;
   }
 
   .images-content {
     display: flex;
     align-items: center;
+    justify-content: center;
     margin-bottom: 8px;
 
     .more-images {
@@ -275,6 +277,7 @@ onMounted(fetchMoments)
   .tags-container {
     display: flex;
     align-items: center;
+    justify-content: center;
     flex-wrap: wrap;
     gap: 8px;
     margin-top: 4px;
