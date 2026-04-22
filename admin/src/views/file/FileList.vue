@@ -124,12 +124,12 @@
     <template #extra>
       <upload-config-dialog v-model="uploadDialogVisible" />
 
-      <!-- 文件引用详情抽屉 -->
-      <el-drawer
-        v-model="referencesDrawerVisible"
+      <!-- 文件引用详情对话框 -->
+      <el-dialog
+        v-model="referencesDialogVisible"
         title="文件引用详情"
-        direction="rtl"
-        size="600px"
+        width="600px"
+        :close-on-click-modal="false"
       >
         <div v-loading="referencesLoading" class="references-content">
           <el-empty v-if="!referencesLoading && references.length === 0" description="暂无引用" />
@@ -160,7 +160,11 @@
             </div>
           </div>
         </div>
-      </el-drawer>
+
+        <template #footer>
+          <el-button @click="referencesDialogVisible = false">关闭</el-button>
+        </template>
+      </el-dialog>
     </template>
   </common-list>
 </template>
@@ -187,7 +191,7 @@ const loading = ref(false)
 const uploadDialogVisible = ref(false)
 
 // 引用详情相关
-const referencesDrawerVisible = ref(false)
+const referencesDialogVisible = ref(false)
 const referencesLoading = ref(false)
 const references = ref<FileReference[]>([])
 const currentFile = ref<FileInfo | null>(null)
@@ -248,13 +252,14 @@ const handleShowReferences = async (file: FileInfo) => {
   }
 
   currentFile.value = file
-  referencesDrawerVisible.value = true
+  referencesDialogVisible.value = true
   referencesLoading.value = true
   references.value = []
 
   try {
     references.value = await getFileReferences(file.id)
-  } catch (error) {
+  } catch (error: any) {
+    console.error('加载引用详情失败:', error)
     ElMessage.error('加载引用详情失败')
   } finally {
     referencesLoading.value = false
@@ -306,13 +311,16 @@ onMounted(loadList)
 /* 搜索表单样式已移至全局样式 main.scss */
 
 .references-content {
-  min-height: 200px;
+  min-height: 150px;
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 4px;
 }
 
 .reference-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .reference-item {
@@ -324,7 +332,8 @@ onMounted(loadList)
 
   &:hover {
     border-color: #409eff;
-    box-shadow: 0 2px 8px rgba(64, 158, 255, 0.1);
+    box-shadow: 0 2px 12px rgba(64, 158, 255, 0.15);
+    transform: translateY(-2px);
   }
 }
 
@@ -340,6 +349,7 @@ onMounted(loadList)
     padding: 2px 8px;
     background: #fff;
     border-radius: 4px;
+    border: 1px solid #e4e7ed;
   }
 }
 
