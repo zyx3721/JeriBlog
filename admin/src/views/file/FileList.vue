@@ -125,8 +125,6 @@
       </template>
     </el-table-column>
 
-    <el-table-column prop="upload_type" label="用途" width="100" align="center" />
-
     <el-table-column label="上传时间" width="180" align="center">
       <template #default="{ row }">
         {{ formatDateTime(row.upload_time) }}
@@ -166,10 +164,9 @@
                 <div class="reference-title">{{ ref.title }}</div>
                 <el-link
                   v-if="ref.url"
-                  :href="ref.url"
-                  target="_blank"
                   type="primary"
                   class="reference-link"
+                  @click="handleReferenceClick(ref)"
                 >
                   <i class="ri-external-link-line"></i>
                   查看详情
@@ -190,11 +187,14 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { useRouter } from 'vue-router'
 import CommonList from '@/components/common/CommonList.vue'
 import { getFileList, deleteFile, getFileReferences, type FileReference } from '@/api/file'
 import type { FileInfo, FileQuery } from '@/types/file'
 import { formatDateTime } from '@/utils/date'
 import UploadConfigDialog from '@/views/file/components/UploadConfigDialog.vue'
+
+const router = useRouter()
 
 const query = reactive<FileQuery>({
   page: 1,
@@ -284,13 +284,82 @@ const handleShowReferences = async (file: FileInfo) => {
   }
 }
 
+// 处理引用详情点击跳转
+const handleReferenceClick = (ref: FileReference) => {
+  referencesDialogVisible.value = false
+
+  // 根据引用类型进行不同的跳转处理
+  switch (ref.type) {
+    case 'user':
+      // 跳转到用户管理页面，并自动搜索用户昵称
+      router.push({
+        path: '/users',
+        query: { keyword: ref.title }
+      })
+      break
+
+    case 'article':
+      // 跳转到文章前端访问链接
+      if (ref.url) {
+        window.open(ref.url, '_blank')
+      }
+      break
+
+    case 'moment':
+      // 跳转到动态前端访问地址
+      if (ref.url) {
+        window.open(ref.url, '_blank')
+      }
+      break
+
+    case 'comment':
+      // 跳转到评论所属文章前端访问链接
+      if (ref.url) {
+        window.open(ref.url, '_blank')
+      }
+      break
+
+    case 'friend':
+      // 跳转到友链前端访问地址
+      if (ref.url) {
+        window.open(ref.url, '_blank')
+      }
+      break
+
+    case 'setting':
+      // 跳转到系统设置页面
+      router.push('/settings')
+      break
+
+    case 'menu':
+      // 跳转到菜单管理页面
+      router.push('/menus')
+      break
+
+    case 'feedback':
+      // 跳转到反馈投诉页面，并根据工单号自动搜索
+      router.push({
+        path: '/feedbacks',
+        query: { ticket_no: ref.title }
+      })
+      break
+
+    default:
+      ElMessage.warning('未知的引用类型')
+  }
+}
+
 // 获取引用类型标签颜色
 const getReferenceTypeTag = (type: string): 'primary' | 'success' | 'warning' | 'info' | 'danger' => {
   const typeMap: Record<string, 'primary' | 'success' | 'warning' | 'info' | 'danger'> = {
     article: 'primary',
     user: 'success',
     friend: 'warning',
-    setting: 'info'
+    setting: 'info',
+    moment: 'primary',
+    comment: 'success',
+    menu: 'info',
+    feedback: 'danger'
   }
   return typeMap[type] || 'info'
 }
@@ -301,7 +370,11 @@ const getReferenceTypeName = (type: string) => {
     article: '文章',
     user: '用户',
     friend: '友链',
-    setting: '系统设置'
+    setting: '系统设置',
+    moment: '动态',
+    comment: '评论',
+    menu: '菜单',
+    feedback: '反馈'
   }
   return nameMap[type] || type
 }
