@@ -17,8 +17,10 @@ import "jeri_blog/pkg/utils"
 
 // ListMomentRequest 动态列表请求
 type ListMomentRequest struct {
-	Page     int `form:"page" binding:"omitempty,min=1"`
-	PageSize int `form:"page_size" binding:"omitempty,min=1,max=1000"`
+	Page      int    `form:"page" binding:"omitempty,min=1"`
+	PageSize  int    `form:"page_size" binding:"omitempty,min=1,max=1000"`
+	Keyword   string `form:"keyword"`    // 搜索关键词（按内容模糊搜索）
+	IsPublish *bool  `form:"is_publish"` // 状态筛选（true=已发布, false=草稿, nil=全部）
 }
 
 // FetchLinkMetadataRequest 获取链接元数据请求
