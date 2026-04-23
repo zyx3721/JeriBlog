@@ -653,11 +653,7 @@
 
   // 标记/高亮
   mark {
-    background: linear-gradient(
-      to bottom,
-      transparent 50%,
-      var(--prose-mark-bg) 50%
-    );
+    background: var(--prose-mark-bg);
     padding: 0.1em 0.2em;
     border-radius: 2px;
     color: inherit;
