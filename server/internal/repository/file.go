@@ -55,7 +55,7 @@ func (r *FileRepository) Delete(id uint) error {
 // ============ 查询方法 ============
 
 // List 获取文件列表
-func (r *FileRepository) List(offset, limit int, keyword string, status *int, uploadType string) ([]model.File, int64, error) {
+func (r *FileRepository) List(offset, limit int, keyword string, status *int, fileType string, uploadType string) ([]model.File, int64, error) {
 	var files []model.File
 	var total int64
 
@@ -71,6 +71,15 @@ func (r *FileRepository) List(offset, limit int, keyword string, status *int, up
 	// 状态筛选
 	if status != nil {
 		query = query.Where("status = ?", *status)
+	}
+
+	// 文件类型筛选（image/video 等主类型）
+	if fileType != "" {
+		if strings.Contains(fileType, "/") {
+			query = query.Where("file_type LIKE ?", fileType+"%")
+		} else {
+			query = query.Where("file_type LIKE ?", fileType+"/%")
+		}
 	}
 
 	// 上传类型筛选

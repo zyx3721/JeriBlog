@@ -296,8 +296,8 @@ func (s *FileService) Upload(req *upload.Request, host string) (*dto.FileRespons
 func (s *FileService) List(req *dto.ListFilesRequest) ([]dto.FileResponse, int64, error) {
 	offset := (req.Page - 1) * req.PageSize
 
-	// 调用仓储层查询（支持关键词、状态、上传类型筛选）
-	files, total, err := s.fileRepo.List(offset, req.PageSize, req.Keyword, req.Status, req.UploadType)
+	// 调用仓储层查询（支持关键词、状态、文件类型、上传类型筛选）
+	files, total, err := s.fileRepo.List(offset, req.PageSize, req.Keyword, req.Status, req.Type, req.UploadType)
 	if err != nil {
 		return nil, 0, fmt.Errorf("获取文件列表失败: %w", err)
 	}

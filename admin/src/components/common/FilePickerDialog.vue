@@ -92,11 +92,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
-import { getFileList } from '@/api/file'
-import type { FileInfo } from '@/types/file'
 import { useDebounceFn } from '@vueuse/core'
+import { getFileList } from '@/api/file'
+import type { FileInfo, FileQuery } from '@/types/file'
 
 interface Props {
   modelValue: boolean
@@ -128,6 +128,13 @@ const currentPage = ref(1)
 const pageSize = ref(20)
 const total = ref(0)
 const searchKeyword = ref('')
+
+const resolvedFileType = computed(() => {
+  if (props.fileType) return props.fileType
+  if (props.accept.includes('image')) return 'image'
+  if (props.accept.includes('video')) return 'video'
+  return ''
+})
 
 // 响应式对话框宽度
 const dialogWidth = computed(() => {
@@ -164,55 +171,25 @@ watch(dialogVisible, (val) => {
 const fetchFileList = async () => {
   try {
     loading.value = true
-    const params: any = {
-      page: currentPage.value
+
+    const params: FileQuery = {
+      page: currentPage.value,
+      page_size: pageSize.value > 0 ? pageSize.value : 1000
     }
 
-    // 如果不是"全部"，才传 page_size
-    if (pageSize.value > 0) {
-      params.page_size = pageSize.value
-    } else {
-      // 选择"全部"时，传一个较大的值
-      params.page_size = 1000
+    const keyword = searchKeyword.value.trim()
+    if (keyword) {
+      params.keyword = keyword
     }
 
-    // 根据 accept 参数过滤文件类型
-    if (props.accept) {
-      if (props.accept.includes('image')) {
-        params.file_type = 'image'
-      } else if (props.accept.includes('video')) {
-        params.file_type = 'video'
-      }
-    }
-
-    // 如果有文件类型限制，添加到参数中
-    if (props.fileType) {
-      params.type = props.fileType
+    if (resolvedFileType.value) {
+      params.type = resolvedFileType.value
     }
 
     const response = await getFileList(params)
 
-    // 直接使用后端返回的数据
-    let list = response.list || []
-
-    // 根据 accept 参数进一步过滤文件扩展名
-    if (props.accept) {
-      list = list.filter(file => matchFileType(file.file_type, props.accept))
-    }
-
-    fileList.value = list
-    total.value = list.length
-
-    // 如果有搜索关键词，在前端过滤显示
-    if (searchKeyword.value.trim()) {
-      const keyword = searchKeyword.value.trim().toLowerCase()
-      const filtered = fileList.value.filter(file =>
-        file.original_name.toLowerCase().includes(keyword) ||
-        file.file_name.toLowerCase().includes(keyword)
-      )
-      fileList.value = filtered
-      total.value = filtered.length
-    }
+    fileList.value = response.list || []
+    total.value = response.total || 0
   } catch (error: any) {
     console.error('获取文件列表失败:', error)
     ElMessage.error(error.message || '获取文件列表失败')
@@ -221,25 +198,6 @@ const fetchFileList = async () => {
   } finally {
     loading.value = false
   }
-}
-
-// 匹配文件类型
-const matchFileType = (fileType: string, accept: string): boolean => {
-  if (!accept) return true
-
-  // 图片类型匹配
-  if (accept.includes('image')) {
-    const imageExts = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg', '.ico']
-    return imageExts.some(ext => fileType.toLowerCase().includes(ext.replace('.', '')))
-  }
-
-  // 视频类型匹配
-  if (accept.includes('video')) {
-    const videoExts = ['.mp4', '.webm', '.ogg', '.avi', '.mov', '.wmv', '.flv', '.mkv']
-    return videoExts.some(ext => fileType.toLowerCase().includes(ext.replace('.', '')))
-  }
-
-  return true
 }
 
 // 判断是否为图片

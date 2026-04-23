@@ -36,6 +36,7 @@ export interface FileQuery {
   page_size: number
   keyword?: string
   status?: number
+  type?: string
   upload_type?: string
 }
 
