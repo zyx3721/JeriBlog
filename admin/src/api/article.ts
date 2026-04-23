@@ -68,7 +68,8 @@ export function importArticles(formData: FormData): Promise<ImportArticlesResult
   return request.post("/admin/articles/import", formData, {
     headers: {
       "Content-Type": "multipart/form-data"
-    }
+    },
+    timeout: 600000 // 10分钟超时，支持多文章 + 图片处理
   });
 }
 
