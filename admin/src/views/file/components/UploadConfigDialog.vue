@@ -190,7 +190,7 @@ const regionPlaceholder = computed(() => {
   switch (form.value.storage_type) {
     case 's3': return '例如 us-east-1, ap-southeast-1'
     case 'cos': return '例如 ap-guangzhou, ap-beijing'
-    case 'oss': return '例如 oss-cn-hangzhou, oss-cn-beijing'
+    case 'oss': return '例如 cn-hangzhou, cn-beijing'
     case 'kodo': return '例如 cn-east-1, cn-north-1, cn-south-1'
     case 'minio': return '例如 us-east-1, cn-east-1'
     default: return ''
