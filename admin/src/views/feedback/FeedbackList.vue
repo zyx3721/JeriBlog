@@ -218,8 +218,8 @@ const truncateUrl = (url: string) => {
 }
 
 onMounted(() => {
-  // 检查 URL 参数，如果有 keyword 则自动填充并搜索
-  const keyword = route.query.keyword as string
+  // 检查路由 state，如果有 keyword 则自动填充并搜索
+  const keyword = (history.state?.keyword || route.query.keyword) as string
   if (keyword) {
     searchKeyword.value = keyword
   }

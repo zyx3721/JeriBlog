@@ -290,8 +290,11 @@ const handleReferenceClick = (ref: FileReference) => {
   // 根据引用类型进行不同的跳转处理
   switch (ref.type) {
     case 'user':
-      // 跳转到用户管理页面
-      router.push('/users')
+      // 跳转到用户管理页面，通过 state 传递搜索关键词
+      router.push({
+        path: '/users',
+        state: { keyword: ref.title }
+      })
       break
 
     case 'article':
@@ -333,8 +336,11 @@ const handleReferenceClick = (ref: FileReference) => {
       break
 
     case 'feedback':
-      // 跳转到反馈投诉页面
-      router.push('/feedback')
+      // 跳转到反馈投诉页面，通过 state 传递搜索关键词
+      router.push({
+        path: '/feedback',
+        state: { keyword: ref.title }
+      })
       break
 
     default:
