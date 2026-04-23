@@ -285,12 +285,11 @@ const handleShowReferences = async (file: FileInfo) => {
 
 // 处理引用详情点击跳转
 const handleReferenceClick = (ref: FileReference) => {
-  referencesDialogVisible.value = false
-
   // 根据引用类型进行不同的跳转处理
   switch (ref.type) {
     case 'user':
       // 跳转到用户管理页面，通过 state 传递搜索关键词
+      referencesDialogVisible.value = false // 当前窗口跳转，关闭对话框
       router.push({
         path: '/users',
         state: { keyword: ref.title }
@@ -300,43 +299,46 @@ const handleReferenceClick = (ref: FileReference) => {
     case 'article':
       // 跳转到文章前端访问链接 /posts/<slug>/
       if (ref.url) {
-        window.open(ref.url, '_blank')
+        window.open(ref.url, '_blank') // 新窗口打开，不关闭对话框
       }
       break
 
     case 'moment':
       // 跳转到动态前端访问地址 /moment
       if (ref.url) {
-        window.open(ref.url, '_blank')
+        window.open(ref.url, '_blank') // 新窗口打开，不关闭对话框
       }
       break
 
     case 'comment':
       // 跳转到评论所属文章前端访问链接 /posts/<slug>/
       if (ref.url) {
-        window.open(ref.url, '_blank')
+        window.open(ref.url, '_blank') // 新窗口打开，不关闭对话框
       }
       break
 
     case 'friend':
       // 跳转到友链前端访问地址 /friend
       if (ref.url) {
-        window.open(ref.url, '_blank')
+        window.open(ref.url, '_blank') // 新窗口打开，不关闭对话框
       }
       break
 
     case 'setting':
       // 跳转到系统设置页面
+      referencesDialogVisible.value = false // 当前窗口跳转，关闭对话框
       router.push('/settings')
       break
 
     case 'menu':
       // 跳转到菜单管理页面
+      referencesDialogVisible.value = false // 当前窗口跳转，关闭对话框
       router.push('/menus')
       break
 
     case 'feedback':
       // 跳转到反馈投诉页面，通过 state 传递搜索关键词
+      referencesDialogVisible.value = false // 当前窗口跳转，关闭对话框
       router.push({
         path: '/feedback',
         state: { keyword: ref.title }
