@@ -83,7 +83,7 @@ func NewArticleService(articleRepo *repository.ArticleRepository, tagRepo *repos
 		config:       cfg,
 		md:           md,
 		httpClient: &http.Client{
-			Timeout: 60 * time.Second,
+			Timeout: 300 * time.Second, // 延长超时时间至 5 分钟，支持图片较多的文章导入
 			Transport: &http.Transport{
 				MaxIdleConns:        100,
 				MaxIdleConnsPerHost: 20,
@@ -781,6 +781,8 @@ func (s *ArticleService) importSingleArticle(
 		if err != nil {
 			return fmt.Errorf("图片处理失败: %w", err)
 		}
+		// 图片处理完成后，再次转换剩余的 HTML img 标签为 Markdown 格式
+		parsed.Content = convertHTMLImagesToMarkdown(parsed.Content)
 	}
 
 	// 处理分类
@@ -1159,18 +1161,46 @@ func (s *ArticleService) downloadAndUploadImages(ctx context.Context, content st
 		uniqueURLs[url] = true
 	}
 
-	// 并发下载上传图片
+	// 并发下载上传图片（限制并发数为 10）
+	const maxConcurrency = 10
 	replacements := make(map[string]string)
+	resultChan := make(chan struct {
+		oldURL string
+		newURL string
+		err    error
+	}, len(uniqueURLs))
+	sem := make(chan struct{}, maxConcurrency)
+
 	for url := range uniqueURLs {
 		// 跳过相对路径和本地路径
 		if strings.HasPrefix(url, "./") || strings.HasPrefix(url, "../") || strings.HasPrefix(url, "/") {
 			continue
 		}
 
-		// 下载并上传图片
-		newURL, err := s.downloadAndUploadSingleImage(ctx, url, host)
-		if err == nil {
-			replacements[url] = newURL
+		go func(imgURL string) {
+			sem <- struct{}{}
+			defer func() { <-sem }()
+
+			// 下载并上传图片
+			newURL, err := s.downloadAndUploadSingleImage(ctx, imgURL, host)
+			resultChan <- struct {
+				oldURL string
+				newURL string
+				err    error
+			}{imgURL, newURL, err}
+		}(url)
+	}
+
+	// 收集结果
+	processedCount := 0
+	totalCount := len(uniqueURLs)
+	for processedCount < totalCount {
+		result := <-resultChan
+		processedCount++
+		if result.err == nil {
+			replacements[result.oldURL] = result.newURL
+		} else {
+			logger.Warn("图片处理失败 (%s): %v", result.oldURL, result.err)
 		}
 	}
 
