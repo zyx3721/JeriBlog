@@ -25,8 +25,8 @@
     <el-form label-width="100px">
       <el-form-item label="数据来源">
         <el-select v-model="articleSourceType" placeholder="请选择数据来源" style="width: 100%">
-          <el-option label="Hexo 格式" value="hexo" />
           <el-option label="Markdown 格式" value="markdown" />
+          <el-option label="Hexo 格式" value="hexo" />
         </el-select>
         <div class="form-tip">
           Hexo 格式需要包含 Front Matter，Markdown 格式 仅需 Markdown 内容
