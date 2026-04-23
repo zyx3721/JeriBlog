@@ -417,4 +417,17 @@ onMounted(() => {
   color: var(--el-color-primary);
   text-decoration: underline;
 }
+
+/* 修复来源选择框样式 */
+:deep(.el-select) {
+  cursor: pointer;
+}
+
+:deep(.el-select .el-input__wrapper) {
+  cursor: pointer;
+}
+
+:deep(.el-select .el-input__inner) {
+  cursor: pointer;
+}
 </style>
