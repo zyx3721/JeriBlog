@@ -99,6 +99,15 @@ const inappropriateEvidenceInputRef = ref<HTMLInputElement>()
 const summaryScreenshotInputRef = ref<HTMLInputElement>()
 const suggestionAttachmentInputRef = ref<HTMLInputElement>()
 
+// 拖拽状态 - 每个上传区域独立的拖拽状态
+const dragStates = reactive({
+  copyrightProof: false,
+  copyrightInfringement: false,
+  inappropriateEvidence: false,
+  summaryScreenshot: false,
+  suggestionAttachment: false
+})
+
 // 文件数组映射
 type FileArrayKey = 'copyrightProofFiles' | 'copyrightInfringementFiles' | 'inappropriateEvidenceFiles' | 'summaryScreenshotFiles' | 'suggestionAttachmentFiles'
 
@@ -135,6 +144,52 @@ const handleFileUpload = (event: Event, targetKey: keyof typeof fileArrayMap) =>
 
   // 清空input以允许重复选择同一文件
   target.value = ''
+}
+
+// 处理拖拽进入
+const handleDragEnter = (e: DragEvent, targetKey: keyof typeof fileArrayMap) => {
+  e.preventDefault()
+  e.stopPropagation()
+  dragStates[targetKey] = true
+}
+
+// 处理拖拽离开
+const handleDragLeave = (e: DragEvent, targetKey: keyof typeof fileArrayMap) => {
+  e.preventDefault()
+  e.stopPropagation()
+  dragStates[targetKey] = false
+}
+
+// 处理拖拽悬停
+const handleDragOver = (e: DragEvent) => {
+  e.preventDefault()
+  e.stopPropagation()
+}
+
+// 处理文件拖放
+const handleDrop = (e: DragEvent, targetKey: keyof typeof fileArrayMap) => {
+  e.preventDefault()
+  e.stopPropagation()
+  dragStates[targetKey] = false
+
+  const files = Array.from(e.dataTransfer?.files || [])
+  if (files.length === 0) return
+
+  // 验证每个文件
+  const validFiles: File[] = []
+  for (const file of files) {
+    const validationError = validateFile(file, '反馈投诉')
+    if (validationError) {
+      warning(validationError)
+      continue
+    }
+    validFiles.push(file)
+  }
+
+  if (validFiles.length > 0) {
+    const arrayKey = fileArrayMap[targetKey] as FileArrayKey
+    formData[arrayKey] = [...formData[arrayKey], ...validFiles]
+  }
 }
 
 // 移除文件
@@ -410,9 +465,17 @@ const formatDate = (date?: string) => {
           <div class="file-upload-section">
             <input ref="copyrightProofInputRef" type="file" multiple accept="image/*,.pdf,.doc,.docx" style="display: none"
               @change="handleFileUpload($event, 'copyrightProof')" />
-            <div class="upload-area" @click="copyrightProofInputRef?.click()">
+            <div
+              class="upload-area"
+              :class="{ 'drag-over': dragStates.copyrightProof }"
+              @click="copyrightProofInputRef?.click()"
+              @dragenter="handleDragEnter($event, 'copyrightProof')"
+              @dragleave="handleDragLeave($event, 'copyrightProof')"
+              @dragover="handleDragOver"
+              @drop="handleDrop($event, 'copyrightProof')"
+            >
               <i class="ri-add-line"></i>
-              <span>点击选择<br>图片/文件</span>
+              <span>点击选择或拖拽上传<br>图片/文件</span>
             </div>
           </div>
           <!-- 文件列表 -->
@@ -440,9 +503,17 @@ const formatDate = (date?: string) => {
           <div class="file-upload-section">
             <input ref="copyrightInfringementInputRef" type="file" multiple accept="image/*,.pdf,.doc,.docx" style="display: none"
               @change="handleFileUpload($event, 'copyrightInfringement')" />
-            <div class="upload-area" @click="copyrightInfringementInputRef?.click()">
+            <div
+              class="upload-area"
+              :class="{ 'drag-over': dragStates.copyrightInfringement }"
+              @click="copyrightInfringementInputRef?.click()"
+              @dragenter="handleDragEnter($event, 'copyrightInfringement')"
+              @dragleave="handleDragLeave($event, 'copyrightInfringement')"
+              @dragover="handleDragOver"
+              @drop="handleDrop($event, 'copyrightInfringement')"
+            >
               <i class="ri-add-line"></i>
-              <span>点击选择<br>图片/文件</span>
+              <span>点击选择或拖拽上传<br>图片/文件</span>
             </div>
           </div>
           <!-- 文件列表 -->
@@ -493,9 +564,17 @@ const formatDate = (date?: string) => {
           <div class="file-upload-section">
             <input ref="inappropriateEvidenceInputRef" type="file" multiple accept="image/*,.pdf,.doc,.docx" style="display: none"
               @change="handleFileUpload($event, 'inappropriateEvidence')" />
-            <div class="upload-area" @click="inappropriateEvidenceInputRef?.click()">
+            <div
+              class="upload-area"
+              :class="{ 'drag-over': dragStates.inappropriateEvidence }"
+              @click="inappropriateEvidenceInputRef?.click()"
+              @dragenter="handleDragEnter($event, 'inappropriateEvidence')"
+              @dragleave="handleDragLeave($event, 'inappropriateEvidence')"
+              @dragover="handleDragOver"
+              @drop="handleDrop($event, 'inappropriateEvidence')"
+            >
               <i class="ri-add-line"></i>
-              <span>点击选择<br>图片/文件</span>
+              <span>点击选择或拖拽上传<br>图片/文件</span>
             </div>
           </div>
           <!-- 文件列表 -->
@@ -549,9 +628,17 @@ const formatDate = (date?: string) => {
           <div class="file-upload-section">
             <input ref="summaryScreenshotInputRef" type="file" multiple accept="image/*,.pdf,.doc,.docx" style="display: none"
               @change="handleFileUpload($event, 'summaryScreenshot')" />
-            <div class="upload-area" @click="summaryScreenshotInputRef?.click()">
+            <div
+              class="upload-area"
+              :class="{ 'drag-over': dragStates.summaryScreenshot }"
+              @click="summaryScreenshotInputRef?.click()"
+              @dragenter="handleDragEnter($event, 'summaryScreenshot')"
+              @dragleave="handleDragLeave($event, 'summaryScreenshot')"
+              @dragover="handleDragOver"
+              @drop="handleDrop($event, 'summaryScreenshot')"
+            >
               <i class="ri-add-line"></i>
-              <span>点击选择<br>图片/文件</span>
+              <span>点击选择或拖拽上传<br>图片/文件</span>
             </div>
           </div>
           <!-- 文件列表 -->
@@ -600,9 +687,17 @@ const formatDate = (date?: string) => {
           <div class="file-upload-section">
             <input ref="suggestionAttachmentInputRef" type="file" multiple accept="image/*,.pdf,.doc,.docx" style="display: none"
               @change="handleFileUpload($event, 'suggestionAttachment')" />
-            <div class="upload-area" @click="suggestionAttachmentInputRef?.click()">
+            <div
+              class="upload-area"
+              :class="{ 'drag-over': dragStates.suggestionAttachment }"
+              @click="suggestionAttachmentInputRef?.click()"
+              @dragenter="handleDragEnter($event, 'suggestionAttachment')"
+              @dragleave="handleDragLeave($event, 'suggestionAttachment')"
+              @dragover="handleDragOver"
+              @drop="handleDrop($event, 'suggestionAttachment')"
+            >
               <i class="ri-add-line"></i>
-              <span>点击选择<br>图片/文件</span>
+              <span>点击选择或拖拽上传<br>图片/文件</span>
             </div>
           </div>
           <!-- 文件列表 -->
@@ -809,9 +904,16 @@ const formatDate = (date?: string) => {
         background-color: transparent;
         cursor: pointer;
         text-align: center;
+        transition: all 0.2s;
 
         &:hover:not(.uploading) {
           border-color: var(--jeri-btn);
+        }
+
+        &.drag-over {
+          border-color: var(--theme-color);
+          background-color: var(--jeri-light-bg);
+          border-style: dashed;
         }
 
         &.uploading {
