@@ -130,7 +130,7 @@ onUnmounted(() => {
 
     <FeaturesArticleNavigation :prev="article.prev" :next="article.next" />
 
-    <LazyFeaturesCommentComments target-type="article" :target-key="article.slug!" />
+    <LazyFeaturesCommentComments target-type="article" :target-id="article.id" :target-key="article.slug!" />
   </div>
 </template>
 

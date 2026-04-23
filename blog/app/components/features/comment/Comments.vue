@@ -19,6 +19,7 @@ import { loadEmojiMap } from '@/composables/useEmojis'
 // 组件属性
 const props = defineProps<{
   targetType: CommentTargetType  // 目标类型 (article/page)
+  targetId?: number               // 目标ID (文章ID，优先使用)
   targetKey: string | number      // 目标键值 (文章slug或页面key)
 }>()
 
@@ -66,10 +67,12 @@ const scrollToComment = (hash?: string | null) => {
 }
 
 // 监听目标变化，自动加载评论
-watch(() => [props.targetType, props.targetKey], ([type, key]) => {
-  // 只在 targetKey 有效时才加载评论，避免传递 undefined
-  if (key) {
-    fetchComments(type as CommentTargetType, key as string | number)
+watch(() => [props.targetType, props.targetId, props.targetKey], ([type, id, key]) => {
+  // 优先使用 targetId，其次使用 targetKey
+  const identifier = id || key
+  // 只在 identifier 有效时才加载评论，避免传递 undefined
+  if (identifier) {
+    fetchComments(type as CommentTargetType, identifier as string | number)
   }
 }, { immediate: true })
 
@@ -106,6 +109,7 @@ const totalCommentsCount = computed(() => {
 const handleAddComment = async (content: string, guestInfo?: { nickname?: string; email?: string; website?: string }) => {
   await addComment({
     target_type: props.targetType,
+    target_id: props.targetId,
     target_key: props.targetKey,
     content,
     ...guestInfo
@@ -116,6 +120,7 @@ const handleAddComment = async (content: string, guestInfo?: { nickname?: string
 const handleAddReply = async (commentId: number, content: string, guestInfo?: { nickname?: string; email?: string; website?: string }) => {
   await addComment({
     target_type: props.targetType,
+    target_id: props.targetId,
     target_key: props.targetKey,
     content,
     parent_id: commentId,
@@ -149,6 +154,7 @@ const handleDeleteComment = async (commentId: number) => {
 // 提供评论上下文给所有子组件
 provideCommentContext({
   targetType: computed(() => props.targetType),
+  targetId: computed(() => props.targetId),
   targetKey: computed(() => props.targetKey),
   addComment: handleAddComment,
   addReply: handleAddReply,

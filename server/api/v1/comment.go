@@ -37,12 +37,13 @@ func NewCommentController(commentService *service.CommentService) *CommentContro
 // ListForWeb 获取评论列表
 //
 //	@Summary		评论列表
-//	@Description	获取目标评论，扁平化显示所有评论和回复。需指定 target_type 和 target_key
+//	@Description	获取目标评论，扁平化显示所有评论和回复。优先使用 target_id，其次使用 target_key
 //	@Tags			评论
 //	@Accept			json
 //	@Produce		json
 //	@Param			target_type	query		string	true	"目标类型(article/page)"
-//	@Param			target_key	query		string	true	"目标标识(文章slug或页面key)"
+//	@Param			target_id	query		int		false	"目标ID(文章ID，优先使用)"
+//	@Param			target_key	query		string	false	"目标标识(文章slug或页面key，target_id 不存在时使用)"
 //	@Param			page		query		int		false	"页码"
 //	@Param			page_size	query		int		false	"每页数量（不传则返回全部）"
 //	@Success		200			{object}	response.Response{data=response.PageResult}
@@ -55,7 +56,18 @@ func (c *CommentController) ListForWeb(ctx *gin.Context) {
 		return
 	}
 
-	comments, total, err := c.commentService.ListForWeb(ctx.Request.Context(), &req)
+	var comments []dto.CommentResponse
+	var total int64
+	var err error
+
+	// 优先使用 target_id 查询（解决 slug 变更问题）
+	if req.TargetID != nil && *req.TargetID > 0 {
+		comments, total, err = c.commentService.GetByTargetID(ctx.Request.Context(), req.TargetType, *req.TargetID, req.Page, req.PageSize)
+	} else {
+		// 兼容旧版本，使用 target_key 查询
+		comments, total, err = c.commentService.ListForWeb(ctx.Request.Context(), &req)
+	}
+
 	if err != nil {
 		response.Failed(ctx, err.Error())
 		return

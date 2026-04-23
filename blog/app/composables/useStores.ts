@@ -104,7 +104,12 @@ export function useComments() {
     currentTargetKey.value = targetKey
 
     try {
-      const data = await getComments({ target_type: targetType, target_key: targetKey })
+      // 如果 targetKey 是数字，则作为 target_id 传递；否则作为 target_key 传递
+      const params = typeof targetKey === 'number'
+        ? { target_type: targetType, target_id: targetKey }
+        : { target_type: targetType, target_key: targetKey }
+
+      const data = await getComments(params)
       comments.value = data.list
     } catch (error) {
       console.error('获取评论失败:', error)
@@ -134,7 +139,10 @@ export function useComments() {
 
     // 更新首页文章列表中的评论数量
     if (params.target_type === 'article') {
-      const article = articles.value.find(a => a.slug === params.target_key)
+      // 优先使用 target_id 查找文章，其次使用 target_key
+      const article = params.target_id
+        ? articles.value.find(a => a.id === params.target_id)
+        : articles.value.find(a => a.slug === params.target_key)
       if (article) {
         article.comment_count = (article.comment_count || 0) + 1
       }

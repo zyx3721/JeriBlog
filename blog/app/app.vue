@@ -108,6 +108,9 @@ onMounted(() => {
   window.addEventListener('scroll', () => { clearTimeout(t); t = setTimeout(save, 200) }, { passive: true })
   window.addEventListener('pagehide', save)
 
+  // 异步加载 remixicon，避免阻塞首屏渲染
+  import('remixicon/fonts/remixicon.css')
+
   // 首次加载：模拟加载进度
   if (!hasInitialized.value) {
     const loadingSteps = [

@@ -15,7 +15,8 @@ import { createApi } from './createApi'
 
 interface GetCommentsParams extends PaginationQuery {
   target_type: CommentTargetType
-  target_key: string | number
+  target_id?: number              // 目标ID（文章ID，优先使用）
+  target_key?: string | number    // 目标键值（文章slug或页面key）
 }
 
 const commentApi = createApi<Comment>('/comments', { stringifyTargetKey: true })

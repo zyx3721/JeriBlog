@@ -43,7 +43,8 @@ export interface Comment {
  */
 export interface CreateCommentParams {
   target_type: CommentTargetType
-  target_key: string | number
+  target_id?: number              // 目标ID（文章ID，优先使用）
+  target_key?: string | number    // 目标键值（文章slug或页面key）
   content: string
   parent_id?: number
 

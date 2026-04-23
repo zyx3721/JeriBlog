@@ -60,6 +60,34 @@ func (r *CommentRepository) GetByTarget(ctx context.Context, targetType, targetK
 	return comments, total, err
 }
 
+// GetByTargetID 通过 target_id 获取目标的顶级评论列表（优先使用，解决 slug 变更问题）
+func (r *CommentRepository) GetByTargetID(ctx context.Context, targetType string, targetID uint, page, pageSize int) ([]model.Comment, int64, error) {
+	var comments []model.Comment
+	var total int64
+
+	// 查询顶级评论（包含已删除的记录）
+	query := r.db.WithContext(ctx).Unscoped().Model(&model.Comment{}).
+		Where("target_type = ? AND target_id = ? AND root_id IS NULL", targetType, targetID)
+
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	query = query.Order("created_at DESC").
+		Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Unscoped().Select("id, nickname, avatar, email, website, badge, role, deleted_at")
+		})
+
+	// 只有当 page 和 pageSize 都大于 0 时才应用分页
+	if page > 0 && pageSize > 0 {
+		offset := (page - 1) * pageSize
+		query = query.Offset(offset).Limit(pageSize)
+	}
+
+	err := query.Find(&comments).Error
+	return comments, total, err
+}
+
 // GetRepliesByRootIDs 批量获取多个根评论的所有回复
 func (r *CommentRepository) GetRepliesByRootIDs(ctx context.Context, rootIDs []uint) ([]model.Comment, error) {
 	if len(rootIDs) == 0 {

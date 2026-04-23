@@ -19,7 +19,8 @@ import "jeri_blog/pkg/utils"
 type CreateCommentRequest struct {
 	Content    string `json:"content" binding:"required,min=1,max=500"`
 	TargetType string `json:"target_type" binding:"required,oneof=article page"`
-	TargetKey  string `json:"target_key" binding:"required"`
+	TargetID   *uint  `json:"target_id"`                       // 目标ID（文章ID，优先使用）
+	TargetKey  string `json:"target_key" binding:"omitempty"` // 目标标识（文章slug或页面key，target_id 不存在时使用）
 	ParentID   *uint  `json:"parent_id"`
 
 	// 游客信息（可选，未登录时必填）
@@ -77,7 +78,8 @@ type CommentQueryForWebRequest struct {
 	Page       int    `form:"page,default=1" binding:"min=1"`
 	PageSize   int    `form:"page_size,default=10" binding:"min=0"`
 	TargetType string `form:"target_type" binding:"required,oneof=article page"`
-	TargetKey  string `form:"target_key" binding:"required"`
+	TargetID   *uint  `form:"target_id"`                       // 目标ID（文章ID，优先使用）
+	TargetKey  string `form:"target_key" binding:"omitempty"` // 目标标识（文章slug或页面key，target_id 不存在时使用）
 }
 
 // ============ 后台评论请求 ============

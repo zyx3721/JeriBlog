@@ -137,6 +137,69 @@ func (s *CommentService) GetByTarget(ctx context.Context, targetType, targetKey 
 	return result, total, nil
 }
 
+// GetByTargetID 通过 target_id 获取目标的评论列表（优先使用，解决 slug 变更问题）
+func (s *CommentService) GetByTargetID(ctx context.Context, targetType string, targetID uint, page, pageSize int) ([]dto.CommentResponse, int64, error) {
+	// 获取顶级评论
+	topComments, total, err := s.repo.GetByTargetID(ctx, targetType, targetID, page, pageSize)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	if len(topComments) == 0 {
+		return []dto.CommentResponse{}, 0, nil
+	}
+
+	// 收集顶级评论ID
+	rootIDs := make([]uint, len(topComments))
+	for i, comment := range topComments {
+		rootIDs[i] = comment.ID
+	}
+
+	// 批量获取所有回复
+	replies, err := s.repo.GetRepliesByRootIDs(ctx, rootIDs)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// 构建回复映射表（过滤已删除或隐藏的）
+	repliesMap := make(map[uint][]dto.CommentResponse)
+	for _, reply := range replies {
+		if reply.RootID != nil {
+			// 跳过已删除或隐藏的回复
+			if reply.DeletedAt.Valid || reply.Status == 0 {
+				continue
+			}
+			replyDTO := s.toCommentResponse(&reply)
+			replyDTO.Replies = []dto.CommentResponse{}
+			repliesMap[*reply.RootID] = append(repliesMap[*reply.RootID], *replyDTO)
+		}
+	}
+
+	// 构建扁平化结构
+	result := make([]dto.CommentResponse, 0, len(topComments))
+	for _, comment := range topComments {
+		commentResp := s.toCommentResponse(&comment)
+
+		// 添加回复列表
+		if replies, ok := repliesMap[comment.ID]; ok {
+			commentResp.Replies = replies
+		} else {
+			commentResp.Replies = []dto.CommentResponse{}
+		}
+
+		// 如果顶级评论已删除或隐藏，只在有可见子评论时保留
+		if comment.DeletedAt.Valid || comment.Status == 0 {
+			if len(commentResp.Replies) > 0 {
+				result = append(result, *commentResp)
+			}
+		} else {
+			result = append(result, *commentResp)
+		}
+	}
+
+	return result, total, nil
+}
+
 // Create 创建评论
 func (s *CommentService) Create(ctx context.Context, req *dto.CreateCommentRequest, userID uint) (*dto.CommentResponse, error) {
 	// 如果 userID 为 0，说明是游客评论
@@ -308,12 +371,26 @@ func (s *CommentService) createComment(ctx context.Context, req *dto.CreateComme
 	// 验证目标类型
 	switch req.TargetType {
 	case "article":
-		// 文章评论：验证 slug 是否存在，并获取文章 ID
-		article, err := s.articleRepo.GetBySlug(req.TargetKey)
-		if err != nil {
-			return nil, errors.New("文章不存在")
+		// 优先使用 target_id（解决 slug 变更问题）
+		if req.TargetID != nil && *req.TargetID > 0 {
+			// 验证文章 ID 是否存在
+			article, err := s.articleRepo.Get(*req.TargetID)
+			if err != nil {
+				return nil, errors.New("文章不存在")
+			}
+			targetID = &article.ID
+			// 如果没有传 target_key，使用文章的当前 slug
+			if req.TargetKey == "" {
+				req.TargetKey = article.Slug
+			}
+		} else {
+			// 兼容旧版本：通过 slug 查询文章
+			article, err := s.articleRepo.GetBySlug(req.TargetKey)
+			if err != nil {
+				return nil, errors.New("文章不存在")
+			}
+			targetID = &article.ID // 存储文章 ID
 		}
-		targetID = &article.ID // 存储文章 ID
 	case "page":
 		// 页面评论：验证页面key是否在配置中
 		if _, ok := pageTitle[req.TargetKey]; !ok {
@@ -348,8 +425,15 @@ func (s *CommentService) createComment(ctx context.Context, req *dto.CreateComme
 			return nil, errors.New("父评论不存在")
 		}
 
-		// 验证父评论属于同一目标
-		if parentComment.TargetType != req.TargetType || parentComment.TargetKey != req.TargetKey {
+		// 验证父评论属于同一目标（优先使用 target_id 比较）
+		if parentComment.TargetType != req.TargetType {
+			return nil, errors.New("不能跨目标回复评论")
+		}
+		if targetID != nil && parentComment.TargetID != nil {
+			if *parentComment.TargetID != *targetID {
+				return nil, errors.New("不能跨目标回复评论")
+			}
+		} else if parentComment.TargetKey != req.TargetKey {
 			return nil, errors.New("不能跨目标回复评论")
 		}
 

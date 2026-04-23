@@ -48,6 +48,8 @@ export interface GuestInfo {
 export interface CommentContext {
   // 目标类型 (article/page)
   targetType: Ref<CommentTargetType>
+  // 目标ID（文章ID，优先使用）
+  targetId?: Ref<number | undefined>
   // 目标键值 (文章slug或页面key)
   targetKey: Ref<string | number>
   // 添加评论（顶层评论）
