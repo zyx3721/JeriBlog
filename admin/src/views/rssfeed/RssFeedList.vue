@@ -39,7 +39,6 @@
           v-model="queryParams.friend_id"
           placeholder="来源"
           clearable
-          filterable
           style="width: 150px"
           @change="handleSearch"
         >
@@ -418,16 +417,4 @@ onMounted(() => {
   text-decoration: underline;
 }
 
-/* 修复来源选择框样式 */
-:deep(.el-select) {
-  cursor: pointer;
-}
-
-:deep(.el-select .el-input__wrapper) {
-  cursor: pointer;
-}
-
-:deep(.el-select .el-input__inner) {
-  cursor: pointer;
-}
 </style>
