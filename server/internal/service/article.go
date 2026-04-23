@@ -782,9 +782,10 @@ func (s *ArticleService) importSingleArticle(
 		if err != nil {
 			return fmt.Errorf("图片处理失败: %w", err)
 		}
-		// 图片处理完成后，再次转换剩余的 HTML img 标签为 Markdown 格式
-		parsed.Content = convertHTMLImagesToMarkdown(parsed.Content)
 	}
+
+	// 无论是否上传图片，都将 HTML img 标签转换为 Markdown 格式
+	parsed.Content = convertHTMLImagesToMarkdown(parsed.Content)
 
 	// 处理分类
 	var categoryID *uint
