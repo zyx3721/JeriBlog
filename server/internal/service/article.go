@@ -719,7 +719,7 @@ func (s *ArticleService) updateContentFileStatus(oldContent, newContent string) 
 // ============ 数据导入导出方法 ============
 
 // ImportArticles 导入文章（支持 Hexo 和 Markdown 格式）
-func (s *ArticleService) ImportArticles(ctx context.Context, files map[string]string, sourceType string, uploadImages bool, host string) (*dto.ImportArticlesResult, error) {
+func (s *ArticleService) ImportArticles(ctx context.Context, files map[string]string, sourceType string, uploadImages bool, host string, imageProxy string) (*dto.ImportArticlesResult, error) {
 	if len(files) == 0 {
 		return nil, fmt.Errorf("没有找到有效的文章数据")
 	}
@@ -734,7 +734,7 @@ func (s *ArticleService) ImportArticles(ctx context.Context, files map[string]st
 
 	// 处理每篇文章
 	for filename, content := range files {
-		if err := s.importSingleArticle(ctx, filename, content, sourceType, uploadImages, host, categoryCache, tagCache); err != nil {
+		if err := s.importSingleArticle(ctx, filename, content, sourceType, uploadImages, host, imageProxy, categoryCache, tagCache); err != nil {
 			result.AddError(filename, extractTitle(content), err.Error())
 		} else {
 			result.Success++
@@ -755,6 +755,7 @@ func (s *ArticleService) importSingleArticle(
 	sourceType string,
 	uploadImages bool,
 	host string,
+	imageProxy string,
 	categoryCache map[string]*model.Category,
 	tagCache map[string]*model.Tag,
 ) error {
@@ -777,7 +778,7 @@ func (s *ArticleService) importSingleArticle(
 
 	// 处理图片上传
 	if uploadImages {
-		parsed.Content, err = s.downloadAndUploadImages(ctx, parsed.Content, host)
+		parsed.Content, err = s.downloadAndUploadImages(ctx, parsed.Content, host, imageProxy)
 		if err != nil {
 			return fmt.Errorf("图片处理失败: %w", err)
 		}
@@ -839,7 +840,7 @@ func (s *ArticleService) importSingleArticle(
 
 // ImportFromHexo 从Hexo格式导入文章（保留向后兼容）
 func (s *ArticleService) ImportFromHexo(ctx context.Context, files map[string]string) (*dto.ImportArticlesResult, error) {
-	return s.ImportArticles(ctx, files, "hexo", false, "")
+	return s.ImportArticles(ctx, files, "hexo", false, "", "")
 }
 
 // getOrCreateCategory 获取或创建分类
@@ -1144,7 +1145,7 @@ func parseMarkdownArticle(filename, content string) (*HexoParsedArticle, error) 
 }
 
 // downloadAndUploadImages 下载并上传文章中的图片
-func (s *ArticleService) downloadAndUploadImages(ctx context.Context, content string, host string) (string, error) {
+func (s *ArticleService) downloadAndUploadImages(ctx context.Context, content string, host string, imageProxy string) (string, error) {
 	if s.fileService == nil {
 		return content, nil
 	}
@@ -1182,7 +1183,7 @@ func (s *ArticleService) downloadAndUploadImages(ctx context.Context, content st
 			defer func() { <-sem }()
 
 			// 下载并上传图片
-			newURL, err := s.downloadAndUploadSingleImage(ctx, imgURL, host)
+			newURL, err := s.downloadAndUploadSingleImage(ctx, imgURL, host, imageProxy)
 			resultChan <- struct {
 				oldURL string
 				newURL string
@@ -1213,7 +1214,7 @@ func (s *ArticleService) downloadAndUploadImages(ctx context.Context, content st
 }
 
 // downloadAndUploadSingleImage 下载并上传单张图片
-func (s *ArticleService) downloadAndUploadSingleImage(ctx context.Context, imgURL string, host string) (string, error) {
+func (s *ArticleService) downloadAndUploadSingleImage(ctx context.Context, imgURL string, host string, imageProxy string) (string, error) {
 	if s.fileService == nil || imgURL == "" {
 		return imgURL, nil
 	}
@@ -1223,8 +1224,22 @@ func (s *ArticleService) downloadAndUploadSingleImage(ctx context.Context, imgUR
 		return imgURL, nil
 	}
 
+	// 应用图片代理（如果配置了代理地址）
+	downloadURL := imgURL
+	if imageProxy != "" {
+		// 确保代理地址以 / 结尾
+		proxy := strings.TrimSpace(imageProxy)
+		if !strings.HasSuffix(proxy, "/") {
+			proxy += "/"
+		}
+		// 为 GitHub raw 地址添加代理前缀
+		if strings.Contains(imgURL, "raw.githubusercontent.com") {
+			downloadURL = proxy + imgURL
+		}
+	}
+
 	// 下载图片
-	data, ext, err := s.fetchImage(ctx, imgURL)
+	data, ext, err := s.fetchImage(ctx, downloadURL)
 	if err != nil {
 		return imgURL, fmt.Errorf("下载图片失败: %w", err)
 	}

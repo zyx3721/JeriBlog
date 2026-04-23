@@ -298,6 +298,7 @@ func (c *ArticleController) Delete(ctx *gin.Context) {
 //	@Security		BearerAuth
 //	@Param			source_type	formData	string	true	"来源类型，支持：hexo, markdown"	Enums(hexo, markdown)
 //	@Param			upload_images formData	bool	false	"是否上传文章中的图片（默认false）"
+//	@Param			image_proxy formData	string	false	"图片代理地址（用于加速GitHub等图床访问）"
 //	@Param			files		formData	[]file	true	"文章文件（.md或.markdown格式，支持多文件）"
 //	@Success		200			{object}	response.Response{data=dto.ImportArticlesResult}
 //	@Failure		400			{object}	response.Response
@@ -329,6 +330,7 @@ func (c *ArticleController) ImportArticles(ctx *gin.Context) {
 	}
 
 	uploadImages := ctx.PostForm("upload_images") == "true"
+	imageProxy := ctx.PostForm("image_proxy")
 
 	// 提取 host 用于生成完整的图片 URL
 	host := upload.ExtractHostFromContext(ctx, "")
@@ -351,7 +353,7 @@ func (c *ArticleController) ImportArticles(ctx *gin.Context) {
 		fileContents[fileHeader.Filename] = string(fileBytes)
 	}
 
-	result, err := c.articleService.ImportArticles(ctx.Request.Context(), fileContents, sourceType, uploadImages, host)
+	result, err := c.articleService.ImportArticles(ctx.Request.Context(), fileContents, sourceType, uploadImages, host, imageProxy)
 	if err != nil {
 		response.Failed(ctx, err.Error())
 		return

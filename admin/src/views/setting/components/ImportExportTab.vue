@@ -50,6 +50,15 @@
           开启后将自动下载并上传文章中的图片
         </div>
       </el-form-item>
+
+      <el-form-item label="图片代理" v-if="articleUploadImages">
+        <el-input v-model="articleImageProxy" placeholder="https://gh.llkk.cc/" clearable style="width: 100%">
+          <template #prepend>代理地址</template>
+        </el-input>
+        <div class="form-tip">
+          用于加速 GitHub 等国外图片下载，留空则使用默认代理：https://gh.llkk.cc/
+        </div>
+      </el-form-item>
     </el-form>
 
     <el-alert v-if="articleImportResult" :type="articleImportResult.failed > 0 ? 'warning' : 'success'"
@@ -147,6 +156,7 @@ const articleUploading = ref(false)
 const articleImportResult = ref<ImportArticlesResult | undefined>()
 const articleSourceType = ref<string>('hexo')
 const articleUploadImages = ref(false)
+const articleImageProxy = ref<string>('')
 
 const handleArticleFileChange = (file: UploadFile, files: UploadUserFile[]) => {
   articleFileList.value = files
@@ -169,6 +179,11 @@ const handleArticleImport = async () => {
     })
     formData.append('source_type', articleSourceType.value)
     formData.append('upload_images', articleUploadImages.value.toString())
+
+    // 传递图片代理地址，留空则后端使用默认值
+    if (articleUploadImages.value && articleImageProxy.value) {
+      formData.append('image_proxy', articleImageProxy.value.trim())
+    }
 
     const result = await importArticles(formData)
     articleImportResult.value = result
@@ -196,6 +211,7 @@ watch(articleImportVisible, (val) => {
       articleImportResult.value = undefined
       articleSourceType.value = 'hexo'
       articleUploadImages.value = false
+      articleImageProxy.value = ''
     }, 300)
   }
 })
