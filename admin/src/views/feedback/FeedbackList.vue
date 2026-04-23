@@ -89,7 +89,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import CommonList from '@/components/common/CommonList.vue'
 import { getFeedbackList, deleteFeedback } from '@/api/feedback'
@@ -97,6 +97,7 @@ import type { Feedback, FeedbackStatus } from '@/types/feedback'
 import { formatDateTime } from '@/utils/date'
 
 const router = useRouter()
+const route = useRoute()
 const loading = ref(false)
 const list = ref<Feedback[]>([])
 const total = ref(0)
@@ -217,6 +218,11 @@ const truncateUrl = (url: string) => {
 }
 
 onMounted(() => {
+  // 检查 URL 参数，如果有 keyword 则自动填充并搜索
+  const keyword = route.query.keyword as string
+  if (keyword) {
+    searchKeyword.value = keyword
+  }
   fetchList()
 })
 </script>

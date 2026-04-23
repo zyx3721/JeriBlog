@@ -243,13 +243,25 @@
 
     <div class="image-row">
       <el-form-item label="微信收款码">
-        <ImageUploader ref="rewardWechatUploaderRef" v-model="form.wechat_qrcode" upload-type="微信收款码" width="160px"
-          height="160px" />
+        <div class="image-upload-wrapper">
+          <ImageUploader ref="rewardWechatUploaderRef" v-model="form.wechat_qrcode" upload-type="微信收款码" width="160px"
+            height="160px" />
+          <el-button class="select-file-btn" @click="openFilePicker('wechat_qrcode')">
+            <i class="ri-folder-image-line"></i>
+            选择文件
+          </el-button>
+        </div>
       </el-form-item>
 
       <el-form-item label="支付宝收款码">
-        <ImageUploader ref="rewardAlipayUploaderRef" v-model="form.alipay_qrcode" upload-type="支付宝收款码" width="160px"
-          height="160px" />
+        <div class="image-upload-wrapper">
+          <ImageUploader ref="rewardAlipayUploaderRef" v-model="form.alipay_qrcode" upload-type="支付宝收款码" width="160px"
+            height="160px" />
+          <el-button class="select-file-btn" @click="openFilePicker('alipay_qrcode')">
+            <i class="ri-folder-image-line"></i>
+            选择文件
+          </el-button>
+        </div>
       </el-form-item>
     </div>
 
@@ -414,10 +426,10 @@ const handleFontSiteCommand = (url: string) => {
 
 // 文件选择对话框
 const filePickerVisible = ref(false)
-const currentField = ref<'favicon' | 'background_image' | 'screenshot' | 'about_exhibition'>('favicon')
+const currentField = ref<'favicon' | 'background_image' | 'screenshot' | 'about_exhibition' | 'wechat_qrcode' | 'alipay_qrcode'>('favicon')
 
 // 打开文件选择对话框
-const openFilePicker = (field: 'favicon' | 'background_image' | 'screenshot' | 'about_exhibition') => {
+const openFilePicker = (field: 'favicon' | 'background_image' | 'screenshot' | 'about_exhibition' | 'wechat_qrcode' | 'alipay_qrcode') => {
   currentField.value = field
   filePickerVisible.value = true
 }

@@ -155,7 +155,7 @@
             <div v-for="(ref, index) in references" :key="index" class="reference-item">
               <div class="reference-header">
                 <el-tag :type="getReferenceTypeTag(ref.type)" size="small">
-                  {{ getReferenceTypeName(ref.type) }}
+                  {{ getReferenceTypeName(ref.type, ref.field) }}
                 </el-tag>
                 <span class="reference-field">{{ ref.field }}</span>
               </div>
@@ -364,7 +364,21 @@ const getReferenceTypeTag = (type: string): 'primary' | 'success' | 'warning' | 
 }
 
 // 获取引用类型名称
-const getReferenceTypeName = (type: string) => {
+const getReferenceTypeName = (type: string, field?: string) => {
+  // 如果是系统设置类型，根据字段名区分基本配置和博客配置
+  if (type === 'setting' && field) {
+    // 基本配置字段
+    const basicFields = ['站长头像', '站长形象']
+    // 博客配置字段
+    const blogFields = ['博客图标', '博客背景', '博客截图', '展览图片', '微信收款码', '支付宝收款码']
+
+    if (basicFields.includes(field)) {
+      return '基本配置'
+    } else if (blogFields.includes(field)) {
+      return '博客配置'
+    }
+  }
+
   const nameMap: Record<string, string> = {
     article: '文章',
     user: '用户',

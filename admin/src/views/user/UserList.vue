@@ -156,12 +156,14 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { User } from '@element-plus/icons-vue'
+import { useRoute } from 'vue-router'
 import CommonList from '@/components/common/CommonList.vue'
 import type { User as UserType, UserQuery } from '@/types/user'
 import { getUsers, deleteUser } from '@/api/user'
 import UserFormDialog from './components/UserFormDialog.vue'
 import { formatDateTime } from '@/utils/date'
 
+const route = useRoute()
 const loading = ref(false)
 const userList = ref<UserType[]>([])
 const total = ref(0)
@@ -228,6 +230,11 @@ const handleDelete = async (id: number) => {
 }
 
 onMounted(() => {
+  // 检查 URL 参数，如果有 keyword 则自动填充并搜索
+  const keyword = route.query.keyword as string
+  if (keyword) {
+    queryParams.value.keyword = keyword
+  }
   fetchUsers()
 })
 </script>
