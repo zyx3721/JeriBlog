@@ -19,7 +19,7 @@
           <el-button type="primary" :loading="saving" @click="handleSave">
             保存配置
           </el-button>
-          <el-button @click="loadAllConfigs">重置</el-button>
+          <el-button @click="loadAllConfigs">刷新</el-button>
         </div>
       </div>
 
