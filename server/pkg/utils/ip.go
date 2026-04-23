@@ -18,6 +18,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 const ipAPIURL = "http://ip-api.com/json/%s?lang=zh-CN"
@@ -39,6 +41,39 @@ func InitIPSearcher(_ string) error {
 
 // CloseIPSearcher 关闭 IP 搜索器（在线模式无需关闭）
 func CloseIPSearcher() {}
+
+// GetRealIP 获取真实客户端 IP 地址
+// 优先级：阿里云 ESA > X-Forwarded-For > X-Real-IP > ClientIP
+func GetRealIP(c *gin.Context) string {
+	// 1. 优先使用阿里云 ESA 的真实 IP 头部
+	if ip := c.GetHeader("Ali-CDN-Real-IP"); ip != "" {
+		return ip
+	}
+	if ip := c.GetHeader("X-Client-IP"); ip != "" {
+		return ip
+	}
+
+	// 2. 使用 X-Forwarded-For (取第一个非内网 IP)
+	if xff := c.GetHeader("X-Forwarded-For"); xff != "" {
+		ips := strings.Split(xff, ",")
+		for _, ip := range ips {
+			ip = strings.TrimSpace(ip)
+			if parsedIP := net.ParseIP(ip); parsedIP != nil {
+				if !parsedIP.IsLoopback() && !parsedIP.IsPrivate() {
+					return ip
+				}
+			}
+		}
+	}
+
+	// 3. 使用 X-Real-IP
+	if ip := c.GetHeader("X-Real-IP"); ip != "" {
+		return ip
+	}
+
+	// 4. 最后使用 Gin 的默认方法
+	return c.ClientIP()
+}
 
 // GetIPLocation 获取 IP 地址的地理位置
 func GetIPLocation(ip string) string {

@@ -15,6 +15,7 @@ import (
 	"jeri_blog/internal/dto"
 	"jeri_blog/internal/service"
 	"jeri_blog/pkg/response"
+	"jeri_blog/pkg/utils"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -51,7 +52,7 @@ func (h *StatsHandler) Collect(c *gin.Context) {
 		return
 	}
 
-	ip := c.ClientIP()
+	ip := utils.GetRealIP(c)
 	userAgent := c.Request.UserAgent()
 
 	if req.Type == "pageview" || req.Type == "" {

@@ -13,7 +13,6 @@ package middleware
 
 import (
 	"bytes"
-	"jeri_blog/pkg/logger"
 	"fmt"
 	"io"
 	"net/http"
@@ -22,6 +21,9 @@ import (
 	"runtime/debug"
 	"strings"
 	"time"
+
+	"jeri_blog/pkg/logger"
+	"jeri_blog/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -81,7 +83,7 @@ func Recovery() gin.HandlerFunc {
 				method := c.Request.Method
 				path := c.Request.URL.Path
 				query := c.Request.URL.RawQuery
-				clientIP := c.ClientIP()
+				clientIP := utils.GetRealIP(c)
 				userAgent := c.Request.UserAgent()
 
 				// 拼接完整路径

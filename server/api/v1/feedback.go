@@ -18,6 +18,7 @@ import (
 	"jeri_blog/internal/service"
 	"jeri_blog/pkg/errcode"
 	"jeri_blog/pkg/response"
+	"jeri_blog/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -51,7 +52,7 @@ func (h *FeedbackHandler) Submit(c *gin.Context) {
 	}
 
 	// 获取IP和UserAgent
-	ip := c.ClientIP()
+	ip := utils.GetRealIP(c)
 	userAgent := c.GetHeader("User-Agent")
 
 	feedback, err := h.service.Submit(c.Request.Context(), &req, ip, userAgent)

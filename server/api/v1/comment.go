@@ -18,6 +18,7 @@ import (
 	"jeri_blog/internal/dto"
 	"jeri_blog/internal/service"
 	"jeri_blog/pkg/response"
+	"jeri_blog/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -95,7 +96,7 @@ func (c *CommentController) Create(ctx *gin.Context) {
 	}
 
 	// 获取客户端信息
-	req.IP = ctx.ClientIP()
+	req.IP = utils.GetRealIP(ctx)
 	req.UserAgent = ctx.GetHeader("User-Agent")
 
 	// 获取用户ID（登录用户有值，游客为0）
