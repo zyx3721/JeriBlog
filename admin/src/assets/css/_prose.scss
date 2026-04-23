@@ -1254,4 +1254,25 @@
     color: #cc0000;
     font-style: italic;
   }
+
+  // ===== 视频容器 =====
+  .custom-video {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; // 16:9 宽高比
+    margin: 1.5rem 0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #000;
+
+    iframe,
+    video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  }
 }
