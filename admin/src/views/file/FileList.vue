@@ -155,13 +155,13 @@
             <div v-for="(ref, index) in references" :key="index" class="reference-item">
               <div class="reference-header">
                 <el-tag :type="getReferenceTypeTag(ref.type)" size="small">
-                  {{ getReferenceTypeName(ref.type, ref.field) }}
+                  {{ getReferenceTypeName(ref.type) }}
                 </el-tag>
                 <span class="reference-field">{{ ref.field }}</span>
               </div>
 
               <div class="reference-body">
-                <div class="reference-title">{{ ref.title }}</div>
+                <div class="reference-title">{{ getReferenceTitle(ref) }}</div>
                 <el-link
                   type="primary"
                   class="reference-link"
@@ -290,11 +290,8 @@ const handleReferenceClick = (ref: FileReference) => {
   // 根据引用类型进行不同的跳转处理
   switch (ref.type) {
     case 'user':
-      // 跳转到用户管理页面，并自动搜索用户昵称
-      router.push({
-        path: '/users',
-        query: { keyword: ref.title }
-      })
+      // 跳转到用户管理页面
+      router.push('/users')
       break
 
     case 'article':
@@ -336,11 +333,8 @@ const handleReferenceClick = (ref: FileReference) => {
       break
 
     case 'feedback':
-      // 跳转到反馈投诉页面，并根据工单号自动搜索
-      router.push({
-        path: '/feedback',
-        query: { keyword: ref.title }
-      })
+      // 跳转到反馈投诉页面
+      router.push('/feedback')
       break
 
     default:
@@ -364,21 +358,7 @@ const getReferenceTypeTag = (type: string): 'primary' | 'success' | 'warning' | 
 }
 
 // 获取引用类型名称
-const getReferenceTypeName = (type: string, field?: string) => {
-  // 如果是系统设置类型，根据字段名区分基本配置和博客配置
-  if (type === 'setting' && field) {
-    // 基本配置字段
-    const basicFields = ['站长头像', '站长形象']
-    // 博客配置字段
-    const blogFields = ['博客图标', '博客背景', '博客截图', '展览图片', '微信收款码', '支付宝收款码']
-
-    if (basicFields.includes(field)) {
-      return '基本配置'
-    } else if (blogFields.includes(field)) {
-      return '博客配置'
-    }
-  }
-
+const getReferenceTypeName = (type: string) => {
   const nameMap: Record<string, string> = {
     article: '文章',
     user: '用户',
@@ -390,6 +370,26 @@ const getReferenceTypeName = (type: string, field?: string) => {
     feedback: '反馈'
   }
   return nameMap[type] || type
+}
+
+// 获取引用标题显示内容
+const getReferenceTitle = (ref: FileReference) => {
+  // 如果是系统设置类型，根据字段名区分基本配置和博客配置
+  if (ref.type === 'setting' && ref.field) {
+    // 基本配置字段
+    const basicFields = ['站长头像', '站长形象']
+    // 博客配置字段
+    const blogFields = ['博客图标', '博客背景', '博客截图', '展览图片', '微信收款码', '支付宝收款码']
+
+    if (basicFields.includes(ref.field)) {
+      return '基本配置'
+    } else if (blogFields.includes(ref.field)) {
+      return '博客配置'
+    }
+  }
+
+  // 其他类型返回原始 title
+  return ref.title
 }
 
 const isImage = (file: FileInfo) => file.file_type?.startsWith('image/')
