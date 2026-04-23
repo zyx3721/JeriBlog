@@ -75,7 +75,7 @@
               <i v-else class="ri-loader-line ai-generate-icon is-loading"></i>
             </div>
           </template>
-          <el-input v-model="formData.summary" type="textarea" placeholder="请输入文章摘要，如不填写将自动截取内容前200字符" :rows="3"
+          <el-input v-model="formData.summary" type="textarea" placeholder="请输入文章摘要，如不填写将自动截取内容前150字符" :rows="3"
             maxlength="150" show-word-limit clearable />
         </el-form-item>
 

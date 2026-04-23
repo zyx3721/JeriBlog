@@ -168,6 +168,61 @@ function renderLinkCard(params: string[], lineNum?: number): string {
 }
 
 /**
+ * 渲染在线视频
+ * @param params - [平台或URL, 视频ID(可选)]
+ * 支持格式：
+ * - :::video bilibili BV1xxx :::
+ * - :::video youtube dQw4w9WgXcQ :::
+ * - :::video https://example.com/video.mp4 :::
+ */
+function renderVideo(params: string[], lineNum?: number): string {
+  if (params.length === 0) return ''
+
+  const platformOrUrl = params[0] || ''
+  const videoId = params[1] || ''
+  const lineAttr = lineNum !== undefined ? ` data-source-line="${lineNum}"` : ''
+
+  // B站视频
+  if (platformOrUrl === 'bilibili' && videoId) {
+    return `<div class="custom-video"${lineAttr}>
+      <iframe
+        src="//player.bilibili.com/player.html?bvid=${videoId}&autoplay=0"
+        scrolling="no"
+        border="0"
+        frameborder="no"
+        framespacing="0"
+        allowfullscreen="true"
+        sandbox="allow-scripts allow-same-origin allow-popups"
+        referrerpolicy="strict-origin-when-cross-origin">
+      </iframe>
+    </div>`
+  }
+
+  // YouTube视频
+  if (platformOrUrl === 'youtube' && videoId) {
+    return `<div class="custom-video"${lineAttr}>
+      <iframe
+        src="https://www.youtube.com/embed/${videoId}"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        sandbox="allow-scripts allow-same-origin allow-popups"
+        referrerpolicy="strict-origin-when-cross-origin">
+      </iframe>
+    </div>`
+  }
+
+  // 本地/在线视频URL
+  if (platformOrUrl.startsWith('http://') || platformOrUrl.startsWith('https://') || platformOrUrl.startsWith('/')) {
+    return `<div class="custom-video"${lineAttr}>
+      <video src="${platformOrUrl}" controls preload="metadata"></video>
+    </div>`
+  }
+
+  return ''
+}
+
+/**
  * 渲染照片展示墙
  * @param rows - 每行的图片数组
  * @param lineNum - 源码行号（可选，用于滚动同步）
@@ -318,6 +373,8 @@ function customBlocksPlugin(md: MarkdownIt) {
       let html = ''
       if (tag === 'link') {
         html = renderLinkCard(params, startLine)
+      } else if (tag === 'video') {
+        html = renderVideo(params, startLine)
       }
 
       if (html) {
@@ -513,7 +570,9 @@ const SANITIZE_CONFIG = {
     // KaTeX / MathML 标签
     'math', 'mrow', 'mi', 'mo', 'mn', 'msup', 'msub', 'msubsup', 'mfrac', 'msqrt', 'mroot',
     'mover', 'munder', 'munderover', 'mtable', 'mtr', 'mtd', 'mtext', 'mspace', 'mpadded',
-    'menclose', 'mstyle', 'merror', 'mfenced', 'mphantom', 'annotation', 'semantics'
+    'menclose', 'mstyle', 'merror', 'mfenced', 'mphantom', 'annotation', 'semantics',
+    // 视频相关标签
+    'video', 'iframe', 'audio', 'source'
   ],
   ALLOWED_ATTR: [
     'href', 'title', 'target', 'rel', 'src', 'alt', 'width', 'height',
@@ -529,10 +588,15 @@ const SANITIZE_CONFIG = {
     'stretchy', 'symmetric', 'largeop', 'movablelimits', 'accent',
     'minsize', 'maxsize', 'open', 'close', 'separators', 'notation',
     'encoding', 'definitionurl', 'display', 'xmlns:xlink',
-    'depth', 'voffset', 'columnalign', 'rowalign', 'columnspacing', 'rowspacing'
+    'depth', 'voffset', 'columnalign', 'rowalign', 'columnspacing', 'rowspacing',
+    // 视频相关属性
+    'controls', 'preload', 'autoplay', 'loop', 'muted', 'poster',
+    'allowfullscreen', 'scrolling', 'border', 'frameborder', 'framespacing', 'allow',
+    'sandbox', 'referrerpolicy',
+    'data-server', 'data-type', 'data-id'
   ],
   ALLOW_DATA_ATTR: true,
-  ADD_ATTR: ['target', 'onclick']
+  ADD_ATTR: ['target', 'onclick', 'allowfullscreen']
 }
 
 // 渲染 Markdown 为 HTML
@@ -701,6 +765,7 @@ const MARKDOWN_STYLES = `
 .markdown-content .custom-link-main { display: flex; align-items: center; gap: 12px; padding: 12px 16px; text-decoration: none; color: inherit; } .markdown-content .custom-link-icon { flex-shrink: 0; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(249, 250, 251, 0.5); border: 1px solid rgba(128, 128, 128, 0.2); }
 .markdown-content .custom-link-info { flex: 1; min-width: 0; } .markdown-content .custom-link-title { font-weight: 600; font-size: 1.1em; color: #2c3e50; } .markdown-content .custom-link-desc { font-size: 0.875em; color: #5a6c7d; line-height: 1.5; }
 .markdown-content .custom-photo-wall{margin:1em 0;border-radius:8px;overflow-x:auto}.markdown-content .custom-photo-wall-container{display:flex;flex-direction:column}.markdown-content .custom-photo-wall-row{display:flex;align-items:stretch;flex-wrap:nowrap}.markdown-content .custom-photo-wall-item{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;padding:5px;height:100%}.markdown-content .custom-photo-wall-item img{margin:0;display:block;max-width:100%;max-height:100%;object-fit:contain;border-radius:6px;background:rgba(249,250,251,.8)}
+.markdown-content .custom-video{position:relative;width:100%;padding-bottom:56.25%;margin:1.5em 0;border-radius:8px;overflow:hidden;background:#000}.markdown-content .custom-video iframe,.markdown-content .custom-video video{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
 .markdown-content .katex-inline{display:inline}.markdown-content .katex-block{display:block;margin:1.5rem 0;text-align:center;overflow-x:auto;padding:0.5rem 0}.markdown-content .katex-block .katex{font-size:1.15em}.markdown-content .katex{font-size:1em;line-height:1.6}.markdown-content .katex .base{color:inherit}.markdown-content .katex .katex-mathml{position:absolute;clip:rect(1px,1px,1px,1px);padding:0;border:0;height:1px;width:1px;overflow:hidden}.markdown-content .katex-error{color:#cc0000;font-style:italic}
 `
 
