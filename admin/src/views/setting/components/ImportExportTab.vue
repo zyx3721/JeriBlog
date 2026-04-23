@@ -154,7 +154,7 @@ const articleImportVisible = ref(false)
 const articleFileList = ref<UploadUserFile[]>([])
 const articleUploading = ref(false)
 const articleImportResult = ref<ImportArticlesResult | undefined>()
-const articleSourceType = ref<string>('hexo')
+const articleSourceType = ref<string>('markdown')
 const articleUploadImages = ref(false)
 const articleImageProxy = ref<string>('')
 
@@ -209,7 +209,7 @@ watch(articleImportVisible, (val) => {
     setTimeout(() => {
       articleFileList.value = []
       articleImportResult.value = undefined
-      articleSourceType.value = 'hexo'
+      articleSourceType.value = 'markdown'
       articleUploadImages.value = false
       articleImageProxy.value = ''
     }, 300)
