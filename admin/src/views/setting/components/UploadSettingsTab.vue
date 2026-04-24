@@ -72,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed } from 'vue'
 
 // 定义存储类型配置接口
 interface StorageConfig {
@@ -111,8 +111,15 @@ const emit = defineEmits<{
   'update:form': [value: UploadForm]
 }>()
 
-// 当前选中的存储类型
-const currentStorageType = ref(props.form.storage_type)
+// 当前选中的存储类型（使用 computed 确保响应式）
+const currentStorageType = computed({
+  get: () => props.form.storage_type,
+  set: (val: string) => {
+    const newForm = { ...props.form }
+    newForm.storage_type = val
+    emit('update:form', newForm)
+  }
+})
 
 // 当前存储类型的配置
 const currentForm = computed({
@@ -130,9 +137,7 @@ const currentForm = computed({
 
 // 监听存储类型变化
 const handleStorageTypeChange = (newType: string) => {
-  const newForm = { ...props.form }
-  newForm.storage_type = newType
-  emit('update:form', newForm)
+  currentStorageType.value = newType
 }
 
 // 存储类型标签
@@ -252,11 +257,6 @@ const showEndpoint = computed(() => {
 const showUseSSL = computed(() => {
   const t = currentStorageType.value
   return t === 'r2' || t === 'minio'
-})
-
-// 监听 props.form 变化,同步 currentStorageType
-watch(() => props.form.storage_type, (newType) => {
-  currentStorageType.value = newType
 })
 </script>
 
