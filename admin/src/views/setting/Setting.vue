@@ -410,13 +410,19 @@ const loadUploadConfigs = async () => {
     // 加载当前存储类型
     uploadForm.value.storage_type = configs.storage_type || 'local'
 
+    // 加载基础配置（不带存储类型前缀）
+    const maxFileSize = Number(configs.max_file_size || 10)
+    const pathPattern = configs.path_pattern || '{timestamp}_{random}{ext}'
+
     // 加载各存储类型的配置
     const storageTypes: StorageType[] = ['local', 's3', 'oss', 'cos', 'kodo', 'r2', 'minio']
     storageTypes.forEach(type => {
       const prefix = `${type}.`
       uploadForm.value[type] = {
-        max_file_size: Number(configs[`${prefix}max_file_size`] || 10),
-        path_pattern: configs[`${prefix}path_pattern`] || '{timestamp}_{random}{ext}',
+        // 所有存储类型共享相同的基础配置
+        max_file_size: maxFileSize,
+        path_pattern: pathPattern,
+        // 云存储特有配置（带存储类型前缀）
         access_key: configs[`${prefix}access_key`] || '',
         secret_key: configs[`${prefix}secret_key`] || '',
         region: configs[`${prefix}region`] || '',
@@ -624,16 +630,20 @@ const handleSave = async () => {
     }
 
     // 上传配置
+    const currentStorageType = uploadForm.value.storage_type as StorageType
+    const currentConfig = uploadForm.value[currentStorageType]
+
     const uploadPayload: Record<string, string> = {
-      'upload.storage_type': uploadForm.value.storage_type
+      'upload.storage_type': uploadForm.value.storage_type,
+      // 保存当前存储类型的基础配置（不带存储类型前缀）
+      'upload.max_file_size': String(currentConfig.max_file_size),
+      'upload.path_pattern': currentConfig.path_pattern
     }
 
-    // 保存各存储类型的配置
-    const storageTypes: StorageType[] = ['local', 's3', 'oss', 'cos', 'kodo', 'r2', 'minio']
+    // 保存各存储类型的云存储配置（带存储类型前缀）
+    const storageTypes: StorageType[] = ['s3', 'oss', 'cos', 'kodo', 'r2', 'minio']
     storageTypes.forEach(type => {
       const config = uploadForm.value[type]
-      uploadPayload[`upload.${type}.max_file_size`] = String(config.max_file_size)
-      uploadPayload[`upload.${type}.path_pattern`] = config.path_pattern
       uploadPayload[`upload.${type}.access_key`] = config.access_key
       uploadPayload[`upload.${type}.secret_key`] = config.secret_key
       uploadPayload[`upload.${type}.region`] = config.region
