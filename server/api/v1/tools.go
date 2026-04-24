@@ -120,3 +120,43 @@ func (c *ToolsController) DownloadImage(ctx *gin.Context) {
 		"data":           data,
 	})
 }
+
+// ParseMusic 解析音乐信息（代理Meting API）
+func (c *ToolsController) ParseMusic(ctx *gin.Context) {
+	server := ctx.Query("server")
+	musicType := ctx.Query("type")
+	id := ctx.Query("id")
+
+	// 参数验证
+	if server == "" || musicType == "" || id == "" {
+		response.ValidateFailed(ctx, "缺少必需参数: server, type, id")
+		return
+	}
+
+	// 构建请求URL
+	apiURL := fmt.Sprintf("https://api.injahow.cn/meting?server=%s&type=%s&id=%s", server, musicType, id)
+
+	// 发起请求
+	resp, err := http.Get(apiURL)
+	if err != nil {
+		response.Failed(ctx, fmt.Sprintf("请求音乐API失败: %v", err))
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		response.Failed(ctx, fmt.Sprintf("音乐API返回错误状态码: %d", resp.StatusCode))
+		return
+	}
+
+	// 读取响应数据
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		response.Failed(ctx, fmt.Sprintf("读取响应数据失败: %v", err))
+		return
+	}
+
+	// 直接返回JSON数据
+	ctx.Header("Content-Type", "application/json")
+	ctx.String(http.StatusOK, string(data))
+}

@@ -42,3 +42,12 @@ export function parseVideo(data: ParseVideoRequest): Promise<VideoInfo> {
 export function downloadImage(data: { url: string }): Promise<{ content_type: string, content_length: number, data: string }> {
   return request.post("/admin/tools/download-image", data)
 }
+
+/**
+ * 解析音乐信息（代理Meting API）
+ * @param params 音乐参数 { server: string, type: string, id: string }
+ * @returns Promise<any[]>
+ */
+export function parseMusic(params: { server: string, type: string, id: string }): Promise<any[]> {
+  return request.get("/admin/tools/parse-music", { params })
+}

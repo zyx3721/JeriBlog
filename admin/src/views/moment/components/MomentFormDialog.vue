@@ -263,24 +263,32 @@
   <!-- 视频Dialog -->
   <el-dialog v-model="videoDialogVisible" title="动态视频" width="400px">
     <div class="video-form">
-      <div style="display: flex; gap: 8px;">
-        <!-- 未添加视频时：显示输入框和解析/上传/选择按钮 -->
-        <template v-if="!videoItem">
-          <el-input v-model="videoUrlInput" placeholder="输入视频链接或点击右侧上传/选择" @keyup.enter="addVideoUrl" style="flex: 1;" />
-          <el-button type="primary" @click="addVideoUrl" :disabled="!videoUrlInput.trim()" :loading="fetchingVideo">
-            {{ fetchingVideo ? '解析中...' : '解析' }}
-          </el-button>
-          <el-button type="primary" @click="handleVideoUpload">上传</el-button>
-          <el-button type="primary" @click="handleVideoPicker">选择</el-button>
-        </template>
+      <!-- 搜索框单独占一行 -->
+      <el-input
+        v-model="videoUrlInput"
+        placeholder="输入视频链接、上传或选择本地文件"
+        @keyup.enter="addVideoUrl"
+        style="margin-bottom: 12px;"
+        :disabled="!!videoItem"
+      />
 
-        <!-- 已添加视频时：显示只读输入框和删除按钮 -->
-        <template v-else>
-          <el-input
-            :value="videoItem.platform && videoItem.video_id ? getVideoIframeSrc(videoItem.platform, videoItem.video_id) : videoItem.url"
-            readonly style="flex: 1;" />
-          <el-button type="danger" @click="removeVideo">删除</el-button>
-        </template>
+      <!-- 三个按钮左右对齐布局 -->
+      <div class="button-row" v-if="!videoItem">
+        <el-button type="primary" @click="addVideoUrl" :disabled="!videoUrlInput.trim()" :loading="fetchingVideo">
+          {{ fetchingVideo ? '解析中...' : '解析链接' }}
+        </el-button>
+        <div class="button-group">
+          <el-button type="primary" @click="handleVideoUpload">上传视频</el-button>
+          <el-button type="primary" @click="handleVideoPicker">选择视频</el-button>
+        </div>
+      </div>
+
+      <!-- 已添加视频时显示 -->
+      <div v-if="videoItem" class="video-url-item">
+        <el-input
+          :value="videoItem.platform && videoItem.video_id ? getVideoIframeSrc(videoItem.platform, videoItem.video_id) : videoItem.url"
+          readonly style="flex: 1;" />
+        <el-button type="danger" size="small" @click="removeVideo">删除</el-button>
       </div>
     </div>
   </el-dialog>
@@ -332,7 +340,7 @@ import { ElMessage } from 'element-plus'
 import { Location, Link, Picture, Headset, VideoPlay, PriceTag, Close, Timer } from '@element-plus/icons-vue'
 import type { CreateMomentRequest, UpdateMomentRequest, Moment } from '@/types/moment'
 import { createMoment, updateMoment } from '@/api/moment'
-import { fetchLinkInfo, parseVideo } from '@/api/tools'
+import { fetchLinkInfo, parseVideo, parseMusic } from '@/api/tools'
 import { uploadFile } from '@/api/file'
 import { formatForBackend } from '@/utils/date'
 import FilePickerDialog from '@/components/common/FilePickerDialog.vue'
@@ -545,10 +553,7 @@ const handleParseMusic = async () => {
   fetchingMusic.value = true
   try {
     const { server, type, id } = formData.content.music
-    const apiUrl = `https://api.injahow.cn/meting?server=${server}&type=${type}&id=${id}`
-
-    const response = await fetch(apiUrl)
-    const data = await response.json()
+    const data = await parseMusic({ server, type, id })
 
     if (data && data.length > 0) {
       const info = data[0]
@@ -1158,7 +1163,8 @@ const handleSubmit = async () => {
   }
 }
 
-.image-form {
+.image-form,
+.video-form {
   .button-row {
     display: flex;
     justify-content: space-between;
@@ -1182,6 +1188,12 @@ const handleSubmit = async () => {
       gap: 8px;
       align-items: center;
     }
+  }
+
+  .video-url-item {
+    display: flex;
+    gap: 8px;
+    align-items: center;
   }
 }
 </style>
