@@ -93,7 +93,7 @@ const fetchMusicData = async () => {
   try {
     const { server, type, id } = props.music
     const config = useRuntimeConfig()
-    const apiUrl = `${config.public.apiBase}/tools/parse-music/?server=${server}&type=${type}&id=${id}`
+    const apiUrl = `${config.public.apiUrl}/tools/parse-music/?server=${server}&type=${type}&id=${id}`
     const response = await fetch(apiUrl)
     const result = await response.json()
 
