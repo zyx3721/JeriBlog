@@ -86,6 +86,9 @@ interface StorageConfig {
   use_ssl: boolean
 }
 
+// 定义存储类型键
+type StorageType = 'local' | 's3' | 'oss' | 'cos' | 'kodo' | 'r2' | 'minio'
+
 // 定义表单接口
 export interface UploadForm {
   storage_type: string
@@ -112,10 +115,14 @@ const currentStorageType = ref(props.form.storage_type)
 
 // 当前存储类型的配置
 const currentForm = computed({
-  get: () => props.form[currentStorageType.value as keyof UploadForm] as StorageConfig,
+  get: () => {
+    const type = currentStorageType.value as StorageType
+    return props.form[type]
+  },
   set: (val: StorageConfig) => {
     const newForm = { ...props.form }
-    newForm[currentStorageType.value as keyof UploadForm] = val
+    const type = currentStorageType.value as StorageType
+    newForm[type] = val
     emit('update:form', newForm)
   }
 })

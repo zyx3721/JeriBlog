@@ -85,6 +85,9 @@ import type { SettingGroupType } from '@/types/sysconfig'
 import type { NotificationForm } from './components/NotificationSettingsTab.vue'
 import type { UploadForm } from './components/UploadSettingsTab.vue'
 
+// 定义存储类型
+type StorageType = 'local' | 's3' | 'oss' | 'cos' | 'kodo' | 'r2' | 'minio'
+
 // 页面状态
 const activeTab = ref('basic')
 const loading = ref(false)
@@ -408,10 +411,10 @@ const loadUploadConfigs = async () => {
     uploadForm.value.storage_type = configs.storage_type || 'local'
 
     // 加载各存储类型的配置
-    const storageTypes = ['local', 's3', 'oss', 'cos', 'kodo', 'r2', 'minio']
+    const storageTypes: StorageType[] = ['local', 's3', 'oss', 'cos', 'kodo', 'r2', 'minio']
     storageTypes.forEach(type => {
       const prefix = `${type}.`
-      uploadForm.value[type as keyof UploadForm] = {
+      uploadForm.value[type] = {
         max_file_size: Number(configs[`${prefix}max_file_size`] || 10),
         path_pattern: configs[`${prefix}path_pattern`] || '{timestamp}_{random}{ext}',
         access_key: configs[`${prefix}access_key`] || '',
@@ -626,20 +629,18 @@ const handleSave = async () => {
     }
 
     // 保存各存储类型的配置
-    const storageTypes = ['local', 's3', 'oss', 'cos', 'kodo', 'r2', 'minio']
+    const storageTypes: StorageType[] = ['local', 's3', 'oss', 'cos', 'kodo', 'r2', 'minio']
     storageTypes.forEach(type => {
-      const config = uploadForm.value[type as keyof UploadForm]
-      if (typeof config === 'object') {
-        uploadPayload[`upload.${type}.max_file_size`] = String(config.max_file_size)
-        uploadPayload[`upload.${type}.path_pattern`] = config.path_pattern
-        uploadPayload[`upload.${type}.access_key`] = config.access_key
-        uploadPayload[`upload.${type}.secret_key`] = config.secret_key
-        uploadPayload[`upload.${type}.region`] = config.region
-        uploadPayload[`upload.${type}.bucket`] = config.bucket
-        uploadPayload[`upload.${type}.endpoint`] = config.endpoint
-        uploadPayload[`upload.${type}.domain`] = config.domain
-        uploadPayload[`upload.${type}.use_ssl`] = config.use_ssl ? 'true' : 'false'
-      }
+      const config = uploadForm.value[type]
+      uploadPayload[`upload.${type}.max_file_size`] = String(config.max_file_size)
+      uploadPayload[`upload.${type}.path_pattern`] = config.path_pattern
+      uploadPayload[`upload.${type}.access_key`] = config.access_key
+      uploadPayload[`upload.${type}.secret_key`] = config.secret_key
+      uploadPayload[`upload.${type}.region`] = config.region
+      uploadPayload[`upload.${type}.bucket`] = config.bucket
+      uploadPayload[`upload.${type}.endpoint`] = config.endpoint
+      uploadPayload[`upload.${type}.domain`] = config.domain
+      uploadPayload[`upload.${type}.use_ssl`] = config.use_ssl ? 'true' : 'false'
     })
 
     // AI 配置
