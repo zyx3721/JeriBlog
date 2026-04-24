@@ -155,10 +155,17 @@ func (s *S3UnifiedStorage) ensureClient() error {
 		return fmt.Errorf("存储类型 %s 需要配置存储桶名称", s.storageType)
 	}
 
+	// 设置 Bucket 查找方式
+	bucketLookup := minio.BucketLookupAuto
+	if s.storageType == "cos" || s.storageType == "oss" || s.storageType == "kodo" {
+		bucketLookup = minio.BucketLookupDNS
+	}
+
 	client, err := minio.New(endpoint, &minio.Options{
-		Creds:  credentials.NewStaticV4(accessKey, secretKey, ""),
-		Secure: useSSL,
-		Region: region,
+		Creds:        credentials.NewStaticV4(accessKey, secretKey, ""),
+		Secure:       useSSL,
+		Region:       region,
+		BucketLookup: bucketLookup,
 	})
 	if err != nil {
 		return fmt.Errorf("创建存储实例失败: %w", err)
