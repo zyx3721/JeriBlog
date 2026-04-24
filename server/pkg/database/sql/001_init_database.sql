@@ -661,8 +661,6 @@ INSERT INTO settings (key, value, "group", is_public) VALUES
 ('upload.storage_type', 'local', 'upload', FALSE),
 ('upload.max_file_size', '5', 'upload', TRUE),
 ('upload.path_pattern', '{timestamp}_{random}{ext}', 'upload', FALSE),
--- Local 存储配置
-('upload.local.enabled', 'true', 'upload', FALSE),
 -- S3 存储配置
 ('upload.s3.access_key', '', 'upload', FALSE),
 ('upload.s3.secret_key', '', 'upload', FALSE),

@@ -42,11 +42,16 @@ BEGIN
 
     RAISE NOTICE '当前存储类型: %', COALESCE(current_storage_type, 'local');
 
-    -- 2. 为每个存储类型创建独立配置字段
-    -- Local 存储配置（无需额外配置）
+    -- 2. 确保基础配置字段存在（如果不存在则创建默认值）
     INSERT INTO settings (key, value, "group", is_public)
-    VALUES ('upload.local.enabled', 'true', 'upload', FALSE)
+    VALUES ('upload.max_file_size', '10', 'upload', FALSE)
     ON CONFLICT (key) DO NOTHING;
+
+    INSERT INTO settings (key, value, "group", is_public)
+    VALUES ('upload.path_pattern', '{timestamp}_{random}{ext}', 'upload', FALSE)
+    ON CONFLICT (key) DO NOTHING;
+
+    -- 3. 为每个存储类型创建独立配置字段
 
     -- S3 存储配置
     INSERT INTO settings (key, value, "group", is_public) VALUES

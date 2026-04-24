@@ -83,10 +83,6 @@ const form = ref({
   storage_type: 'local',
   max_file_size: 10,
   path_pattern: '{timestamp}_{random}{ext}',
-  // Local 配置
-  local: {
-    enabled: true
-  },
   // S3 配置
   s3: {
     access_key: '',
@@ -154,9 +150,6 @@ const loadConfigs = async () => {
     form.value.storage_type = configs.storage_type || 'local'
     form.value.max_file_size = Number(configs.max_file_size || 10)
     form.value.path_pattern = configs.path_pattern || '{timestamp}_{random}{ext}'
-
-    // Local 配置
-    form.value.local.enabled = (configs['local.enabled'] || 'true') === 'true'
 
     // S3 配置
     form.value.s3.access_key = configs['s3.access_key'] || ''
@@ -265,8 +258,6 @@ const handleSubmit = async () => {
       'upload.storage_type': form.value.storage_type,
       'upload.max_file_size': String(form.value.max_file_size),
       'upload.path_pattern': form.value.path_pattern,
-      // Local 配置
-      'upload.local.enabled': form.value.local.enabled ? 'true' : 'false',
       // S3 配置
       'upload.s3.access_key': form.value.s3.access_key,
       'upload.s3.secret_key': form.value.s3.secret_key,

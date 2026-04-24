@@ -93,8 +93,6 @@ const (
 	KeyUploadStorageType = "upload.storage_type"
 	KeyUploadMaxFileSize = "upload.max_file_size"
 	KeyUploadPathPattern = "upload.path_pattern"
-	// Local 存储
-	KeyUploadLocalEnabled = "upload.local.enabled"
 	// S3 存储
 	KeyUploadS3AccessKey = "upload.s3.access_key"
 	KeyUploadS3SecretKey = "upload.s3.secret_key"
@@ -524,13 +522,6 @@ func (s *SettingService) ApplyDatabaseConfig(cfg *config.Config) error {
 		// 路径模式
 		if v, ok := uploadSettings[KeyUploadPathPattern]; ok && v != "" {
 			cfg.Upload.PathPattern = v
-		}
-
-		// Local 存储配置
-		if v, ok := uploadSettings[KeyUploadLocalEnabled]; ok && v != "" {
-			if enabled, err := strconv.ParseBool(v); err == nil {
-				cfg.Upload.Local.Enabled = enabled
-			}
 		}
 
 		// S3 存储配置

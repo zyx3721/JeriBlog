@@ -92,7 +92,6 @@ type UploadConfig struct {
 	StorageType string                 // 存储类型: local/s3/cos/oss/kodo/r2/minio
 	MaxFileSize int64                  // 最大文件大小(MB)
 	PathPattern string                 // 路径生成模式
-	Local       LocalStorageConfig     // Local 存储配置
 	S3          S3StorageConfig        // S3 存储配置
 	OSS         OSSStorageConfig       // OSS 存储配置
 	COS         COSStorageConfig       // COS 存储配置
@@ -100,11 +99,6 @@ type UploadConfig struct {
 	R2          R2StorageConfig        // R2 存储配置
 	MinIO       MinIOStorageConfig     // MinIO 存储配置
 	Extra       map[string]interface{} // 额外配置
-}
-
-// LocalStorageConfig Local 存储配置
-type LocalStorageConfig struct {
-	Enabled bool // 是否启用
 }
 
 // S3StorageConfig S3 存储配置
