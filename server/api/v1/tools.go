@@ -12,6 +12,7 @@
 package v1
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"jeri_blog/pkg/linkparser"
@@ -156,7 +157,13 @@ func (c *ToolsController) ParseMusic(ctx *gin.Context) {
 		return
 	}
 
-	// 直接返回JSON数据
-	ctx.Header("Content-Type", "application/json")
-	ctx.String(http.StatusOK, string(data))
+	// 解析JSON数据
+	var musicData []interface{}
+	if err := json.Unmarshal(data, &musicData); err != nil {
+		response.Failed(ctx, fmt.Sprintf("解析音乐数据失败: %v", err))
+		return
+	}
+
+	// 使用标准响应格式返回
+	response.Success(ctx, musicData)
 }
