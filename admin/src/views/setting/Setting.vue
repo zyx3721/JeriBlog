@@ -418,12 +418,16 @@ const loadUploadConfigs = async () => {
     const storageTypes: StorageType[] = ['local', 's3', 'oss', 'cos', 'kodo', 'r2', 'minio']
     storageTypes.forEach(type => {
       const prefix = `${type}.`
+
+      // 腾讯云 COS 使用 secret_id，其他使用 access_key
+      const accessKeyField = type === 'cos' ? 'secret_id' : 'access_key'
+
       uploadForm.value[type] = {
         // 所有存储类型共享相同的基础配置
         max_file_size: maxFileSize,
         path_pattern: pathPattern,
         // 云存储特有配置（带存储类型前缀）
-        access_key: configs[`${prefix}access_key`] || '',
+        access_key: configs[`${prefix}${accessKeyField}`] || '',
         secret_key: configs[`${prefix}secret_key`] || '',
         region: configs[`${prefix}region`] || '',
         bucket: configs[`${prefix}bucket`] || '',
@@ -644,7 +648,14 @@ const handleSave = async () => {
     const storageTypes: StorageType[] = ['s3', 'oss', 'cos', 'kodo', 'r2', 'minio']
     storageTypes.forEach(type => {
       const config = uploadForm.value[type]
-      uploadPayload[`upload.${type}.access_key`] = config.access_key
+
+      // 腾讯云 COS 使用 secret_id，其他使用 access_key
+      if (type === 'cos') {
+        uploadPayload[`upload.${type}.secret_id`] = config.access_key
+      } else {
+        uploadPayload[`upload.${type}.access_key`] = config.access_key
+      }
+
       uploadPayload[`upload.${type}.secret_key`] = config.secret_key
       uploadPayload[`upload.${type}.region`] = config.region
       uploadPayload[`upload.${type}.bucket`] = config.bucket
