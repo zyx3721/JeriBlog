@@ -661,13 +661,48 @@ INSERT INTO settings (key, value, "group", is_public) VALUES
 ('upload.storage_type', 'local', 'upload', FALSE),
 ('upload.max_file_size', '5', 'upload', TRUE),
 ('upload.path_pattern', '{timestamp}_{random}{ext}', 'upload', FALSE),
-('upload.access_key', '', 'upload', FALSE),
-('upload.secret_key', '', 'upload', FALSE),
-('upload.region', '', 'upload', FALSE),
-('upload.bucket', '', 'upload', FALSE),
-('upload.endpoint', '', 'upload', FALSE),
-('upload.domain', '', 'upload', FALSE),
-('upload.use_ssl', 'true', 'upload', FALSE)
+-- Local 存储配置
+('upload.local.enabled', 'true', 'upload', FALSE),
+-- S3 存储配置
+('upload.s3.access_key', '', 'upload', FALSE),
+('upload.s3.secret_key', '', 'upload', FALSE),
+('upload.s3.region', '', 'upload', FALSE),
+('upload.s3.bucket', '', 'upload', FALSE),
+('upload.s3.endpoint', '', 'upload', FALSE),
+('upload.s3.domain', '', 'upload', FALSE),
+-- OSS 存储配置
+('upload.oss.access_key', '', 'upload', FALSE),
+('upload.oss.secret_key', '', 'upload', FALSE),
+('upload.oss.region', '', 'upload', FALSE),
+('upload.oss.bucket', '', 'upload', FALSE),
+('upload.oss.domain', '', 'upload', FALSE),
+-- COS 存储配置
+('upload.cos.secret_id', '', 'upload', FALSE),
+('upload.cos.secret_key', '', 'upload', FALSE),
+('upload.cos.region', '', 'upload', FALSE),
+('upload.cos.bucket', '', 'upload', FALSE),
+('upload.cos.domain', '', 'upload', FALSE),
+-- Kodo 存储配置
+('upload.kodo.access_key', '', 'upload', FALSE),
+('upload.kodo.secret_key', '', 'upload', FALSE),
+('upload.kodo.region', '', 'upload', FALSE),
+('upload.kodo.bucket', '', 'upload', FALSE),
+('upload.kodo.domain', '', 'upload', FALSE),
+-- R2 存储配置
+('upload.r2.access_key', '', 'upload', FALSE),
+('upload.r2.secret_key', '', 'upload', FALSE),
+('upload.r2.bucket', '', 'upload', FALSE),
+('upload.r2.endpoint', '', 'upload', FALSE),
+('upload.r2.domain', '', 'upload', FALSE),
+('upload.r2.use_ssl', 'true', 'upload', FALSE),
+-- MinIO 存储配置
+('upload.minio.access_key', '', 'upload', FALSE),
+('upload.minio.secret_key', '', 'upload', FALSE),
+('upload.minio.region', '', 'upload', FALSE),
+('upload.minio.bucket', '', 'upload', FALSE),
+('upload.minio.endpoint', '', 'upload', FALSE),
+('upload.minio.domain', '', 'upload', FALSE),
+('upload.minio.use_ssl', 'true', 'upload', FALSE)
 ON CONFLICT (key) DO NOTHING;
 
 -- OAuth 配置

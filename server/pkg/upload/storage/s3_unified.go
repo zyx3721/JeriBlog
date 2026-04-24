@@ -38,10 +38,27 @@ type S3UnifiedStorage struct {
 
 // NewS3UnifiedStorage 创建统一S3存储实例
 func NewS3UnifiedStorage(cfg config.UploadConfig, storageType string) (*S3UnifiedStorage, error) {
+	// 根据存储类型获取对应的 bucket
+	var bucketName string
+	switch storageType {
+	case "s3":
+		bucketName = cfg.S3.Bucket
+	case "cos":
+		bucketName = cfg.COS.Bucket
+	case "oss":
+		bucketName = cfg.OSS.Bucket
+	case "kodo":
+		bucketName = cfg.Kodo.Bucket
+	case "r2":
+		bucketName = cfg.R2.Bucket
+	case "minio":
+		bucketName = cfg.MinIO.Bucket
+	}
+
 	storage := &S3UnifiedStorage{
 		cfg:         cfg,
 		storageType: storageType,
-		bucketName:  cfg.Bucket,
+		bucketName:  bucketName,
 	}
 	return storage, nil
 }
@@ -55,47 +72,91 @@ func (s *S3UnifiedStorage) ensureClient() error {
 		return nil
 	}
 
-	endpoint := s.cfg.Endpoint
-	useSSL := s.cfg.UseSSL
+	// 根据存储类型获取对应的配置
+	var accessKey, secretKey, region, endpoint, domain string
+	var useSSL bool
 
-	if endpoint == "" {
-		switch s.storageType {
-		case "s3":
-			if s.cfg.Region == "" {
-				return fmt.Errorf("AWS S3 需要配置 region")
-			}
-			endpoint = fmt.Sprintf("s3.%s.amazonaws.com", s.cfg.Region)
-			useSSL = true
-		case "cos":
-			if s.cfg.Region == "" {
-				return fmt.Errorf("腾讯云 COS 需要配置 region")
-			}
-			endpoint = fmt.Sprintf("cos.%s.myqcloud.com", s.cfg.Region)
-			useSSL = true
-		case "oss":
-			if s.cfg.Region == "" {
-				return fmt.Errorf("阿里云 OSS 需要配置 region")
-			}
-			endpoint = fmt.Sprintf("oss-%s.aliyuncs.com", s.cfg.Region)
-			useSSL = true
-		case "kodo":
-			if s.cfg.Region == "" {
-				return fmt.Errorf("七牛云 Kodo 需要配置 region")
-			}
-			endpoint = fmt.Sprintf("s3.%s.qiniucs.com", s.cfg.Region)
-			useSSL = true
-		default:
-			return fmt.Errorf("存储类型 %s 需要配置 endpoint", s.storageType)
+	switch s.storageType {
+	case "s3":
+		accessKey = s.cfg.S3.AccessKey
+		secretKey = s.cfg.S3.SecretKey
+		region = s.cfg.S3.Region
+		endpoint = s.cfg.S3.Endpoint
+		domain = s.cfg.S3.Domain
+		useSSL = true
+		if region == "" {
+			return fmt.Errorf("AWS S3 需要配置 region")
 		}
+		if endpoint == "" {
+			endpoint = fmt.Sprintf("s3.%s.amazonaws.com", region)
+		}
+	case "cos":
+		accessKey = s.cfg.COS.SecretID
+		secretKey = s.cfg.COS.SecretKey
+		region = s.cfg.COS.Region
+		domain = s.cfg.COS.Domain
+		useSSL = true
+		if region == "" {
+			return fmt.Errorf("腾讯云 COS 需要配置 region")
+		}
+		endpoint = fmt.Sprintf("cos.%s.myqcloud.com", region)
+	case "oss":
+		accessKey = s.cfg.OSS.AccessKey
+		secretKey = s.cfg.OSS.SecretKey
+		region = s.cfg.OSS.Region
+		domain = s.cfg.OSS.Domain
+		useSSL = true
+		if region == "" {
+			return fmt.Errorf("阿里云 OSS 需要配置 region")
+		}
+		endpoint = fmt.Sprintf("oss-%s.aliyuncs.com", region)
+	case "kodo":
+		accessKey = s.cfg.Kodo.AccessKey
+		secretKey = s.cfg.Kodo.SecretKey
+		region = s.cfg.Kodo.Region
+		domain = s.cfg.Kodo.Domain
+		useSSL = true
+		if region == "" {
+			return fmt.Errorf("七牛云 Kodo 需要配置 region")
+		}
+		endpoint = fmt.Sprintf("s3.%s.qiniucs.com", region)
+	case "r2":
+		accessKey = s.cfg.R2.AccessKey
+		secretKey = s.cfg.R2.SecretKey
+		endpoint = s.cfg.R2.Endpoint
+		domain = s.cfg.R2.Domain
+		useSSL = s.cfg.R2.UseSSL
+		region = "auto"
+		if endpoint == "" {
+			return fmt.Errorf("Cloudflare R2 需要配置 endpoint")
+		}
+	case "minio":
+		accessKey = s.cfg.MinIO.AccessKey
+		secretKey = s.cfg.MinIO.SecretKey
+		region = s.cfg.MinIO.Region
+		endpoint = s.cfg.MinIO.Endpoint
+		domain = s.cfg.MinIO.Domain
+		useSSL = s.cfg.MinIO.UseSSL
+		if region == "" {
+			region = "us-east-1"
+		}
+		if endpoint == "" {
+			return fmt.Errorf("MinIO 需要配置 endpoint")
+		}
+	default:
+		return fmt.Errorf("不支持的存储类型: %s", s.storageType)
 	}
 
-	region := s.cfg.Region
-	if s.storageType == "minio" && region == "" {
-		region = "us-east-1"
+	// 验证必需参数
+	if accessKey == "" || secretKey == "" {
+		return fmt.Errorf("存储类型 %s 需要配置访问密钥", s.storageType)
+	}
+	if s.bucketName == "" {
+		return fmt.Errorf("存储类型 %s 需要配置存储桶名称", s.storageType)
 	}
 
 	client, err := minio.New(endpoint, &minio.Options{
-		Creds:  credentials.NewStaticV4(s.cfg.AccessKey, s.cfg.SecretKey, ""),
+		Creds:  credentials.NewStaticV4(accessKey, secretKey, ""),
 		Secure: useSSL,
 		Region: region,
 	})
@@ -104,7 +165,7 @@ func (s *S3UnifiedStorage) ensureClient() error {
 	}
 
 	s.client = client
-	s.baseURL = buildBaseURL(endpoint, s.cfg.Bucket, useSSL, s.cfg.Domain, s.storageType)
+	s.baseURL = buildBaseURL(endpoint, s.bucketName, useSSL, domain, s.storageType)
 	return nil
 }
 

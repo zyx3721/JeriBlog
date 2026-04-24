@@ -32,26 +32,26 @@
       </el-form-item>
       <template v-if="form.storage_type !== 'local'">
         <el-form-item :label="accessLabel">
-          <el-input v-model="form.access_key" :placeholder="accessPlaceholder" clearable />
+          <el-input v-model="currentConfig.access_key" :placeholder="accessPlaceholder" clearable />
         </el-form-item>
         <el-form-item :label="secretLabel">
-          <el-input v-model="form.secret_key" type="password" show-password :placeholder="secretPlaceholder"
+          <el-input v-model="currentConfig.secret_key" type="password" show-password :placeholder="secretPlaceholder"
             clearable />
         </el-form-item>
         <el-form-item v-if="showRegion" label="地域">
-          <el-input v-model="form.region" :placeholder="regionPlaceholder" clearable />
+          <el-input v-model="currentConfig.region" :placeholder="regionPlaceholder" clearable />
         </el-form-item>
         <el-form-item label="存储桶">
-          <el-input v-model="form.bucket" :placeholder="bucketPlaceholder" clearable />
+          <el-input v-model="currentConfig.bucket" :placeholder="bucketPlaceholder" clearable />
         </el-form-item>
         <el-form-item v-if="showEndpoint" label="服务端点">
-          <el-input v-model="form.endpoint" :placeholder="endpointPlaceholder" clearable />
+          <el-input v-model="currentConfig.endpoint" :placeholder="endpointPlaceholder" clearable />
         </el-form-item>
         <el-form-item label="自定义域名">
-          <el-input v-model="form.domain" :placeholder="domainPlaceholder" clearable />
+          <el-input v-model="currentConfig.domain" :placeholder="domainPlaceholder" clearable />
         </el-form-item>
         <el-form-item v-if="showUseSSL" label="启用 HTTPS">
-          <el-switch v-model="form.use_ssl" :active-value="true" :inactive-value="false" />
+          <el-switch v-model="currentConfig.use_ssl" :active-value="true" :inactive-value="false" />
         </el-form-item>
       </template>
     </el-form>
@@ -83,13 +83,62 @@ const form = ref({
   storage_type: 'local',
   max_file_size: 10,
   path_pattern: '{timestamp}_{random}{ext}',
-  access_key: '',
-  secret_key: '',
-  region: '',
-  bucket: '',
-  endpoint: '',
-  domain: '',
-  use_ssl: true
+  // Local 配置
+  local: {
+    enabled: true
+  },
+  // S3 配置
+  s3: {
+    access_key: '',
+    secret_key: '',
+    region: '',
+    bucket: '',
+    endpoint: '',
+    domain: ''
+  },
+  // OSS 配置
+  oss: {
+    access_key: '',
+    secret_key: '',
+    region: '',
+    bucket: '',
+    domain: ''
+  },
+  // COS 配置
+  cos: {
+    secret_id: '',
+    secret_key: '',
+    region: '',
+    bucket: '',
+    domain: ''
+  },
+  // Kodo 配置
+  kodo: {
+    access_key: '',
+    secret_key: '',
+    region: '',
+    bucket: '',
+    domain: ''
+  },
+  // R2 配置
+  r2: {
+    access_key: '',
+    secret_key: '',
+    bucket: '',
+    endpoint: '',
+    domain: '',
+    use_ssl: true
+  },
+  // MinIO 配置
+  minio: {
+    access_key: '',
+    secret_key: '',
+    region: '',
+    bucket: '',
+    endpoint: '',
+    domain: '',
+    use_ssl: true
+  }
 })
 
 const loadConfigs = async () => {
@@ -105,19 +154,98 @@ const loadConfigs = async () => {
     form.value.storage_type = configs.storage_type || 'local'
     form.value.max_file_size = Number(configs.max_file_size || 10)
     form.value.path_pattern = configs.path_pattern || '{timestamp}_{random}{ext}'
-    form.value.access_key = configs.access_key || ''
-    form.value.secret_key = configs.secret_key || ''
-    form.value.region = configs.region || ''
-    form.value.bucket = configs.bucket || ''
-    form.value.endpoint = configs.endpoint || ''
-    form.value.domain = configs.domain || ''
-    form.value.use_ssl = (configs.use_ssl || 'true') === 'true'
+
+    // Local 配置
+    form.value.local.enabled = (configs['local.enabled'] || 'true') === 'true'
+
+    // S3 配置
+    form.value.s3.access_key = configs['s3.access_key'] || ''
+    form.value.s3.secret_key = configs['s3.secret_key'] || ''
+    form.value.s3.region = configs['s3.region'] || ''
+    form.value.s3.bucket = configs['s3.bucket'] || ''
+    form.value.s3.endpoint = configs['s3.endpoint'] || ''
+    form.value.s3.domain = configs['s3.domain'] || ''
+
+    // OSS 配置
+    form.value.oss.access_key = configs['oss.access_key'] || ''
+    form.value.oss.secret_key = configs['oss.secret_key'] || ''
+    form.value.oss.region = configs['oss.region'] || ''
+    form.value.oss.bucket = configs['oss.bucket'] || ''
+    form.value.oss.domain = configs['oss.domain'] || ''
+
+    // COS 配置
+    form.value.cos.secret_id = configs['cos.secret_id'] || ''
+    form.value.cos.secret_key = configs['cos.secret_key'] || ''
+    form.value.cos.region = configs['cos.region'] || ''
+    form.value.cos.bucket = configs['cos.bucket'] || ''
+    form.value.cos.domain = configs['cos.domain'] || ''
+
+    // Kodo 配置
+    form.value.kodo.access_key = configs['kodo.access_key'] || ''
+    form.value.kodo.secret_key = configs['kodo.secret_key'] || ''
+    form.value.kodo.region = configs['kodo.region'] || ''
+    form.value.kodo.bucket = configs['kodo.bucket'] || ''
+    form.value.kodo.domain = configs['kodo.domain'] || ''
+
+    // R2 配置
+    form.value.r2.access_key = configs['r2.access_key'] || ''
+    form.value.r2.secret_key = configs['r2.secret_key'] || ''
+    form.value.r2.bucket = configs['r2.bucket'] || ''
+    form.value.r2.endpoint = configs['r2.endpoint'] || ''
+    form.value.r2.domain = configs['r2.domain'] || ''
+    form.value.r2.use_ssl = (configs['r2.use_ssl'] || 'true') === 'true'
+
+    // MinIO 配置
+    form.value.minio.access_key = configs['minio.access_key'] || ''
+    form.value.minio.secret_key = configs['minio.secret_key'] || ''
+    form.value.minio.region = configs['minio.region'] || ''
+    form.value.minio.bucket = configs['minio.bucket'] || ''
+    form.value.minio.endpoint = configs['minio.endpoint'] || ''
+    form.value.minio.domain = configs['minio.domain'] || ''
+    form.value.minio.use_ssl = (configs['minio.use_ssl'] || 'true') === 'true'
   } catch {
     ElMessage.error('获取配置失败')
   }
 }
 
 watch(() => visible.value, (val) => { if (val) loadConfigs() })
+
+// 根据当前存储类型获取对应的配置对象
+const currentConfig = computed(() => {
+  const storageType = form.value.storage_type
+  switch (storageType) {
+    case 's3':
+      return form.value.s3
+    case 'oss':
+      return form.value.oss
+    case 'cos':
+      // COS 使用 secret_id 而不是 access_key
+      return {
+        access_key: form.value.cos.secret_id,
+        secret_key: form.value.cos.secret_key,
+        region: form.value.cos.region,
+        bucket: form.value.cos.bucket,
+        domain: form.value.cos.domain
+      }
+    case 'kodo':
+      return form.value.kodo
+    case 'r2':
+      return form.value.r2
+    case 'minio':
+      return form.value.minio
+    default:
+      return {}
+  }
+})
+
+// 监听 currentConfig 的变化，同步回原始配置
+watch(() => currentConfig.value, (newVal) => {
+  const storageType = form.value.storage_type
+  if (storageType === 'cos' && 'access_key' in newVal) {
+    // COS 特殊处理：将 access_key 同步到 secret_id
+    form.value.cos.secret_id = newVal.access_key || ''
+  }
+}, { deep: true })
 
 const handleSubmit = async () => {
   saving.value = true
@@ -126,13 +254,48 @@ const handleSubmit = async () => {
       'upload.storage_type': form.value.storage_type,
       'upload.max_file_size': String(form.value.max_file_size),
       'upload.path_pattern': form.value.path_pattern,
-      'upload.access_key': form.value.access_key,
-      'upload.secret_key': form.value.secret_key,
-      'upload.region': form.value.region,
-      'upload.bucket': form.value.bucket,
-      'upload.endpoint': form.value.endpoint,
-      'upload.domain': form.value.domain,
-      'upload.use_ssl': form.value.use_ssl ? 'true' : 'false'
+      // Local 配置
+      'upload.local.enabled': form.value.local.enabled ? 'true' : 'false',
+      // S3 配置
+      'upload.s3.access_key': form.value.s3.access_key,
+      'upload.s3.secret_key': form.value.s3.secret_key,
+      'upload.s3.region': form.value.s3.region,
+      'upload.s3.bucket': form.value.s3.bucket,
+      'upload.s3.endpoint': form.value.s3.endpoint,
+      'upload.s3.domain': form.value.s3.domain,
+      // OSS 配置
+      'upload.oss.access_key': form.value.oss.access_key,
+      'upload.oss.secret_key': form.value.oss.secret_key,
+      'upload.oss.region': form.value.oss.region,
+      'upload.oss.bucket': form.value.oss.bucket,
+      'upload.oss.domain': form.value.oss.domain,
+      // COS 配置
+      'upload.cos.secret_id': form.value.cos.secret_id,
+      'upload.cos.secret_key': form.value.cos.secret_key,
+      'upload.cos.region': form.value.cos.region,
+      'upload.cos.bucket': form.value.cos.bucket,
+      'upload.cos.domain': form.value.cos.domain,
+      // Kodo 配置
+      'upload.kodo.access_key': form.value.kodo.access_key,
+      'upload.kodo.secret_key': form.value.kodo.secret_key,
+      'upload.kodo.region': form.value.kodo.region,
+      'upload.kodo.bucket': form.value.kodo.bucket,
+      'upload.kodo.domain': form.value.kodo.domain,
+      // R2 配置
+      'upload.r2.access_key': form.value.r2.access_key,
+      'upload.r2.secret_key': form.value.r2.secret_key,
+      'upload.r2.bucket': form.value.r2.bucket,
+      'upload.r2.endpoint': form.value.r2.endpoint,
+      'upload.r2.domain': form.value.r2.domain,
+      'upload.r2.use_ssl': form.value.r2.use_ssl ? 'true' : 'false',
+      // MinIO 配置
+      'upload.minio.access_key': form.value.minio.access_key,
+      'upload.minio.secret_key': form.value.minio.secret_key,
+      'upload.minio.region': form.value.minio.region,
+      'upload.minio.bucket': form.value.minio.bucket,
+      'upload.minio.endpoint': form.value.minio.endpoint,
+      'upload.minio.domain': form.value.minio.domain,
+      'upload.minio.use_ssl': form.value.minio.use_ssl ? 'true' : 'false'
     }
     await updateSettingGroup('upload', payload)
     ElMessage.success('保存成功（配置已自动热重载）')

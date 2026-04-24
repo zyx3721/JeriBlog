@@ -59,9 +59,6 @@
         </el-form-item>
         <el-form-item label="自定义域名">
           <el-input v-model="currentForm.domain" :placeholder="domainPlaceholder" clearable />
-          <div style="margin-top: 4px; font-size: 12px; color: #909399;">
-            支持 http:// 或 https:// 开头,如: http://oss.example.com
-          </div>
         </el-form-item>
         <el-form-item v-if="showUseSSL" label="启用 HTTPS">
           <el-switch v-model="currentForm.use_ssl" :active-value="true" :inactive-value="false" />

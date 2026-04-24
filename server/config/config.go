@@ -89,17 +89,80 @@ type NotificationConfig struct {
 
 // UploadConfig 上传配置（从数据库动态加载）
 type UploadConfig struct {
-	StorageType string                 // 存储类型: local/s3/cos/oss/kodo/minio
+	StorageType string                 // 存储类型: local/s3/cos/oss/kodo/r2/minio
 	MaxFileSize int64                  // 最大文件大小(MB)
 	PathPattern string                 // 路径生成模式
-	AccessKey   string                 // 访问密钥
-	SecretKey   string                 // 秘密密钥
-	Region      string                 // 地域
-	Bucket      string                 // 存储桶名称
-	Endpoint    string                 // 服务端点
-	Domain      string                 // 访问域名
-	UseSSL      bool                   // 是否使用HTTPS
+	Local       LocalStorageConfig     // Local 存储配置
+	S3          S3StorageConfig        // S3 存储配置
+	OSS         OSSStorageConfig       // OSS 存储配置
+	COS         COSStorageConfig       // COS 存储配置
+	Kodo        KodoStorageConfig      // Kodo 存储配置
+	R2          R2StorageConfig        // R2 存储配置
+	MinIO       MinIOStorageConfig     // MinIO 存储配置
 	Extra       map[string]interface{} // 额外配置
+}
+
+// LocalStorageConfig Local 存储配置
+type LocalStorageConfig struct {
+	Enabled bool // 是否启用
+}
+
+// S3StorageConfig S3 存储配置
+type S3StorageConfig struct {
+	AccessKey string // Access Key
+	SecretKey string // Secret Key
+	Region    string // 地域
+	Bucket    string // 存储桶
+	Endpoint  string // 服务端点（可选）
+	Domain    string // 自定义域名（可选）
+}
+
+// OSSStorageConfig OSS 存储配置
+type OSSStorageConfig struct {
+	AccessKey string // AccessKeyId
+	SecretKey string // AccessKeySecret
+	Region    string // 地域
+	Bucket    string // 存储桶
+	Domain    string // 自定义域名（可选）
+}
+
+// COSStorageConfig COS 存储配置
+type COSStorageConfig struct {
+	SecretID  string // SecretId
+	SecretKey string // SecretKey
+	Region    string // 地域
+	Bucket    string // 存储桶
+	Domain    string // 自定义域名（可选）
+}
+
+// KodoStorageConfig Kodo 存储配置
+type KodoStorageConfig struct {
+	AccessKey string // AccessKey
+	SecretKey string // SecretKey
+	Region    string // 地域
+	Bucket    string // 存储桶
+	Domain    string // CDN 域名（必需）
+}
+
+// R2StorageConfig R2 存储配置
+type R2StorageConfig struct {
+	AccessKey string // Access Key
+	SecretKey string // Secret Key
+	Bucket    string // 存储桶
+	Endpoint  string // 服务端点
+	Domain    string // 自定义域名（可选）
+	UseSSL    bool   // 是否使用 HTTPS
+}
+
+// MinIOStorageConfig MinIO 存储配置
+type MinIOStorageConfig struct {
+	AccessKey string // Access Key
+	SecretKey string // Secret Key
+	Region    string // 地域
+	Bucket    string // 存储桶
+	Endpoint  string // 服务端点
+	Domain    string // 自定义域名（可选）
+	UseSSL    bool   // 是否使用 HTTPS
 }
 
 // AIConfig AI服务配置（从数据库动态加载）

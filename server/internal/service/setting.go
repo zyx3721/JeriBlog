@@ -93,13 +93,48 @@ const (
 	KeyUploadStorageType = "upload.storage_type"
 	KeyUploadMaxFileSize = "upload.max_file_size"
 	KeyUploadPathPattern = "upload.path_pattern"
-	KeyUploadAccessKey   = "upload.access_key"
-	KeyUploadSecretKey   = "upload.secret_key"
-	KeyUploadRegion      = "upload.region"
-	KeyUploadBucket      = "upload.bucket"
-	KeyUploadEndpoint    = "upload.endpoint"
-	KeyUploadDomain      = "upload.domain"
-	KeyUploadUseSSL      = "upload.use_ssl"
+	// Local 存储
+	KeyUploadLocalEnabled = "upload.local.enabled"
+	// S3 存储
+	KeyUploadS3AccessKey = "upload.s3.access_key"
+	KeyUploadS3SecretKey = "upload.s3.secret_key"
+	KeyUploadS3Region    = "upload.s3.region"
+	KeyUploadS3Bucket    = "upload.s3.bucket"
+	KeyUploadS3Endpoint  = "upload.s3.endpoint"
+	KeyUploadS3Domain    = "upload.s3.domain"
+	// OSS 存储
+	KeyUploadOSSAccessKey = "upload.oss.access_key"
+	KeyUploadOSSSecretKey = "upload.oss.secret_key"
+	KeyUploadOSSRegion    = "upload.oss.region"
+	KeyUploadOSSBucket    = "upload.oss.bucket"
+	KeyUploadOSSDomain    = "upload.oss.domain"
+	// COS 存储
+	KeyUploadCOSSecretID  = "upload.cos.secret_id"
+	KeyUploadCOSSecretKey = "upload.cos.secret_key"
+	KeyUploadCOSRegion    = "upload.cos.region"
+	KeyUploadCOSBucket    = "upload.cos.bucket"
+	KeyUploadCOSDomain    = "upload.cos.domain"
+	// Kodo 存储
+	KeyUploadKodoAccessKey = "upload.kodo.access_key"
+	KeyUploadKodoSecretKey = "upload.kodo.secret_key"
+	KeyUploadKodoRegion    = "upload.kodo.region"
+	KeyUploadKodoBucket    = "upload.kodo.bucket"
+	KeyUploadKodoDomain    = "upload.kodo.domain"
+	// R2 存储
+	KeyUploadR2AccessKey = "upload.r2.access_key"
+	KeyUploadR2SecretKey = "upload.r2.secret_key"
+	KeyUploadR2Bucket    = "upload.r2.bucket"
+	KeyUploadR2Endpoint  = "upload.r2.endpoint"
+	KeyUploadR2Domain    = "upload.r2.domain"
+	KeyUploadR2UseSSL    = "upload.r2.use_ssl"
+	// MinIO 存储
+	KeyUploadMinIOAccessKey = "upload.minio.access_key"
+	KeyUploadMinIOSecretKey = "upload.minio.secret_key"
+	KeyUploadMinIORegion    = "upload.minio.region"
+	KeyUploadMinIOBucket    = "upload.minio.bucket"
+	KeyUploadMinIOEndpoint  = "upload.minio.endpoint"
+	KeyUploadMinIODomain    = "upload.minio.domain"
+	KeyUploadMinIOUseSSL    = "upload.minio.use_ssl"
 )
 
 // 配置键常量 - AI 相关
@@ -474,81 +509,145 @@ func (s *SettingService) ApplyDatabaseConfig(cfg *config.Config) error {
 		return err
 	}
 	if len(uploadSettings) > 0 {
-		// 先获取存储类型
-		storageType := "local"
+		// 存储类型
 		if v, ok := uploadSettings[KeyUploadStorageType]; ok && v != "" {
 			cfg.Upload.StorageType = v
-			storageType = v
 		}
 
-		// 根据存储类型加载对应的配置
-		// 键名格式: upload.<storage_type>.<field> 或 upload.<field>（兼容旧格式）
-		prefix := "upload." + storageType + "."
-
-		// 通用配置（所有存储类型共享）
-		if v, ok := uploadSettings[prefix+"max_file_size"]; ok && v != "" {
-			if size, err := strconv.ParseInt(v, 10, 64); err == nil {
-				cfg.Upload.MaxFileSize = size
-			}
-		} else if v, ok := uploadSettings[KeyUploadMaxFileSize]; ok && v != "" {
-			// 兼容旧格式
+		// 最大文件大小
+		if v, ok := uploadSettings[KeyUploadMaxFileSize]; ok && v != "" {
 			if size, err := strconv.ParseInt(v, 10, 64); err == nil {
 				cfg.Upload.MaxFileSize = size
 			}
 		}
 
-		if v, ok := uploadSettings[prefix+"path_pattern"]; ok && v != "" {
-			cfg.Upload.PathPattern = v
-		} else if v, ok := uploadSettings[KeyUploadPathPattern]; ok && v != "" {
+		// 路径模式
+		if v, ok := uploadSettings[KeyUploadPathPattern]; ok && v != "" {
 			cfg.Upload.PathPattern = v
 		}
 
-		// 云存储配置（仅非 local 存储类型需要）
-		if storageType != "local" {
-			if v, ok := uploadSettings[prefix+"access_key"]; ok && v != "" {
-				cfg.Upload.AccessKey = v
-			} else if v, ok := uploadSettings[KeyUploadAccessKey]; ok && v != "" {
-				cfg.Upload.AccessKey = v
+		// Local 存储配置
+		if v, ok := uploadSettings[KeyUploadLocalEnabled]; ok && v != "" {
+			if enabled, err := strconv.ParseBool(v); err == nil {
+				cfg.Upload.Local.Enabled = enabled
 			}
+		}
 
-			if v, ok := uploadSettings[prefix+"secret_key"]; ok && v != "" {
-				cfg.Upload.SecretKey = v
-			} else if v, ok := uploadSettings[KeyUploadSecretKey]; ok && v != "" {
-				cfg.Upload.SecretKey = v
+		// S3 存储配置
+		if v, ok := uploadSettings[KeyUploadS3AccessKey]; ok {
+			cfg.Upload.S3.AccessKey = v
+		}
+		if v, ok := uploadSettings[KeyUploadS3SecretKey]; ok {
+			cfg.Upload.S3.SecretKey = v
+		}
+		if v, ok := uploadSettings[KeyUploadS3Region]; ok {
+			cfg.Upload.S3.Region = v
+		}
+		if v, ok := uploadSettings[KeyUploadS3Bucket]; ok {
+			cfg.Upload.S3.Bucket = v
+		}
+		if v, ok := uploadSettings[KeyUploadS3Endpoint]; ok {
+			cfg.Upload.S3.Endpoint = v
+		}
+		if v, ok := uploadSettings[KeyUploadS3Domain]; ok {
+			cfg.Upload.S3.Domain = v
+		}
+
+		// OSS 存储配置
+		if v, ok := uploadSettings[KeyUploadOSSAccessKey]; ok {
+			cfg.Upload.OSS.AccessKey = v
+		}
+		if v, ok := uploadSettings[KeyUploadOSSSecretKey]; ok {
+			cfg.Upload.OSS.SecretKey = v
+		}
+		if v, ok := uploadSettings[KeyUploadOSSRegion]; ok {
+			cfg.Upload.OSS.Region = v
+		}
+		if v, ok := uploadSettings[KeyUploadOSSBucket]; ok {
+			cfg.Upload.OSS.Bucket = v
+		}
+		if v, ok := uploadSettings[KeyUploadOSSDomain]; ok {
+			cfg.Upload.OSS.Domain = v
+		}
+
+		// COS 存储配置
+		if v, ok := uploadSettings[KeyUploadCOSSecretID]; ok {
+			cfg.Upload.COS.SecretID = v
+		}
+		if v, ok := uploadSettings[KeyUploadCOSSecretKey]; ok {
+			cfg.Upload.COS.SecretKey = v
+		}
+		if v, ok := uploadSettings[KeyUploadCOSRegion]; ok {
+			cfg.Upload.COS.Region = v
+		}
+		if v, ok := uploadSettings[KeyUploadCOSBucket]; ok {
+			cfg.Upload.COS.Bucket = v
+		}
+		if v, ok := uploadSettings[KeyUploadCOSDomain]; ok {
+			cfg.Upload.COS.Domain = v
+		}
+
+		// Kodo 存储配置
+		if v, ok := uploadSettings[KeyUploadKodoAccessKey]; ok {
+			cfg.Upload.Kodo.AccessKey = v
+		}
+		if v, ok := uploadSettings[KeyUploadKodoSecretKey]; ok {
+			cfg.Upload.Kodo.SecretKey = v
+		}
+		if v, ok := uploadSettings[KeyUploadKodoRegion]; ok {
+			cfg.Upload.Kodo.Region = v
+		}
+		if v, ok := uploadSettings[KeyUploadKodoBucket]; ok {
+			cfg.Upload.Kodo.Bucket = v
+		}
+		if v, ok := uploadSettings[KeyUploadKodoDomain]; ok {
+			cfg.Upload.Kodo.Domain = v
+		}
+
+		// R2 存储配置
+		if v, ok := uploadSettings[KeyUploadR2AccessKey]; ok {
+			cfg.Upload.R2.AccessKey = v
+		}
+		if v, ok := uploadSettings[KeyUploadR2SecretKey]; ok {
+			cfg.Upload.R2.SecretKey = v
+		}
+		if v, ok := uploadSettings[KeyUploadR2Bucket]; ok {
+			cfg.Upload.R2.Bucket = v
+		}
+		if v, ok := uploadSettings[KeyUploadR2Endpoint]; ok {
+			cfg.Upload.R2.Endpoint = v
+		}
+		if v, ok := uploadSettings[KeyUploadR2Domain]; ok {
+			cfg.Upload.R2.Domain = v
+		}
+		if v, ok := uploadSettings[KeyUploadR2UseSSL]; ok && v != "" {
+			if useSSL, err := strconv.ParseBool(v); err == nil {
+				cfg.Upload.R2.UseSSL = useSSL
 			}
+		}
 
-			if v, ok := uploadSettings[prefix+"region"]; ok && v != "" {
-				cfg.Upload.Region = v
-			} else if v, ok := uploadSettings[KeyUploadRegion]; ok && v != "" {
-				cfg.Upload.Region = v
-			}
-
-			if v, ok := uploadSettings[prefix+"bucket"]; ok && v != "" {
-				cfg.Upload.Bucket = v
-			} else if v, ok := uploadSettings[KeyUploadBucket]; ok && v != "" {
-				cfg.Upload.Bucket = v
-			}
-
-			if v, ok := uploadSettings[prefix+"endpoint"]; ok && v != "" {
-				cfg.Upload.Endpoint = v
-			} else if v, ok := uploadSettings[KeyUploadEndpoint]; ok && v != "" {
-				cfg.Upload.Endpoint = v
-			}
-
-			if v, ok := uploadSettings[prefix+"domain"]; ok && v != "" {
-				cfg.Upload.Domain = v
-			} else if v, ok := uploadSettings[KeyUploadDomain]; ok && v != "" {
-				cfg.Upload.Domain = v
-			}
-
-			if v, ok := uploadSettings[prefix+"use_ssl"]; ok && v != "" {
-				if useSSL, err := strconv.ParseBool(v); err == nil {
-					cfg.Upload.UseSSL = useSSL
-				}
-			} else if v, ok := uploadSettings[KeyUploadUseSSL]; ok && v != "" {
-				if useSSL, err := strconv.ParseBool(v); err == nil {
-					cfg.Upload.UseSSL = useSSL
-				}
+		// MinIO 存储配置
+		if v, ok := uploadSettings[KeyUploadMinIOAccessKey]; ok {
+			cfg.Upload.MinIO.AccessKey = v
+		}
+		if v, ok := uploadSettings[KeyUploadMinIOSecretKey]; ok {
+			cfg.Upload.MinIO.SecretKey = v
+		}
+		if v, ok := uploadSettings[KeyUploadMinIORegion]; ok {
+			cfg.Upload.MinIO.Region = v
+		}
+		if v, ok := uploadSettings[KeyUploadMinIOBucket]; ok {
+			cfg.Upload.MinIO.Bucket = v
+		}
+		if v, ok := uploadSettings[KeyUploadMinIOEndpoint]; ok {
+			cfg.Upload.MinIO.Endpoint = v
+		}
+		if v, ok := uploadSettings[KeyUploadMinIODomain]; ok {
+			cfg.Upload.MinIO.Domain = v
+		}
+		if v, ok := uploadSettings[KeyUploadMinIOUseSSL]; ok && v != "" {
+			if useSSL, err := strconv.ParseBool(v); err == nil {
+				cfg.Upload.MinIO.UseSSL = useSSL
 			}
 		}
 	}
