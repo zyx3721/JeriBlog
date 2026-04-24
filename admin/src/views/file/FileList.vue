@@ -81,7 +81,7 @@
 
     <!-- 右上角工具栏 -->
     <template #toolbar-after>
-      <el-button type="primary" @click="uploadDialogVisible = true">上传配置</el-button>
+      <!-- 上传配置已移至系统设置 -->
     </template>
 
     <!-- 表格列 -->
@@ -139,8 +139,6 @@
     </el-table-column>
     <!-- 额外挂载区域 -->
     <template #extra>
-      <upload-config-dialog v-model="uploadDialogVisible" />
-
       <!-- 文件引用详情对话框 -->
       <el-dialog
         v-model="referencesDialogVisible"
@@ -191,7 +189,6 @@ import CommonList from '@/components/common/CommonList.vue'
 import { getFileList, deleteFile, getFileReferences, type FileReference } from '@/api/file'
 import type { FileInfo, FileQuery } from '@/types/file'
 import { formatDateTime } from '@/utils/date'
-import UploadConfigDialog from '@/views/file/components/UploadConfigDialog.vue'
 
 const router = useRouter()
 
@@ -205,7 +202,6 @@ const query = reactive<FileQuery>({
 const fileList = ref<FileInfo[]>([])
 const total = ref(0)
 const loading = ref(false)
-const uploadDialogVisible = ref(false)
 
 // 引用详情相关
 const referencesDialogVisible = ref(false)

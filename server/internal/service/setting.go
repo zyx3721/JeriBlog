@@ -474,38 +474,81 @@ func (s *SettingService) ApplyDatabaseConfig(cfg *config.Config) error {
 		return err
 	}
 	if len(uploadSettings) > 0 {
+		// 先获取存储类型
+		storageType := "local"
 		if v, ok := uploadSettings[KeyUploadStorageType]; ok && v != "" {
 			cfg.Upload.StorageType = v
+			storageType = v
 		}
-		if v, ok := uploadSettings[KeyUploadMaxFileSize]; ok && v != "" {
+
+		// 根据存储类型加载对应的配置
+		// 键名格式: upload.<storage_type>.<field> 或 upload.<field>（兼容旧格式）
+		prefix := "upload." + storageType + "."
+
+		// 通用配置（所有存储类型共享）
+		if v, ok := uploadSettings[prefix+"max_file_size"]; ok && v != "" {
+			if size, err := strconv.ParseInt(v, 10, 64); err == nil {
+				cfg.Upload.MaxFileSize = size
+			}
+		} else if v, ok := uploadSettings[KeyUploadMaxFileSize]; ok && v != "" {
+			// 兼容旧格式
 			if size, err := strconv.ParseInt(v, 10, 64); err == nil {
 				cfg.Upload.MaxFileSize = size
 			}
 		}
-		if v, ok := uploadSettings[KeyUploadPathPattern]; ok && v != "" {
+
+		if v, ok := uploadSettings[prefix+"path_pattern"]; ok && v != "" {
+			cfg.Upload.PathPattern = v
+		} else if v, ok := uploadSettings[KeyUploadPathPattern]; ok && v != "" {
 			cfg.Upload.PathPattern = v
 		}
-		if v, ok := uploadSettings[KeyUploadAccessKey]; ok && v != "" {
-			cfg.Upload.AccessKey = v
-		}
-		if v, ok := uploadSettings[KeyUploadSecretKey]; ok && v != "" {
-			cfg.Upload.SecretKey = v
-		}
-		if v, ok := uploadSettings[KeyUploadRegion]; ok && v != "" {
-			cfg.Upload.Region = v
-		}
-		if v, ok := uploadSettings[KeyUploadBucket]; ok && v != "" {
-			cfg.Upload.Bucket = v
-		}
-		if v, ok := uploadSettings[KeyUploadEndpoint]; ok && v != "" {
-			cfg.Upload.Endpoint = v
-		}
-		if v, ok := uploadSettings[KeyUploadDomain]; ok && v != "" {
-			cfg.Upload.Domain = v
-		}
-		if v, ok := uploadSettings[KeyUploadUseSSL]; ok && v != "" {
-			if useSSL, err := strconv.ParseBool(v); err == nil {
-				cfg.Upload.UseSSL = useSSL
+
+		// 云存储配置（仅非 local 存储类型需要）
+		if storageType != "local" {
+			if v, ok := uploadSettings[prefix+"access_key"]; ok && v != "" {
+				cfg.Upload.AccessKey = v
+			} else if v, ok := uploadSettings[KeyUploadAccessKey]; ok && v != "" {
+				cfg.Upload.AccessKey = v
+			}
+
+			if v, ok := uploadSettings[prefix+"secret_key"]; ok && v != "" {
+				cfg.Upload.SecretKey = v
+			} else if v, ok := uploadSettings[KeyUploadSecretKey]; ok && v != "" {
+				cfg.Upload.SecretKey = v
+			}
+
+			if v, ok := uploadSettings[prefix+"region"]; ok && v != "" {
+				cfg.Upload.Region = v
+			} else if v, ok := uploadSettings[KeyUploadRegion]; ok && v != "" {
+				cfg.Upload.Region = v
+			}
+
+			if v, ok := uploadSettings[prefix+"bucket"]; ok && v != "" {
+				cfg.Upload.Bucket = v
+			} else if v, ok := uploadSettings[KeyUploadBucket]; ok && v != "" {
+				cfg.Upload.Bucket = v
+			}
+
+			if v, ok := uploadSettings[prefix+"endpoint"]; ok && v != "" {
+				cfg.Upload.Endpoint = v
+			} else if v, ok := uploadSettings[KeyUploadEndpoint]; ok && v != "" {
+				cfg.Upload.Endpoint = v
+			}
+
+			if v, ok := uploadSettings[prefix+"domain"]; ok && v != "" {
+				cfg.Upload.Domain = v
+			} else if v, ok := uploadSettings[KeyUploadDomain]; ok && v != "" {
+				cfg.Upload.Domain = v
+			}
+
+			if v, ok := uploadSettings[prefix+"use_ssl"]; ok && v != "" {
+				if useSSL, err := strconv.ParseBool(v); err == nil {
+					cfg.Upload.UseSSL = useSSL
+				}
+			} else if v, ok := uploadSettings[KeyUploadUseSSL]; ok && v != "" {
+				if useSSL, err := strconv.ParseBool(v); err == nil {
+					cfg.Upload.UseSSL = useSSL
+				}
 			}
 		}
 	}

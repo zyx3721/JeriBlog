@@ -40,6 +40,11 @@
           <NotificationSettingsTab v-model:form="notificationForm" :loading="loading" />
         </el-tab-pane>
 
+        <!-- 上传配置标签页 -->
+        <el-tab-pane label="上传配置" name="upload">
+          <UploadSettingsTab v-model:form="uploadForm" :loading="loading" />
+        </el-tab-pane>
+
         <!-- AI 配置标签页 -->
         <el-tab-pane label="AI 配置" name="ai">
           <AISettingsTab v-model:form="aiForm" :loading="loading" />
@@ -71,12 +76,14 @@ import { getSettingGroup, updateSettingGroup } from '@/api/sysconfig'
 import BasicSettingsTab from './components/BasicSettingsTab.vue'
 import BlogSettingsTab from './components/BlogSettingsTab.vue'
 import NotificationSettingsTab from './components/NotificationSettingsTab.vue'
+import UploadSettingsTab from './components/UploadSettingsTab.vue'
 import AISettingsTab from './components/AISettingsTab.vue'
 import OAuthSettingsTab from './components/OAuthSettingsTab.vue'
 import WeChatSettingsTab from './components/WeChatSettingsTab.vue'
 import ImportExportTab from './components/ImportExportTab.vue'
 import type { SettingGroupType } from '@/types/sysconfig'
 import type { NotificationForm } from './components/NotificationSettingsTab.vue'
+import type { UploadForm } from './components/UploadSettingsTab.vue'
 
 // 页面状态
 const activeTab = ref('basic')
@@ -110,6 +117,88 @@ const notificationForm = ref<NotificationForm>({
   feishu_app_id: '',
   feishu_secret: '',
   feishu_chat_id: ''
+})
+
+// 上传配置表单
+const uploadForm = ref<UploadForm>({
+  storage_type: 'local',
+  local: {
+    max_file_size: 10,
+    path_pattern: '{timestamp}_{random}{ext}',
+    access_key: '',
+    secret_key: '',
+    region: '',
+    bucket: '',
+    endpoint: '',
+    domain: '',
+    use_ssl: true
+  },
+  s3: {
+    max_file_size: 10,
+    path_pattern: '{timestamp}_{random}{ext}',
+    access_key: '',
+    secret_key: '',
+    region: '',
+    bucket: '',
+    endpoint: '',
+    domain: '',
+    use_ssl: true
+  },
+  oss: {
+    max_file_size: 10,
+    path_pattern: '{timestamp}_{random}{ext}',
+    access_key: '',
+    secret_key: '',
+    region: '',
+    bucket: '',
+    endpoint: '',
+    domain: '',
+    use_ssl: true
+  },
+  cos: {
+    max_file_size: 10,
+    path_pattern: '{timestamp}_{random}{ext}',
+    access_key: '',
+    secret_key: '',
+    region: '',
+    bucket: '',
+    endpoint: '',
+    domain: '',
+    use_ssl: true
+  },
+  kodo: {
+    max_file_size: 10,
+    path_pattern: '{timestamp}_{random}{ext}',
+    access_key: '',
+    secret_key: '',
+    region: '',
+    bucket: '',
+    endpoint: '',
+    domain: '',
+    use_ssl: true
+  },
+  r2: {
+    max_file_size: 10,
+    path_pattern: '{timestamp}_{random}{ext}',
+    access_key: '',
+    secret_key: '',
+    region: '',
+    bucket: '',
+    endpoint: '',
+    domain: '',
+    use_ssl: true
+  },
+  minio: {
+    max_file_size: 10,
+    path_pattern: '{timestamp}_{random}{ext}',
+    access_key: '',
+    secret_key: '',
+    region: '',
+    bucket: '',
+    endpoint: '',
+    domain: '',
+    use_ssl: true
+  }
 })
 
 // 博客配置表单
@@ -310,6 +399,35 @@ const loadNotificationConfigs = async () => {
   }
 }
 
+// 加载上传配置
+const loadUploadConfigs = async () => {
+  try {
+    const configs = await loadConfigs('upload')
+
+    // 加载当前存储类型
+    uploadForm.value.storage_type = configs.storage_type || 'local'
+
+    // 加载各存储类型的配置
+    const storageTypes = ['local', 's3', 'oss', 'cos', 'kodo', 'r2', 'minio']
+    storageTypes.forEach(type => {
+      const prefix = `${type}.`
+      uploadForm.value[type as keyof UploadForm] = {
+        max_file_size: Number(configs[`${prefix}max_file_size`] || 10),
+        path_pattern: configs[`${prefix}path_pattern`] || '{timestamp}_{random}{ext}',
+        access_key: configs[`${prefix}access_key`] || '',
+        secret_key: configs[`${prefix}secret_key`] || '',
+        region: configs[`${prefix}region`] || '',
+        bucket: configs[`${prefix}bucket`] || '',
+        endpoint: configs[`${prefix}endpoint`] || '',
+        domain: configs[`${prefix}domain`] || '',
+        use_ssl: (configs[`${prefix}use_ssl`] || 'true') === 'true'
+      }
+    })
+  } catch {
+    ElMessage.error('获取上传配置失败')
+  }
+}
+
 // JSON 解析辅助函数
 const parseJSON = <T>(jsonStr: string, fallback: T): T => {
   try {
@@ -385,6 +503,7 @@ const loadAllConfigs = async () => {
       loadBasicConfigs(),
       loadBlogConfigs(),
       loadNotificationConfigs(),
+      loadUploadConfigs(),
       loadAIConfigs(),
       loadOAuthConfigs(),
       loadWeChatConfigs()
@@ -501,6 +620,28 @@ const handleSave = async () => {
       'notification.feishu_chat_id': notificationForm.value.feishu_chat_id
     }
 
+    // 上传配置
+    const uploadPayload: Record<string, string> = {
+      'upload.storage_type': uploadForm.value.storage_type
+    }
+
+    // 保存各存储类型的配置
+    const storageTypes = ['local', 's3', 'oss', 'cos', 'kodo', 'r2', 'minio']
+    storageTypes.forEach(type => {
+      const config = uploadForm.value[type as keyof UploadForm]
+      if (typeof config === 'object') {
+        uploadPayload[`upload.${type}.max_file_size`] = String(config.max_file_size)
+        uploadPayload[`upload.${type}.path_pattern`] = config.path_pattern
+        uploadPayload[`upload.${type}.access_key`] = config.access_key
+        uploadPayload[`upload.${type}.secret_key`] = config.secret_key
+        uploadPayload[`upload.${type}.region`] = config.region
+        uploadPayload[`upload.${type}.bucket`] = config.bucket
+        uploadPayload[`upload.${type}.endpoint`] = config.endpoint
+        uploadPayload[`upload.${type}.domain`] = config.domain
+        uploadPayload[`upload.${type}.use_ssl`] = config.use_ssl ? 'true' : 'false'
+      }
+    })
+
     // AI 配置
     const aiPayload: Record<string, string> = {
       'ai.base_url': aiForm.value.base_url,
@@ -543,6 +684,7 @@ const handleSave = async () => {
       updateSettingGroup('basic', basicPayload),
       updateSettingGroup('blog', blogPayload),
       updateSettingGroup('notification', notificationPayload),
+      updateSettingGroup('upload', uploadPayload),
       updateSettingGroup('ai', aiPayload),
       updateSettingGroup('oauth', oauthPayload),
       updateSettingGroup('wechat', wechatPayload)
