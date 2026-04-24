@@ -192,12 +192,7 @@ func buildBaseURL(endpoint, bucket string, useSSL bool, customDomain, storageTyp
 		scheme = "https"
 	}
 
-	// COS 使用 virtual-hosted style：bucket.cos.region.myqcloud.com
-	if storageType == "cos" {
-		return fmt.Sprintf("%s://%s.%s", scheme, bucket, endpoint)
-	}
-
-	return fmt.Sprintf("%s://%s/%s", scheme, endpoint, bucket)
+	return fmt.Sprintf("%s://%s.%s", scheme, bucket, endpoint)
 }
 
 // Save 实现 Storage 接口 - 保存文件
