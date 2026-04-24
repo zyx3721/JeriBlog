@@ -100,10 +100,9 @@ const handleDelete = () => {
 const uploadPendingFile = async (): Promise<string | null> => {
   if (!pendingFile.value) return null
 
+  const loading = ElMessage.info({ message: '正在上传...', duration: 0 })
   try {
-    const loading = ElMessage.info({ message: '正在上传...', duration: 0 })
     const result = await uploadFile(pendingFile.value, props.uploadType)
-    loading.close()
 
     // 清理本地预览
     if (previewUrl.value) {
@@ -118,6 +117,8 @@ const uploadPendingFile = async (): Promise<string | null> => {
   } catch (error: any) {
     ElMessage.error(error.message || '上传失败')
     throw error
+  } finally {
+    loading.close()
   }
 }
 
@@ -131,11 +132,21 @@ const setPendingFile = (file: File) => {
   pendingFile.value = file
 }
 
+// 清理待上传文件状态
+const clearPending = () => {
+  if (previewUrl.value) {
+    URL.revokeObjectURL(previewUrl.value)
+    previewUrl.value = ''
+  }
+  pendingFile.value = null
+}
+
 // 暴露方法给父组件
 defineExpose({
   uploadPendingFile,
   getPendingCount,
-  setPendingFile
+  setPendingFile,
+  clearPending
 })
 </script>
 

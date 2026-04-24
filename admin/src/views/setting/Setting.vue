@@ -526,6 +526,27 @@ const loadAllConfigs = async () => {
   }
 }
 
+// 清理所有待上传文件状态
+const clearAllPendingFiles = () => {
+  // 清理基本配置的待上传文件
+  const basicUploaders = basicTabRef.value
+  if (basicUploaders) {
+    basicUploaders.authorAvatarUploaderRef?.clearPending?.()
+    basicUploaders.authorPhotoUploaderRef?.clearPending?.()
+  }
+
+  // 清理博客配置的待上传文件
+  const blogUploaders = blogTabRef.value
+  if (blogUploaders) {
+    blogUploaders.faviconUploaderRef?.clearPending?.()
+    blogUploaders.backgroundUploaderRef?.clearPending?.()
+    blogUploaders.screenshotUploaderRef?.clearPending?.()
+    blogUploaders.aboutExhibitionUploaderRef?.clearPending?.()
+    blogUploaders.rewardWechatUploaderRef?.clearPending?.()
+    blogUploaders.rewardAlipayUploaderRef?.clearPending?.()
+  }
+}
+
 // 统一保存配置
 const handleSave = async () => {
   saving.value = true
@@ -720,6 +741,9 @@ const handleSave = async () => {
 
     ElMessage.success('配置保存成功')
   } catch (e) {
+    // 保存失败时清理所有待上传文件状态，避免状态残留
+    clearAllPendingFiles()
+
     if (e instanceof Error) ElMessage.error(e.message)
     else ElMessage.error('保存失败')
   } finally {
