@@ -210,8 +210,19 @@ const loadConfigs = async () => {
 
 watch(() => visible.value, (val) => { if (val) loadConfigs() })
 
+// 定义配置对象的类型
+interface StorageConfig {
+  access_key?: string
+  secret_key?: string
+  region?: string
+  bucket?: string
+  endpoint?: string
+  domain?: string
+  use_ssl?: boolean
+}
+
 // 根据当前存储类型获取对应的配置对象
-const currentConfig = computed(() => {
+const currentConfig = computed<StorageConfig>(() => {
   const storageType = form.value.storage_type
   switch (storageType) {
     case 's3':
@@ -241,9 +252,9 @@ const currentConfig = computed(() => {
 // 监听 currentConfig 的变化，同步回原始配置
 watch(() => currentConfig.value, (newVal) => {
   const storageType = form.value.storage_type
-  if (storageType === 'cos' && 'access_key' in newVal) {
+  if (storageType === 'cos' && newVal.access_key !== undefined) {
     // COS 特殊处理：将 access_key 同步到 secret_id
-    form.value.cos.secret_id = newVal.access_key || ''
+    form.value.cos.secret_id = newVal.access_key
   }
 }, { deep: true })
 
