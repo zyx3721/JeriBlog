@@ -282,7 +282,7 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 		frontendAPI.GET("/health", systemController.Health) // 服务及数据库状态检查
 
 		// ==================== 工具接口（公开）====================
-		frontendAPI.GET("/tools/parse-music", toolsHandler.ParseMusic) // 音乐解析（前台播放器使用）
+		frontendAPI.GET("/tools/parse-music/", toolsHandler.ParseMusic) // 音乐解析（前台播放器使用）
 	}
 
 	// ============================
@@ -384,24 +384,24 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 		// ==================== 文件管理 ====================
 		fileManagement := adminAPI.Group("/files")
 		{
-			fileManagement.POST("", fileController.Upload)                 // 上传文件
-			fileManagement.GET("", fileController.List)                    // 获取文件列表
-			fileManagement.GET("/:id", fileController.Get)                 // 获取文件详情
+			fileManagement.POST("", fileController.Upload)                      // 上传文件
+			fileManagement.GET("", fileController.List)                         // 获取文件列表
+			fileManagement.GET("/:id", fileController.Get)                      // 获取文件详情
 			fileManagement.GET("/:id/references", fileController.GetReferences) // 获取文件引用详情
-			fileManagement.DELETE("/:id", fileController.Delete)           // 删除文件
+			fileManagement.DELETE("/:id", fileController.Delete)                // 删除文件
 		}
 
 		// ==================== 统计管理 ====================
 		statsManagement := adminAPI.Group("/stats")
 		{
-			statsManagement.GET("/dashboard", statsHandler.GetDashboard)              // 获取仪表盘统计
-			statsManagement.GET("/trend", statsHandler.GetTrend)                      // 获取访问趋势
-			statsManagement.GET("/category", statsHandler.GetCategoryStats)           // 获取分类统计
-			statsManagement.GET("/tag", statsHandler.GetTagStats)                     // 获取标签统计
-			statsManagement.GET("/contribution", statsHandler.GetArticleContribution) // 获取文章贡献数据
-			statsManagement.GET("/visits", statsHandler.GetVisitLogs)                 // 获取访问日志
+			statsManagement.GET("/dashboard", statsHandler.GetDashboard)                     // 获取仪表盘统计
+			statsManagement.GET("/trend", statsHandler.GetTrend)                             // 获取访问趋势
+			statsManagement.GET("/category", statsHandler.GetCategoryStats)                  // 获取分类统计
+			statsManagement.GET("/tag", statsHandler.GetTagStats)                            // 获取标签统计
+			statsManagement.GET("/contribution", statsHandler.GetArticleContribution)        // 获取文章贡献数据
+			statsManagement.GET("/visits", statsHandler.GetVisitLogs)                        // 获取访问日志
 			statsManagement.DELETE("/visits/batch", statsHandler.DeleteVisitLogsByCondition) // 批量删除访问日志
-			statsManagement.DELETE("/visits/:id", statsHandler.DeleteVisitLog)        // 删除访问日志
+			statsManagement.DELETE("/visits/:id", statsHandler.DeleteVisitLog)               // 删除访问日志
 		}
 
 		// ==================== 菜单管理 ====================
@@ -426,11 +426,11 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 		// ==================== 通知管理 ====================
 		notificationManagement := adminAPI.Group("/notifications")
 		{
-			notificationManagement.GET("", notificationController.List)                      // 获取通知列表（含未读数量）
-			notificationManagement.PUT("/:id/read", notificationController.MarkAsRead)       // 标记已读
-			notificationManagement.PUT("/read-all", notificationController.MarkAllAsRead)    // 全部标记已读
-			notificationManagement.DELETE("/clear-all", notificationController.ClearAll)     // 清空所有通知
-			notificationManagement.DELETE("/clear-read", notificationController.ClearRead)   // 清空已读通知
+			notificationManagement.GET("", notificationController.List)                    // 获取通知列表（含未读数量）
+			notificationManagement.PUT("/:id/read", notificationController.MarkAsRead)     // 标记已读
+			notificationManagement.PUT("/read-all", notificationController.MarkAllAsRead)  // 全部标记已读
+			notificationManagement.DELETE("/clear-all", notificationController.ClearAll)   // 清空所有通知
+			notificationManagement.DELETE("/clear-read", notificationController.ClearRead) // 清空已读通知
 		}
 
 		// ==================== 配置管理 ====================
@@ -450,7 +450,7 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 		toolsManagement.POST("/parse-video", toolsHandler.ParseVideo)
 		toolsManagement.POST("/fetch-linkmeta", toolsHandler.FetchLinkMetadata)
 		toolsManagement.POST("/download-image", toolsHandler.DownloadImage)
-		toolsManagement.GET("/parse-music", toolsHandler.ParseMusic)
+		toolsManagement.GET("/parse-music/", toolsHandler.ParseMusic)
 
 		// ==================== AI功能相关 ====================
 		aiManagement := adminAPI.Group("/ai")

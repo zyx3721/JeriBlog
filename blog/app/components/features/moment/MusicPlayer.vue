@@ -93,9 +93,12 @@ const fetchMusicData = async () => {
   try {
     const { server, type, id } = props.music
     const config = useRuntimeConfig()
-    const apiUrl = `${config.public.apiBase}/tools/parse-music?server=${server}&type=${type}&id=${id}`
+    const apiUrl = `${config.public.apiUrl}/tools/parse-music/?server=${server}&type=${type}&id=${id}`
     const response = await fetch(apiUrl)
-    const data = await response.json()
+    const result = await response.json()
+
+    // 处理标准响应格式 { code, message, data }
+    const data = result.data || result
     const list = Array.isArray(data) ? data : [data]
 
     audioList.value = list.map((item: any) => ({

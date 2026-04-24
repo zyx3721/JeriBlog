@@ -1079,6 +1079,11 @@ server {
         proxy_pass http://127.0.0.1:8080/atom.xml;
     }
     
+    # 动态音乐解析
+    location /tools/parse-music {
+        proxy_pass http://127.0.0.1:8080/tools/parse-music;
+    }
+    
     # 后端 API 反向代理（其余 /api/* 请求）
     location /api/ {
         proxy_pass http://127.0.0.1:8080;  # 与后端 API 相同地址
@@ -1196,6 +1201,11 @@ server {
     # RSS 订阅
     location = /atom.xml {
         proxy_pass http://127.0.0.1:8080/atom.xml;
+    }
+    
+    # 动态音乐解析
+    location /tools/parse-music {
+        proxy_pass http://127.0.0.1:8080/tools/parse-music;
     }
     
     # 后端 API 反向代理（其余 /api/* 请求）

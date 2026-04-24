@@ -12,11 +12,12 @@
 package v1
 
 import (
+	"encoding/json"
+	"fmt"
+	"io"
 	"jeri_blog/pkg/linkparser"
 	"jeri_blog/pkg/response"
 	"jeri_blog/pkg/videoparser"
-	"fmt"
-	"io"
 	"net/http"
 	"strings"
 
@@ -134,7 +135,7 @@ func (c *ToolsController) ParseMusic(ctx *gin.Context) {
 	}
 
 	// 构建请求URL
-	apiURL := fmt.Sprintf("https://api.injahow.cn/meting?server=%s&type=%s&id=%s", server, musicType, id)
+	apiURL := fmt.Sprintf("https://api.injahow.cn/meting/?server=%s&type=%s&id=%s", server, musicType, id)
 
 	// 发起请求
 	resp, err := http.Get(apiURL)
@@ -156,7 +157,13 @@ func (c *ToolsController) ParseMusic(ctx *gin.Context) {
 		return
 	}
 
-	// 直接返回JSON数据
-	ctx.Header("Content-Type", "application/json")
-	ctx.String(http.StatusOK, string(data))
+	// 解析JSON数据
+	var musicData []interface{}
+	if err := json.Unmarshal(data, &musicData); err != nil {
+		response.Failed(ctx, fmt.Sprintf("解析音乐数据失败: %v", err))
+		return
+	}
+
+	// 使用标准响应格式返回
+	response.Success(ctx, musicData)
 }
