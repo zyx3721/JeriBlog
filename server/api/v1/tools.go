@@ -12,11 +12,11 @@
 package v1
 
 import (
+	"fmt"
+	"io"
 	"jeri_blog/pkg/linkparser"
 	"jeri_blog/pkg/response"
 	"jeri_blog/pkg/videoparser"
-	"fmt"
-	"io"
 	"net/http"
 	"strings"
 
@@ -134,7 +134,7 @@ func (c *ToolsController) ParseMusic(ctx *gin.Context) {
 	}
 
 	// 构建请求URL
-	apiURL := fmt.Sprintf("https://api.injahow.cn/meting?server=%s&type=%s&id=%s", server, musicType, id)
+	apiURL := fmt.Sprintf("https://api.injahow.cn/meting/?server=%s&type=%s&id=%s", server, musicType, id)
 
 	// 发起请求
 	resp, err := http.Get(apiURL)
