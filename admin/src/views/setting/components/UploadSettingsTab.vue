@@ -12,7 +12,21 @@
 <template>
   <div class="upload-settings-tab">
     <el-form :model="currentForm" label-width="120px" class="setting-form">
+      <!-- 基础配置 -->
+      <el-divider content-position="left">基础配置</el-divider>
+      <el-form-item label="最大文件大小">
+        <el-input-number v-model="currentForm.max_file_size" :min="0" :step="1" />
+        <span style="margin-left:8px;color:#909399">MB</span>
+      </el-form-item>
+      <el-form-item label="文件命名">
+        <el-input v-model="currentForm.path_pattern" placeholder="{timestamp}_{random}{ext}" />
+        <div style="margin-top: 4px; font-size: 12px; color: #909399;">
+          支持变量: {timestamp} {random} {filename} {ext} {type} {userid} YYYY MM DD HH mm ss
+        </div>
+      </el-form-item>
+
       <!-- 存储类型选择 -->
+      <el-divider content-position="left">存储类型</el-divider>
       <el-form-item label="存储类型">
         <el-select v-model="currentStorageType" placeholder="选择存储类型" style="width: 220px" @change="handleStorageTypeChange">
           <el-option label="本地存储" value="local" />
@@ -23,19 +37,6 @@
           <el-option label="Cloudflare R2" value="r2" />
           <el-option label="MinIO" value="minio" />
         </el-select>
-      </el-form-item>
-
-      <!-- 通用配置 -->
-      <el-divider content-position="left">通用配置</el-divider>
-      <el-form-item label="最大文件大小">
-        <el-input-number v-model="currentForm.max_file_size" :min="0" :step="1" />
-        <span style="margin-left:8px;color:#909399">MB</span>
-      </el-form-item>
-      <el-form-item label="文件命名">
-        <el-input v-model="currentForm.path_pattern" placeholder="{timestamp}_{random}{ext}" />
-        <div style="margin-top: 4px; font-size: 12px; color: #909399;">
-          支持变量: {timestamp} {random} {filename} {ext} {type} {userid} YYYY MM DD HH mm ss
-        </div>
       </el-form-item>
 
       <!-- 云存储配置 -->
