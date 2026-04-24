@@ -282,7 +282,7 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 		frontendAPI.GET("/health", systemController.Health) // 服务及数据库状态检查
 
 		// ==================== 工具接口（公开）====================
-		frontendAPI.GET("/tools/parse-music/", toolsHandler.ParseMusic) // 音乐解析（前台播放器使用）
+		frontendAPI.GET("/tools/parse-music", toolsHandler.ParseMusic) // 音乐解析（前台播放器使用）
 	}
 
 	// ============================
@@ -450,7 +450,7 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 		toolsManagement.POST("/parse-video", toolsHandler.ParseVideo)
 		toolsManagement.POST("/fetch-linkmeta", toolsHandler.FetchLinkMetadata)
 		toolsManagement.POST("/download-image", toolsHandler.DownloadImage)
-		toolsManagement.GET("/parse-music/", toolsHandler.ParseMusic)
+		toolsManagement.GET("/parse-music", toolsHandler.ParseMusic)
 
 		// ==================== AI功能相关 ====================
 		aiManagement := adminAPI.Group("/ai")

@@ -192,6 +192,12 @@ func buildBaseURL(endpoint, bucket string, useSSL bool, customDomain, storageTyp
 		scheme = "https"
 	}
 
+	// MinIO 使用路径风格访问（Path-Style）
+	if storageType == "minio" {
+		return fmt.Sprintf("%s://%s/%s", scheme, endpoint, bucket)
+	}
+
+	// 其他云存储使用虚拟主机风格（Virtual-Hosted-Style）
 	return fmt.Sprintf("%s://%s.%s", scheme, bucket, endpoint)
 }
 

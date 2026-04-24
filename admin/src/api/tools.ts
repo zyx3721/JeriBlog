@@ -49,5 +49,5 @@ export function downloadImage(data: { url: string }): Promise<{ content_type: st
  * @returns Promise<any[]>
  */
 export function parseMusic(params: { server: string, type: string, id: string }): Promise<any[]> {
-  return request.get("/admin/tools/parse-music/", { params })
+  return request.get("/admin/tools/parse-music", { params })
 }

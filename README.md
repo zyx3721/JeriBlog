@@ -1081,7 +1081,7 @@ server {
     
     # 动态音乐解析
     location /tools/parse-music {
-        proxy_pass http://127.0.0.1:8080/tools/parse-music;
+        proxy_pass http://127.0.0.1:8080/api/v1/tools/parse-music;
     }
     
     # 后端 API 反向代理（其余 /api/* 请求）
@@ -1205,7 +1205,7 @@ server {
     
     # 动态音乐解析
     location /tools/parse-music {
-        proxy_pass http://127.0.0.1:8080/tools/parse-music;
+        proxy_pass http://127.0.0.1:8080/api/v1/tools/parse-music;
     }
     
     # 后端 API 反向代理（其余 /api/* 请求）
