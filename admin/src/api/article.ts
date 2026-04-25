@@ -10,7 +10,7 @@
 */
 
 import request from "@/utils/request";
-import type { Article, CreateArticleRequest, UpdateArticleRequest, ImportArticlesResult, WeChatExportResult } from "@/types/article";
+import type { Article, CreateArticleRequest, UpdateArticleRequest, ImportArticlesResult, WeChatExportResult, ArticleListQuery } from "@/types/article";
 import type { PaginationQuery } from "@/types/request";
 
 /**
@@ -18,7 +18,7 @@ import type { PaginationQuery } from "@/types/request";
  * @param params 查询参数
  * @returns Promise<ArticleListResponse>
  */
-export function getArticles(params: PaginationQuery): Promise<any> {
+export function getArticles(params: ArticleListQuery): Promise<any> {
   return request.get("/admin/articles", { params });
 }
 

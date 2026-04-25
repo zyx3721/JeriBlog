@@ -18,11 +18,24 @@
                 <div class="actions">
                     <!-- 前工具栏 -->
                     <slot name="toolbar-before" />
-                    <el-button v-if="showCreate" type="primary" @click="$emit('create')">
-                        {{ createText }}
+                    <el-button v-if="showCreate" type="primary" class="create-btn" @click="$emit('create')">
+                        <el-icon class="create-icon"><Plus /></el-icon>
+                        <span class="create-text">{{ createText }}</span>
                     </el-button>
                     <!-- 后工具栏 -->
                     <slot name="toolbar-after" />
+                    <el-badge
+                        v-if="showFilter"
+                        :value="filterCount"
+                        :hidden="filterCount === 0"
+                        class="filter-badge"
+                    >
+                        <el-button :type="filterActive ? 'success' : 'default'" @click="$emit('filter')">
+                            <el-icon>
+                                <Filter />
+                            </el-icon>
+                        </el-button>
+                    </el-badge>
                     <el-button class="refresh-btn" @click="$emit('refresh')">
                         <el-icon>
                             <Refresh />
@@ -58,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import { Refresh } from '@element-plus/icons-vue'
+import { Refresh, Filter, Plus } from '@element-plus/icons-vue'
 
 withDefaults(defineProps<{
     title: string
@@ -71,6 +84,9 @@ withDefaults(defineProps<{
     showCreate?: boolean
     createText?: string
     rowKey?: string
+    showFilter?: boolean
+    filterActive?: boolean
+    filterCount?: number
 }>(), {
     loading: false,
     total: 0,
@@ -79,12 +95,16 @@ withDefaults(defineProps<{
     showPagination: true,
     showCreate: true,
     createText: '新增',
-    rowKey: 'id'
+    rowKey: 'id',
+    showFilter: true,
+    filterActive: false,
+    filterCount: 0
 })
 
 defineEmits<{
     create: []
     refresh: []
+    filter: []
     'update:page': [page: number]
     'update:pageSize': [size: number]
 }>()
@@ -125,6 +145,51 @@ defineEmits<{
 
             :deep(.el-button + .el-button) {
                 margin-left: 0;
+            }
+
+            // 筛选按钮hover时显示绿色，与active状态保持一致
+            :deep(.el-button--default:hover) {
+                color: var(--el-color-success);
+                border-color: var(--el-color-success-light-5);
+                background-color: var(--el-color-success-light-9);
+            }
+        }
+
+        @media (max-width: 769px) {
+            h2 {
+                font-size: 16px;
+            }
+
+            .actions {
+                flex-wrap: nowrap;
+                gap: 8px;
+
+                .refresh-btn {
+                    display: none;
+                }
+            }
+        }
+
+        // 默认显示文字
+        .create-btn {
+            .create-icon {
+                display: none;
+            }
+            // 覆盖 Element Plus 默认样式，消除图标隐藏后的左边距
+            .create-text {
+                margin-left: 0;
+            }
+        }
+
+        // 移动端（≤500px）显示图标，隐藏文字
+        @media (max-width: 500px) {
+            .create-btn {
+                .create-text {
+                    display: none;
+                }
+                .create-icon {
+                    display: inline-flex;
+                }
             }
         }
 
