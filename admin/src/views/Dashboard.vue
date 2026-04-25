@@ -222,19 +222,19 @@
       </template>
       <div class="quick-access-content">
         <div class="quick-links">
-          <div class="link-item" @click="openLink('https://talen.top')">
+          <div class="link-item" @click="openLink('https://blog.jerion.cn')">
             <span class="link-text">主页</span>
             <el-icon class="link-icon">
               <Right />
             </el-icon>
           </div>
-          <div class="link-item" @click="openLink('https://blog.talen.top')">
+          <div class="link-item" @click="openLink('https://blog.jerion.cn')">
             <span class="link-text">博客</span>
             <el-icon class="link-icon">
               <Right />
             </el-icon>
           </div>
-          <div class="link-item" @click="openLink('https://github.com/talen8')">
+          <div class="link-item" @click="openLink('https://github.com/zyx3721')">
             <span class="link-text">GitHub</span>
             <el-icon class="link-icon">
               <Right />

@@ -1405,6 +1405,11 @@ func (s *ArticleService) uploadCoverToWeChat(ctx context.Context, client *wechat
 
 // fetchImage 下载图片，返回数据和扩展名
 func (s *ArticleService) fetchImage(ctx context.Context, imgURL string) ([]byte, string, error) {
+	// 如果图片链接包含 raw.githubusercontent.com，使用代理加速下载
+	if strings.Contains(imgURL, "raw.githubusercontent.com") {
+		imgURL = "https://gh.llkk.cc/" + imgURL
+	}
+
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, imgURL, nil)
 	if err != nil {
 		return nil, "", err
