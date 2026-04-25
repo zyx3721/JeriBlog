@@ -19,16 +19,24 @@ import (
 
 // ListArticlesRequest 文章列表请求
 type ListArticlesRequest struct {
-	Page       int    `form:"page,default=1" binding:"min=0"`
-	PageSize   int    `form:"page_size,default=10" binding:"min=0"`
-	Year       string `form:"year"`
-	Month      string `form:"month"`
-	Category   string `form:"category"`
-	Tag        string `form:"tag"`
-	Keyword    string `form:"keyword"`      // 搜索关键词（标题）
-	CategoryID uint   `form:"category_id"`  // 分类ID
-	TagID      uint   `form:"tag_id"`       // 标签ID
-	Status     string `form:"status"`       // 状态：published-已发布, draft-草稿
+	Page       int      `form:"page,default=1" binding:"min=0"`
+	PageSize   int      `form:"page_size,default=10" binding:"min=0"`
+	Year       string   `form:"year"`
+	Month      string   `form:"month"`
+	Category   string   `form:"category"`
+	Tag        string   `form:"tag"`
+	Keyword    string   `form:"keyword"`       // 搜索关键词（标题或内容）
+	CategoryID *uint    `form:"category_id"`   // 分类ID
+	TagID      *uint    `form:"tag_id"`        // 单个标签ID（兼容旧版）
+	TagIDs     []uint   `form:"tag_ids"`       // 标签ID数组（新版多选）
+	Location   string   `form:"location"`      // 发布地点
+	Status     string   `form:"status"`        // 状态：published-已发布, draft-草稿
+	IsPublish  *bool    `form:"is_publish"`    // 是否已发布
+	IsTop      *bool    `form:"is_top"`        // 是否置顶
+	IsEssence  *bool    `form:"is_essence"`    // 是否精选
+	IsOutdated *bool    `form:"is_outdated"`   // 是否过时
+	StartTime  string   `form:"start_time"`    // 开始时间 YYYY-MM-DD
+	EndTime    string   `form:"end_time"`      // 结束时间 YYYY-MM-DD
 }
 
 // ============ 通用文章响应 ============

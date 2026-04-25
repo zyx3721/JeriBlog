@@ -192,96 +192,6 @@ defineEmits<{
                 }
             }
         }
-
-        @media (max-width: 767px) {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 12px;
-
-            h2 {
-                font-size: 18px;
-            }
-
-            .actions {
-                width: 100%;
-                flex-wrap: wrap;
-
-                .refresh-btn {
-                    display: none;
-                }
-            }
-        }
-
-        @media (max-width: 480px) {
-            .actions {
-                /* 用户管理：搜索表单 + 新增用户按钮三等分 */
-                &:has(.user-search) {
-                    .user-search {
-                        width: 100%;
-                        display: flex;
-                        flex-wrap: wrap;
-                        gap: 12px;
-                    }
-                    /* 新增用户按钮与搜索/重置按钮同行三等分 */
-                    > .el-button {
-                        flex: 1 1 calc(33.333% - 8px);
-                        min-width: 0;
-                    }
-                }
-
-                /* 文件管理：搜索表单 + 上传配置按钮三等分 */
-                &:has(.file-search) {
-                    .file-search {
-                        width: 100%;
-                        display: flex;
-                        flex-wrap: wrap;
-                        gap: 12px;
-                    }
-                    /* 上传配置按钮与搜索/重置按钮同行三等分 */
-                    > .el-button {
-                        flex: 1 1 calc(33.333% - 8px);
-                        min-width: 0;
-                    }
-                }
-
-                /* 友链管理：新增友链和类型管理按钮同行平分 */
-                &:has(.friend-search) {
-                    .friend-search {
-                        width: 100%;
-                    }
-                    /* 新增友链和类型管理按钮同行平分 */
-                    > .el-button {
-                        flex: 1 1 calc(50% - 6px);
-                        min-width: 0;
-                    }
-                }
-
-                /* 文章管理：新增文章、分类管理、标签管理按钮同行三等分 */
-                &:has(.article-search) {
-                    .article-search {
-                        width: 100%;
-                    }
-                    /* 新增文章、分类管理、标签管理按钮同行三等分 */
-                    > .el-button {
-                        flex: 1 1 calc(33.333% - 8px);
-                        min-width: 0;
-                    }
-                }
-
-                /* RSS订阅：多个按钮自适应 */
-                &:has(.rss-search) {
-                    .rss-search {
-                        width: 100%;
-                    }
-                    /* 本站订阅、立即抓取RSS、全部已读按钮自适应 */
-                    > .el-button,
-                    > .unread-badge .el-button {
-                        flex: 1 1 auto;
-                        min-width: 0;
-                    }
-                }
-            }
-        }
     }
 
     .table-wrapper {
@@ -298,8 +208,46 @@ defineEmits<{
         justify-content: flex-end;
         padding-top: 12px;
 
-        @media (max-width: 767px) {
-            justify-content: center;
+        @media (max-width: 769px) {
+            :deep(.el-pagination .el-select) {
+                width: 110px;
+            }
+        }
+    }
+
+    @media (max-width: 1200px) {
+        .actions :deep(.quick-filter-1200) {
+            display: none !important;
+        }
+    }
+
+    @media (max-width: 1080px) {
+        .actions :deep(.quick-filter-1080) {
+            display: none !important;
+        }
+    }
+
+    @media (max-width: 960px) {
+        .actions :deep(.quick-filter-960) {
+            display: none !important;
+        }
+    }
+
+    @media (max-width: 900px) {
+        .actions :deep(.quick-filter-900) {
+            display: none !important;
+        }
+    }
+
+    @media (max-width: 840px) {
+        .actions :deep(.quick-filter-840) {
+            display: none !important;
+        }
+    }
+
+    @media (max-width: 800px) {
+        .actions :deep(.quick-filter-800) {
+            display: none !important;
         }
     }
 }

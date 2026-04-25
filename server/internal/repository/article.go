@@ -12,6 +12,7 @@
 package repository
 
 import (
+	"jeri_blog/internal/dto"
 	"jeri_blog/internal/model"
 
 	"gorm.io/gorm"
@@ -223,39 +224,69 @@ func (r *ArticleRepository) CountByTag(tagID uint, onlyPublished bool) (int64, e
 // ============ 基础CRUD ============
 
 // List 获取文章列表
-func (r *ArticleRepository) List(offset, limit int, keyword string, categoryID uint, tagID uint, status string) ([]model.Article, int64, error) {
+func (r *ArticleRepository) List(req *dto.ListArticlesRequest) ([]model.Article, int64, error) {
 	var articles []model.Article
 	var total int64
 
 	query := r.db.Model(&model.Article{})
 
-	// 关键词搜索（标题）
-	if keyword != "" {
-		query = query.Where("title ILIKE ?", "%"+keyword+"%")
+	// 关键词搜索（标题或内容）
+	if req.Keyword != "" {
+		query = query.Where("title ILIKE ? OR content ILIKE ?", "%"+req.Keyword+"%", "%"+req.Keyword+"%")
 	}
 
 	// 分类筛选
-	if categoryID > 0 {
-		query = query.Where("category_id = ?", categoryID)
+	if req.CategoryID != nil && *req.CategoryID > 0 {
+		query = query.Where("category_id = ?", *req.CategoryID)
 	}
 
-	// 标签筛选
-	if tagID > 0 {
+	// 标签筛选（支持多选）
+	if len(req.TagIDs) > 0 {
 		query = query.Joins("JOIN article_tags ON article_tags.article_id = articles.id").
-			Where("article_tags.tag_id = ?", tagID).
+			Where("article_tags.tag_id IN ?", req.TagIDs).
 			Distinct()
 	}
 
-	// 状态筛选
-	if status == "published" {
-		query = query.Where("is_publish = ?", true)
-	} else if status == "draft" {
-		query = query.Where("is_publish = ?", false)
+	// 发布地点筛选
+	if req.Location != "" {
+		query = query.Where("location ILIKE ?", "%"+req.Location+"%")
+	}
+
+	// 发布状态筛选
+	if req.IsPublish != nil {
+		query = query.Where("is_publish = ?", *req.IsPublish)
+	}
+
+	// 置顶状态筛选
+	if req.IsTop != nil {
+		query = query.Where("is_top = ?", *req.IsTop)
+	}
+
+	// 精选状态筛选
+	if req.IsEssence != nil {
+		query = query.Where("is_essence = ?", *req.IsEssence)
+	}
+
+	// 过时状态筛选
+	if req.IsOutdated != nil {
+		query = query.Where("is_outdated = ?", *req.IsOutdated)
+	}
+
+	// 发布时间范围筛选
+	if req.StartTime != "" {
+		query = query.Where("publish_time >= ?", req.StartTime)
+	}
+	if req.EndTime != "" {
+		query = query.Where("publish_time <= ?", req.EndTime+" 23:59:59")
 	}
 
 	if err := query.Count(&total).Error; err != nil {
 		return nil, 0, err
 	}
+
+	// 计算分页偏移量
+	offset := (req.Page - 1) * req.PageSize
+	limit := req.PageSize
 
 	if err := query.Order("is_publish ASC, publish_time DESC NULLS LAST, created_at DESC").
 		Preload("Category").

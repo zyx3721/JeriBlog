@@ -204,8 +204,8 @@
   </div>
 
   <!-- 弹窗组件：懒挂载，首次打开时才渲染 -->
-  <category-manager v-if="categoryMounted" v-model="categoryDialogVisible" @success="loadCategoriesForQuickFilter" />
-  <tag-manager v-if="tagMounted" v-model="tagDialogVisible" />
+  <category-manager v-if="categoryMounted" v-model="categoryDialogVisible" @success="handleCategoryUpdate" />
+  <tag-manager v-if="tagMounted" v-model="tagDialogVisible" @success="handleTagUpdate" />
 
   <!-- 导出弹窗 -->
   <el-dialog
@@ -493,6 +493,20 @@ const openCategoryManager = () => {
 const openTagManager = () => {
   tagMounted.value = true
   tagDialogVisible.value = true
+}
+
+/**
+ * 处理分类更新（新增/删除分类后）
+ */
+const handleCategoryUpdate = () => {
+  loadCategoriesForQuickFilter()
+}
+
+/**
+ * 处理标签更新（新增/删除标签后）
+ */
+const handleTagUpdate = () => {
+  // 标签更新后不需要特殊处理，ArticleFilter 组件会自动重新加载
 }
 
 /**
