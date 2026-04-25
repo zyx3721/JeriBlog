@@ -33,7 +33,8 @@ export async function uploadFile(file: File, type = 'image'): Promise<UploadResp
   formData.append("type", type);
   try {
     return await request.post("/admin/files", formData, {
-      headers: { "Content-Type": "multipart/form-data" }
+      headers: { "Content-Type": "multipart/form-data" },
+      timeout: 300000 // 5分钟超时，支持大文件上传
     });
   } catch (error: any) {
     // 尝试从响应中提取详细错误信息

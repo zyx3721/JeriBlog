@@ -302,8 +302,8 @@ interface PreviewImageInfo {
 
 const downloadPreviewImage = async (url: string, filename: string): Promise<PreviewImageInfo | null> => {
   try {
-    // 使用更长的超时时间（60秒）下载图片
-    const response = await request.post('/admin/tools/download-image', { url }, { timeout: 60000 })
+    // 使用更长的超时时间（5分钟）下载图片
+    const response = await request.post('/admin/tools/download-image', { url }, { timeout: 300000 })
 
     // 简化：直接使用base64创建Blob
     const blob = await fetch(`data:image/png;base64,${response.data}`).then(res => res.blob());

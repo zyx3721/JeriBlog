@@ -81,7 +81,12 @@ export async function uploadFile(
 
   const response = await $fetch<ApiResponse<UploadResponse>>(
     '/upload',
-    { baseURL, method: 'POST', body: formData }
+    {
+      baseURL,
+      method: 'POST',
+      body: formData,
+      timeout: 300000 // 5分钟超时，支持大文件上传
+    }
   ).catch((error: any) => {
     throw new Error(error?.data?.message || error?.message || '文件上传失败')
   })

@@ -63,6 +63,7 @@ export function importComments(formData: FormData): Promise<ImportCommentsResult
   return request.post("/admin/comments/import", formData, {
     headers: {
       "Content-Type": "multipart/form-data"
-    }
+    },
+    timeout: 300000 // 5分钟超时，支持大量评论导入
   });
 }
