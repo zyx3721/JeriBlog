@@ -4019,6 +4019,56 @@ paths:
       summary: 批量删除访问日志
       tags:
       - 统计管理
+  /admin/system/dynamic:
+    get:
+      consumes:
+      - application/json
+      description: 获取系统动态信息（CPU使用率、内存使用率、磁盘使用率等）
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+      security:
+      - BearerAuth: []
+      summary: 获取系统动态信息
+      tags:
+      - 系统信息
+  /admin/system/static:
+    get:
+      consumes:
+      - application/json
+      description: 获取系统静态信息（操作系统、Go版本、架构等）
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+      security:
+      - BearerAuth: []
+      summary: 获取系统静态信息
+      tags:
+      - 系统信息
   /admin/tags:
     get:
       consumes:
@@ -4219,6 +4269,152 @@ paths:
       summary: 更新标签
       tags:
       - 标签管理
+  /admin/tools/download-image:
+    post:
+      consumes:
+      - application/json
+      description: 从指定URL下载图片并保存到服务器
+      parameters:
+      - description: 图片URL
+        in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            url:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+      security:
+      - BearerAuth: []
+      summary: 下载图片到服务器
+      tags:
+      - 管理工具
+  /admin/tools/fetch-link-meta:
+    post:
+      consumes:
+      - application/json
+      description: 获取链接的标题、描述、图标等元数据信息
+      parameters:
+      - description: 链接URL
+        in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            url:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+      security:
+      - BearerAuth: []
+      summary: 获取链接元数据
+      tags:
+      - 管理工具
+  /admin/tools/parse-music:
+    get:
+      consumes:
+      - application/json
+      description: 通过 Meting API 解析音乐平台的歌曲信息（网易云、QQ音乐等）
+      parameters:
+      - description: 音乐平台（netease/tencent/kugou等）
+        in: query
+        name: server
+        required: true
+        type: string
+      - description: 类型（song/playlist/album等）
+        in: query
+        name: type
+        required: true
+        type: string
+      - description: 音乐ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+      security:
+      - BearerAuth: []
+      summary: 解析音乐信息
+      tags:
+      - 管理工具
+  /admin/tools/parse-video:
+    post:
+      consumes:
+      - application/json
+      description: 解析视频URL，支持多个视频平台（抖音、快手、B站等）
+      parameters:
+      - description: 视频URL
+        in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            url:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+      security:
+      - BearerAuth: []
+      summary: 解析视频URL
+      tags:
+      - 管理工具
   /admin/users:
     get:
       consumes:

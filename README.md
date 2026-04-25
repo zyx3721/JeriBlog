@@ -1455,7 +1455,6 @@ systemctl reload nginx
 - `GET /api/v1/admin/comments/:id` - 获取评论详情
 - `POST /api/v1/admin/comments` - 创建评论（管理员回复）
 - `PUT /api/v1/admin/comments/:id/toggle-status` - 切换评论状态
-- `PUT /api/v1/admin/comments/:id/restore` - 恢复已删除评论
 - `DELETE /api/v1/admin/comments/:id` - 删除评论
 - `POST /api/v1/admin/comments/import` - 导入评论（支持 Artalk 等格式）
 
@@ -1508,14 +1507,15 @@ systemctl reload nginx
 
 ### 6.4.14 系统信息
 
-- `GET /api/v1/admin/system/static` - 获取系统静态信息（OS、Go 版本等）
-- `GET /api/v1/admin/system/dynamic` - 获取系统动态信息（CPU、内存等）
+- `GET /api/v1/admin/system/static` - 获取系统静态信息（服务器配置、运行环境）
+- `GET /api/v1/admin/system/dynamic` - 获取系统动态信息（CPU、内存、磁盘使用率）
 
 ### 6.4.15 管理工具
 
-- `POST /api/v1/admin/tools/parse-video` - 解析视频链接（B站、YouTube等）
-- `POST /api/v1/admin/tools/fetch-linkmeta` - 获取链接元数据（标题、描述、图标等）
+- `POST /api/v1/admin/tools/parse-video` - 解析视频信息（支持 B站、抖音等平台）
+- `POST /api/v1/admin/tools/fetch-link-meta` - 获取链接元数据（标题、描述、图标）
 - `POST /api/v1/admin/tools/download-image` - 下载图片到服务器
+- `GET /api/v1/admin/tools/parse-music` - 解析音乐信息（支持网易云、QQ音乐等平台）
 
 ### 6.4.16 AI 功能
 

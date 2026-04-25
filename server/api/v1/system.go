@@ -31,11 +31,31 @@ func NewSystemController(systemService *service.SystemService) *SystemController
 }
 
 // GetSystemStatic 获取系统静态信息。
+// @Summary 获取系统静态信息
+// @Description 获取系统静态信息（操作系统、Go版本、架构等）
+// @Tags 系统信息
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} response.Response
+// @Failure 401 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /admin/system/static [get]
 func (h *SystemController) GetSystemStatic(c *gin.Context) {
 	response.Success(c, h.systemService.GetStaticInfo())
 }
 
 // GetSystemDynamic 获取系统动态信息。
+// @Summary 获取系统动态信息
+// @Description 获取系统动态信息（CPU使用率、内存使用率、磁盘使用率等）
+// @Tags 系统信息
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} response.Response
+// @Failure 401 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /admin/system/dynamic [get]
 func (h *SystemController) GetSystemDynamic(c *gin.Context) {
 	response.Success(c, h.systemService.GetDynamicInfo())
 }
