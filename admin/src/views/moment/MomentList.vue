@@ -10,7 +10,7 @@
 -->
 
 <template>
-  <common-list title="动态列表" :data="momentList" :loading="loading" :total="total" v-model:page="queryParams.page"
+  <common-list title="动态管理" :data="momentList" :loading="loading" :total="total" v-model:page="queryParams.page"
     v-model:page-size="queryParams.page_size" create-text="新增动态" @create="handleCreate" @refresh="fetchMoments"
     @update:page="fetchMoments" @update:pageSize="fetchMoments">
     <!-- 搜索表单 -->

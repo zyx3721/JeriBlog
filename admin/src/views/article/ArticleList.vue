@@ -10,7 +10,7 @@
 -->
 
 <template>
-  <common-list title="文章列表" :data="articleList" :loading="loading" :total="total" v-model:page="queryParams.page"
+  <common-list title="文章管理" :data="articleList" :loading="loading" :total="total" v-model:page="queryParams.page"
     v-model:page-size="queryParams.page_size" create-text="新增文章" @create="handleCreate" @refresh="fetchArticles"
     @update:page="fetchArticles" @update:pageSize="fetchArticles">
     <!-- 搜索表单 -->

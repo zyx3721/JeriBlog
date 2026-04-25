@@ -10,7 +10,7 @@
 -->
 
 <template>
-  <common-list title="用户列表" :data="userList" :loading="loading" :total="total" v-model:page="queryParams.page"
+  <common-list title="用户管理" :data="userList" :loading="loading" :total="total" v-model:page="queryParams.page"
     v-model:page-size="queryParams.page_size" create-text="新增用户" @create="handleCreate" @refresh="fetchUsers"
     @update:page="fetchUsers" @update:pageSize="fetchUsers">
 
