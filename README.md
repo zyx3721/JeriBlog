@@ -1463,6 +1463,7 @@ systemctl reload nginx
 
 - `GET /api/v1/admin/files` - 获取文件列表
 - `GET /api/v1/admin/files/:id` - 获取文件详情
+- `GET /api/v1/admin/files/:id/references` - 查询文件引用详情
 - `POST /api/v1/admin/files` - 上传文件
 - `DELETE /api/v1/admin/files/:id` - 删除文件
 
@@ -1474,6 +1475,7 @@ systemctl reload nginx
 - `GET /api/v1/admin/stats/tag` - 获取标签统计
 - `GET /api/v1/admin/stats/contribution` - 获取文章贡献数据
 - `GET /api/v1/admin/stats/visits` - 获取访问日志列表
+- `DELETE /api/v1/admin/stats/visits/batch` - 批量删除访问日志
 
 ### 6.4.10 菜单管理
 
@@ -1488,6 +1490,7 @@ systemctl reload nginx
 - `GET /api/v1/admin/feedback` - 获取反馈列表
 - `GET /api/v1/admin/feedback/:id` - 获取反馈详情
 - `PUT /api/v1/admin/feedback/:id` - 更新反馈
+- `POST /api/v1/admin/feedback/:id/reply` - 回复反馈（自动发送邮件通知）
 - `DELETE /api/v1/admin/feedback/:id` - 删除反馈
 
 ### 6.4.12 通知管理
@@ -1495,6 +1498,8 @@ systemctl reload nginx
 - `GET /api/v1/admin/notifications` - 获取通知列表
 - `PUT /api/v1/admin/notifications/:id/read` - 标记已读
 - `PUT /api/v1/admin/notifications/read-all` - 全部标记已读
+- `DELETE /api/v1/admin/notifications/clear-all` - 清空所有通知
+- `DELETE /api/v1/admin/notifications/clear-read` - 清空已读通知
 
 ### 6.4.13 配置管理
 
