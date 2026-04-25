@@ -107,7 +107,9 @@ func NewClient(appID, appSecret, chatID string) *Client {
 
 	var client *lark.Client
 	if enable {
-		client = lark.NewClient(appID, appSecret)
+		client = lark.NewClient(appID, appSecret,
+			lark.WithReqTimeout(30*time.Second), // 设置 30 秒超时
+		)
 	}
 
 	return &Client{
@@ -130,7 +132,7 @@ func (c *Client) HealthCheck() error {
 		return fmt.Errorf("未配置飞书客户端")
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
 	resp, err := c.client.GetTenantAccessTokenBySelfBuiltApp(ctx, &larkcore.SelfBuiltTenantAccessTokenReq{
@@ -294,7 +296,9 @@ func Reload(appID, appSecret, chatID string) {
 	globalClient.enable = appID != "" && appSecret != "" && chatID != ""
 
 	if globalClient.enable {
-		globalClient.client = lark.NewClient(appID, appSecret)
+		globalClient.client = lark.NewClient(appID, appSecret,
+			lark.WithReqTimeout(30*time.Second), // 设置 30 秒超时
+		)
 		ctx, cancel := context.WithCancel(context.Background())
 		globalClient.cancel = cancel
 		globalClient.wsClient = larkws.NewClient(appID, appSecret, larkws.WithEventHandler(createEventHandler()))
