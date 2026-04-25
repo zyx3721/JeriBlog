@@ -548,7 +548,11 @@ definitions:
         type: string
       parent_id:
         type: integer
+      target_id:
+        description: 目标ID（文章ID，优先使用）
+        type: integer
       target_key:
+        description: 目标标识（文章slug或页面key，target_id 不存在时使用）
         type: string
       target_type:
         enum:
@@ -560,7 +564,6 @@ definitions:
         type: string
     required:
     - content
-    - target_key
     - target_type
     type: object
   jeri_blog_internal_dto.CreateFriendRequest:
@@ -719,6 +722,24 @@ definitions:
       user_agent:
         type: string
     type: object
+  jeri_blog_internal_dto.FileReferenceResponse:
+    properties:
+      field:
+        description: 引用字段：封面图片/正文图片/头像等
+        type: string
+      id:
+        description: 引用对象ID
+        type: integer
+      title:
+        description: 引用对象标题
+        type: string
+      type:
+        description: 引用类型：article/friend/moment/setting/user/menu/feedback/comment
+        type: string
+      url:
+        description: 跳转链接
+        type: string
+    type: object
   jeri_blog_internal_dto.FileResponse:
     properties:
       file_name:
@@ -733,6 +754,8 @@ definitions:
         type: integer
       original_name:
         type: string
+      reference_count:
+        type: integer
       status:
         description: 文件状态：0=未使用 1=使用中
         type: integer
@@ -1638,6 +1661,10 @@ definitions:
       code:
         type: integer
       data: {}
+      details:
+        items:
+          type: string
+        type: array
       message:
         type: string
     type: object
@@ -2115,6 +2142,10 @@ paths:
         in: formData
         name: upload_images
         type: boolean
+      - description: 图片代理地址（用于加速GitHub等图床访问）
+        in: formData
+        name: image_proxy
+        type: string
       - collectionFormat: csv
         description: 文章文件（.md或.markdown格式，支持多文件）
         in: formData
@@ -2443,7 +2474,7 @@ paths:
     delete:
       consumes:
       - application/json
-      description: 软删除评论，子评论会保留，可通过恢复接口还原
+      description: 硬删除评论，永久删除无法恢复，子评论会保留
       parameters:
       - description: 评论 ID
         in: path
@@ -2519,45 +2550,6 @@ paths:
       security:
       - BearerAuth: []
       summary: 评论详情（管理）
-      tags:
-      - 评论管理
-  /admin/comments/{id}/restore:
-    put:
-      consumes:
-      - application/json
-      description: 恢复已删除的评论
-      parameters:
-      - description: 评论 ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
-      security:
-      - BearerAuth: []
-      summary: 恢复评论
       tags:
       - 评论管理
   /admin/comments/{id}/toggle-status:
@@ -2801,6 +2793,52 @@ paths:
       security:
       - BearerAuth: []
       summary: 文件详情（管理）
+      tags:
+      - 文件管理
+  /admin/files/{id}/references:
+    get:
+      consumes:
+      - application/json
+      description: 获取文件被哪些地方引用
+      parameters:
+      - description: 文件 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/jeri_blog_internal_dto.FileReferenceResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+      security:
+      - BearerAuth: []
+      summary: 文件引用详情
       tags:
       - 文件管理
   /admin/friends:
@@ -3331,6 +3369,14 @@ paths:
         in: query
         name: page_size
         type: integer
+      - description: 搜索关键词（按内容模糊搜索）
+        in: query
+        name: keyword
+        type: string
+      - description: 状态筛选（true=已发布, false=草稿）
+        in: query
+        name: is_publish
+        type: boolean
       produces:
       - application/json
       responses:
@@ -3912,6 +3958,67 @@ paths:
       summary: 访问日志
       tags:
       - 统计管理
+  /admin/stats/visits/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除指定的访问日志
+      parameters:
+      - description: 访问日志ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+      security:
+      - BearerAuth: []
+      summary: 删除访问日志
+      tags:
+      - 统计管理
+  /admin/stats/visits/batch:
+    delete:
+      consumes:
+      - application/json
+      description: 根据搜索条件批量删除访问日志
+      parameters:
+      - description: 关键词
+        in: query
+        name: keyword
+        type: string
+      - description: 开始时间
+        in: query
+        name: start_date
+        type: string
+      - description: 结束时间
+        in: query
+        name: end_date
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - properties:
+                data:
+                  additionalProperties:
+                    format: int64
+                    type: integer
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 批量删除访问日志
+      tags:
+      - 统计管理
   /admin/tags:
     get:
       consumes:
@@ -4455,6 +4562,56 @@ paths:
       security:
       - BearerAuth: []
       summary: 获取后台管理员通知列表
+      tags:
+      - 通知管理
+  /api/v1/admin/notifications/clear-all:
+    delete:
+      consumes:
+      - application/json
+      description: 删除当前用户的所有通知
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+      security:
+      - BearerAuth: []
+      summary: 清空所有通知
+      tags:
+      - 通知管理
+  /api/v1/admin/notifications/clear-read:
+    delete:
+      consumes:
+      - application/json
+      description: 删除当前用户的所有已读通知
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+      security:
+      - BearerAuth: []
+      summary: 清空已读通知
       tags:
       - 通知管理
   /api/v1/admin/subscribers:
@@ -5140,17 +5297,20 @@ paths:
     get:
       consumes:
       - application/json
-      description: 获取目标评论，扁平化显示所有评论和回复。需指定 target_type 和 target_key
+      description: 获取目标评论，扁平化显示所有评论和回复。优先使用 target_id，其次使用 target_key
       parameters:
       - description: 目标类型(article/page)
         in: query
         name: target_type
         required: true
         type: string
-      - description: 目标标识(文章slug或页面key)
+      - description: 目标ID(文章ID，优先使用)
+        in: query
+        name: target_id
+        type: integer
+      - description: 目标标识(文章slug或页面key，target_id 不存在时使用)
         in: query
         name: target_key
-        required: true
         type: string
       - description: 页码
         in: query

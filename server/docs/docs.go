@@ -450,6 +450,12 @@ const docTemplate = `{
                         "in": "formData"
                     },
                     {
+                        "type": "string",
+                        "description": "图片代理地址（用于加速GitHub等图床访问）",
+                        "name": "image_proxy",
+                        "in": "formData"
+                    },
+                    {
                         "type": "array",
                         "items": {
                             "type": "file"
@@ -1456,7 +1462,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "软删除评论，子评论会保留，可通过恢复接口还原",
+                "description": "硬删除评论，永久删除无法恢复，子评论会保留",
                 "consumes": [
                     "application/json"
                 ],
@@ -1467,67 +1473,6 @@ const docTemplate = `{
                     "评论管理"
                 ],
                 "summary": "删除评论（管理）",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "评论 ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/comments/{id}/restore": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "恢复已删除的评论",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "评论管理"
-                ],
-                "summary": "恢复评论",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1851,6 +1796,82 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/files/{id}/references": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "获取文件被哪些地方引用",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "文件管理"
+                ],
+                "summary": "文件引用详情",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "文件 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/jeri_blog_internal_dto.FileReferenceResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -2737,6 +2758,18 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "每页数量（不传则返回全部）",
                         "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "搜索关键词（按内容模糊搜索）",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "状态筛选（true=已发布, false=草稿）",
+                        "name": "is_publish",
                         "in": "query"
                     }
                 ],
@@ -3676,6 +3709,107 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/stats/visits/batch": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "根据搜索条件批量删除访问日志",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "统计管理"
+                ],
+                "summary": "批量删除访问日志",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "关键词",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "开始时间",
+                        "name": "start_date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "结束时间",
+                        "name": "end_date",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "integer",
+                                                "format": "int64"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/stats/visits/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "删除指定的访问日志",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "统计管理"
+                ],
+                "summary": "删除访问日志",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "访问日志ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/tags": {
             "get": {
                 "security": [
@@ -4540,6 +4674,86 @@ const docTemplate = `{
                                     }
                                 }
                             ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/notifications/clear-all": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "删除当前用户的所有通知",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "通知管理"
+                ],
+                "summary": "清空所有通知",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/notifications/clear-read": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "删除当前用户的所有已读通知",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "通知管理"
+                ],
+                "summary": "清空已读通知",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     },
                     "400": {
@@ -5657,7 +5871,7 @@ const docTemplate = `{
         },
         "/comments": {
             "get": {
-                "description": "获取目标评论，扁平化显示所有评论和回复。需指定 target_type 和 target_key",
+                "description": "获取目标评论，扁平化显示所有评论和回复。优先使用 target_id，其次使用 target_key",
                 "consumes": [
                     "application/json"
                 ],
@@ -5677,11 +5891,16 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "integer",
+                        "description": "目标ID(文章ID，优先使用)",
+                        "name": "target_id",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
-                        "description": "目标标识(文章slug或页面key)",
+                        "description": "目标标识(文章slug或页面key，target_id 不存在时使用)",
                         "name": "target_key",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "integer",
@@ -7485,7 +7704,6 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "content",
-                "target_key",
                 "target_type"
             ],
             "properties": {
@@ -7506,7 +7724,12 @@ const docTemplate = `{
                 "parent_id": {
                     "type": "integer"
                 },
+                "target_id": {
+                    "description": "目标ID（文章ID，优先使用）",
+                    "type": "integer"
+                },
                 "target_key": {
+                    "description": "目标标识（文章slug或页面key，target_id 不存在时使用）",
                     "type": "string"
                 },
                 "target_type": {
@@ -7750,6 +7973,31 @@ const docTemplate = `{
                 }
             }
         },
+        "jeri_blog_internal_dto.FileReferenceResponse": {
+            "type": "object",
+            "properties": {
+                "field": {
+                    "description": "引用字段：封面图片/正文图片/头像等",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "引用对象ID",
+                    "type": "integer"
+                },
+                "title": {
+                    "description": "引用对象标题",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "引用类型：article/friend/moment/setting/user/menu/feedback/comment",
+                    "type": "string"
+                },
+                "url": {
+                    "description": "跳转链接",
+                    "type": "string"
+                }
+            }
+        },
         "jeri_blog_internal_dto.FileResponse": {
             "type": "object",
             "properties": {
@@ -7770,6 +8018,9 @@ const docTemplate = `{
                 },
                 "original_name": {
                     "type": "string"
+                },
+                "reference_count": {
+                    "type": "integer"
                 },
                 "status": {
                     "description": "文件状态：0=未使用 1=使用中",
@@ -9079,6 +9330,12 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "data": {},
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "message": {
                     "type": "string"
                 }
