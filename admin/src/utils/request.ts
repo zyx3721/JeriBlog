@@ -29,7 +29,28 @@ const getApiUrl = () => {
 const request = axios.create({
   baseURL: getApiUrl(),
   timeout: 15000,
-  headers: { 'Content-Type': 'application/json' }
+  headers: { 'Content-Type': 'application/json' },
+  paramsSerializer: {
+    serialize: (params) => {
+      // 自定义参数序列化,支持数组参数
+      const parts: string[] = []
+      Object.keys(params).forEach(key => {
+        const value = params[key]
+        if (value === null || value === undefined) {
+          return
+        }
+        if (Array.isArray(value)) {
+          // 数组参数: tag_ids=1&tag_ids=2 (不使用 tag_ids[])
+          value.forEach(item => {
+            parts.push(`${encodeURIComponent(key)}=${encodeURIComponent(item)}`)
+          })
+        } else {
+          parts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+        }
+      })
+      return parts.join('&')
+    }
+  }
 })
 
 // 是否正在刷新token的标志

@@ -15,6 +15,7 @@
     <transition name="filter-slide">
       <article-filter
         v-if="showFilter"
+        ref="articleFilterRef"
         v-model="queryParams"
         @close="showFilter = false"
         @search="fetchArticles"
@@ -409,6 +410,7 @@ const tagMounted = ref(false)
 const articleList = ref<Article[]>([])
 const total = ref(0)
 const showFilter = ref(false)
+const articleFilterRef = ref()
 const queryParams = ref<ArticleListQuery>({
   page: 1,
   page_size: 20,
@@ -500,13 +502,20 @@ const openTagManager = () => {
  */
 const handleCategoryUpdate = () => {
   loadCategoriesForQuickFilter()
+  // 如果筛选面板打开，也更新筛选面板的分类列表
+  if (showFilter.value && articleFilterRef.value) {
+    articleFilterRef.value.loadCategories()
+  }
 }
 
 /**
  * 处理标签更新（新增/删除标签后）
  */
 const handleTagUpdate = () => {
-  // 标签更新后不需要特殊处理，ArticleFilter 组件会自动重新加载
+  // 如果筛选面板打开，更新筛选面板的标签列表
+  if (showFilter.value && articleFilterRef.value) {
+    articleFilterRef.value.loadTags()
+  }
 }
 
 /**
