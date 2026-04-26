@@ -676,6 +676,21 @@ server {
     
     # 限制上传文件大小（可选）
     client_max_body_size 50m;
+    
+    # Gzip 压缩配置
+    gzip on;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_types text/plain text/css text/xml text/javascript
+               application/json application/javascript application/xml+rss
+               application/rss+xml font/truetype font/opentype
+               application/vnd.ms-fontobject image/svg+xml;
+    gzip_min_length 1000;
+    
+    # 日志配置
+    access_log /usr/local/nginx/logs/jeriblog-access.log;
+    error_log /usr/local/nginx/logs/jeriblog-error.log warn;
 
     location / {
         proxy_pass http://127.0.0.1:8080;
@@ -727,11 +742,21 @@ server {
     
     # 限制上传文件大小（可选）
     client_max_body_size 50m;
-
-    ssl_certificate     /path/to/your-domain.com.pem;
-    ssl_certificate_key /path/to/your-domain.com.key;
-    ssl_protocols       TLSv1.2 TLSv1.3;
-    ssl_session_cache   shared:SSL:10m;
+    
+    # Gzip 压缩配置
+    gzip on;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_types text/plain text/css text/xml text/javascript
+               application/json application/javascript application/xml+rss
+               application/rss+xml font/truetype font/opentype
+               application/vnd.ms-fontobject image/svg+xml;
+    gzip_min_length 1000;
+    
+    # 日志配置
+    access_log /usr/local/nginx/logs/jeriblog-access.log;
+    error_log /usr/local/nginx/logs/jeriblog-error.log warn;
 
     location / {
         proxy_pass http://127.0.0.1:8080;
@@ -1043,6 +1068,21 @@ server {
     # 限制上传文件大小（可选）
     client_max_body_size 50m;
     
+    # Gzip 压缩配置
+    gzip on;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_types text/plain text/css text/xml text/javascript
+               application/json application/javascript application/xml+rss
+               application/rss+xml font/truetype font/opentype
+               application/vnd.ms-fontobject image/svg+xml;
+    gzip_min_length 1000;
+    
+    # 日志配置
+    access_log /usr/local/nginx/logs/jeriblog-access.log;
+    error_log /usr/local/nginx/logs/jeriblog-error.log warn;
+    
     # blog 前端（Nuxt SSR）
     location / {
         proxy_pass http://127.0.0.1:3000;
@@ -1166,6 +1206,21 @@ server {
     
     # 限制上传文件大小（可选）
     client_max_body_size 50m;
+    
+    # Gzip 压缩配置
+    gzip on;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_types text/plain text/css text/xml text/javascript
+               application/json application/javascript application/xml+rss
+               application/rss+xml font/truetype font/opentype
+               application/vnd.ms-fontobject image/svg+xml;
+    gzip_min_length 1000;
+    
+    # 日志配置
+    access_log /usr/local/nginx/logs/jeriblog-access.log;
+    error_log /usr/local/nginx/logs/jeriblog-error.log warn;
     
     # blog 前端（Nuxt SSR）
     location / {
