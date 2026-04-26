@@ -98,7 +98,8 @@ func ExtractFileReferencesFromMarkdown(content string) []FileReference {
 	}
 
 	// 3. 提取视频 URL：:::video url ::: -> 文章视频
-	videoRegex := regexp.MustCompile(`:::video\s+([^\s]+)(?:\s+[^\s]+)?\s+:::`)
+	// 修复：使用 [ \t] 替代 \s，避免匹配换行符导致连续视频块被错误合并
+	videoRegex := regexp.MustCompile(`:::video[ \t]+([^\s]+)(?:[ \t]+([^\s]+))?[ \t]*:::`)
 	videoMatches := videoRegex.FindAllStringSubmatch(content, -1)
 	for _, videoMatch := range videoMatches {
 		if len(videoMatch) > 1 {
@@ -169,4 +170,3 @@ func ExtractFileURLsFromMarkdown(content string) []string {
 	}
 	return urls
 }
-

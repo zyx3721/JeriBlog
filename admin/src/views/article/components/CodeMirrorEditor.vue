@@ -157,10 +157,21 @@
             </template>
             <div class="link-dialog-wrap">
               <div class="link-form-item">
+                <el-radio-group v-model="linkDialog.type" size="small">
+                  <el-radio-button value="external">站外链接</el-radio-button>
+                  <el-radio-button value="internal">站内链接</el-radio-button>
+                </el-radio-group>
+              </div>
+              <div class="link-form-item">
                 <el-input v-model="linkDialog.title" placeholder="标题" size="small" clearable />
               </div>
               <div class="link-form-item">
-                <el-input v-model="linkDialog.url" placeholder="https://" size="small" clearable />
+                <el-input
+                  v-model="linkDialog.url"
+                  :placeholder="linkDialog.type === 'external' ? 'https://' : '/path/to/file'"
+                  size="small"
+                  clearable
+                />
               </div>
               <div class="link-form-item">
                 <el-input v-model="linkDialog.description" placeholder="描述（可选）" size="small" clearable />
@@ -596,6 +607,7 @@ const foldDialog = reactive({
 // 链接卡片弹窗状态
 const linkDialog = reactive({
   visible: false,
+  type: 'external' as 'external' | 'internal',
   title: '',
   url: '',
   description: ''
@@ -1291,6 +1303,7 @@ const handleInsertFold = () => {
 const toggleLinkDialog = () => {
   linkDialog.visible = !linkDialog.visible
   if (linkDialog.visible) {
+    linkDialog.type = 'external'
     linkDialog.title = ''
     linkDialog.url = ''
     linkDialog.description = ''
@@ -1302,14 +1315,36 @@ const handleInsertLink = () => {
   const title = linkDialog.title.trim() || '标题'
   let url = linkDialog.url.trim()
   const description = linkDialog.description.trim()
-  if (!url) {
-    url = 'https://example.com'
-  } else if (!url.startsWith('http://') && !url.startsWith('https://')) {
-    url = 'https://' + url
+
+  if (linkDialog.type === 'external') {
+    // 站外链接：必须以 http:// 或 https:// 开头
+    if (!url) {
+      ElMessage.warning('请输入链接地址')
+      return
+    }
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      ElMessage.warning('站外链接必须以 http:// 或 https:// 开头')
+      return
+    }
+  } else {
+    // 站内链接：不能以 http:// 或 https:// 开头
+    if (!url) {
+      ElMessage.warning('请输入站内链接路径')
+      return
+    }
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      ElMessage.warning('站内链接不能以 http:// 或 https:// 开头')
+      return
+    }
   }
+
   const descPart = description ? ` ${description}` : ''
   insertText(`:::link ${title} ${url}${descPart} :::\n`)
   linkDialog.visible = false
+  // 重置所有输入框
+  linkDialog.title = ''
+  linkDialog.url = ''
+  linkDialog.description = ''
 }
 
 // 切换视频弹窗显示
@@ -1367,9 +1402,13 @@ const handleInsertVideo = async () => {
       } else {
         insertText(`:::video ${url} :::\n`)
       }
+      // 插入成功后清空输入框
+      videoDialog.videoUrl = ''
       videoDialog.visible = false
     } catch {
       insertText(`:::video ${url} :::\n`)
+      // 插入成功后清空输入框
+      videoDialog.videoUrl = ''
       videoDialog.visible = false
     } finally {
       videoDialog.loading = false
@@ -1377,6 +1416,8 @@ const handleInsertVideo = async () => {
   } else {
     const url = videoDialog.videoUrl.trim() || 'https://example.com/video.mp4'
     insertText(`:::video ${url} :::\n`)
+    // 插入成功后清空输入框
+    videoDialog.videoUrl = ''
     videoDialog.visible = false
   }
 }
@@ -1453,6 +1494,9 @@ const handleInsertAudio = () => {
     const url = audioDialog.audioUrl.trim()
     insertText(`:::audio ${title} ${url} :::\n`)
     audioDialog.visible = false
+    // 重置本地上传：清空标题、地址
+    audioDialog.title = ''
+    audioDialog.audioUrl = ''
   } else {
     if (!audioDialog.musicInfo) {
       insertText(`:::music ${audioDialog.musicServer} ${audioDialog.musicId.trim() || '音乐ID'} :::\n`)
@@ -1460,6 +1504,11 @@ const handleInsertAudio = () => {
       insertText(`:::music ${audioDialog.musicServer} ${audioDialog.musicId.trim()} :::\n`)
     }
     audioDialog.visible = false
+    // 重置在线音乐：清空输入框，隐藏显示的地址
+    audioDialog.musicId = ''
+    audioDialog.musicInfo = null
+    // 同时清空本地上传栏的标题（防止串数据）
+    audioDialog.title = ''
   }
 }
 
@@ -1576,6 +1625,8 @@ const handleInsertPhoto = () => {
 
   insertText(`:::photo\n${photoBlocks}\n:::endphoto\n`)
   photoDialog.visible = false
+  // 重置为默认状态：两行空数据
+  photoDialog.rows = [['', '']]
 }
 
 // ==================== 编辑器初始化 ====================

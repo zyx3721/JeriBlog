@@ -16,7 +16,7 @@
 -- 目标：为 reference_count > 0 的文件补充实际使用场景到 upload_type
 -- 特性：支持同用途多次引用（如一个文件被 3 篇文章引用，则记录 3 次"文章配图"）
 -- 用途类型：
---   用户头像、文章封面、文章配图、文章视频、文章音频、
+--   用户头像、文章封面、文章配图、文章视频、文章音频、文章附件、
 --   动态配图、动态视频、评论贴图、友情链接A、友情链接S、
 --   站长头像、站长形象、博客图标、博客背景、博客截图、
 --   展览图片、微信收款码、支付宝收款码、菜单图标、反馈投诉
@@ -117,7 +117,26 @@ WHERE EXISTS (
     WHERE a.content LIKE '%' || f.file_url || '%'
 );
 
--- 6. 动态配图（moments.content 中的图片，JSON 格式）- 按引用次数追加
+-- 6. 文章附件（articles.content 中的附件）- 按引用次数追加
+UPDATE files f
+SET upload_type = CASE
+    WHEN upload_type = '' OR upload_type IS NULL THEN (
+        SELECT string_agg('文章附件', ',' ORDER BY a.id)
+        FROM articles a
+        WHERE a.content LIKE '%' || f.file_url || '%'
+    )
+    ELSE upload_type || ',' || (
+        SELECT string_agg('文章附件', ',' ORDER BY a.id)
+        FROM articles a
+        WHERE a.content LIKE '%' || f.file_url || '%'
+    )
+END
+WHERE EXISTS (
+    SELECT 1 FROM articles a
+    WHERE a.content LIKE '%' || f.file_url || '%'
+);
+
+-- 7. 动态配图（moments.content 中的图片，JSON 格式）- 按引用次数追加
 UPDATE files f
 SET upload_type = CASE
     WHEN upload_type = '' OR upload_type IS NULL THEN (
@@ -139,7 +158,7 @@ WHERE EXISTS (
     AND m.content::text LIKE '%"images"%'
 );
 
--- 7. 动态视频（moments.content 中的视频，JSON 格式）- 按引用次数追加
+-- 8. 动态视频（moments.content 中的视频，JSON 格式）- 按引用次数追加
 UPDATE files f
 SET upload_type = CASE
     WHEN upload_type = '' OR upload_type IS NULL THEN (
@@ -161,7 +180,7 @@ WHERE EXISTS (
     AND m.content::text LIKE '%"video"%'
 );
 
--- 8. 评论贴图（comments.content 中的图片）- 按引用次数追加
+-- 9. 评论贴图（comments.content 中的图片）- 按引用次数追加
 UPDATE files f
 SET upload_type = CASE
     WHEN upload_type = '' OR upload_type IS NULL THEN (
@@ -183,7 +202,7 @@ WHERE EXISTS (
     AND c.deleted_at IS NULL
 );
 
--- 9. 友情链接A（friends.avatar）- 按引用次数追加
+-- 10. 友情链接A（friends.avatar）- 按引用次数追加
 UPDATE files f
 SET upload_type = CASE
     WHEN upload_type = '' OR upload_type IS NULL THEN (
@@ -202,7 +221,7 @@ WHERE EXISTS (
     WHERE fr.avatar = f.file_url
 );
 
--- 10. 友情链接S（friends.screenshot）- 按引用次数追加
+-- 11. 友情链接S（friends.screenshot）- 按引用次数追加
 UPDATE files f
 SET upload_type = CASE
     WHEN upload_type = '' OR upload_type IS NULL THEN (
@@ -221,7 +240,7 @@ WHERE EXISTS (
     WHERE fr.screenshot = f.file_url
 );
 
--- 11. 站长头像（settings.key = 'basic.author_avatar'）
+-- 12. 站长头像（settings.key = 'basic.author_avatar'）
 UPDATE files f
 SET upload_type = CASE
     WHEN upload_type = '' OR upload_type IS NULL THEN '站长头像'
@@ -233,7 +252,7 @@ WHERE EXISTS (
     AND s.key = 'basic.author_avatar'
 );
 
--- 12. 站长形象（settings.key = 'basic.author_photo'）
+-- 13. 站长形象（settings.key = 'basic.author_photo'）
 UPDATE files f
 SET upload_type = CASE
     WHEN upload_type = '' OR upload_type IS NULL THEN '站长形象'
@@ -245,7 +264,7 @@ WHERE EXISTS (
     AND s.key = 'basic.author_photo'
 );
 
--- 13. 博客图标（settings.key = 'blog.favicon'）
+-- 14. 博客图标（settings.key = 'blog.favicon'）
 UPDATE files f
 SET upload_type = CASE
     WHEN upload_type = '' OR upload_type IS NULL THEN '博客图标'
@@ -257,7 +276,7 @@ WHERE EXISTS (
     AND s.key = 'blog.favicon'
 );
 
--- 14. 博客背景（settings.key = 'blog.background_image'）
+-- 15. 博客背景（settings.key = 'blog.background_image'）
 UPDATE files f
 SET upload_type = CASE
     WHEN upload_type = '' OR upload_type IS NULL THEN '博客背景'
@@ -269,7 +288,7 @@ WHERE EXISTS (
     AND s.key = 'blog.background_image'
 );
 
--- 15. 博客截图（settings.key = 'blog.screenshot'）
+-- 16. 博客截图（settings.key = 'blog.screenshot'）
 UPDATE files f
 SET upload_type = CASE
     WHEN upload_type = '' OR upload_type IS NULL THEN '博客截图'
@@ -281,7 +300,7 @@ WHERE EXISTS (
     AND s.key = 'blog.screenshot'
 );
 
--- 16. 展览图片（settings.key = 'blog.about_exhibition'）
+-- 17. 展览图片（settings.key = 'blog.about_exhibition'）
 UPDATE files f
 SET upload_type = CASE
     WHEN upload_type = '' OR upload_type IS NULL THEN '展览图片'
@@ -293,7 +312,7 @@ WHERE EXISTS (
     AND s.key = 'blog.about_exhibition'
 );
 
--- 17. 微信收款码（settings.key = 'blog.wechat_qrcode'）
+-- 18. 微信收款码（settings.key = 'blog.wechat_qrcode'）
 UPDATE files f
 SET upload_type = CASE
     WHEN upload_type = '' OR upload_type IS NULL THEN '微信收款码'
@@ -305,7 +324,7 @@ WHERE EXISTS (
     AND s.key = 'blog.wechat_qrcode'
 );
 
--- 18. 支付宝收款码（settings.key = 'blog.alipay_qrcode'）
+-- 19. 支付宝收款码（settings.key = 'blog.alipay_qrcode'）
 UPDATE files f
 SET upload_type = CASE
     WHEN upload_type = '' OR upload_type IS NULL THEN '支付宝收款码'
@@ -317,7 +336,7 @@ WHERE EXISTS (
     AND s.key = 'blog.alipay_qrcode'
 );
 
--- 19. 菜单图标（menus.icon）- 按引用次数追加
+-- 20. 菜单图标（menus.icon）- 按引用次数追加
 UPDATE files f
 SET upload_type = CASE
     WHEN upload_type = '' OR upload_type IS NULL THEN (
@@ -336,7 +355,7 @@ WHERE EXISTS (
     WHERE m.icon = f.file_url
 );
 
--- 20. 反馈投诉（feedbacks 表中的文件）- 按引用次数追加
+-- 21. 反馈投诉（feedbacks 表中的文件）- 按引用次数追加
 UPDATE files f
 SET upload_type = CASE
     WHEN upload_type = '' OR upload_type IS NULL THEN (
@@ -355,7 +374,7 @@ WHERE EXISTS (
     WHERE fb.form_content LIKE '%' || f.file_url || '%'
 );
 
--- 21. 对 upload_type 进行排序（保证一致性）
+-- 22. 对 upload_type 进行排序（保证一致性）
 UPDATE files
 SET upload_type = (
     SELECT string_agg(type_item, ',' ORDER BY type_item)

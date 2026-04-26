@@ -1420,6 +1420,8 @@ function initMusicCard(container: Element): void {
           audio.preload = 'auto'
           audio.style.display = 'none'
           container.appendChild(audio)
+          // 初始化音频事件监听
+          initMusicEvents(container)
         }
       }
     })

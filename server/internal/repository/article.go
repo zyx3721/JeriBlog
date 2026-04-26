@@ -15,6 +15,7 @@ import (
 	"jeri_blog/internal/dto"
 	"jeri_blog/internal/model"
 	"jeri_blog/pkg/utils"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -398,6 +399,12 @@ func (r *ArticleRepository) FindByCover(url string) ([]model.Article, error) {
 	return articles, err
 }
 
+// ArticleFileReference 文章文件引用信息
+type ArticleFileReference struct {
+	Article  model.Article
+	FileType utils.FileType
+}
+
 // FindByContentURL 查找正文引用该文件的文章列表
 // 使用精确的 Markdown 解析来查找文件引用（支持标准图片、照片墙、视频等格式）
 func (r *ArticleRepository) FindByContentURL(url string) ([]model.Article, error) {
@@ -422,6 +429,35 @@ func (r *ArticleRepository) FindByContentURL(url string) ([]model.Article, error
 	}
 
 	return matchedArticles, nil
+}
+
+// FindByContentURLWithType 查找正文引用该文件的文章列表（带文件类型）
+func (r *ArticleRepository) FindByContentURLWithType(url string) ([]ArticleFileReference, error) {
+	var allArticles []model.Article
+	var matchedReferences []ArticleFileReference
+
+	// 先获取所有文章
+	err := r.db.Find(&allArticles).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// 遍历文章，使用工具函数提取文件引用并匹配
+	for _, article := range allArticles {
+		references := utils.ExtractFileReferencesFromMarkdown(article.Content)
+		for _, ref := range references {
+			// 支持精确匹配和包含匹配（处理完整URL和相对路径的情况）
+			if ref.URL == url || strings.Contains(ref.URL, url) || strings.Contains(url, ref.URL) {
+				matchedReferences = append(matchedReferences, ArticleFileReference{
+					Article:  article,
+					FileType: ref.Type,
+				})
+				break // 找到匹配后跳出内层循环
+			}
+		}
+	}
+
+	return matchedReferences, nil
 }
 
 // ============ 辅助方法 ============

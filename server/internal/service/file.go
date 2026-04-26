@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"strings"
 	"time"
 
 	"jeri_blog/internal/dto"
@@ -23,6 +24,8 @@ import (
 	"jeri_blog/pkg/logger"
 	"jeri_blog/pkg/upload"
 	"jeri_blog/pkg/utils"
+
+	"gorm.io/gorm"
 )
 
 var reconciledSettingImageKeys = []string{
@@ -152,12 +155,49 @@ func (s *FileService) UploadFromReader(reader io.Reader, originalName, fileType 
 }
 
 // MarkAsUsed 增加文件引用计数并添加用途
+// normalizeFileURL 规范化文件URL
+// 如果是相对路径，尝试查找对应的完整URL
+func (s *FileService) normalizeFileURL(fileUrl string) (string, error) {
+	if fileUrl == "" {
+		return "", nil
+	}
+
+	// 如果已经是完整URL（http/https开头），直接返回
+	if strings.HasPrefix(fileUrl, "http://") || strings.HasPrefix(fileUrl, "https://") {
+		return fileUrl, nil
+	}
+
+	// 如果是相对路径，通过模糊匹配查找完整URL
+	file, err := s.fileRepo.GetByURLPattern(fileUrl)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			// 找不到记录，返回原始URL
+			return "", nil
+		}
+		return "", err
+	}
+
+	// 找到了完整URL，返回
+	logger.Info("URL规范化: %s -> %s", fileUrl, file.FileURL)
+	return file.FileURL, nil
+}
+
 func (s *FileService) MarkAsUsed(fileUrl string, usageType string) error {
 	if fileUrl == "" {
 		return nil
 	}
 
-	count, err := s.fileRepo.CountByURL(fileUrl)
+	// 规范化URL
+	normalizedURL, err := s.normalizeFileURL(fileUrl)
+	if err != nil {
+		return err
+	}
+
+	if normalizedURL == "" {
+		return nil
+	}
+
+	count, err := s.fileRepo.CountByURL(normalizedURL)
 	if err != nil {
 		return err
 	}
@@ -167,19 +207,19 @@ func (s *FileService) MarkAsUsed(fileUrl string, usageType string) error {
 	}
 
 	// 增加引用计数
-	if err := s.fileRepo.IncrementReferenceCount(fileUrl); err != nil {
+	if err := s.fileRepo.IncrementReferenceCount(normalizedURL); err != nil {
 		return err
 	}
 
 	// 添加用途到 upload_type 字段
 	if usageType != "" {
-		if err := s.fileRepo.AddUploadType(fileUrl, usageType); err != nil {
+		if err := s.fileRepo.AddUploadType(normalizedURL, usageType); err != nil {
 			return err
 		}
 	}
 
 	// 根据引用计数更新状态
-	return s.fileRepo.UpdateStatusByReferenceCount(fileUrl)
+	return s.fileRepo.UpdateStatusByReferenceCount(normalizedURL)
 }
 
 // MarkAsUnused 减少文件引用计数并移除用途
@@ -188,7 +228,17 @@ func (s *FileService) MarkAsUnused(fileUrl string, usageType string) error {
 		return nil
 	}
 
-	count, err := s.fileRepo.CountByURL(fileUrl)
+	// 规范化URL
+	normalizedURL, err := s.normalizeFileURL(fileUrl)
+	if err != nil {
+		return err
+	}
+
+	if normalizedURL == "" {
+		return nil
+	}
+
+	count, err := s.fileRepo.CountByURL(normalizedURL)
 	if err != nil {
 		return err
 	}
@@ -198,19 +248,19 @@ func (s *FileService) MarkAsUnused(fileUrl string, usageType string) error {
 	}
 
 	// 减少引用计数
-	if err := s.fileRepo.DecrementReferenceCount(fileUrl); err != nil {
+	if err := s.fileRepo.DecrementReferenceCount(normalizedURL); err != nil {
 		return err
 	}
 
 	// 从 upload_type 字段移除用途
 	if usageType != "" {
-		if err := s.fileRepo.RemoveUploadType(fileUrl, usageType); err != nil {
+		if err := s.fileRepo.RemoveUploadType(normalizedURL, usageType); err != nil {
 			return err
 		}
 	}
 
 	// 根据引用计数更新状态
-	return s.fileRepo.UpdateStatusByReferenceCount(fileUrl)
+	return s.fileRepo.UpdateStatusByReferenceCount(normalizedURL)
 }
 
 // ============ 前台服务 ============
@@ -362,16 +412,16 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 		}
 	}
 
-	// 检查文章正文
-	articles, err = s.usageChecker.articleRepo.FindByContentURL(file.FileURL)
+	// 检查文章正文（带文件类型）
+	articleRefs, err := s.usageChecker.articleRepo.FindByContentURLWithType(file.FileURL)
 	if err == nil {
-		for _, article := range articles {
+		for _, ref := range articleRefs {
 			references = append(references, dto.FileReferenceResponse{
 				Type:  "article",
-				ID:    article.ID,
-				Title: article.Title,
-				Field: "文章配图",
-				URL:   fmt.Sprintf("/posts/%s/", article.Slug),
+				ID:    ref.Article.ID,
+				Title: ref.Article.Title,
+				Field: string(ref.FileType), // 使用文件类型：文章配图/文章视频/文章音频/文章附件
+				URL:   fmt.Sprintf("/posts/%s/", ref.Article.Slug),
 			})
 		}
 	}
