@@ -217,11 +217,6 @@ func (s *FileService) MarkAsUnused(fileUrl string, usageType string) error {
 
 // UploadForWeb 前台文件上传
 func (s *FileService) UploadForWeb(req *upload.Request, host string) (*dto.FileUploadForWebResponse, error) {
-	// 验证上传类型
-	if string(req.UploadType) == "" {
-		return nil, fmt.Errorf("上传类型不能为空")
-	}
-
 	// 文件大小限制（从配置获取，单位MB）
 	maxFileSizeMB := s.uploadManager.GetMaxFileSize()
 	if maxFileSizeMB <= 0 {
@@ -266,11 +261,6 @@ func (s *FileService) UploadForWeb(req *upload.Request, host string) (*dto.FileU
 
 // Upload 文件上传
 func (s *FileService) Upload(req *upload.Request, host string) (*dto.FileResponse, error) {
-	// 验证上传类型
-	if string(req.UploadType) == "" {
-		return nil, fmt.Errorf("上传类型不能为空")
-	}
-
 	// 调用通用上传方法（传递 host）
 	file, err := s.handleUpload(req, host)
 	if err != nil {

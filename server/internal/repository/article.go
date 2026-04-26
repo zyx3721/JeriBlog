@@ -14,6 +14,7 @@ package repository
 import (
 	"jeri_blog/internal/dto"
 	"jeri_blog/internal/model"
+	"jeri_blog/pkg/utils"
 
 	"gorm.io/gorm"
 )
@@ -368,10 +369,26 @@ func (r *ArticleRepository) ExistsByCover(url string) (bool, error) {
 }
 
 // ExistsByContentURL 检查是否有文章正文引用该文件
+// 使用精确的 Markdown 解析来检查文件引用（支持标准图片、照片墙、视频等格式）
 func (r *ArticleRepository) ExistsByContentURL(url string) (bool, error) {
-	var count int64
-	err := r.db.Model(&model.Article{}).Where("content LIKE ?", "%"+url+"%").Count(&count).Error
-	return count > 0, err
+	var articles []model.Article
+	// 先获取所有文章内容（只查询 content 字段以提高性能）
+	err := r.db.Model(&model.Article{}).Select("content").Find(&articles).Error
+	if err != nil {
+		return false, err
+	}
+
+	// 遍历文章，使用工具函数提取文件 URL 并匹配
+	for _, article := range articles {
+		urls := utils.ExtractFileURLsFromMarkdown(article.Content)
+		for _, extractedURL := range urls {
+			if extractedURL == url {
+				return true, nil
+			}
+		}
+	}
+
+	return false, nil
 }
 
 // FindByCover 查找使用该封面的文章列表
@@ -382,10 +399,29 @@ func (r *ArticleRepository) FindByCover(url string) ([]model.Article, error) {
 }
 
 // FindByContentURL 查找正文引用该文件的文章列表
+// 使用精确的 Markdown 解析来查找文件引用（支持标准图片、照片墙、视频等格式）
 func (r *ArticleRepository) FindByContentURL(url string) ([]model.Article, error) {
-	var articles []model.Article
-	err := r.db.Where("content LIKE ?", "%"+url+"%").Find(&articles).Error
-	return articles, err
+	var allArticles []model.Article
+	var matchedArticles []model.Article
+
+	// 先获取所有文章
+	err := r.db.Find(&allArticles).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// 遍历文章，使用工具函数提取文件 URL 并匹配
+	for _, article := range allArticles {
+		urls := utils.ExtractFileURLsFromMarkdown(article.Content)
+		for _, extractedURL := range urls {
+			if extractedURL == url {
+				matchedArticles = append(matchedArticles, article)
+				break // 找到匹配后跳出内层循环
+			}
+		}
+	}
+
+	return matchedArticles, nil
 }
 
 // ============ 辅助方法 ============

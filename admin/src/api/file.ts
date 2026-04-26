@@ -24,10 +24,10 @@ export interface UploadResponse {
 /**
  * 上传文件
  * @param {File} file - 要上传的文件
- * @param {string} [type='image'] - 文件类型（默认为'image'）
+ * @param {string} [type=''] - 文件类型（默认为空，由文章保存时设置）
  * @returns {Promise<UploadResponse>} 上传结果
  */
-export async function uploadFile(file: File, type = 'image'): Promise<UploadResponse> {
+export async function uploadFile(file: File, type = ''): Promise<UploadResponse> {
   const formData = new FormData();
   formData.append("file", file);
   formData.append("type", type);

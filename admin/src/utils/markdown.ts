@@ -223,6 +223,85 @@ function renderVideo(params: string[], lineNum?: number): string {
 }
 
 /**
+ * 渲染音频播放器
+ * @param params - [标题, 音频URL]
+ * 支持格式：:::audio 标题 https://example.com/audio.mp3 :::
+ */
+function renderAudio(params: string[], lineNum?: number): string {
+  const title = params[0] || ''
+  const audioUrl = params[1] || ''
+  const lineAttr = lineNum !== undefined ? ` data-source-line="${lineNum}"` : ''
+
+  if (!title || (!audioUrl.startsWith('http://') && !audioUrl.startsWith('https://'))) {
+    return ''
+  }
+
+  const audioId = `audio-${Math.random().toString(36).slice(2, 9)}`
+
+  return `<div class="custom-audio" data-audio-id="${audioId}"${lineAttr}>
+  <div class="custom-audio-type">播放音频</div>
+  <div class="custom-audio-main">
+    <div class="custom-audio-icon">
+      <i class="ri-music-line"></i>
+      <button class="custom-audio-btn" onclick="toggleAudioPlay('${audioId}')">
+        <i class="ri-play-fill"></i>
+      </button>
+    </div>
+    <div class="custom-audio-content">
+      <div class="custom-audio-info">${title}</div>
+      <div class="custom-audio-controls">
+        <div class="custom-audio-progress" onclick="seekAudio('${audioId}', event)">
+          <div class="custom-audio-progress-bar"></div>
+        </div>
+        <div class="custom-audio-time"><span class="custom-audio-current">0:00</span> / <span class="custom-audio-duration">0:00</span></div>
+      </div>
+    </div>
+  </div>
+  <audio src="${audioUrl}" preload="auto" style="display:none;"></audio>
+</div>`
+}
+
+/**
+ * 渲染在线音乐播放器
+ * @param params - [平台, 音乐ID]
+ * 支持格式：:::music netease 音乐ID :::
+ */
+function renderMusic(params: string[], lineNum?: number): string {
+  if (params.length < 2) return ''
+
+  const server = params[0] || ''
+  const musicId = params[1] || ''
+  const lineAttr = lineNum !== undefined ? ` data-source-line="${lineNum}"` : ''
+
+  if (!server || !musicId) return ''
+
+  const audioId = `audio-${Math.random().toString(36).slice(2, 9)}`
+  const embedUrl = `https://api.injahow.cn/meting/?server=${server}&type=song&id=${musicId}`
+
+  return `<div class="custom-audio" data-audio-id="${audioId}" data-music-id="${musicId}"${lineAttr}>
+  <div class="custom-audio-type">播放在线音乐</div>
+  <div class="custom-audio-main">
+    <div class="custom-audio-icon">
+      <i class="ri-music-line"></i>
+      <button class="custom-audio-btn" onclick="toggleMusicPlay('${audioId}', '${server}', '${musicId}')">
+        <i class="ri-play-fill"></i>
+      </button>
+    </div>
+    <div class="custom-audio-content">
+      <div class="custom-audio-info" data-music-info="${audioId}">加载中...</div>
+      <div class="custom-audio-controls">
+        <div class="custom-audio-progress" onclick="seekMusic('${audioId}', event)">
+          <div class="custom-audio-progress-bar"></div>
+        </div>
+        <div class="custom-audio-time"><span class="custom-audio-current">0:00</span> / <span class="custom-audio-duration">0:00</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="custom-audio-source" data-embed-url="${embedUrl}" style="display:none;"></div>
+</div>`
+}
+
+/**
  * 渲染照片展示墙
  * @param rows - 每行的图片数组
  * @param lineNum - 源码行号（可选，用于滚动同步）
@@ -375,6 +454,10 @@ function customBlocksPlugin(md: MarkdownIt) {
         html = renderLinkCard(params, startLine)
       } else if (tag === 'video') {
         html = renderVideo(params, startLine)
+      } else if (tag === 'audio') {
+        html = renderAudio(params, startLine)
+      } else if (tag === 'music') {
+        html = renderMusic(params, startLine)
       }
 
       if (html) {
@@ -578,7 +661,7 @@ const SANITIZE_CONFIG = {
     'href', 'title', 'target', 'rel', 'src', 'alt', 'width', 'height',
     'class', 'id', 'colspan', 'rowspan', 'align',
     'type', 'checked', 'disabled', 'for', 'onclick', 'start',
-    'data-source-line',
+    'data-source-line', 'data-audio-id', 'data-music-id', 'data-music-info', 'data-embed-url',
     'd', 'fill', 'stroke', 'stroke-width', 'x', 'y', 'cx', 'cy', 'r', 'rx', 'ry',
     'x1', 'y1', 'x2', 'y2', 'points', 'transform', 'viewBox', 'xmlns',
     'text-anchor', 'font-size', 'font-family', 'dominant-baseline', 'data-processed',
@@ -681,7 +764,7 @@ function createLineNumberMd(): MarkdownIt {
     }
   })
 
-  // 为图片添加 data-source-line 属性
+  // 为图片添加 data-source-line 属性和缩放类
   const originalImageRule = lineMd.renderer.rules.image
   lineMd.renderer.rules.image = (tokens, idx, options, env, self) => {
     const token = tokens[idx]
@@ -691,6 +774,8 @@ function createLineNumberMd(): MarkdownIt {
       if (env.currentLine !== undefined) {
         token.attrSet('data-source-line', String(env.currentLine))
       }
+      // 添加可缩放类
+      token.attrJoin('class', 'preview-collapsible-image')
     }
     return originalImageRule ? originalImageRule(tokens, idx, options, env, self) : self.renderToken(tokens, idx, options)
   }
@@ -766,6 +851,17 @@ const MARKDOWN_STYLES = `
 .markdown-content .custom-link-info { flex: 1; min-width: 0; } .markdown-content .custom-link-title { font-weight: 600; font-size: 1.1em; color: #2c3e50; } .markdown-content .custom-link-desc { font-size: 0.875em; color: #5a6c7d; line-height: 1.5; }
 .markdown-content .custom-photo-wall{margin:1em 0;border-radius:8px;overflow-x:auto}.markdown-content .custom-photo-wall-container{display:flex;flex-direction:column}.markdown-content .custom-photo-wall-row{display:flex;align-items:stretch;flex-wrap:nowrap}.markdown-content .custom-photo-wall-item{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;padding:5px;height:100%}.markdown-content .custom-photo-wall-item img{margin:0;display:block;max-width:100%;max-height:100%;object-fit:contain;border-radius:6px;background:rgba(249,250,251,.8)}
 .markdown-content .custom-video{position:relative;width:100%;padding-bottom:56.25%;margin:1.5em 0;border-radius:8px;overflow:hidden;background:#000}.markdown-content .custom-video iframe,.markdown-content .custom-video video{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
+.markdown-content .custom-audio{margin:1.5em 0;border-radius:8px;background:rgba(249,250,251,0.5);box-shadow:0 1px 3px rgba(0,0,0,0.06);overflow:hidden;transition:box-shadow 0.3s ease}.markdown-content .custom-audio:hover{box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+.markdown-content .custom-audio-type{padding:6px 16px;font-size:0.75em;font-weight:600;letter-spacing:0.5px;color:#858585;background:rgba(76,175,80,0.08);border-bottom:1px solid rgba(128,128,128,0.2);transition:all 0.3s ease}
+.markdown-content .custom-audio-main{display:flex;align-items:center;gap:12px;padding:12px 16px}
+.markdown-content .custom-audio-icon{position:relative;flex-shrink:0;width:64px;height:64px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:rgba(249,250,251,0.5);border:1px solid rgba(128,128,128,0.2);cursor:pointer}.markdown-content .custom-audio-icon>i{font-size:1.6em;font-style:normal;color:#858585;transition:opacity 0.2s ease}
+.markdown-content .custom-audio-btn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:8px;background:rgba(73,177,245,0.9);color:#fff;cursor:pointer;opacity:0;transition:opacity 0.2s ease}.markdown-content .custom-audio-btn i{font-size:1.4em;font-style:normal}
+.markdown-content .custom-audio-icon:hover .custom-audio-btn{opacity:1}.markdown-content .custom-audio-icon:hover>i{opacity:0}
+.markdown-content .custom-audio-content{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.markdown-content .custom-audio-info{font-weight:600;font-size:1.1em;color:#2c3e50;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.markdown-content .custom-audio-controls{display:flex;align-items:center;gap:12px}
+.markdown-content .custom-audio-progress{flex:1;height:4px;background:rgba(128,128,128,0.2);border-radius:2px;cursor:pointer;position:relative}.markdown-content .custom-audio-progress-bar{height:100%;background:#49b1f5;border-radius:2px;width:0;transition:width 0.1s linear}
+.markdown-content .custom-audio-time{flex-shrink:0;font-size:0.75em;color:#858585;min-width:80px;text-align:right}
 .markdown-content .katex-inline{display:inline}.markdown-content .katex-block{display:block;margin:1.5rem 0;text-align:center;overflow-x:auto;padding:0.5rem 0}.markdown-content .katex-block .katex{font-size:1.15em}.markdown-content .katex{font-size:1em;line-height:1.6}.markdown-content .katex .base{color:inherit}.markdown-content .katex .katex-mathml{position:absolute;clip:rect(1px,1px,1px,1px);padding:0;border:0;height:1px;width:1px;overflow:hidden}.markdown-content .katex-error{color:#cc0000;font-style:italic}
 `
 
@@ -982,11 +1078,165 @@ export function toggleFold(foldId: string): void {
   foldContainer.classList.toggle('open')
 }
 
+// 格式化时间（秒转为 mm:ss）
+function formatTime(seconds: number): string {
+  const mins = Math.floor(seconds / 60)
+  const secs = Math.floor(seconds % 60)
+  return `${mins}:${secs.toString().padStart(2, '0')}`
+}
+
+// 音频播放控制
+export function toggleAudioPlay(audioId: string): void {
+  const container = document.querySelector(`[data-audio-id="${audioId}"]`) as HTMLElement
+  if (!container) return
+
+  const audio = container.querySelector('audio') as HTMLAudioElement
+  const btn = container.querySelector('.custom-audio-btn i') as HTMLElement
+  const progressBar = container.querySelector('.custom-audio-progress-bar') as HTMLElement
+  const currentTimeEl = container.querySelector('.custom-audio-current') as HTMLElement
+  const durationEl = container.querySelector('.custom-audio-duration') as HTMLElement
+
+  if (!audio || !btn) return
+
+  if (audio.paused) {
+    audio.play()
+    btn.className = 'ri-pause-fill'
+
+    // 更新进度
+    audio.ontimeupdate = () => {
+      const progress = (audio.currentTime / audio.duration) * 100
+      if (progressBar) progressBar.style.width = `${progress}%`
+      if (currentTimeEl) currentTimeEl.textContent = formatTime(audio.currentTime)
+    }
+
+    // 加载完成后显示总时长
+    audio.onloadedmetadata = () => {
+      if (durationEl) durationEl.textContent = formatTime(audio.duration)
+    }
+
+    // 播放结束
+    audio.onended = () => {
+      btn.className = 'ri-play-fill'
+      if (progressBar) progressBar.style.width = '0%'
+      if (currentTimeEl) currentTimeEl.textContent = '0:00'
+    }
+  } else {
+    audio.pause()
+    btn.className = 'ri-play-fill'
+  }
+}
+
+// 音频进度跳转
+export function seekAudio(audioId: string, event: MouseEvent): void {
+  const container = document.querySelector(`[data-audio-id="${audioId}"]`) as HTMLElement
+  if (!container) return
+
+  const audio = container.querySelector('audio') as HTMLAudioElement
+  const progressContainer = event.currentTarget as HTMLElement
+
+  if (!audio || !progressContainer) return
+
+  const rect = progressContainer.getBoundingClientRect()
+  const clickX = event.clientX - rect.left
+  const percentage = clickX / rect.width
+  audio.currentTime = percentage * audio.duration
+}
+
+// 在线音乐播放控制
+export function toggleMusicPlay(audioId: string, server: string, musicId: string): void {
+  const container = document.querySelector(`[data-audio-id="${audioId}"]`) as HTMLElement
+  if (!container) return
+
+  const btn = container.querySelector('.custom-audio-btn i') as HTMLElement
+  const infoEl = container.querySelector(`[data-music-info="${audioId}"]`) as HTMLElement
+  const progressBar = container.querySelector('.custom-audio-progress-bar') as HTMLElement
+  const currentTimeEl = container.querySelector('.custom-audio-current') as HTMLElement
+  const durationEl = container.querySelector('.custom-audio-duration') as HTMLElement
+  const sourceEl = container.querySelector('.custom-audio-source') as HTMLElement
+
+  if (!btn || !sourceEl) return
+
+  // 获取或创建 audio 元素
+  let audio = container.querySelector('audio') as HTMLAudioElement
+  if (!audio) {
+    audio = document.createElement('audio')
+    audio.preload = 'auto'
+    audio.style.display = 'none'
+    container.appendChild(audio)
+
+    // 加载音乐信息
+    const embedUrl = sourceEl.getAttribute('data-embed-url')
+    if (embedUrl) {
+      fetch(embedUrl)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.length > 0) {
+            const info = data[0]
+            audio.src = info.url || ''
+            if (infoEl) {
+              infoEl.textContent = `${info.name || '未知歌曲'} - ${info.artist || '未知艺术家'}`
+            }
+          }
+        })
+        .catch(() => {
+          if (infoEl) infoEl.textContent = '加载失败'
+        })
+    }
+  }
+
+  if (audio.paused) {
+    audio.play()
+    btn.className = 'ri-pause-fill'
+
+    // 更新进度
+    audio.ontimeupdate = () => {
+      const progress = (audio.currentTime / audio.duration) * 100
+      if (progressBar) progressBar.style.width = `${progress}%`
+      if (currentTimeEl) currentTimeEl.textContent = formatTime(audio.currentTime)
+    }
+
+    // 加载完成后显示总时长
+    audio.onloadedmetadata = () => {
+      if (durationEl) durationEl.textContent = formatTime(audio.duration)
+    }
+
+    // 播放结束
+    audio.onended = () => {
+      btn.className = 'ri-play-fill'
+      if (progressBar) progressBar.style.width = '0%'
+      if (currentTimeEl) currentTimeEl.textContent = '0:00'
+    }
+  } else {
+    audio.pause()
+    btn.className = 'ri-play-fill'
+  }
+}
+
+// 在线音乐进度跳转
+export function seekMusic(audioId: string, event: MouseEvent): void {
+  const container = document.querySelector(`[data-audio-id="${audioId}"]`) as HTMLElement
+  if (!container) return
+
+  const audio = container.querySelector('audio') as HTMLAudioElement
+  const progressContainer = event.currentTarget as HTMLElement
+
+  if (!audio || !progressContainer) return
+
+  const rect = progressContainer.getBoundingClientRect()
+  const clickX = event.clientX - rect.left
+  const percentage = clickX / rect.width
+  audio.currentTime = percentage * audio.duration
+}
+
 // 挂载全局函数供内联 onclick 使用
 if (typeof window !== 'undefined') {
   (window as any).copyCodeBlock = copyCodeBlock;
   (window as any).switchTab = switchTab;
-  (window as any).toggleFold = toggleFold
+  (window as any).toggleFold = toggleFold;
+  (window as any).toggleAudioPlay = toggleAudioPlay;
+  (window as any).seekAudio = seekAudio;
+  (window as any).toggleMusicPlay = toggleMusicPlay;
+  (window as any).seekMusic = seekMusic
 }
 
 export default {

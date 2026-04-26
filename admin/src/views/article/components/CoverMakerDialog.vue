@@ -104,6 +104,10 @@
                     <div class="guide-line vertical-center"></div>
                     <div class="guide-line horizontal-center"></div>
                   </div>
+                  <div v-if="textElements.subtitle.text" class="text-element subtitle-element"
+                    :style="getSubtitleStyle()" @mousedown="startDragElement('subtitle', $event)">
+                    {{ textElements.subtitle.text }}
+                  </div>
                   <div v-if="textElements.title.text" class="text-element title-element" :style="getTitleStyle()"
                     @mousedown="startDragElement('title', $event)">
                     {{ textElements.title.text }}
@@ -131,6 +135,10 @@
               <div class="property-group">
                 <label>标题</label>
                 <el-input v-model="textElements.title.text" placeholder="请输入标题" />
+              </div>
+              <div class="property-group">
+                <label>副标题</label>
+                <el-input v-model="textElements.subtitle.text" placeholder="请输入副标题" />
               </div>
               <div class="property-group">
                 <label>作者</label>
@@ -217,6 +225,14 @@ const textElements = ref({
     fontFamily: 'SlidefontKBK',
     color: '#ffffff'
   } as TextElement,
+  subtitle: {
+    text: '',
+    x: 50,
+    y: 25,
+    fontSize: 78,
+    fontFamily: 'SlidefontKBK',
+    color: '#ffffff'
+  } as TextElement,
   author: {
     text: '',
     x: 50,
@@ -235,7 +251,7 @@ const textElements = ref({
 
 const dragStart = ref({ x: 0, y: 0, elementX: 0, elementY: 0 })
 const isDragging = ref(false)
-const currentDragElement = ref<'title' | 'author' | 'avatar' | null>(null)
+const currentDragElement = ref<'title' | 'subtitle' | 'author' | 'avatar' | null>(null)
 const canvasContainerRef = ref<HTMLElement>()
 
 const displayedPhotos = computed(() => {
@@ -299,6 +315,24 @@ function getTitleStyle() {
   }
 }
 
+function getSubtitleStyle() {
+  const subtitle = textElements.value.subtitle
+  const canvasSize = getCanvasSize()
+  return {
+    position: 'absolute' as const,
+    left: `${(subtitle.x / 100) * canvasSize.width}px`,
+    top: `${(subtitle.y / 100) * canvasSize.height}px`,
+    fontSize: `${subtitle.fontSize}px`,
+    fontFamily: subtitle.fontFamily,
+    color: '#ffffff',
+    cursor: 'move' as const,
+    userSelect: 'none' as const,
+    transform: 'translate(-50%, -50%)',
+    textAlign: 'center' as const,
+    whiteSpace: 'nowrap' as const
+  }
+}
+
 function getAuthorStyle() {
   const author = textElements.value.author
   const canvasSize = getCanvasSize()
@@ -341,7 +375,7 @@ function getAvatarImageStyle() {
   }
 }
 
-function startDragElement(element: 'title' | 'author' | 'avatar', e: MouseEvent) {
+function startDragElement(element: 'title' | 'subtitle' | 'author' | 'avatar', e: MouseEvent) {
   e.preventDefault()
   e.stopPropagation()
   isDragging.value = true
@@ -462,6 +496,7 @@ async function generateImageDataUrl() {
   try {
     const previewCanvas = canvasRef.value
     const titleElement = previewCanvas.querySelector('.title-element') as HTMLElement
+    const subtitleElement = previewCanvas.querySelector('.subtitle-element') as HTMLElement
     const authorElement = previewCanvas.querySelector('.author-element') as HTMLElement
     const avatarElement = previewCanvas.querySelector('.avatar-element') as HTMLElement
     const canvas = document.createElement('canvas')
@@ -496,6 +531,17 @@ async function generateImageDataUrl() {
     ctx.fillRect(0, 0, canvas.width, canvas.height)
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
+    if (textElements.value.subtitle.text && subtitleElement) {
+      const computedStyle = window.getComputedStyle(subtitleElement)
+      const actualFontSize = parseFloat(computedStyle.fontSize)
+      ctx.font = `${actualFontSize}px 'SlidefontKBK'`
+      ctx.fillStyle = '#ffffff'
+      const subtitleRect = subtitleElement.getBoundingClientRect()
+      const previewRect = previewCanvas.getBoundingClientRect()
+      const subtitleX = ((subtitleRect.left + subtitleRect.width / 2 - previewRect.left) / canvasScale.value)
+      const subtitleY = ((subtitleRect.top + subtitleRect.height / 2 - previewRect.top) / canvasScale.value)
+      ctx.fillText(textElements.value.subtitle.text, subtitleX, subtitleY)
+    }
     if (textElements.value.title.text && titleElement) {
       const computedStyle = window.getComputedStyle(titleElement)
       const actualFontSize = parseFloat(computedStyle.fontSize)

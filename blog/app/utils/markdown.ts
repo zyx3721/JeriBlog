@@ -174,7 +174,8 @@ function renderTabs(tabsData: Array<{ name: string; content: string }>, params: 
 function renderFold(content: string, params: string[]): string {
   const title = params[0] || '点击展开'
   const open = params[1] === 'true' || params[1] === 'open'
-  const foldId = `fold-${simpleHash(title + content.slice(0, 50))}`
+  // 使用时间戳和随机数确保 ID 唯一性
+  const foldId = `fold-${simpleHash(title + content.slice(0, 50))}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
   const openClass = open ? 'open' : ''
 
   return `<div class="custom-fold ${openClass}" id="${foldId}"><div class="custom-fold-header" onclick="toggleFold('${foldId}')"><i class="ri-arrow-right-s-line"></i><span>${title}</span></div><div class="custom-fold-content"><div>${content}</div></div></div>`
@@ -267,6 +268,80 @@ function renderVideo(params: string[]): string {
   return ''
 }
 
+/**
+ * 渲染音频播放器
+ * @param params - [标题, 音频URL]
+ */
+function renderAudio(params: string[]): string {
+  const title = params[0] || ''
+  const audioUrl = params[1] || ''
+
+  if (!audioUrl) return ''
+
+  const audioId = `audio-${simpleHash(audioUrl + title)}`
+
+  return `<div class="custom-audio" data-audio-id="${audioId}">
+  <div class="custom-audio-type">播放音频</div>
+  <div class="custom-audio-main">
+    <div class="custom-audio-icon">
+      <i class="ri-music-line"></i>
+      <button class="custom-audio-btn" onclick="toggleAudioPlay('${audioId}')">
+        <i class="ri-play-fill"></i>
+      </button>
+    </div>
+    <div class="custom-audio-content">
+      <div class="custom-audio-info">${title || '音频'}</div>
+      <div class="custom-audio-controls">
+        <div class="custom-audio-progress" onclick="seekAudio('${audioId}', event)">
+          <div class="custom-audio-progress-bar"></div>
+        </div>
+        <div class="custom-audio-time"><span class="custom-audio-current">0:00</span> / <span class="custom-audio-duration">0:00</span></div>
+      </div>
+    </div>
+  </div>
+  <audio src="${audioUrl}" preload="auto" style="display:none;"></audio>
+</div>`
+}
+
+/**
+ * 渲染在线音乐播放器
+ * @param params - [平台, 音乐ID]
+ * 支持平台：netease, tencent, kugou, xiami, baidu
+ */
+function renderMusic(params: string[]): string {
+  if (params.length < 2) return ''
+
+  const server = params[0] || ''
+  const musicId = params[1] || ''
+
+  if (!server || !musicId) return ''
+
+  const audioId = `audio-${simpleHash(server + musicId)}`
+  const embedUrl = `https://api.injahow.cn/meting/?server=${server}&type=song&id=${musicId}`
+
+  return `<div class="custom-audio" data-audio-id="${audioId}" data-music-id="${musicId}">
+  <div class="custom-audio-type">播放在线音乐</div>
+  <div class="custom-audio-main">
+    <div class="custom-audio-icon">
+      <i class="ri-music-line"></i>
+      <button class="custom-audio-btn" onclick="toggleMusicPlay('${audioId}', '${server}', '${musicId}')">
+        <i class="ri-play-fill"></i>
+      </button>
+    </div>
+    <div class="custom-audio-content">
+      <div class="custom-audio-info" data-music-info="${audioId}">加载中...</div>
+      <div class="custom-audio-controls">
+        <div class="custom-audio-progress" onclick="seekMusic('${audioId}', event)">
+          <div class="custom-audio-progress-bar"></div>
+        </div>
+        <div class="custom-audio-time"><span class="custom-audio-current">0:00</span> / <span class="custom-audio-duration">0:00</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="custom-audio-source" data-embed-url="${embedUrl}" style="display:none;"></div>
+</div>`
+}
+
 // 创建 markdown-it 实例
 const md = new MarkdownIt({
   html: false,
@@ -301,11 +376,23 @@ md.renderer.rules.fence = (tokens, idx) => {
     highlightedCode = md.utils.escapeHtml(code)
   }
 
-  // 添加行号（移除末尾换行符避免空行）
-  const numberedLines = highlightedCode
-    .replace(/\n$/, '')
-    .split('\n')
-    .map((line, index) => `<div class="code-line"><span class="line-number" data-line="${index + 1}"></span><span class="line-content">${line}</span></div>`)
+  // 添加行号（保持 HTML 标签完整性）
+  const lines = code.split('\n')
+  const numberedLines = lines
+    .map((line, index) => {
+      // 对每一行原始代码单独进行高亮
+      let lineHighlighted = ''
+      if (lang && hljs.getLanguage(lang)) {
+        try {
+          lineHighlighted = hljs.highlight(line, { language: lang, ignoreIllegals: true }).value
+        } catch {
+          lineHighlighted = md.utils.escapeHtml(line)
+        }
+      } else {
+        lineHighlighted = md.utils.escapeHtml(line)
+      }
+      return `<div class="code-line"><span class="line-number" data-line="${index + 1}"></span><span class="line-content">${lineHighlighted}</span></div>`
+    })
     .join('')
 
   // 返回完整结构
@@ -399,6 +486,10 @@ function customBlocksPlugin(md: MarkdownIt) {
         html = renderLinkCard(params)
       } else if (tag === 'video') {
         html = renderVideo(params)
+      } else if (tag === 'audio') {
+        html = renderAudio(params)
+      } else if (tag === 'music') {
+        html = renderMusic(params)
       }
 
       if (html) {
@@ -624,7 +715,10 @@ export function renderMarkdown(markdown: string): string {
       'controls', 'preload', 'autoplay', 'loop', 'muted', 'poster',
       'allowfullscreen', 'scrolling', 'border', 'frameborder', 'framespacing', 'allow',
       'sandbox', 'referrerpolicy',
-      'data-server', 'data-type', 'data-id'
+      'data-server', 'data-type', 'data-id',
+      // 音频相关属性
+      'data-audio-id', 'data-music-id', 'data-music-server', 'aria-label',
+      'data-music-info', 'data-embed-url', 'data-initialized', 'data-audio-initialized', 'data-music-initialized'
     ],
     ALLOW_DATA_ATTR: true,
     ADD_ATTR: ['target', 'onclick', 'allowfullscreen']
@@ -993,11 +1087,368 @@ export function toggleFold(foldId: string): void {
   foldContainer.classList.toggle('open')
 }
 
+// ========== 音频播放控制函数 ==========
+
+/**
+ * 格式化时间（秒 -> mm:ss）
+ */
+function formatTime(seconds: number): string {
+  if (isNaN(seconds) || !isFinite(seconds)) return '0:00'
+  const mins = Math.floor(seconds / 60)
+  const secs = Math.floor(seconds % 60)
+  return `${mins}:${secs.toString().padStart(2, '0')}`
+}
+
+/**
+ * 切换音频播放/暂停
+ */
+export function toggleAudioPlay(audioId: string): void {
+  const container = document.querySelector(`[data-audio-id="${audioId}"]`)
+  if (!container) return
+
+  const audio = container.querySelector('audio') as HTMLAudioElement
+  const btn = container.querySelector('.custom-audio-btn i')
+  const durationTime = container.querySelector('.custom-audio-duration')
+  if (!audio || !btn) return
+
+  if (!(container as HTMLElement).dataset.audioInitialized) {
+    initAudioEvents(container)
+    ;(container as HTMLElement).dataset.audioInitialized = 'true'
+  }
+
+  if (durationTime && audio.duration && isFinite(audio.duration)) {
+    const mins = Math.floor(audio.duration / 60)
+    const secs = Math.floor(audio.duration % 60)
+    durationTime.textContent = `${mins}:${secs.toString().padStart(2, '0')}`
+  }
+
+  if (audio.paused) {
+    audio.play()
+    btn.className = 'ri-pause-fill'
+  } else {
+    audio.pause()
+    btn.className = 'ri-play-fill'
+  }
+}
+
+/**
+ * 音频进度条拖动
+ */
+export function seekAudio(audioId: string, event: MouseEvent): void {
+  const container = document.querySelector(`[data-audio-id="${audioId}"]`)
+  if (!container) return
+
+  const audio = container.querySelector('audio') as HTMLAudioElement
+  const progressBar = container.querySelector('.custom-audio-progress')
+  const durationTime = container.querySelector('.custom-audio-duration')
+  if (!audio || !progressBar) return
+
+  if (!(container as HTMLElement).dataset.audioInitialized) {
+    initAudioEvents(container)
+    ;(container as HTMLElement).dataset.audioInitialized = 'true'
+  }
+
+  if (durationTime && (!audio.duration || !isFinite(audio.duration))) {
+    audio.preload = 'metadata'
+    audio.addEventListener(
+      'loadedmetadata',
+      () => {
+        const mins = Math.floor(audio.duration / 60)
+        const secs = Math.floor(audio.duration % 60)
+        durationTime.textContent = `${mins}:${secs.toString().padStart(2, '0')}`
+      },
+      { once: true }
+    )
+  }
+
+  const rect = progressBar.getBoundingClientRect()
+  const percent = (event.clientX - rect.left) / rect.width
+  audio.currentTime = percent * audio.duration
+}
+
+/**
+ * 切换音乐播放/暂停
+ */
+export function toggleMusicPlay(audioId: string, _server: string, _musicId: string): void {
+  const container = document.querySelector(`[data-audio-id="${audioId}"]`)
+  if (!container) return
+
+  const btn = container.querySelector('.custom-audio-btn i')
+  const musicInfoEl = container.querySelector(`[data-music-info="${audioId}"]`)
+  const durationTime = container.querySelector('.custom-audio-duration')
+  if (!btn) return
+
+  let audio = container.querySelector('audio') as HTMLAudioElement
+  const musicSource = container.querySelector('.custom-audio-source') as HTMLElement
+
+  if (!audio && musicSource) {
+    const embedUrl = musicSource.dataset.embedUrl || ''
+
+    fetch(embedUrl)
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.length > 0) {
+          const info = data[0]
+          if (musicInfoEl) {
+            musicInfoEl.textContent = `${info.name || '未知歌曲'} - ${info.artist || info.author || '未知艺术家'}`
+          }
+
+          audio = container.querySelector('audio') as HTMLAudioElement
+          if (!audio && info.url) {
+            const newAudio = document.createElement('audio')
+            newAudio.src = info.url
+            newAudio.preload = 'auto'
+            container.appendChild(newAudio)
+            audio = newAudio
+          } else if (audio) {
+            audio.src = info.url
+          }
+
+          if (audio && durationTime) {
+            audio.addEventListener(
+              'loadedmetadata',
+              () => {
+                if (durationTime && audio.duration && isFinite(audio.duration)) {
+                  const mins = Math.floor(audio.duration / 60)
+                  const secs = Math.floor(audio.duration % 60)
+                  durationTime.textContent = `${mins}:${secs.toString().padStart(2, '0')}`
+                }
+              },
+              { once: true }
+            )
+          }
+
+          initMusicEvents(container)
+          audio.play()
+          btn.className = 'ri-pause-fill'
+        }
+      })
+      .catch(err => {
+        console.error('Failed to load music:', err)
+        if (musicInfoEl) {
+          musicInfoEl.textContent = '加载失败'
+        }
+      })
+    return
+  }
+
+  if (audio) {
+    if (audio.paused) {
+      audio.play()
+      btn.className = 'ri-pause-fill'
+    } else {
+      audio.pause()
+      btn.className = 'ri-play-fill'
+    }
+  }
+}
+
+/**
+ * 音乐进度条拖动
+ */
+export function seekMusic(audioId: string, event: MouseEvent): void {
+  const container = document.querySelector(`[data-audio-id="${audioId}"]`)
+  if (!container) return
+
+  const audio = container.querySelector('audio') as HTMLAudioElement
+  const progressBar = container.querySelector('.custom-audio-progress')
+  const durationTime = container.querySelector('.custom-audio-duration')
+  if (!audio || !progressBar) return
+
+  initMusicEvents(container)
+
+  if (durationTime && (!audio.duration || !isFinite(audio.duration))) {
+    audio.preload = 'metadata'
+    audio.addEventListener(
+      'loadedmetadata',
+      () => {
+        if (durationTime && audio.duration && isFinite(audio.duration)) {
+          const mins = Math.floor(audio.duration / 60)
+          const secs = Math.floor(audio.duration % 60)
+          durationTime.textContent = `${mins}:${secs.toString().padStart(2, '0')}`
+        }
+      },
+      { once: true }
+    )
+  }
+
+  const rect = progressBar.getBoundingClientRect()
+  const percent = (event.clientX - rect.left) / rect.width
+  audio.currentTime = percent * audio.duration
+}
+
+/**
+ * 初始化音乐事件监听
+ */
+function initMusicEvents(container: Element): void {
+  if ((container as HTMLElement).dataset.musicInitialized) return
+  ;(container as HTMLElement).dataset.musicInitialized = 'true'
+
+  const audio = container.querySelector('audio') as HTMLAudioElement
+  const progressBar = container.querySelector('.custom-audio-progress-bar') as HTMLElement
+  const currentTimeEl = container.querySelector('.custom-audio-current') as HTMLElement
+  const durationTime = container.querySelector('.custom-audio-duration') as HTMLElement
+
+  if (!audio) return
+
+  audio.load()
+
+  const updateDuration = () => {
+    if (durationTime && audio.duration && isFinite(audio.duration)) {
+      durationTime.textContent = formatTime(audio.duration)
+    }
+  }
+
+  audio.addEventListener('loadedmetadata', updateDuration)
+  audio.addEventListener('canplay', updateDuration)
+
+  audio.addEventListener('timeupdate', () => {
+    if (currentTimeEl) {
+      currentTimeEl.textContent = formatTime(audio.currentTime)
+    }
+    if (progressBar && audio.duration && isFinite(audio.duration)) {
+      progressBar.style.width = `${(audio.currentTime / audio.duration) * 100}%`
+    }
+    if (durationTime && audio.duration && isFinite(audio.duration)) {
+      durationTime.textContent = formatTime(audio.duration)
+    }
+  })
+
+  audio.addEventListener('ended', () => {
+    const btnEl = container.querySelector('.custom-audio-btn i') as HTMLElement
+    if (btnEl) btnEl.className = 'ri-play-fill'
+    if (progressBar) progressBar.style.width = '0%'
+    if (currentTimeEl) currentTimeEl.textContent = '0:00'
+  })
+}
+
+/**
+ * 初始化音频事件监听
+ */
+function initAudioEvents(container: Element): void {
+  const audio = container.querySelector('audio') as HTMLAudioElement
+  const progressBar = container.querySelector('.custom-audio-progress-bar') as HTMLElement
+  const currentTimeEl = container.querySelector('.custom-audio-current') as HTMLElement
+  const durationTime = container.querySelector('.custom-audio-duration') as HTMLElement
+
+  if (!audio) return
+  if ((container as HTMLElement).dataset.audioInitialized) return
+  ;(container as HTMLElement).dataset.audioInitialized = 'true'
+
+  audio.load()
+
+  const updateDuration = () => {
+    if (durationTime && audio.duration && isFinite(audio.duration)) {
+      durationTime.textContent = formatTime(audio.duration)
+    }
+  }
+
+  audio.addEventListener('loadedmetadata', updateDuration)
+  audio.addEventListener('canplay', updateDuration)
+
+  audio.addEventListener('timeupdate', () => {
+    if (progressBar && audio.duration && isFinite(audio.duration)) {
+      progressBar.style.width = `${(audio.currentTime / audio.duration) * 100}%`
+    }
+    if (durationTime && audio.duration && isFinite(audio.duration)) {
+      durationTime.textContent = formatTime(audio.duration)
+    }
+    if (currentTimeEl) currentTimeEl.textContent = formatTime(audio.currentTime)
+  })
+
+  audio.addEventListener('ended', () => {
+    const btn = container.querySelector('.custom-audio-btn i') as HTMLElement
+    if (btn) btn.className = 'ri-play-fill'
+    if (progressBar) progressBar.style.width = '0%'
+    if (currentTimeEl) currentTimeEl.textContent = '0:00'
+  })
+}
+
+/**
+ * 使用 MutationObserver 自动初始化音频播放器
+ */
+function observeAudioPlayers(): void {
+  const observer = new MutationObserver(mutations => {
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (node instanceof Element) {
+          const audioContainers = node.matches?.('[data-audio-id]')
+            ? [node]
+            : node.querySelectorAll?.('[data-audio-id]')
+          audioContainers?.forEach(container => {
+            initAudioEvents(container)
+            initMusicCard(container)
+          })
+        }
+      }
+    }
+  })
+
+  observer.observe(document.body, { childList: true, subtree: true })
+
+  document.querySelectorAll('.custom-audio[data-audio-id]').forEach(container => {
+    initAudioEvents(container)
+    initMusicCard(container)
+  })
+}
+
+/**
+ * 初始化音乐卡片 - 预加载音乐信息
+ */
+function initMusicCard(container: Element): void {
+  const musicSource = container.querySelector('.custom-audio-source') as HTMLElement
+  const musicInfoEl = container.querySelector('.custom-audio-info') as HTMLElement
+  if (!musicSource || musicInfoEl?.dataset.initialized) return
+
+  const embedUrl = musicSource.dataset.embedUrl
+  if (!embedUrl) return
+
+  musicInfoEl.dataset.initialized = 'true'
+
+  fetch(embedUrl)
+    .then(res => res.json())
+    .then(data => {
+      if (data && data.length > 0) {
+        const info = data[0]
+        if (musicInfoEl) {
+          musicInfoEl.textContent = `${info.name || '未知歌曲'} - ${info.artist || info.author || '未知艺术家'}`
+        }
+        const existingAudio = container.querySelector('audio')
+        if (!existingAudio && info.url) {
+          const audio = document.createElement('audio')
+          audio.src = info.url
+          audio.preload = 'auto'
+          audio.style.display = 'none'
+          container.appendChild(audio)
+        }
+      }
+    })
+    .catch(err => {
+      console.error('Failed to load music info:', err)
+      if (musicInfoEl) {
+        musicInfoEl.textContent = '加载失败'
+      }
+    })
+}
+
+// 在客户端环境下自动初始化
+if (typeof window !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', observeAudioPlayers)
+  } else {
+    observeAudioPlayers()
+  }
+}
+
 // 挂载全局函数供内联 onclick 使用
 if (typeof window !== 'undefined') {
   (window as any).copyCodeBlock = copyCodeBlock;
   (window as any).switchTab = switchTab;
-  (window as any).toggleFold = toggleFold
+  (window as any).toggleFold = toggleFold;
+  (window as any).toggleAudioPlay = toggleAudioPlay;
+  (window as any).seekAudio = seekAudio;
+  (window as any).toggleMusicPlay = toggleMusicPlay;
+  (window as any).seekMusic = seekMusic
 }
 
 export default {
