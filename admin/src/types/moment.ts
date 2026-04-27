@@ -19,6 +19,9 @@ export interface MomentContent {
     platform?: string
     video_id?: string
   }
+  audio?: {
+    url: string;
+  };
   music?: {
     server: string
     type: string
@@ -84,16 +87,17 @@ export interface VideoInfo {
 export interface MomentListQuery {
   page: number
   page_size: number
-  keyword?: string
-  tags?: string[]
-  location?: string
-  is_publish?: boolean
-  has_images?: boolean
-  has_video?: boolean
-  has_music?: boolean
-  has_link?: boolean
-  start_time?: string
-  end_time?: string
+  keyword?: string // 搜索关键词（文本内容）
+  tags?: string[] // 标签
+  location?: string // 发布地点
+  is_publish?: boolean // 是否发布
+  has_images?: boolean // 是否有图片
+  has_video?: boolean // 是否有视频
+  has_audio?: boolean // 是否有音频
+  has_music?: boolean // 是否有音乐
+  has_link?: boolean // 是否有链接
+  start_time?: string // 发布开始时间
+  end_time?: string // 发布结束时间
 }
 
 // 分页数据

@@ -44,6 +44,7 @@
           <el-option-group label="动态相关">
             <el-option label="动态配图" value="动态配图" />
             <el-option label="动态视频" value="动态视频" />
+            <el-option label="动态音频" value="动态音频" />
           </el-option-group>
           <el-option-group label="评论相关">
             <el-option label="评论贴图" value="评论贴图" />
@@ -274,6 +275,8 @@ const handleShowReferences = async (file: FileInfo) => {
 
   try {
     references.value = await getFileReferences(file.id)
+    console.log('📊 引用详情数据:', references.value)
+    console.log('📊 引用数量:', references.value.length)
   } catch (error: any) {
     console.error('加载引用详情失败:', error)
     ElMessage.error('加载引用详情失败')
@@ -423,8 +426,6 @@ onMounted(loadList)
 
 .references-content {
   min-height: 150px;
-  max-height: 500px;
-  overflow-y: auto;
   padding: 4px;
 }
 
@@ -432,6 +433,27 @@ onMounted(loadList)
   display: flex;
   flex-direction: column;
   gap: 12px;
+  max-height: calc(3 * (16px + 12px + 12px + 16px + 24px)); /* 3行的高度: padding + gap + header + body + margin */
+  overflow-y: auto;
+
+  /* 美化滚动条 */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+
+    &:hover {
+      background: #a8a8a8;
+    }
+  }
 }
 
 .reference-item {

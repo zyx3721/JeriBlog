@@ -89,11 +89,12 @@
               </span>
             </div>
 
-            <!-- 所有标签（标签、视频、音乐、链接、位置） -->
+            <!-- 所有标签（标签、视频、音频、音乐、链接、位置） -->
             <div
               v-if="
                 row.content.tags ||
                 row.content.video ||
+                row.content.audio ||
                 row.content.music ||
                 row.content.link ||
                 row.content.location
@@ -109,6 +110,12 @@
               <el-tag v-if="row.content.video" type="primary" size="small">
                 <i class="ri-video-line"></i>
                 {{ getVideoPlatformName(row.content.video.platform) }}
+              </el-tag>
+
+              <!-- 音频 -->
+              <el-tag v-if="row.content.audio" type="success" size="small">
+                <i class="ri-mic-line"></i>
+                音频
               </el-tag>
 
               <!-- 音乐 -->
@@ -216,7 +223,6 @@ const editingMoment = ref<Moment | null>(null)
 // 音乐平台和类型映射
 const MUSIC_LABELS = {
   type: {
-    search: '搜索',
     song: '单曲',
     album: '专辑',
     artist: '艺术家',
@@ -225,10 +231,6 @@ const MUSIC_LABELS = {
   server: {
     netease: '网易云',
     tencent: 'QQ音乐',
-    kugou: '酷狗',
-    xiami: '虾米',
-    baidu: '百度',
-    kuwo: '酷我',
   },
 }
 
@@ -238,7 +240,7 @@ const MUSIC_LABELS = {
 const activeFilterCount = computed(() => {
   let count = 0
   if (queryParams.value.keyword) count++
-  if (queryParams.value.tags) count++
+  if (queryParams.value.tags && queryParams.value.tags.length > 0) count++
   if (queryParams.value.location) count++
   if (queryParams.value.is_publish !== undefined) count++
   if (queryParams.value.has_images !== undefined) count++
@@ -303,14 +305,10 @@ let errorMessageShown = false
  */
 const fetchAllMomentsForTags = async () => {
   try {
-    console.log('🔍 [MomentList] 开始获取全量动态数据...')
-    const result = await getMoments({ page: 1, page_size: 9999 })
+    const result = await getMoments({ page: 1, page_size: 1000 })
     allMomentsForTags.value = result.list
-    console.log('✅ [MomentList] 获取到的全量动态数量:', result.list.length)
-    console.log('✅ [MomentList] 全量动态数据:', result.list)
-    console.log('✅ [MomentList] allMomentsForTags.value:', allMomentsForTags.value)
   } catch (error) {
-    console.error('❌ [MomentList] 获取全量动态失败:', error)
+    console.error('获取全量动态失败:', error)
     // 静默失败，不影响主流程
   }
 }
@@ -414,6 +412,13 @@ onMounted(() => {
 .moment-list-page > :deep(.common-list) {
   flex: 1;
   min-height: 0;
+}
+
+/* 移动端隐藏发布状态筛选框 */
+@media (max-width: 768px) {
+  :deep(.quick-filter-769) {
+    display: none !important;
+  }
 }
 
 .moment-content {
