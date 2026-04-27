@@ -483,32 +483,24 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 		}
 	}
 
-	// 检查动态配图和动态视频
-	moments, err := s.usageChecker.momentRepo.FindByContentURL(file.FileURL)
+	// 检查动态配图、动态视频和动态音频
+	momentRefs, err := s.usageChecker.momentRepo.FindByContentURLWithType(file.FileURL)
 	if err == nil {
-		for _, moment := range moments {
-			// 解析动态内容 JSON，提取 text 字段
+		for _, ref := range momentRefs {
+			// 解析动态内容 JSON，提取 text 字段作为标题
 			var contentData map[string]interface{}
 			title := "动态" // 默认标题
-			if err := json.Unmarshal([]byte(moment.Content), &contentData); err == nil {
+			if err := json.Unmarshal([]byte(ref.Moment.Content), &contentData); err == nil {
 				if text, ok := contentData["text"].(string); ok && text != "" {
-					title = text // 使用动态的纯文本内容
-				}
-			}
-
-			// 判断是配图还是视频
-			fieldName := "动态配图"
-			if err := json.Unmarshal([]byte(moment.Content), &contentData); err == nil {
-				if video, ok := contentData["video"].(string); ok && video == file.FileURL {
-					fieldName = "动态视频"
+					title = text
 				}
 			}
 
 			references = append(references, dto.FileReferenceResponse{
 				Type:  "moment",
-				ID:    moment.ID,
+				ID:    ref.Moment.ID,
 				Title: title,
-				Field: fieldName,
+				Field: ref.FileType, // 直接使用返回的文件类型
 				URL:   "/moment",
 			})
 		}

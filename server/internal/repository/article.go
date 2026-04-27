@@ -445,14 +445,21 @@ func (r *ArticleRepository) FindByContentURLWithType(url string) ([]ArticleFileR
 	// 遍历文章，使用工具函数提取文件引用并匹配
 	for _, article := range allArticles {
 		references := utils.ExtractFileReferencesFromMarkdown(article.Content)
+
+		// 用于记录当前文章中已匹配的文件类型，避免重复
+		matchedTypes := make(map[utils.FileType]bool)
+
 		for _, ref := range references {
 			// 支持精确匹配和包含匹配（处理完整URL和相对路径的情况）
 			if ref.URL == url || strings.Contains(ref.URL, url) || strings.Contains(url, ref.URL) {
-				matchedReferences = append(matchedReferences, ArticleFileReference{
-					Article:  article,
-					FileType: ref.Type,
-				})
-				break // 找到匹配后跳出内层循环
+				// 如果当前文章中该类型尚未记录，则添加
+				if !matchedTypes[ref.Type] {
+					matchedReferences = append(matchedReferences, ArticleFileReference{
+						Article:  article,
+						FileType: ref.Type,
+					})
+					matchedTypes[ref.Type] = true
+				}
 			}
 		}
 	}

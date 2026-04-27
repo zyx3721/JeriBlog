@@ -13,6 +13,7 @@ package repository
 
 import (
 	"context"
+	"encoding/json"
 	"strings"
 
 	"jeri_blog/internal/model"
@@ -100,9 +101,9 @@ func (r *MomentRepository) List(ctx context.Context, page, pageSize int, params 
 	// 根据是否包含音乐筛选
 	if params.HasMusic != nil {
 		if *params.HasMusic {
-			query = query.Where("content::jsonb->'music' IS NOT NULL")
+			query = query.Where("(content::jsonb->'music' IS NOT NULL) OR (content::jsonb->'audio' IS NOT NULL)")
 		} else {
-			query = query.Where("content::jsonb->'music' IS NULL")
+			query = query.Where("(content::jsonb->'music' IS NULL) AND (content::jsonb->'audio' IS NULL)")
 		}
 	}
 
@@ -172,11 +173,57 @@ func (r *MomentRepository) ExistsByContentURL(url string) (bool, error) {
 	return count > 0, err
 }
 
-// FindByContentURL 查找内容引用该文件的动态列表
-func (r *MomentRepository) FindByContentURL(url string) ([]model.Moment, error) {
+// MomentFileReference 动态文件引用信息
+type MomentFileReference struct {
+	Moment   model.Moment
+	FileType string // "动态配图" / "动态视频" / "动态音频"
+}
+
+// FindByContentURLWithType 查找内容引用该文件的动态列表（带文件类型）
+func (r *MomentRepository) FindByContentURLWithType(url string) ([]MomentFileReference, error) {
 	var moments []model.Moment
+	var references []MomentFileReference
+
+	// 先查找所有包含该 URL 的动态
 	err := r.db.Where("content::text LIKE ?", "%"+url+"%").Find(&moments).Error
-	return moments, err
+	if err != nil {
+		return nil, err
+	}
+
+	// 解析每个动态的 content JSON，判断文件类型
+	for _, moment := range moments {
+		var contentData map[string]interface{}
+		if err := json.Unmarshal([]byte(moment.Content), &contentData); err != nil {
+			continue
+		}
+
+		fileType := ""
+
+		// 判断是视频
+		if video, ok := contentData["video"].(string); ok && video == url {
+			fileType = "动态视频"
+		} else if audio, ok := contentData["audio"].(string); ok && audio == url {
+			// 判断是音频
+			fileType = "动态音频"
+		} else if images, ok := contentData["images"].([]interface{}); ok {
+			// 判断是配图
+			for _, img := range images {
+				if imgURL, ok := img.(string); ok && imgURL == url {
+					fileType = "动态配图"
+					break
+				}
+			}
+		}
+
+		if fileType != "" {
+			references = append(references, MomentFileReference{
+				Moment:   moment,
+				FileType: fileType,
+			})
+		}
+	}
+
+	return references, nil
 }
 
 // Delete 删除动态

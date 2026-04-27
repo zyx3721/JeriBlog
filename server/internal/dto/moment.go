@@ -13,22 +13,12 @@ package dto
 
 import "jeri_blog/pkg/utils"
 
-// ============ 通用动态请求 ============
+// ============ 前台动态请求 ============
 
-// ListMomentRequest 动态列表请求
-type ListMomentRequest struct {
-	Page      int      `form:"page" binding:"omitempty,min=1"`
-	PageSize  int      `form:"page_size" binding:"omitempty,min=1,max=1000"`
-	Keyword   string   `form:"keyword"`    // 搜索关键词（按内容模糊搜索）
-	Tags      []string `form:"tags"`       // 标签筛选（多选）
-	Location  string   `form:"location"`   // 发布地点筛选
-	IsPublish *bool    `form:"is_publish"` // 状态筛选（true=已发布, false=草稿, nil=全部）
-	HasImages *bool    `form:"has_images"` // 是否包含图片
-	HasVideo  *bool    `form:"has_video"`  // 是否包含视频
-	HasMusic  *bool    `form:"has_music"`  // 是否包含音乐
-	HasLink   *bool    `form:"has_link"`   // 是否包含链接
-	StartTime string   `form:"start_time"` // 开始时间（YYYY-MM-DD）
-	EndTime   string   `form:"end_time"`   // 结束时间（YYYY-MM-DD）
+// ListMomentsForWebRequest 前台动态列表请求
+type ListMomentsForWebRequest struct {
+	Page     int `form:"page" binding:"omitempty,min=1"`
+	PageSize int `form:"page_size" binding:"omitempty,min=1,max=1000"`
 }
 
 // FetchLinkMetadataRequest 获取链接元数据请求
@@ -64,6 +54,7 @@ type MomentContent struct {
 	Link     *MomentLink    `json:"link,omitempty"`     // 外链
 	Music    *MomentMusic   `json:"music,omitempty"`    // 音乐（基于MetingJS）
 	Video    *MomentVideo   `json:"video,omitempty"`    // 视频（本地或在线）
+	Audio    *MomentAudio   `json:"audio,omitempty"`    // 音频（本地或在线）
 	Book     map[string]any `json:"book,omitempty"`     // 书籍
 	Movie    map[string]any `json:"movie,omitempty"`    // 电影
 }
@@ -77,8 +68,8 @@ type MomentLink struct {
 
 // MomentMusic 音乐结构（基于 MetingJS）
 type MomentMusic struct {
-	Server string `json:"server"` // 音乐平台：netease, tencent, kugou, xiami, baidu
-	Type   string `json:"type"`   // 类型：song, playlist, album, search, artist
+	Server string `json:"server"` // 音乐平台：netease, tencent
+	Type   string `json:"type"`   // 类型：song, playlist, album, artist
 	ID     string `json:"id"`     // 音乐ID
 }
 
@@ -87,6 +78,11 @@ type MomentVideo struct {
 	URL      string `json:"url"`                // 视频URL（本地视频或在线视频链接）
 	Platform string `json:"platform,omitempty"` // 平台：bilibili, youtube（本地视频为空）
 	VideoID  string `json:"video_id,omitempty"` // 视频ID（在线视频的ID，本地视频为空）
+}
+
+// MomentAudio 音频结构
+type MomentAudio struct {
+	URL string `json:"url"` // 音频URL（本地音频或在线音频链接）
 }
 
 // MomentForWebResponse 前台动态响应
@@ -98,6 +94,23 @@ type MomentForWebResponse struct {
 }
 
 // ============ 后台动态管理请求 ============
+
+// ListMomentRequest 后台动态列表请求（支持筛选）
+type ListMomentRequest struct {
+	Page      int      `form:"page" binding:"omitempty,min=1"`
+	PageSize  int      `form:"page_size" binding:"omitempty,min=1,max=1000"`
+	Keyword   string   `form:"keyword"`    // 搜索关键词（文本内容）
+	Tags      []string `form:"tags"`       // 标签（多选）
+	Location  string   `form:"location"`   // 发布地点
+	IsPublish *bool    `form:"is_publish"` // 是否发布
+	HasImages *bool    `form:"has_images"` // 是否有图片
+	HasVideo  *bool    `form:"has_video"`  // 是否有视频
+	HasAudio  *bool    `form:"has_audio"`  // 是否有音频
+	HasMusic  *bool    `form:"has_music"`  // 是否有音乐
+	HasLink   *bool    `form:"has_link"`   // 是否有链接
+	StartTime string   `form:"start_time"` // 发布开始时间
+	EndTime   string   `form:"end_time"`   // 发布结束时间
+}
 
 // CreateMomentRequest 创建动态请求
 type CreateMomentRequest struct {
