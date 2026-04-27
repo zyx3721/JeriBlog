@@ -199,18 +199,30 @@ func (r *MomentRepository) FindByContentURLWithType(url string) ([]MomentFileRef
 
 		fileType := ""
 
-		// 判断是视频
-		if video, ok := contentData["video"].(string); ok && video == url {
-			fileType = "动态视频"
-		} else if audio, ok := contentData["audio"].(string); ok && audio == url {
-			// 判断是音频
-			fileType = "动态音频"
-		} else if images, ok := contentData["images"].([]interface{}); ok {
-			// 判断是配图
-			for _, img := range images {
-				if imgURL, ok := img.(string); ok && imgURL == url {
-					fileType = "动态配图"
-					break
+		// 判断是视频（video 是对象，需要提取 url 字段）
+		if videoObj, ok := contentData["video"].(map[string]interface{}); ok {
+			if videoURL, ok := videoObj["url"].(string); ok && videoURL == url {
+				fileType = "动态视频"
+			}
+		}
+
+		// 判断是音频（audio 是对象，需要提取 url 字段）
+		if fileType == "" {
+			if audioObj, ok := contentData["audio"].(map[string]interface{}); ok {
+				if audioURL, ok := audioObj["url"].(string); ok && audioURL == url {
+					fileType = "动态音频"
+				}
+			}
+		}
+
+		// 判断是配图
+		if fileType == "" {
+			if images, ok := contentData["images"].([]interface{}); ok {
+				for _, img := range images {
+					if imgURL, ok := img.(string); ok && imgURL == url {
+						fileType = "动态配图"
+						break
+					}
 				}
 			}
 		}
