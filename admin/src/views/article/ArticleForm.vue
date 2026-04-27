@@ -1196,14 +1196,26 @@ onBeforeRouteLeave(async (to, from, next) => {
     @media (max-width: 768px) {
       flex-direction: column;
 
+      .cover-left {
+        width: 100%;
+      }
+
       .cover-right {
         width: 100%;
 
+        .online-image-section {
+          width: 100%;
+        }
+
         .cover-actions {
-          flex-direction: column;
+          display: flex;
+          flex-direction: row;
+          gap: 12px;
+          width: 100%;
 
           .action-btn {
-            width: 100%;
+            flex: 1;
+            justify-content: center;
           }
         }
       }

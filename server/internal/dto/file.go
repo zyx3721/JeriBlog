@@ -20,7 +20,7 @@ import (
 
 // UploadFileRequest 文件上传请求
 type UploadFileRequest struct {
-	Type string `form:"type" binding:"required"`
+	Type string `form:"type"` // 上传类型，可选
 }
 
 // ============ 通用文件响应 ============

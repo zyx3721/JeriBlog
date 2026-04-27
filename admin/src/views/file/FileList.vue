@@ -37,6 +37,9 @@
           <el-option-group label="文章相关">
             <el-option label="文章封面" value="文章封面" />
             <el-option label="文章配图" value="文章配图" />
+            <el-option label="文章视频" value="文章视频" />
+            <el-option label="文章音频" value="文章音频" />
+            <el-option label="文章附件" value="文章附件" />
           </el-option-group>
           <el-option-group label="动态相关">
             <el-option label="动态配图" value="动态配图" />

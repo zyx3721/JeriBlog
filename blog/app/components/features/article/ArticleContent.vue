@@ -118,6 +118,7 @@ onUnmounted(() => {
 
 <style>
 @import 'highlight.js/styles/atom-one-dark.css';
+@import 'katex/dist/katex.min.css';
 
 .medium-zoom-overlay {
   z-index: 9999 !important;
@@ -179,22 +180,6 @@ onUnmounted(() => {
       background: #fef0f0;
       border-radius: 4px;
       border-left: 4px solid #f56c6c;
-    }
-
-    .custom-video {
-      margin: 1.5rem 0;
-      border-radius: 8px;
-      overflow: hidden;
-      background: #000;
-
-      video,
-      iframe {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 16 / 9;
-        border: none;
-        display: block;
-      }
     }
   }
 }

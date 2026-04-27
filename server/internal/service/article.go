@@ -360,8 +360,7 @@ func (s *ArticleService) GetBySlug(ctx context.Context, slug string) (*dto.Artic
 
 // List 获取文章列表
 func (s *ArticleService) List(ctx context.Context, req *dto.ListArticlesRequest) ([]dto.ArticleListResponse, int64, error) {
-	offset := (req.Page - 1) * req.PageSize
-	articles, total, err := s.articleRepo.List(offset, req.PageSize, req.Keyword, req.CategoryID, req.TagID, req.Status)
+	articles, total, err := s.articleRepo.List(req)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -634,27 +633,20 @@ func (s *ArticleService) Delete(ctx context.Context, id uint) error {
 
 // ============ 辅助方法 ============
 
-// extractContentImages 从 Markdown/HTML 内容中提取所有图片 URL
+// extractContentImages 从 Markdown/HTML 内容中提取所有文件 URL
+// 支持标准 Markdown 图片、照片墙、视频等编辑器特殊格式
 func extractContentImages(content string) []string {
-	var urls []string
-	seen := make(map[string]bool)
+	// 使用工具函数提取所有文件 URL（支持照片墙、视频等特殊格式）
+	urls := utils.ExtractFileURLsFromMarkdown(content)
 
-	// 提取 Markdown 图片: ![alt](url)
-	mdImageRe := regexp.MustCompile(`!\[[^\]]*\]\(([^)]+)\)`)
-	matches := mdImageRe.FindAllStringSubmatch(content, -1)
-	for _, match := range matches {
-		if len(match) > 1 {
-			url := strings.TrimSpace(match[1])
-			if url != "" && !seen[url] {
-				seen[url] = true
-				urls = append(urls, url)
-			}
-		}
+	// 额外提取 HTML img 标签（兼容富文本编辑器）
+	seen := make(map[string]bool)
+	for _, url := range urls {
+		seen[url] = true
 	}
 
-	// 提取 HTML img 标签: <img src="url" />
 	htmlImageRe := regexp.MustCompile(`<img[^>]+src=["']([^"']+)["'][^>]*>`)
-	matches = htmlImageRe.FindAllStringSubmatch(content, -1)
+	matches := htmlImageRe.FindAllStringSubmatch(content, -1)
 	for _, match := range matches {
 		if len(match) > 1 {
 			url := strings.TrimSpace(match[1])
@@ -668,50 +660,84 @@ func extractContentImages(content string) []string {
 	return urls
 }
 
-// markContentImagesAsUsed 标记内容中的图片为已使用
+// markContentImagesAsUsed 标记内容中的文件为已使用（根据文件类型自动分类）
 func (s *ArticleService) markContentImagesAsUsed(content string) {
 	if s.fileService == nil {
 		return
 	}
-	for _, url := range extractContentImages(content) {
-		_ = s.fileService.MarkAsUsed(url, "文章配图")
+
+	// 使用新函数提取文件引用及其类型
+	references := utils.ExtractFileReferencesFromMarkdown(content)
+	for _, ref := range references {
+		_ = s.fileService.MarkAsUsed(ref.URL, string(ref.Type))
+	}
+
+	// 额外处理 HTML img 标签（标记为文章配图）
+	htmlImageRe := regexp.MustCompile(`<img[^>]+src=["']([^"']+)["'][^>]*>`)
+	matches := htmlImageRe.FindAllStringSubmatch(content, -1)
+	for _, match := range matches {
+		if len(match) > 1 {
+			url := strings.TrimSpace(match[1])
+			if url != "" {
+				_ = s.fileService.MarkAsUsed(url, "文章配图")
+			}
+		}
 	}
 }
 
-// markContentImagesAsUnused 标记内容中的图片为未使用
+// markContentImagesAsUnused 标记内容中的文件为未使用（根据文件类型自动分类）
 func (s *ArticleService) markContentImagesAsUnused(content string) {
 	if s.fileService == nil {
 		return
 	}
-	for _, url := range extractContentImages(content) {
-		_ = s.fileService.MarkAsUnused(url, "文章配图")
+
+	// 使用新函数提取文件引用及其类型
+	references := utils.ExtractFileReferencesFromMarkdown(content)
+	for _, ref := range references {
+		_ = s.fileService.MarkAsUnused(ref.URL, string(ref.Type))
+	}
+
+	// 额外处理 HTML img 标签（标记为文章配图）
+	htmlImageRe := regexp.MustCompile(`<img[^>]+src=["']([^"']+)["'][^>]*>`)
+	matches := htmlImageRe.FindAllStringSubmatch(content, -1)
+	for _, match := range matches {
+		if len(match) > 1 {
+			url := strings.TrimSpace(match[1])
+			if url != "" {
+				_ = s.fileService.MarkAsUnused(url, "文章配图")
+			}
+		}
 	}
 }
 
-// updateContentFileStatus 对比新旧内容，更新图片文件状态
+// updateContentFileStatus 对比新旧内容，更新文件状态（根据文件类型自动分类）
 func (s *ArticleService) updateContentFileStatus(oldContent, newContent string) {
 	if s.fileService == nil {
 		return
 	}
 
-	oldImages := make(map[string]bool)
-	for _, url := range extractContentImages(oldContent) {
-		oldImages[url] = true
+	// 提取旧内容中的文件引用
+	oldRefs := utils.ExtractFileReferencesFromMarkdown(oldContent)
+	oldRefMap := make(map[string]utils.FileType)
+	for _, ref := range oldRefs {
+		oldRefMap[ref.URL] = ref.Type
 	}
 
-	newImages := make(map[string]bool)
-	for _, url := range extractContentImages(newContent) {
-		newImages[url] = true
-		// 新增的图片标记为使用中
-		if !oldImages[url] {
-			_ = s.fileService.MarkAsUsed(url, "文章配图")
+	// 提取新内容中的文件引用
+	newRefs := utils.ExtractFileReferencesFromMarkdown(newContent)
+	newRefMap := make(map[string]utils.FileType)
+	for _, ref := range newRefs {
+		newRefMap[ref.URL] = ref.Type
+		// 新增的文件标记为使用中
+		if _, exists := oldRefMap[ref.URL]; !exists {
+			_ = s.fileService.MarkAsUsed(ref.URL, string(ref.Type))
 		}
 	}
 
-	// 移除的图片标记为未使用
-	for url := range oldImages {
-		if !newImages[url] {
-			_ = s.fileService.MarkAsUnused(url, "文章配图")
+	// 移除的文件标记为未使用
+	for url, refType := range oldRefMap {
+		if _, exists := newRefMap[url]; !exists {
+			_ = s.fileService.MarkAsUnused(url, string(refType))
 		}
 	}
 }

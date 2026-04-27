@@ -47,6 +47,32 @@ func (r *FileRepository) Get(id uint) (*model.File, error) {
 	return &file, nil
 }
 
+// GetByURLPattern 通过URL模式查找文件（支持精确匹配和模糊匹配）
+// 优先返回精确匹配的结果，如果没有则返回模糊匹配的结果
+func (r *FileRepository) GetByURLPattern(urlPattern string) (*model.File, error) {
+	var files []model.File
+	// 使用 OR 条件同时查询精确匹配和模糊匹配
+	err := r.db.Where("file_url = ? OR file_url LIKE ?", urlPattern, "%"+urlPattern).
+		Find(&files).Error
+	if err != nil {
+		return nil, err
+	}
+
+	if len(files) == 0 {
+		return nil, gorm.ErrRecordNotFound
+	}
+
+	// 优先返回精确匹配的结果
+	for _, file := range files {
+		if file.FileURL == urlPattern {
+			return &file, nil
+		}
+	}
+
+	// 没有精确匹配，返回第一个模糊匹配的结果
+	return &files[0], nil
+}
+
 // Delete 删除文件记录
 func (r *FileRepository) Delete(id uint) error {
 	return r.db.Unscoped().Delete(&model.File{}, id).Error
@@ -168,9 +194,13 @@ func (r *FileRepository) UpdateStatus(url string, status int) error {
 }
 
 // CountByURL 统计指定URL的文件记录数量
+// 支持相对路径和完整URL的匹配
 func (r *FileRepository) CountByURL(url string) (int64, error) {
 	var count int64
-	err := r.db.Model(&model.File{}).Where("file_url = ?", url).Count(&count).Error
+	// 同时匹配完整URL和相对路径（使用 LIKE 匹配以 url 结尾的记录）
+	err := r.db.Model(&model.File{}).
+		Where("file_url = ? OR file_url LIKE ?", url, "%"+url).
+		Count(&count).Error
 	return count, err
 }
 
@@ -209,26 +239,29 @@ func (r *FileRepository) DeleteByIDs(ids []uint) error {
 // ============ 引用计数方法 ============
 
 // IncrementReferenceCount 增加文件引用计数
+// 支持相对路径和完整URL的匹配
 func (r *FileRepository) IncrementReferenceCount(url string) error {
 	if url == "" {
 		return nil
 	}
 	return r.db.Model(&model.File{}).
-		Where("file_url = ?", url).
+		Where("file_url = ? OR file_url LIKE ?", url, "%"+url).
 		UpdateColumn("reference_count", gorm.Expr("reference_count + 1")).Error
 }
 
 // DecrementReferenceCount 减少文件引用计数
+// 支持相对路径和完整URL的匹配
 func (r *FileRepository) DecrementReferenceCount(url string) error {
 	if url == "" {
 		return nil
 	}
 	return r.db.Model(&model.File{}).
-		Where("file_url = ? AND reference_count > 0", url).
+		Where("(file_url = ? OR file_url LIKE ?) AND reference_count > 0", url, "%"+url).
 		UpdateColumn("reference_count", gorm.Expr("reference_count - 1")).Error
 }
 
 // UpdateStatusByReferenceCount 根据引用计数更新文件状态
+// 支持相对路径和完整URL的匹配
 func (r *FileRepository) UpdateStatusByReferenceCount(url string) error {
 	if url == "" {
 		return nil
@@ -241,8 +274,8 @@ func (r *FileRepository) UpdateStatusByReferenceCount(url string) error {
 			ELSE 0
 		END,
 		updated_at = NOW()
-		WHERE file_url = ?
-	`, url).Error
+		WHERE file_url = ? OR file_url LIKE ?
+	`, url, "%"+url).Error
 }
 
 // GetReferenceCount 获取文件引用计数
@@ -262,13 +295,14 @@ func (r *FileRepository) GetReferenceCount(url string) (int, error) {
 }
 
 // AddUploadType 添加用途到 upload_type 字段（逗号分隔，不去重，支持同用途多次引用）
+// 支持相对路径和完整URL的匹配
 func (r *FileRepository) AddUploadType(url string, usageType string) error {
 	if url == "" || usageType == "" {
 		return nil
 	}
 
 	var file model.File
-	if err := r.db.Where("file_url = ?", url).First(&file).Error; err != nil {
+	if err := r.db.Where("file_url = ? OR file_url LIKE ?", url, "%"+url).First(&file).Error; err != nil {
 		return err
 	}
 
@@ -294,13 +328,14 @@ func (r *FileRepository) AddUploadType(url string, usageType string) error {
 }
 
 // RemoveUploadType 从 upload_type 字段移除指定用途（仅移除一次，支持同用途多次引用）
+// 支持相对路径和完整URL的匹配
 func (r *FileRepository) RemoveUploadType(url string, usageType string) error {
 	if url == "" || usageType == "" {
 		return nil
 	}
 
 	var file model.File
-	if err := r.db.Where("file_url = ?", url).First(&file).Error; err != nil {
+	if err := r.db.Where("file_url = ? OR file_url LIKE ?", url, "%"+url).First(&file).Error; err != nil {
 		return err
 	}
 
@@ -329,7 +364,7 @@ func (r *FileRepository) RemoveUploadType(url string, usageType string) error {
 	sort.Strings(newTypes) // 排序保证一致性
 
 	return r.db.Model(&model.File{}).
-		Where("file_url = ?", url).
+		Where("file_url = ? OR file_url LIKE ?", url, "%"+url).
 		Update("upload_type", strings.Join(newTypes, ",")).
 		Error
 }

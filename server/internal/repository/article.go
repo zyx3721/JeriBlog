@@ -12,7 +12,10 @@
 package repository
 
 import (
+	"jeri_blog/internal/dto"
 	"jeri_blog/internal/model"
+	"jeri_blog/pkg/utils"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -223,39 +226,69 @@ func (r *ArticleRepository) CountByTag(tagID uint, onlyPublished bool) (int64, e
 // ============ 基础CRUD ============
 
 // List 获取文章列表
-func (r *ArticleRepository) List(offset, limit int, keyword string, categoryID uint, tagID uint, status string) ([]model.Article, int64, error) {
+func (r *ArticleRepository) List(req *dto.ListArticlesRequest) ([]model.Article, int64, error) {
 	var articles []model.Article
 	var total int64
 
 	query := r.db.Model(&model.Article{})
 
-	// 关键词搜索（标题）
-	if keyword != "" {
-		query = query.Where("title ILIKE ?", "%"+keyword+"%")
+	// 关键词搜索（标题或内容）
+	if req.Keyword != "" {
+		query = query.Where("title ILIKE ? OR content ILIKE ?", "%"+req.Keyword+"%", "%"+req.Keyword+"%")
 	}
 
 	// 分类筛选
-	if categoryID > 0 {
-		query = query.Where("category_id = ?", categoryID)
+	if req.CategoryID != nil && *req.CategoryID > 0 {
+		query = query.Where("category_id = ?", *req.CategoryID)
 	}
 
-	// 标签筛选
-	if tagID > 0 {
+	// 标签筛选（支持多选）
+	if len(req.TagIDs) > 0 {
 		query = query.Joins("JOIN article_tags ON article_tags.article_id = articles.id").
-			Where("article_tags.tag_id = ?", tagID).
+			Where("article_tags.tag_id IN ?", req.TagIDs).
 			Distinct()
 	}
 
-	// 状态筛选
-	if status == "published" {
-		query = query.Where("is_publish = ?", true)
-	} else if status == "draft" {
-		query = query.Where("is_publish = ?", false)
+	// 发布地点筛选
+	if req.Location != "" {
+		query = query.Where("location ILIKE ?", "%"+req.Location+"%")
+	}
+
+	// 发布状态筛选
+	if req.IsPublish != nil {
+		query = query.Where("is_publish = ?", *req.IsPublish)
+	}
+
+	// 置顶状态筛选
+	if req.IsTop != nil {
+		query = query.Where("is_top = ?", *req.IsTop)
+	}
+
+	// 精选状态筛选
+	if req.IsEssence != nil {
+		query = query.Where("is_essence = ?", *req.IsEssence)
+	}
+
+	// 过时状态筛选
+	if req.IsOutdated != nil {
+		query = query.Where("is_outdated = ?", *req.IsOutdated)
+	}
+
+	// 发布时间范围筛选
+	if req.StartTime != "" {
+		query = query.Where("publish_time >= ?", req.StartTime)
+	}
+	if req.EndTime != "" {
+		query = query.Where("publish_time <= ?", req.EndTime+" 23:59:59")
 	}
 
 	if err := query.Count(&total).Error; err != nil {
 		return nil, 0, err
 	}
+
+	// 计算分页偏移量
+	offset := (req.Page - 1) * req.PageSize
+	limit := req.PageSize
 
 	if err := query.Order("is_publish ASC, publish_time DESC NULLS LAST, created_at DESC").
 		Preload("Category").
@@ -337,10 +370,26 @@ func (r *ArticleRepository) ExistsByCover(url string) (bool, error) {
 }
 
 // ExistsByContentURL 检查是否有文章正文引用该文件
+// 使用精确的 Markdown 解析来检查文件引用（支持标准图片、照片墙、视频等格式）
 func (r *ArticleRepository) ExistsByContentURL(url string) (bool, error) {
-	var count int64
-	err := r.db.Model(&model.Article{}).Where("content LIKE ?", "%"+url+"%").Count(&count).Error
-	return count > 0, err
+	var articles []model.Article
+	// 先获取所有文章内容（只查询 content 字段以提高性能）
+	err := r.db.Model(&model.Article{}).Select("content").Find(&articles).Error
+	if err != nil {
+		return false, err
+	}
+
+	// 遍历文章，使用工具函数提取文件 URL 并匹配
+	for _, article := range articles {
+		urls := utils.ExtractFileURLsFromMarkdown(article.Content)
+		for _, extractedURL := range urls {
+			if extractedURL == url {
+				return true, nil
+			}
+		}
+	}
+
+	return false, nil
 }
 
 // FindByCover 查找使用该封面的文章列表
@@ -350,11 +399,65 @@ func (r *ArticleRepository) FindByCover(url string) ([]model.Article, error) {
 	return articles, err
 }
 
+// ArticleFileReference 文章文件引用信息
+type ArticleFileReference struct {
+	Article  model.Article
+	FileType utils.FileType
+}
+
 // FindByContentURL 查找正文引用该文件的文章列表
+// 使用精确的 Markdown 解析来查找文件引用（支持标准图片、照片墙、视频等格式）
 func (r *ArticleRepository) FindByContentURL(url string) ([]model.Article, error) {
-	var articles []model.Article
-	err := r.db.Where("content LIKE ?", "%"+url+"%").Find(&articles).Error
-	return articles, err
+	var allArticles []model.Article
+	var matchedArticles []model.Article
+
+	// 先获取所有文章
+	err := r.db.Find(&allArticles).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// 遍历文章，使用工具函数提取文件 URL 并匹配
+	for _, article := range allArticles {
+		urls := utils.ExtractFileURLsFromMarkdown(article.Content)
+		for _, extractedURL := range urls {
+			if extractedURL == url {
+				matchedArticles = append(matchedArticles, article)
+				break // 找到匹配后跳出内层循环
+			}
+		}
+	}
+
+	return matchedArticles, nil
+}
+
+// FindByContentURLWithType 查找正文引用该文件的文章列表（带文件类型）
+func (r *ArticleRepository) FindByContentURLWithType(url string) ([]ArticleFileReference, error) {
+	var allArticles []model.Article
+	var matchedReferences []ArticleFileReference
+
+	// 先获取所有文章
+	err := r.db.Find(&allArticles).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// 遍历文章，使用工具函数提取文件引用并匹配
+	for _, article := range allArticles {
+		references := utils.ExtractFileReferencesFromMarkdown(article.Content)
+		for _, ref := range references {
+			// 支持精确匹配和包含匹配（处理完整URL和相对路径的情况）
+			if ref.URL == url || strings.Contains(ref.URL, url) || strings.Contains(url, ref.URL) {
+				matchedReferences = append(matchedReferences, ArticleFileReference{
+					Article:  article,
+					FileType: ref.Type,
+				})
+				break // 找到匹配后跳出内层循环
+			}
+		}
+	}
+
+	return matchedReferences, nil
 }
 
 // ============ 辅助方法 ============
