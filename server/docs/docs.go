@@ -2767,9 +2767,57 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "标签筛选",
+                        "name": "tags",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "发布地点筛选",
+                        "name": "location",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
                         "description": "状态筛选（true=已发布, false=草稿）",
                         "name": "is_publish",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否包含图片",
+                        "name": "has_images",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否包含视频",
+                        "name": "has_video",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否包含音乐",
+                        "name": "has_music",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否包含链接",
+                        "name": "has_link",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "开始时间（YYYY-MM-DD）",
+                        "name": "start_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "结束时间（YYYY-MM-DD）",
+                        "name": "end_time",
                         "in": "query"
                     }
                 ],
@@ -8731,9 +8779,26 @@ const docTemplate = `{
                 }
             }
         },
+        "jeri_blog_internal_dto.MomentAudio": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "description": "音频URL（本地音频或在线音频链接）",
+                    "type": "string"
+                }
+            }
+        },
         "jeri_blog_internal_dto.MomentContent": {
             "type": "object",
             "properties": {
+                "audio": {
+                    "description": "音频（本地或在线）",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/jeri_blog_internal_dto.MomentAudio"
+                        }
+                    ]
+                },
                 "book": {
                     "description": "书籍",
                     "type": "object",
@@ -8828,11 +8893,11 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "server": {
-                    "description": "音乐平台：netease, tencent, kugou, xiami, baidu",
+                    "description": "音乐平台：netease, tencent",
                     "type": "string"
                 },
                 "type": {
-                    "description": "类型：song, playlist, album, search, artist",
+                    "description": "类型：song, playlist, album, artist",
                     "type": "string"
                 }
             }

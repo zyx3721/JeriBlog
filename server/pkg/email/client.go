@@ -13,13 +13,20 @@ package email
 
 import (
 	"crypto/tls"
+	"fmt"
 	"jeri_blog/config"
 	"jeri_blog/pkg/logger"
-	"fmt"
 	"sync"
 	"time"
 
 	"gopkg.in/gomail.v2"
+)
+
+// 邮件加密方式常量
+const (
+	emailSecureNone     = "none"     // 无加密 (端口 25)
+	emailSecureSSL      = "ssl"      // SSL/TLS (端口 465)
+	emailSecureSTARTTLS = "starttls" // STARTTLS (端口 587)
 )
 
 // Client 邮件客户端
@@ -106,16 +113,37 @@ func (c *Client) SendEmail(to, subject, htmlBody, fromName string) error {
 		fromName = c.config.Blog.Title
 	}
 
+	// 确定发件人邮箱地址
+	fromEmail := cfg.EmailFrom
+	if fromEmail == "" {
+		fromEmail = cfg.EmailUsername
+	}
+
 	// 创建邮件
 	msg := gomail.NewMessage()
-	msg.SetHeader("From", msg.FormatAddress(cfg.EmailUsername, fromName))
+	msg.SetHeader("From", msg.FormatAddress(fromEmail, fromName))
 	msg.SetHeader("To", to)
 	msg.SetHeader("Subject", subject)
 	msg.SetBody("text/html", htmlBody)
 
 	// 发送邮件
 	dialer := gomail.NewDialer(cfg.EmailHost, cfg.EmailPort, cfg.EmailUsername, cfg.EmailPassword)
-	dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+
+	// 根据加密方式配置连接
+	// #nosec G402 - 允许自签名证书，用于兼容某些邮件服务器配置
+	switch cfg.EmailSecure {
+	case emailSecureSSL:
+		dialer.SSL = true
+		dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+	case emailSecureNone:
+		dialer.SSL = false
+		dialer.TLSConfig = nil
+	case emailSecureSTARTTLS:
+		fallthrough
+	default:
+		dialer.SSL = false
+		dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+	}
 
 	if err := dialer.DialAndSend(msg); err != nil {
 		logger.Error("邮件发送失败 to=%s err=%v", to, err)
@@ -133,7 +161,23 @@ func (c *Client) HealthCheck() error {
 	}
 	cfg := c.config.Notification
 	dialer := gomail.NewDialer(cfg.EmailHost, cfg.EmailPort, cfg.EmailUsername, cfg.EmailPassword)
-	dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+
+	// 根据加密方式配置连接
+	// #nosec G402 - 允许自签名证书，用于兼容某些邮件服务器配置
+	switch cfg.EmailSecure {
+	case emailSecureSSL:
+		dialer.SSL = true
+		dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+	case emailSecureNone:
+		dialer.SSL = false
+		dialer.TLSConfig = nil
+	case emailSecureSTARTTLS:
+		fallthrough
+	default:
+		dialer.SSL = false
+		dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+	}
+
 	conn, err := dialer.Dial()
 	if err != nil {
 		return err

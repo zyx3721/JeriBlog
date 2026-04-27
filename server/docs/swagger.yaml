@@ -1030,8 +1030,18 @@ definitions:
     - title
     - type
     type: object
+  jeri_blog_internal_dto.MomentAudio:
+    properties:
+      url:
+        description: 音频URL（本地音频或在线音频链接）
+        type: string
+    type: object
   jeri_blog_internal_dto.MomentContent:
     properties:
+      audio:
+        allOf:
+        - $ref: '#/definitions/jeri_blog_internal_dto.MomentAudio'
+        description: 音频（本地或在线）
       book:
         additionalProperties: {}
         description: 书籍
@@ -1093,10 +1103,10 @@ definitions:
         description: 音乐ID
         type: string
       server:
-        description: 音乐平台：netease, tencent, kugou, xiami, baidu
+        description: 音乐平台：netease, tencent
         type: string
       type:
-        description: 类型：song, playlist, album, search, artist
+        description: 类型：song, playlist, album, artist
         type: string
     type: object
   jeri_blog_internal_dto.MomentVideo:
@@ -3373,10 +3383,42 @@ paths:
         in: query
         name: keyword
         type: string
+      - description: 标签筛选
+        in: query
+        name: tags
+        type: string
+      - description: 发布地点筛选
+        in: query
+        name: location
+        type: string
       - description: 状态筛选（true=已发布, false=草稿）
         in: query
         name: is_publish
         type: boolean
+      - description: 是否包含图片
+        in: query
+        name: has_images
+        type: boolean
+      - description: 是否包含视频
+        in: query
+        name: has_video
+        type: boolean
+      - description: 是否包含音乐
+        in: query
+        name: has_music
+        type: boolean
+      - description: 是否包含链接
+        in: query
+        name: has_link
+        type: boolean
+      - description: 开始时间（YYYY-MM-DD）
+        in: query
+        name: start_time
+        type: string
+      - description: 结束时间（YYYY-MM-DD）
+        in: query
+        name: end_time
+        type: string
       produces:
       - application/json
       responses:
