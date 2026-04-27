@@ -498,7 +498,7 @@ const handleSave = async (autoRedirect: boolean = true) => {
 
           // 创建文件对象并上传
           const file = new File([blob], 'cover.jpg', { type: downloadResult.content_type })
-          const uploadResult = await uploadFile(file, '文章封面')
+          const uploadResult = await uploadFile(file, '') // 上传时不标记用途，保存时才标记
           formData.cover = uploadResult.file_url
 
           // 清空在线图片URL
@@ -512,7 +512,7 @@ const handleSave = async (autoRedirect: boolean = true) => {
       }
       // 2. 如果没有在线图片，但有制作封面的文件
       else if (coverFile.value) {
-        const result = await uploadFile(coverFile.value, '文章封面')
+        const result = await uploadFile(coverFile.value, '') // 上传时不标记用途，保存时才标记
         formData.cover = result.file_url
         coverFile.value = null // 清理文件对象
       }

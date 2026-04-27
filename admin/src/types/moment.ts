@@ -80,6 +80,22 @@ export interface VideoInfo {
   video_id: string
 }
 
+// 动态列表查询参数
+export interface MomentListQuery {
+  page: number
+  page_size: number
+  keyword?: string
+  tags?: string[]
+  location?: string
+  is_publish?: boolean
+  has_images?: boolean
+  has_video?: boolean
+  has_music?: boolean
+  has_link?: boolean
+  start_time?: string
+  end_time?: string
+}
+
 // 分页数据
 export interface MomentListData {
   list: Moment[]

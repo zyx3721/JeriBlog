@@ -236,7 +236,7 @@ const validateForm = (): boolean => {
 const uploadFiles = async (files: File[]): Promise<string[]> => {
   if (files.length === 0) return []
 
-  const uploadPromises = files.map(file => uploadFile(file, '反馈投诉'))
+  const uploadPromises = files.map(file => uploadFile(file, ''))
   const uploadResults = await Promise.all(uploadPromises)
   return uploadResults.map(result => result.file_url)
 }

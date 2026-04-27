@@ -13,6 +13,7 @@ package repository
 
 import (
 	"context"
+	"strings"
 
 	"jeri_blog/internal/model"
 
@@ -31,21 +32,95 @@ func NewMomentRepository(db *gorm.DB) *MomentRepository {
 
 // ============ 基础CRUD ============
 
+// ListParams 动态列表查询参数
+type ListParams struct {
+	IsPublish *bool
+	Keyword   string
+	Tags      []string
+	Location  string
+	HasImages *bool
+	HasVideo  *bool
+	HasMusic  *bool
+	HasLink   *bool
+	StartTime string
+	EndTime   string
+}
+
 // List 获取动态列表
-func (r *MomentRepository) List(ctx context.Context, page, pageSize int, isPublish *bool, keyword string) ([]model.Moment, int64, error) {
+func (r *MomentRepository) List(ctx context.Context, page, pageSize int, params ListParams) ([]model.Moment, int64, error) {
 	var moments []model.Moment
 	var total int64
 
 	query := r.db.WithContext(ctx).Model(&model.Moment{})
 
 	// 根据发布状态过滤
-	if isPublish != nil {
-		query = query.Where("is_publish = ?", *isPublish)
+	if params.IsPublish != nil {
+		query = query.Where("is_publish = ?", *params.IsPublish)
 	}
 
 	// 根据关键词搜索（按内容模糊搜索）
-	if keyword != "" {
-		query = query.Where("content::text LIKE ?", "%"+keyword+"%")
+	if params.Keyword != "" {
+		query = query.Where("content::text LIKE ?", "%"+params.Keyword+"%")
+	}
+
+	// 根据标签筛选（多选，任意匹配）
+	if len(params.Tags) > 0 {
+		tagConditions := make([]string, len(params.Tags))
+		tagValues := make([]interface{}, len(params.Tags))
+		for i, tag := range params.Tags {
+			tagConditions[i] = "content::jsonb->>'tags' = ?"
+			tagValues[i] = tag
+		}
+		query = query.Where(strings.Join(tagConditions, " OR "), tagValues...)
+	}
+
+	// 根据发布地点筛选
+	if params.Location != "" {
+		query = query.Where("content::jsonb->>'location' LIKE ?", "%"+params.Location+"%")
+	}
+
+	// 根据是否包含图片筛选
+	if params.HasImages != nil {
+		if *params.HasImages {
+			query = query.Where("jsonb_array_length(content::jsonb->'images') > 0")
+		} else {
+			query = query.Where("(content::jsonb->'images' IS NULL OR jsonb_array_length(content::jsonb->'images') = 0)")
+		}
+	}
+
+	// 根据是否包含视频筛选
+	if params.HasVideo != nil {
+		if *params.HasVideo {
+			query = query.Where("content::jsonb->'video' IS NOT NULL")
+		} else {
+			query = query.Where("content::jsonb->'video' IS NULL")
+		}
+	}
+
+	// 根据是否包含音乐筛选
+	if params.HasMusic != nil {
+		if *params.HasMusic {
+			query = query.Where("content::jsonb->'music' IS NOT NULL")
+		} else {
+			query = query.Where("content::jsonb->'music' IS NULL")
+		}
+	}
+
+	// 根据是否包含链接筛选
+	if params.HasLink != nil {
+		if *params.HasLink {
+			query = query.Where("content::jsonb->'link' IS NOT NULL")
+		} else {
+			query = query.Where("content::jsonb->'link' IS NULL")
+		}
+	}
+
+	// 根据发布时间范围筛选
+	if params.StartTime != "" {
+		query = query.Where("DATE(publish_time) >= ?", params.StartTime)
+	}
+	if params.EndTime != "" {
+		query = query.Where("DATE(publish_time) <= ?", params.EndTime)
 	}
 
 	err := query.Count(&total).Error

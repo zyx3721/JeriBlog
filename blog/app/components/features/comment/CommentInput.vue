@@ -297,7 +297,7 @@ const uploadPendingImages = async () => {
 
   const uploads = Array.from(pendingImages.value.entries()).map(
     async ([blobUrl, file]) => {
-      const result = await uploadFile(file, '评论贴图')
+      const result = await uploadFile(file, '')
       return { blobUrl, realUrl: result.file_url }
     }
   )

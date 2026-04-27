@@ -45,7 +45,10 @@ func NewMomentService(repo *repository.MomentRepository, fileService *FileServic
 func (s *MomentService) ListForWeb(ctx context.Context, page, pageSize int) ([]dto.MomentForWebResponse, int64, error) {
 	// 前台只显示已发布的动态
 	isPublish := true
-	moments, total, err := s.repo.List(ctx, page, pageSize, &isPublish, "")
+	params := repository.ListParams{
+		IsPublish: &isPublish,
+	}
+	moments, total, err := s.repo.List(ctx, page, pageSize, params)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -73,8 +76,21 @@ func (s *MomentService) ListForWeb(ctx context.Context, page, pageSize int) ([]d
 // ============ 后台管理服务 ============
 
 // List 获取动态列表（管理）
-func (s *MomentService) List(ctx context.Context, page, pageSize int, keyword string, isPublish *bool) ([]dto.MomentListResponse, int64, error) {
-	moments, total, err := s.repo.List(ctx, page, pageSize, isPublish, keyword)
+func (s *MomentService) List(ctx context.Context, page, pageSize int, req *dto.ListMomentRequest) ([]dto.MomentListResponse, int64, error) {
+	params := repository.ListParams{
+		IsPublish: req.IsPublish,
+		Keyword:   req.Keyword,
+		Tags:      req.Tags,
+		Location:  req.Location,
+		HasImages: req.HasImages,
+		HasVideo:  req.HasVideo,
+		HasMusic:  req.HasMusic,
+		HasLink:   req.HasLink,
+		StartTime: req.StartTime,
+		EndTime:   req.EndTime,
+	}
+
+	moments, total, err := s.repo.List(ctx, page, pageSize, params)
 	if err != nil {
 		return nil, 0, err
 	}

@@ -75,7 +75,15 @@ func (c *MomentController) ListForWeb(ctx *gin.Context) {
 //	@Param			page		query		int		false	"页码"
 //	@Param			page_size	query		int		false	"每页数量（不传则返回全部）"
 //	@Param			keyword		query		string	false	"搜索关键词（按内容模糊搜索）"
+//	@Param			tags		query		string	false	"标签筛选"
+//	@Param			location	query		string	false	"发布地点筛选"
 //	@Param			is_publish	query		bool	false	"状态筛选（true=已发布, false=草稿）"
+//	@Param			has_images	query		bool	false	"是否包含图片"
+//	@Param			has_video	query		bool	false	"是否包含视频"
+//	@Param			has_music	query		bool	false	"是否包含音乐"
+//	@Param			has_link	query		bool	false	"是否包含链接"
+//	@Param			start_time	query		string	false	"开始时间（YYYY-MM-DD）"
+//	@Param			end_time	query		string	false	"结束时间（YYYY-MM-DD）"
 //	@Success		200			{object}	response.Response{data=response.PageResult}
 //	@Failure		401			{object}	response.Response
 //	@Failure		403			{object}	response.Response
@@ -87,7 +95,7 @@ func (c *MomentController) List(ctx *gin.Context) {
 		return
 	}
 
-	moments, total, err := c.momentService.List(ctx.Request.Context(), req.Page, req.PageSize, req.Keyword, req.IsPublish)
+	moments, total, err := c.momentService.List(ctx.Request.Context(), req.Page, req.PageSize, &req)
 	if err != nil {
 		response.Failed(ctx, err.Error())
 		return

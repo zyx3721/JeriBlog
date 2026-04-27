@@ -102,7 +102,7 @@ const uploadPendingFile = async (): Promise<string | null> => {
 
   const loading = ElMessage.info({ message: '正在上传...', duration: 0 })
   try {
-    const result = await uploadFile(pendingFile.value, props.uploadType)
+    const result = await uploadFile(pendingFile.value, '')
 
     // 清理本地预览
     if (previewUrl.value) {

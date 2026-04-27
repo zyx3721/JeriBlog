@@ -805,7 +805,7 @@ watch(() => props.editMoment, (moment) => {
 const uploadImages = async (): Promise<string[]> => {
   const uploadPromises = imageItems.value.map(async (item) => {
     if (item.type === 'file' && item.file) {
-      const result = await uploadFile(item.file, '动态配图')
+      const result = await uploadFile(item.file, '') // 上传时不标记用途，保存时才标记
       return result.file_url
     }
     return item.url
@@ -819,7 +819,7 @@ const uploadVideo = async (): Promise<string | null> => {
   if (!videoItem.value) return null
 
   if (videoItem.value.type === 'file' && videoItem.value.file) {
-    const result = await uploadFile(videoItem.value.file, '动态视频')
+    const result = await uploadFile(videoItem.value.file, '') // 上传时不标记用途，保存时才标记
     return result.file_url
   }
 
