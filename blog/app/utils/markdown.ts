@@ -349,6 +349,29 @@ const md = new MarkdownIt({
   linkify: true
 })
 
+// 自定义插件：放宽加粗/斜体的边界限制
+function relaxedEmphasisPlugin(md: MarkdownIt) {
+  // 保存原始的 scanDelims 方法
+  const State = md.inline.State
+  const originalScanDelims = State.prototype.scanDelims
+
+  // 重写 scanDelims 方法
+  State.prototype.scanDelims = function(start, canSplitWord) {
+    const result = originalScanDelims.call(this, start, canSplitWord)
+
+    // 放宽 can_close 的限制：只要能 open，就允许 close
+    // 这样 **text：**2 中的第二个 ** 就能正确识别为结束标记
+    if (result.can_open) {
+      result.can_close = true
+    }
+
+    return result
+  }
+}
+
+// 应用自定义插件
+md.use(relaxedEmphasisPlugin)
+
 // 自定义代码块渲染规则
 md.renderer.rules.fence = (tokens, idx) => {
   const token = tokens[idx]
@@ -377,7 +400,7 @@ md.renderer.rules.fence = (tokens, idx) => {
   }
 
   // 添加行号（保持 HTML 标签完整性）
-  const lines = code.split('\n')
+  const lines = code.replace(/\n$/, '').split('\n')
   const numberedLines = lines
     .map((line, index) => {
       // 对每一行原始代码单独进行高亮

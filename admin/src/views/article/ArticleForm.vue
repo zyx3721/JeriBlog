@@ -1208,11 +1208,13 @@ onBeforeRouteLeave(async (to, from, next) => {
         }
 
         .cover-actions {
-          flex-direction: column;
+          display: flex;
+          flex-direction: row;
+          gap: 12px;
           width: 100%;
 
           .action-btn {
-            width: 100%;
+            flex: 1;
             justify-content: center;
           }
         }

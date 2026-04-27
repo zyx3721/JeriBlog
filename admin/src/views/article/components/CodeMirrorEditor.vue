@@ -184,7 +184,7 @@
         </template>
         <!-- 照片墙按钮 -->
         <template v-else-if="item.title === '照片墙'">
-          <el-popover :width="520" trigger="click" placement="bottom" v-model:visible="photoDialog.visible">
+          <el-popover :width="photoDialogWidth" trigger="click" placement="bottom" v-model:visible="photoDialog.visible">
             <template #reference>
               <button :title="item.title" class="toolbar-btn" :class="{ active: photoDialog.visible }">
                 <i :class="item.icon"></i>
@@ -202,11 +202,11 @@
                         @click="movePhotoRowDown(rowIndex)">
                         <i class="ri-arrow-down-line"></i>
                       </el-button>
-                      <el-button v-if="photoDialog.rows.length > 1" type="danger" size="small" text
-                        @click="removePhotoDialogRow(rowIndex)">
-                        <i class="ri-close-line"></i>
-                      </el-button>
                     </div>
+                    <el-button v-if="photoDialog.rows.length > 1" type="danger" size="small" text
+                      @click="removePhotoDialogRow(rowIndex)">
+                      <i class="ri-close-line"></i>
+                    </el-button>
                   </div>
                   <div class="photo-images">
                     <div v-for="(img, imgIndex) in row" :key="imgIndex" class="photo-image-item">
@@ -640,6 +640,14 @@ const photoDialog = reactive({
   visible: false,
   rows: [['', '']] as string[][],
   uploading: false as boolean
+})
+
+// 照片墙弹窗宽度（移动端自适应）
+const photoDialogWidth = computed(() => {
+  if (typeof window !== 'undefined') {
+    return window.innerWidth <= 768 ? Math.min(window.innerWidth - 32, 400) : 520
+  }
+  return 520
 })
 
 // 安全获取照片墙图片 URL
@@ -1784,10 +1792,8 @@ onMounted(() => {
   loadEmojis()
   document.addEventListener('fullscreenchange', handleFullscreenChange)
 
-  // 移动端默认为纯编辑模式
-  if (window.innerWidth <= 768) {
-    viewMode.value = 'editor'
-  }
+  // 移动端保持分屏模式以启用滚动同步
+  // 通过 CSS 控制编辑器和预览区各占 50% 宽度
 })
 
 onBeforeUnmount(() => {
@@ -2176,6 +2182,10 @@ onBeforeUnmount(() => {
 
     .editor-container {
       .editor-pane {
+        // 移动端编辑器占一半宽度
+        flex: 0 0 50%;
+        max-width: 50%;
+
         :deep(.cm-editor) {
           .cm-content {
             padding: 12px;
@@ -2184,7 +2194,15 @@ onBeforeUnmount(() => {
       }
 
       .preview-pane {
+        // 移动端预览区占一半宽度
+        flex: 0 0 50%;
+        max-width: 50%;
         padding: 12px;
+
+        // 确保在分屏模式下也显示
+        &:not(.full-width) {
+          display: block !important;
+        }
       }
 
       .toc-pane {
@@ -2393,19 +2411,21 @@ onBeforeUnmount(() => {
 
 // 照片墙弹窗样式
 .photo-dialog-wrap {
+  padding: 4px 0;
+  max-height: 400px;
+  overflow-y: auto;
+
   .photo-rows {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
     margin-bottom: 12px;
-    max-height: 400px;
-    overflow-y: auto;
   }
 
   .photo-row {
-    border: 1px solid #e4e7ed;
+    border: 1px solid #eee;
     border-radius: 4px;
-    padding: 12px;
+    padding: 8px;
   }
 
   .photo-row-header {
@@ -2413,34 +2433,117 @@ onBeforeUnmount(() => {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 8px;
+    font-size: 12px;
+    color: #909399;
   }
 
   .photo-row-actions {
     display: flex;
-    gap: 4px;
+    align-items: center;
+    gap: 2px;
   }
 
   .photo-images {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
   }
 
   .photo-image-item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+
+    .el-input {
+      flex: 1;
+    }
+
+    .el-button {
+      flex-shrink: 0;
+      padding: 4px;
+    }
   }
 
   .photo-image-actions {
     display: flex;
-    gap: 4px;
+    align-items: center;
+    gap: 2px;
   }
 
   .photo-footer {
     display: flex;
     justify-content: space-between;
     gap: 8px;
+  }
+
+  // 移动端适配
+  @media (max-width: 768px) {
+    padding: 2px 0;
+    max-height: 60vh;
+
+    .photo-rows {
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .photo-row {
+      padding: 6px;
+      border-radius: 3px;
+    }
+
+    .photo-row-header {
+      margin-bottom: 6px;
+      font-size: 11px;
+    }
+
+    .photo-row-actions {
+      gap: 1px;
+
+      .el-button {
+        padding: 2px;
+        font-size: 14px;
+      }
+    }
+
+    .photo-images {
+      gap: 4px;
+    }
+
+    .photo-image-item {
+      gap: 4px;
+
+      .el-input {
+        :deep(.el-input__wrapper) {
+          font-size: 12px;
+        }
+
+        :deep(.el-input-group__append) {
+          padding: 0 8px;
+        }
+      }
+
+      .el-button {
+        padding: 2px;
+      }
+    }
+
+    .photo-image-actions {
+      gap: 1px;
+
+      .el-button {
+        padding: 2px;
+        font-size: 14px;
+      }
+    }
+
+    .photo-footer {
+      gap: 6px;
+
+      .el-button {
+        flex: 1;
+        font-size: 12px;
+      }
+    }
   }
 }
 
