@@ -354,7 +354,7 @@ const loadCategories = async () => {
  */
 const loadTags = async () => {
   try {
-    const result = await getTags()
+    const result = await getTags({ page: 1, page_size: 1000 })
     tagList.value = result.list
   } catch (error) {
     console.error('加载标签列表失败:', error)
