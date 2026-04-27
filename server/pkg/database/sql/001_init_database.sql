@@ -316,7 +316,7 @@ COMMENT ON COLUMN rss_articles.update_type IS '更新类型：title-标题已更
 CREATE TABLE IF NOT EXISTS moments (
     id BIGSERIAL PRIMARY KEY,
     content JSONB NOT NULL,
-    is_publish BOOLEAN DEFAULT TRUE,
+    is_publish BOOLEAN,
     publish_time TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
