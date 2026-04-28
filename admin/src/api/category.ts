@@ -9,9 +9,9 @@
 功能描述：API 接口定义 - category
 */
 
-import request from "@/utils/request";
-import type { Category, CategoryListData } from "@/types/category";
-import type { PaginationQuery } from "@/types/request";
+import request from '@/utils/request';
+import type { Category, CategoryListData } from '@/types/category';
+import type { PaginationQuery } from '@/types/request';
 
 /**
  * 获取分类列表
@@ -19,7 +19,7 @@ import type { PaginationQuery } from "@/types/request";
  * @returns Promise<CategoryListData>
  */
 export function getCategories(params?: PaginationQuery): Promise<CategoryListData> {
-  return request.get("/admin/categories", { params });
+  return request.get('/admin/categories', { params });
 }
 
 /**
@@ -37,7 +37,7 @@ export function getCategory(id: number): Promise<Category> {
  * @returns Promise<Category>
  */
 export function createCategory(data: Partial<Category>): Promise<Category> {
-  return request.post("/admin/categories", data);
+  return request.post('/admin/categories', data);
 }
 
 /**

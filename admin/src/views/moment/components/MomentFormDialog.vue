@@ -22,30 +22,57 @@
       <!-- 功能工具栏 -->
       <div class="toolbar">
         <!-- 链接按钮 -->
-        <el-button :type="formData.content.link?.url ? 'primary' : 'default'" :icon="Link" circle
-          @click="linkDialogVisible = true" />
+        <el-button
+          :type="formData.content.link?.url ? 'primary' : 'default'"
+          :icon="Link"
+          circle
+          @click="linkDialogVisible = true"
+        />
 
         <!-- 图片按钮 -->
-        <el-button :type="imageItems.length ? 'primary' : 'default'" :icon="Picture" circle
-          @click="imageDialogVisible = true" />
+        <el-button
+          :type="imageItems.length ? 'primary' : 'default'"
+          :icon="Picture"
+          circle
+          @click="imageDialogVisible = true"
+        />
 
         <!-- 音乐按钮 -->
-        <el-button :type="formData.content.music?.id ? 'primary' : 'default'" :icon="Headset" circle
-          @click="musicDialogVisible = true" />
+        <el-button
+          :type="formData.content.music?.id ? 'primary' : 'default'"
+          :icon="Headset"
+          circle
+          @click="musicDialogVisible = true"
+        />
 
         <!-- 视频按钮 -->
-        <el-button :type="videoItem ? 'primary' : 'default'" :icon="VideoPlay" circle
-          @click="videoDialogVisible = true" />
+        <el-button
+          :type="videoItem ? 'primary' : 'default'"
+          :icon="VideoPlay"
+          circle
+          @click="videoDialogVisible = true"
+        />
 
         <!-- 音频按钮 -->
-        <el-button :type="audioItem ? 'primary' : 'default'" :icon="Microphone" circle
-          @click="audioDialogVisible = true" />
+        <el-button
+          :type="audioItem ? 'primary' : 'default'"
+          :icon="Microphone"
+          circle
+          @click="audioDialogVisible = true"
+        />
       </div>
 
       <!-- 文本输入区域 -->
       <div class="content-area">
-        <el-input v-model="formData.content.text" type="textarea" placeholder="分享你的想法..." :rows="6" maxlength="1000"
-          show-word-limit resize="none" />
+        <el-input
+          v-model="formData.content.text"
+          type="textarea"
+          placeholder="分享你的想法..."
+          :rows="6"
+          maxlength="1000"
+          show-word-limit
+          resize="none"
+        />
       </div>
 
       <!-- 图片预览区域 -->
@@ -62,12 +89,20 @@
 
       <!-- 其他内容预览区域 -->
       <div v-if="otherContentPreviews.length" class="content-preview">
-        <div v-for="preview in otherContentPreviews" :key="preview.type"
-          :class="[`${preview.type}-preview`, preview.type === 'video' ? 'video-preview' : '']">
+        <div
+          v-for="preview in otherContentPreviews"
+          :key="preview.type"
+          :class="[`${preview.type}-preview`, preview.type === 'video' ? 'video-preview' : '']"
+        >
           <!-- 链接类型：显示图标、标题和URL -->
           <template v-if="preview.type === 'link'">
             <div class="content-icon">
-              <img v-if="preview.favicon" :src="preview.favicon" alt="网站图标" class="favicon-icon" />
+              <img
+                v-if="preview.favicon"
+                :src="preview.favicon"
+                alt="网站图标"
+                class="favicon-icon"
+              />
             </div>
             <div class="content-info">
               <div class="preview-title">{{ preview.title }}</div>
@@ -92,7 +127,7 @@
             <div class="content-info">
               <div class="preview-title">
                 {{ preview.title }}
-                <el-tag size="small" style="margin-left: 8px;">{{ preview.musicType }}</el-tag>
+                <el-tag size="small" style="margin-left: 8px">{{ preview.musicType }}</el-tag>
               </div>
               <div class="preview-artist">{{ preview.artist }}</div>
             </div>
@@ -106,9 +141,21 @@
           <template v-else-if="preview.type === 'video'">
             <!-- 网络视频预览（iframe） -->
             <div class="video-preview-container" v-if="!preview.isLocal && preview.url">
-              <iframe :src="preview.url" frameborder="0" scrolling="no" allowfullscreen
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                class="video-iframe"></iframe>
+              <iframe
+                :src="preview.url"
+                frameborder="0"
+                scrolling="no"
+                allowfullscreen
+                allow="
+                  accelerometer;
+                  autoplay;
+                  clipboard-write;
+                  encrypted-media;
+                  gyroscope;
+                  picture-in-picture;
+                "
+                class="video-iframe"
+              ></iframe>
             </div>
             <!-- 本地视频预览（video标签） -->
             <div class="video-local-preview-container" v-else-if="preview.isLocal && preview.url">
@@ -155,19 +202,32 @@
       <!-- 底部工具栏 -->
       <div class="bottom-toolbar">
         <!-- 位置按钮 -->
-        <el-button :type="formData.content.location ? 'primary' : 'default'" :icon="Location" text
-          @click="locationDialogVisible = true">
+        <el-button
+          :type="formData.content.location ? 'primary' : 'default'"
+          :icon="Location"
+          text
+          @click="locationDialogVisible = true"
+        >
           {{ formData.content.location || '发布位置' }}
         </el-button>
 
         <!-- 标签按钮 -->
-        <el-button :type="formData.content.tags ? 'primary' : 'default'" :icon="PriceTag" text
-          @click="tagDialogVisible = true">
+        <el-button
+          :type="formData.content.tags ? 'primary' : 'default'"
+          :icon="PriceTag"
+          text
+          @click="tagDialogVisible = true"
+        >
           {{ formData.content.tags || '分类标签' }}
         </el-button>
 
         <!-- 发布时间按钮 -->
-        <el-button :type="publishTime ? 'primary' : 'default'" :icon="Timer" text @click="timeDialogVisible = true">
+        <el-button
+          :type="publishTime ? 'primary' : 'default'"
+          :icon="Timer"
+          text
+          @click="timeDialogVisible = true"
+        >
           {{ publishTime ? formatTime(publishTime) : '发布时间' }}
         </el-button>
 
@@ -193,17 +253,29 @@
   <!-- 链接Dialog -->
   <el-dialog v-model="linkDialogVisible" title="网站分享" width="90%" style="max-width: 400px">
     <div class="link-form">
-      <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-        <el-input v-model="formData.content.link!.url" placeholder="请输入网站地址" style="flex: 1;" />
+      <div style="display: flex; gap: 8px; margin-bottom: 12px">
+        <el-input
+          v-model="formData.content.link!.url"
+          placeholder="请输入网站地址"
+          style="flex: 1"
+        />
         <el-button type="primary" :loading="fetchingLink" @click="handleParseLink">
           {{ fetchingLink ? '解析中...' : '解析' }}
         </el-button>
       </div>
-      <el-input v-model="formData.content.link!.title" placeholder="网站标题" style="margin-bottom: 12px;" />
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <el-input v-model="formData.content.link!.favicon" placeholder="网站图标" style="flex: 1;" />
+      <el-input
+        v-model="formData.content.link!.title"
+        placeholder="网站标题"
+        style="margin-bottom: 12px"
+      />
+      <div style="display: flex; align-items: center; gap: 8px">
+        <el-input v-model="formData.content.link!.favicon" placeholder="网站图标" style="flex: 1" />
         <div class="favicon-preview">
-          <img v-if="formData.content.link!.favicon" :src="formData.content.link!.favicon" alt="图标" />
+          <img
+            v-if="formData.content.link!.favicon"
+            :src="formData.content.link!.favicon"
+            alt="图标"
+          />
           <span v-else>图标</span>
         </div>
       </div>
@@ -232,7 +304,7 @@
 
       <div v-if="imageItems.length" class="image-url-list">
         <div v-for="(item, index) in imageItems" :key="item.id" class="url-item">
-          <el-input :value="item.url" readonly style="flex: 1;" />
+          <el-input :value="item.url" readonly style="flex: 1" />
           <el-button type="danger" size="small" @click="removeImage(index)">删除</el-button>
         </div>
       </div>
@@ -255,14 +327,18 @@
           搜索
         </el-button>
       </div>
-      <el-select v-model="formData.content.music!.type" placeholder="类型" style="width: 100%; margin-bottom: 12px;">
+      <el-select
+        v-model="formData.content.music!.type"
+        placeholder="类型"
+        style="width: 100%; margin-bottom: 12px"
+      >
         <el-option label="单曲" value="song" />
         <el-option label="歌单" value="playlist" />
         <el-option label="艺术家" value="artist" />
         <el-option label="专辑" value="album" />
       </el-select>
-      <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-        <el-input v-model="formData.content.music!.id" placeholder="音乐ID" style="flex: 1;" />
+      <div style="display: flex; gap: 8px; margin-bottom: 12px">
+        <el-input v-model="formData.content.music!.id" placeholder="音乐ID" style="flex: 1" />
         <el-button type="primary" :loading="fetchingMusic" @click="handleParseMusic">
           {{ fetchingMusic ? '解析中...' : '解析' }}
         </el-button>
@@ -274,11 +350,11 @@
         <div class="music-preview-info">
           <div class="music-preview-title">
             {{ musicInfo.title }}
-            <el-tag size="small" style="margin-left: 8px;">
+            <el-tag size="small" style="margin-left: 8px">
               {{
                 {
                   netease: '网易云',
-                  tencent: 'QQ音乐'
+                  tencent: 'QQ音乐',
                 }[musicInfo.server]
               }}
               ·
@@ -287,7 +363,7 @@
                   song: '单曲',
                   album: '专辑',
                   artist: '艺术家',
-                  playlist: '歌单'
+                  playlist: '歌单',
                 }[musicInfo.type]
               }}
             </el-tag>
@@ -304,7 +380,12 @@
   </el-dialog>
 
   <!-- 音乐搜索Dialog -->
-  <el-dialog v-model="musicSearchDialogVisible" title="搜索网易云音乐" width="90%" style="max-width: 500px">
+  <el-dialog
+    v-model="musicSearchDialogVisible"
+    title="搜索网易云音乐"
+    width="90%"
+    style="max-width: 500px"
+  >
     <div class="music-search-form">
       <div style="display: flex; gap: 8px; margin-bottom: 16px">
         <el-input
@@ -369,7 +450,7 @@
       <div v-if="videoItem" class="video-url-item">
         <el-input
           :value="videoItem.platform && videoItem.video_id ? getVideoIframeSrc(videoItem.platform, videoItem.video_id) : videoItem.url"
-          readonly style="flex: 1;" />
+          readonly style="flex: 1" />
         <el-button type="danger" size="small" @click="removeVideo">删除</el-button>
       </div>
     </div>
@@ -405,8 +486,13 @@
   <!-- 标签Dialog -->
   <el-dialog v-model="tagDialogVisible" title="分类标签" width="90%" style="max-width: 400px">
     <div class="tags-form">
-      <el-input v-model="formData.content.tags" placeholder="输入标签名称" maxlength="20" show-word-limit />
-      <div style="margin-top: 12px; font-size: 12px; color: #999;">
+      <el-input
+        v-model="formData.content.tags"
+        placeholder="输入标签名称"
+        maxlength="20"
+        show-word-limit
+      />
+      <div style="margin-top: 12px; font-size: 12px; color: #999">
         输入一个标签，如：日常、学习、技术等
       </div>
     </div>
@@ -415,8 +501,13 @@
   <!-- 位置Dialog -->
   <el-dialog v-model="locationDialogVisible" title="发布位置" width="90%" style="max-width: 400px">
     <div class="location-form">
-      <el-input v-model="formData.content.location" placeholder="输入位置信息" maxlength="100" show-word-limit />
-      <div style="margin-top: 12px; font-size: 12px; color: #999;">
+      <el-input
+        v-model="formData.content.location"
+        placeholder="输入位置信息"
+        maxlength="100"
+        show-word-limit
+      />
+      <div style="margin-top: 12px; font-size: 12px; color: #999">
         可以输入具体地址、城市或地标名称
       </div>
     </div>
@@ -425,9 +516,15 @@
   <!-- 时间Dialog -->
   <el-dialog v-model="timeDialogVisible" title="发布时间" width="90%" style="max-width: 400px">
     <div class="time-form">
-      <el-date-picker v-model="publishTime" type="datetime" placeholder="选择发布时间" format="YYYY-MM-DD HH:mm"
-        value-format="YYYY-MM-DD HH:mm:ss" style="width: 100%;" />
-      <div style="margin-top: 12px; font-size: 12px; color: #999;">
+      <el-date-picker
+        v-model="publishTime"
+        type="datetime"
+        placeholder="选择发布时间"
+        format="YYYY-MM-DD HH:mm"
+        value-format="YYYY-MM-DD HH:mm:ss"
+        style="width: 100%"
+      />
+      <div style="margin-top: 12px; font-size: 12px; color: #999">
         设置动态显示的发布时间，不设置则使用当前时间
       </div>
     </div>
@@ -444,63 +541,73 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, watch } from 'vue'
-import { ElMessage } from 'element-plus'
-import { Location, Link, Picture, Headset, VideoPlay, PriceTag, Close, Timer, Microphone } from '@element-plus/icons-vue'
-import type { CreateMomentRequest, UpdateMomentRequest, Moment } from '@/types/moment'
-import { createMoment, updateMoment } from '@/api/moment'
-import { fetchLinkInfo, parseVideo, parseMusic } from '@/api/tools'
-import { uploadFile } from '@/api/file'
-import { formatForBackend } from '@/utils/date'
-import FilePickerDialog from '@/components/common/FilePickerDialog.vue'
+import { ref, reactive, computed, watch } from 'vue';
+import { ElMessage } from 'element-plus';
+import {
+  Location,
+  Link,
+  Picture,
+  Headset,
+  VideoPlay,
+  PriceTag,
+  Close,
+  Timer,
+  Microphone,
+} from '@element-plus/icons-vue';
+import type { CreateMomentRequest, UpdateMomentRequest, Moment } from '@/types/moment';
+import { createMoment, updateMoment } from '@/api/moment';
+import { fetchLinkInfo, parseVideo, parseMusic } from '@/api/tools';
+import { uploadFile } from '@/api/file';
+import { formatForBackend } from '@/utils/date';
+import FilePickerDialog from '@/components/common/FilePickerDialog.vue';
 
 const props = defineProps<{
-  modelValue: boolean
-  editMoment?: Moment | null
-}>()
+  modelValue: boolean;
+  editMoment?: Moment | null;
+}>();
 
-const emit = defineEmits(['update:modelValue', 'success'])
+const emit = defineEmits(['update:modelValue', 'success']);
 
 // 基础状态
 const visible = computed({
   get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val)
-})
-const isEdit = computed(() => !!props.editMoment)
-const dialogTitle = computed(() => isEdit.value ? '编辑动态' : '新增动态')
-const submitLoading = ref(false)
-const fetchingLink = ref(false)
-const fetchingVideo = ref(false)
+  set: val => emit('update:modelValue', val),
+});
+const isEdit = computed(() => !!props.editMoment);
+const dialogTitle = computed(() => (isEdit.value ? '编辑动态' : '新增动态'));
+const submitLoading = ref(false);
+const fetchingLink = ref(false);
+const fetchingVideo = ref(false);
 
 // Dialog 显示状态
-const linkDialogVisible = ref(false)
-const imageDialogVisible = ref(false)
-const musicDialogVisible = ref(false)
-const videoDialogVisible = ref(false)
-const audioDialogVisible = ref(false)
-const tagDialogVisible = ref(false)
-const locationDialogVisible = ref(false)
-const timeDialogVisible = ref(false)
+const linkDialogVisible = ref(false);
+const imageDialogVisible = ref(false);
+const musicDialogVisible = ref(false);
+const videoDialogVisible = ref(false);
+const audioDialogVisible = ref(false);
+const tagDialogVisible = ref(false);
+const locationDialogVisible = ref(false);
+const timeDialogVisible = ref(false);
 
 // 文件选择器状态
-const filePickerVisible = ref(false)
-const filePickerPurpose = ref<'image' | 'video'>('image')
+const filePickerVisible = ref(false);
+const filePickerPurpose = ref<'image' | 'video'>('image');
 
 // 其他状态
-const imageUrlInput = ref('')
-const videoUrlInput = ref('')
-const audioUrlInput = ref('')
+const imageUrlInput = ref('');
+const videoUrlInput = ref('');
+const audioUrlInput = ref('');
 
 // 音乐信息
 interface MusicInfo {
-  title: string
-  artist: string
-  pic: string
-  type: 'song' | 'album' | 'artist' | 'playlist'  // 音乐类型
-  server: 'netease' | 'tencent'  // 平台
+  title: string;
+  artist: string;
+  pic: string;
+  type: 'song' | 'album' | 'artist' | 'playlist'; // 音乐类型
+  server: 'netease' | 'tencent'; // 平台
 }
-const musicInfo = ref<MusicInfo | null>(null)
-const fetchingMusic = ref(false)
+const musicInfo = ref<MusicInfo | null>(null);
+const fetchingMusic = ref(false);
 
 // 音乐搜索相关
 interface MusicSearchItem {
@@ -518,30 +625,30 @@ const hasSearched = ref(false);
 
 // 图片数据项
 interface ImageItem {
-  id: string
-  type: 'file' | 'url'
-  file?: File
-  url: string
+  id: string;
+  type: 'file' | 'url';
+  file?: File;
+  url: string;
 }
-const imageItems = ref<ImageItem[]>([])
+const imageItems = ref<ImageItem[]>([]);
 
 // 视频数据项
 interface VideoItem {
-  type: 'file' | 'url'
-  file?: File
-  url: string
-  platform?: string  // 视频平台
-  video_id?: string  // 视频ID
+  type: 'file' | 'url';
+  file?: File;
+  url: string;
+  platform?: string; // 视频平台
+  video_id?: string; // 视频ID
 }
-const videoItem = ref<VideoItem | null>(null)
+const videoItem = ref<VideoItem | null>(null);
 
 // 音频数据项
 interface AudioItem {
-  type: 'file' | 'url'
-  file?: File
-  url: string
+  type: 'file' | 'url';
+  file?: File;
+  url: string;
 }
-const audioItem = ref<AudioItem | null>(null)
+const audioItem = ref<AudioItem | null>(null);
 
 // 表单数据
 const formData = reactive<CreateMomentRequest>({
@@ -553,90 +660,98 @@ const formData = reactive<CreateMomentRequest>({
     audio: { url: '' },
     music: { server: 'netease', type: 'song', id: '' },
     link: { url: '', title: '', favicon: '' },
-    location: ''
+    location: '',
   },
-  is_publish: true
-})
-const publishTime = ref('')
+  is_publish: true,
+});
+const publishTime = ref('');
 
 // 计算属性
 const hasContent = computed(() =>
   formData.content.link?.url || imageItems.value.length ||
   formData.content.music?.id || videoItem.value
-)
+);
 
 const otherContentPreviews = computed(() => {
-  const previews = []
+  const previews = [];
   if (formData.content.link?.url) {
     previews.push({
       type: 'link',
       favicon: formData.content.link.favicon || null,
       title: formData.content.link.title || formData.content.link.url,
-      url: formData.content.link.url
-    })
+      url: formData.content.link.url,
+    });
   }
   if (formData.content.music?.id) {
     const MUSIC_LABELS = {
-      type: { song: '单曲', album: '专辑', artist: '艺术家', playlist: '歌单' },
-      server: { netease: '网易云', tencent: 'QQ音乐' }
-    }
+      type: {
+        song: '单曲',
+        album: '专辑',
+        artist: '艺术家',
+        playlist: '歌单',
+      },
+      server: {
+        netease: '网易云',
+        tencent: 'QQ音乐',
+      },
+    };
 
-    const music = formData.content.music
-    const info = musicInfo.value
-    const typeLabel = info?.type ? MUSIC_LABELS.type[info.type] : music.type
-    const serverLabel = info?.server ? MUSIC_LABELS.server[info.server] : music.server
+    const music = formData.content.music;
+    const info = musicInfo.value;
+    const typeLabel = info?.type ? MUSIC_LABELS.type[info.type] : music.type;
+    const serverLabel = info?.server ? MUSIC_LABELS.server[info.server] : music.server;
 
     previews.push({
       type: 'music',
       title: info?.title || '未知歌曲',
       artist: info?.artist || `${music.server} - ${music.type}`,
       cover: info?.pic || '',
-      musicType: info ? `${serverLabel} · ${typeLabel}` : `${music.server} - ${music.type}`
-    })
+      musicType: info ? `${serverLabel} · ${typeLabel}` : `${music.server} - ${music.type}`,
+    });
   }
   if (videoItem.value) {
-    const { platform, video_id, url, file, type } = videoItem.value
+    const { platform, video_id, url, file } = videoItem.value;
     previews.push({
       type: 'video',
       url: platform && video_id ? getVideoIframeSrc(platform, video_id) : url,
-      isLocal: type === 'file' || !platform,
-      text: file?.name || '视频'
-    })
+      isLocal: !platform,
+      text: file?.name || '视频',
+    });
   }
   if (audioItem.value) {
-    const { url, file } = audioItem.value
+    const { url, file } = audioItem.value;
     previews.push({
       type: 'audio',
       url,
-      text: file?.name || '音频'
-    })
+      text: file?.name || '音频',
+    });
   }
-  return previews
-})
+  return previews;
+});
 
 // 工具方法
 const formatTime = (time: string) => {
-  if (!time) return ''
-  const date = new Date(time)
-  const now = new Date()
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  const targetDay = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+  if (!time) return '';
+  const date = new Date(time);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const targetDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
   if (targetDay.getTime() === today.getTime()) {
-    return `今天 ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+    return `今天 ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
   } else {
-    return `${date.getMonth() + 1}-${date.getDate()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+    return `${date.getMonth() + 1}-${date.getDate()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
   }
-}
+};
 
 const resetForm = () => {
   // 清理所有 Blob URLs
-  imageItems.value.forEach(cleanupBlobUrl)
-  imageItems.value = []
-  cleanupVideoBlob()
-  videoItem.value = null
-  cleanupAudioBlob()
-  audioItem.value = null
+  imageItems.value.forEach(cleanupBlobUrl);
+  imageItems.value = [];
+  cleanupVideoBlob();
+  videoItem.value = null;
+  cleanupAudioBlob();
+  audioItem.value = null;
 
   Object.assign(formData, {
     content: {
@@ -647,87 +762,93 @@ const resetForm = () => {
       audio: { url: '' },
       music: { server: 'netease', type: 'song', id: '' },
       link: { url: '', title: '', favicon: '' },
-      location: ''
+      location: '',
     },
-    is_publish: true
-  })
-  publishTime.value = ''
-  imageUrlInput.value = ''
-  videoUrlInput.value = ''
-  audioUrlInput.value = ''
-  musicInfo.value = null
+    is_publish: true,
+  });
+  publishTime.value = '';
+  imageUrlInput.value = '';
+  videoUrlInput.value = '';
+  audioUrlInput.value = '';
+  musicInfo.value = null;
 
   // 重置音乐搜索状态
-  musicSearchDialogVisible.value = false
-  musicSearchKeyword.value = ''
-  musicSearchResults.value = []
-  hasSearched.value = false
+  musicSearchDialogVisible.value = false;
+  musicSearchKeyword.value = '';
+  musicSearchResults.value = [];
+  hasSearched.value = false;
 
   // 关闭所有dialog
-  linkDialogVisible.value = false
-  imageDialogVisible.value = false
-  musicDialogVisible.value = false
-  videoDialogVisible.value = false
-  audioDialogVisible.value = false
-  tagDialogVisible.value = false
-  locationDialogVisible.value = false
-  timeDialogVisible.value = false
-}
+  linkDialogVisible.value = false;
+  imageDialogVisible.value = false;
+  musicDialogVisible.value = false;
+  videoDialogVisible.value = false;
+  audioDialogVisible.value = false;
+  tagDialogVisible.value = false;
+  locationDialogVisible.value = false;
+  timeDialogVisible.value = false;
+};
 
 // 链接解析函数
 const handleParseLink = async () => {
   if (!formData.content.link?.url?.trim()) {
-    ElMessage.warning('请先输入链接地址')
-    return
+    ElMessage.warning('请先输入链接地址');
+    return;
   }
 
-  fetchingLink.value = true
+  fetchingLink.value = true;
   try {
-    const result = await fetchLinkInfo({ url: formData.content.link.url.trim() })
+    const result = await fetchLinkInfo({
+      url: formData.content.link.url.trim(),
+    });
     if (formData.content.link) {
-      formData.content.link.title = result.title || ''
-      formData.content.link.favicon = result.favicon || ''
+      formData.content.link.title = result.title || '';
+      formData.content.link.favicon = result.favicon || '';
     }
-    ElMessage.success('解析成功')
-  } catch (error) {
-    ElMessage.error('解析失败，请手动填写信息')
+    ElMessage.success('解析成功');
+  } catch (_error) {
+    ElMessage.error('解析失败，请手动填写信息');
   } finally {
-    fetchingLink.value = false
+    fetchingLink.value = false;
   }
-}
+};
 
 // 音乐解析函数
 const handleParseMusic = async () => {
-  if (!formData.content.music?.server || !formData.content.music?.type || !formData.content.music?.id) {
-    ElMessage.warning('请先填写音乐平台、类型和ID')
-    return
+  if (
+    !formData.content.music?.server ||
+    !formData.content.music?.type ||
+    !formData.content.music?.id
+  ) {
+    ElMessage.warning('请先填写音乐平台、类型和ID');
+    return;
   }
 
-  fetchingMusic.value = true
+  fetchingMusic.value = true;
   try {
-    const { server, type, id } = formData.content.music
+    const { server, type, id } = formData.content.music;
     const data = await parseMusic({ server, type, id })
 
     if (data && data.length > 0) {
-      const info = data[0]
+      const info = data[0];
       musicInfo.value = {
         title: info.name || info.title || '未知歌曲',
         artist: info.artist || info.author || '未知艺术家',
         pic: info.pic || info.cover || '',
         type: type as 'song' | 'album' | 'artist' | 'playlist',
-        server: server as 'netease' | 'tencent'
-      }
-      ElMessage.success('解析成功')
+        server: server as 'netease' | 'tencent',
+      };
+      ElMessage.success('解析成功');
     } else {
-      throw new Error('未获取到音乐信息')
+      throw new Error('未获取到音乐信息');
     }
-  } catch (error) {
-    ElMessage.error('解析失败，请检查音乐ID是否正确')
-    musicInfo.value = null
+  } catch (_error) {
+    ElMessage.error('解析失败，请检查音乐ID是否正确');
+    musicInfo.value = null;
   } finally {
-    fetchingMusic.value = false
+    fetchingMusic.value = false;
   }
-}
+};
 
 /**
  * 从URL中提取音乐ID
@@ -804,37 +925,37 @@ const selectMusic = (item: MusicSearchItem) => {
 
 // 本地上传图片
 const handleImageUpload = () => {
-  const input = document.createElement('input')
-  input.type = 'file'
-  input.accept = 'image/*'
-  input.multiple = true
-  input.onchange = (e) => {
-    const files = (e.target as HTMLInputElement).files
-    if (!files) return
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.multiple = true;
+  input.onchange = e => {
+    const files = (e.target as HTMLInputElement).files;
+    if (!files) return;
 
     Array.from(files).forEach(file => {
       imageItems.value.push({
         id: `${Date.now()}-${Math.random()}`,
         type: 'file',
         file,
-        url: URL.createObjectURL(file)
-      })
-    })
-  }
-  input.click()
-}
+        url: URL.createObjectURL(file),
+      });
+    });
+  };
+  input.click();
+};
 
 // 打开文件选择器（图片）
 const handleImagePicker = () => {
-  filePickerPurpose.value = 'image'
-  filePickerVisible.value = true
-}
+  filePickerPurpose.value = 'image';
+  filePickerVisible.value = true;
+};
 
 // 打开文件选择器（视频）
 const handleVideoPicker = () => {
-  filePickerPurpose.value = 'video'
-  filePickerVisible.value = true
-}
+  filePickerPurpose.value = 'video';
+  filePickerVisible.value = true;
+};
 
 // 文件选择器回调（多选）
 const handleFileSelect = (files: any[]) => {
@@ -843,121 +964,119 @@ const handleFileSelect = (files: any[]) => {
       imageItems.value.push({
         id: `${Date.now()}-${Math.random()}`,
         type: 'url',
-        url: file.file_url
+        url: file.file_url,
       })
-    })
+    });
   } else if (filePickerPurpose.value === 'video') {
     if (files.length > 0) {
-      cleanupVideoBlob()
+      cleanupVideoBlob();
       videoItem.value = {
         type: 'url',
-        url: files[0].file_url
-      }
-      console.log('选择的视频文件:', files[0])
-      console.log('设置的 videoItem:', videoItem.value)
+        url: files[0].file_url,
+      };
     }
   }
-  filePickerVisible.value = false
+  filePickerVisible.value = false;
 }
 
 // 文件选择器回调（单选）
 const handleFileSingleSelect = (file: any) => {
   if (filePickerPurpose.value === 'video') {
-    cleanupVideoBlob()
+    cleanupVideoBlob();
     videoItem.value = {
       type: 'url',
-      url: file.file_url
-    }
-    console.log('选择的视频文件:', file)
-    console.log('设置的 videoItem:', videoItem.value)
+      url: file.file_url,
+    };
   }
-  filePickerVisible.value = false
+  filePickerVisible.value = false;
 }
 
 // 添加网络图片
 const addImageUrl = () => {
-  const url = imageUrlInput.value.trim()
-  if (!url) return
+  const url = imageUrlInput.value.trim();
+  if (!url) return;
 
   imageItems.value.push({
     id: `${Date.now()}-${Math.random()}`,
     type: 'url',
-    url
-  })
-  imageUrlInput.value = ''
-}
+    url,
+  });
+  imageUrlInput.value = '';
+};
 
 // 视频平台配置
 const VIDEO_PLATFORMS = {
   bilibili: {
     name: '哔哩哔哩',
-    getIframeSrc: (id: string) => `//player.bilibili.com/player.html?isOutside=true&bvid=${id}&p=1`
+    getIframeSrc: (id: string) => `//player.bilibili.com/player.html?isOutside=true&bvid=${id}&p=1`,
   },
   youtube: {
     name: 'YouTube',
-    getIframeSrc: (id: string) => `//www.youtube.com/embed/${id}`
-  }
-} as const
+    getIframeSrc: (id: string) => `//www.youtube.com/embed/${id}`,
+  },
+} as const;
 
-const getPlatformName = (platform: string) => VIDEO_PLATFORMS[platform as keyof typeof VIDEO_PLATFORMS]?.name || platform
-const getVideoIframeSrc = (platform: string, videoId: string) => VIDEO_PLATFORMS[platform as keyof typeof VIDEO_PLATFORMS]?.getIframeSrc(videoId) || ''
+const getPlatformName = (platform: string) =>
+  VIDEO_PLATFORMS[platform as keyof typeof VIDEO_PLATFORMS]?.name || platform;
+const getVideoIframeSrc = (platform: string, videoId: string) =>
+  VIDEO_PLATFORMS[platform as keyof typeof VIDEO_PLATFORMS]?.getIframeSrc(videoId) || '';
 
 // 清理旧的视频Blob URL
 const cleanupVideoBlob = () => {
   if (videoItem.value?.type === 'file' && videoItem.value.url.startsWith('blob:')) {
-    URL.revokeObjectURL(videoItem.value.url)
+    URL.revokeObjectURL(videoItem.value.url);
   }
-}
+};
 
 // 本地上传视频
 const handleVideoUpload = () => {
-  const input = document.createElement('input')
-  input.type = 'file'
-  input.accept = 'video/*'
-  input.onchange = (e) => {
-    const file = (e.target as HTMLInputElement).files?.[0]
-    if (!file) return
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'video/*';
+  input.onchange = e => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
 
-    cleanupVideoBlob()
+    cleanupVideoBlob();
     videoItem.value = {
       type: 'file',
       file,
-      url: URL.createObjectURL(file)
-    }
-  }
-  input.click()
-}
+      url: URL.createObjectURL(file),
+    };
+  };
+  input.click();
+};
 
 // 添加网络视频
 const addVideoUrl = async () => {
-  const url = videoUrlInput.value.trim()
-  if (!url) return
+  const url = videoUrlInput.value.trim();
+  if (!url) return;
 
-  fetchingVideo.value = true
+  fetchingVideo.value = true;
   try {
-    const result = await parseVideo({ url })
-    cleanupVideoBlob()
+    const result = await parseVideo({ url });
+    cleanupVideoBlob();
 
     videoItem.value = {
       type: 'url',
       url,
       platform: result.platform,
-      video_id: result.video_id
-    }
-    videoUrlInput.value = ''
-    ElMessage.success(`已识别：${getPlatformName(result.platform)} - ${result.video_id}`)
-  } catch (error) {
-    ElMessage.error('无法识别的视频链接，请检查URL格式')
+      video_id: result.video_id,
+    };
+    videoUrlInput.value = '';
+    ElMessage.success(`已识别：${getPlatformName(result.platform)} - ${result.video_id}`);
+  } catch (_error) {
+    ElMessage.error('无法识别的视频链接，请检查URL格式');
   } finally {
-    fetchingVideo.value = false
+    fetchingVideo.value = false;
   }
-}
+};
 
 // 删除视频
 const removeVideo = () => {
-  cleanupVideoBlob()
-  videoItem.value = null
-}
+  cleanupVideoBlob();
+  videoItem.value = null;
+};
 
 // 清理旧的音频Blob URL
 const cleanupAudioBlob = () => {
@@ -1007,188 +1126,204 @@ const removeAudio = () => {
 // 清理 Blob URL
 const cleanupBlobUrl = (item: ImageItem) => {
   if (item.type === 'file' && item.url.startsWith('blob:')) {
-    URL.revokeObjectURL(item.url)
+    URL.revokeObjectURL(item.url);
   }
-}
+};
 
 // 删除图片（Dialog和预览区域共用）
 const removeImage = (index: number) => {
-  const item = imageItems.value[index]
-  if (!item) return
-  cleanupBlobUrl(item)
-  imageItems.value.splice(index, 1)
-}
+  const item = imageItems.value[index];
+  if (!item) return;
+  cleanupBlobUrl(item);
+  imageItems.value.splice(index, 1);
+};
 
 const handleImageError = (e: Event) => {
-  const target = e.target as HTMLImageElement
-  const parent = target.parentElement!
-  target.style.display = 'none'
-  parent.style.display = 'flex'
-  parent.style.alignItems = 'center'
-  parent.style.justifyContent = 'center'
-  parent.innerHTML = '<span style="color: #c0c4cc; font-size: 12px;">加载失败</span>'
-}
+  const target = e.target as HTMLImageElement;
+  const parent = target.parentElement!;
+  target.style.display = 'none';
+  parent.style.display = 'flex';
+  parent.style.alignItems = 'center';
+  parent.style.justifyContent = 'center';
+  parent.innerHTML = '<span style="color: #c0c4cc; font-size: 12px;">加载失败</span>';
+};
 
 // 移除内容
 const removeContent = (type: string) => {
   const removeMap = {
-    link: () => { formData.content.link = { url: '', title: '', favicon: '' } },
-    images: () => { formData.content.images = [] },
-    music: () => {
-      formData.content.music = { server: 'netease', type: 'song', id: '' }
-      musicInfo.value = null
+    link: () => {
+      formData.content.link = { url: '', title: '', favicon: '' };
     },
-    video: () => { removeVideo() },
-    audio: () => { removeAudio() }
-  }
-  removeMap[type as keyof typeof removeMap]?.()
-}
+    images: () => {
+      formData.content.images = [];
+    },
+    music: () => {
+      formData.content.music = { server: 'netease', type: 'song', id: '' };
+      musicInfo.value = null;
+    },
+    video: () => {
+      removeVideo();
+    },
+    audio: () => {
+      removeAudio();
+    },
+  };
+  removeMap[type as keyof typeof removeMap]?.();
+};
 
 // 监听器
-watch(() => props.editMoment, (moment) => {
-  resetForm()
-  if (moment) {
-    Object.assign(formData.content, moment.content)
-    formData.is_publish = moment.is_publish
-    publishTime.value = moment.publish_time || ''
+watch(
+  () => props.editMoment,
+  moment => {
+    resetForm();
+    if (moment) {
+      Object.assign(formData.content, moment.content);
+      formData.is_publish = moment.is_publish;
+      publishTime.value = moment.publish_time || '';
 
-    // 加载已有图片（编辑时）
-    if (moment.content.images?.length) {
-      imageItems.value = moment.content.images.map(url => ({
-        id: `${Date.now()}-${Math.random()}`,
-        type: 'url' as const,
-        url: url
-      }))
-    }
+      // 加载已有图片（编辑时）
+      if (moment.content.images?.length) {
+        imageItems.value = moment.content.images.map(url => ({
+          id: `${Date.now()}-${Math.random()}`,
+          type: 'url' as const,
+          url: url,
+        }));
+      }
 
-    // 加载已有视频（编辑时）
-    if (moment.content.video?.url) {
-      videoItem.value = {
-        type: 'url' as const,
-        url: moment.content.video.url,
-        platform: moment.content.video.platform,
-        video_id: moment.content.video.video_id
+      // 加载已有视频（编辑时）
+      if (moment.content.video?.url) {
+        videoItem.value = {
+          type: 'url' as const,
+          url: moment.content.video.url,
+          platform: moment.content.video.platform,
+          video_id: moment.content.video.video_id,
+        };
+      }
+
+      // 加载已有音频（编辑时）
+      if (moment.content.audio?.url) {
+        audioItem.value = {
+          type: 'url' as const,
+          url: moment.content.audio.url,
+        };
       }
     }
-
-    // 加载已有音频（编辑时）
-    if (moment.content.audio?.url) {
-      audioItem.value = {
-        type: 'url' as const,
-        url: moment.content.audio.url
-      }
-    }
-  }
-}, { immediate: true })
+  },
+  { immediate: true }
+);
 
 // 上传图片（本地文件上传，网络图片直接使用）
 const uploadImages = async (): Promise<string[]> => {
-  const uploadPromises = imageItems.value.map(async (item) => {
+  const uploadPromises = imageItems.value.map(async item => {
     if (item.type === 'file' && item.file) {
-      const result = await uploadFile(item.file, '') // 上传时不标记用途，保存时才标记
-      return result.file_url
+      const result = await uploadFile(item.file, ''); // 上传时不标记用途，保存时才标记
+      return result.file_url;
     }
-    return item.url
-  })
+    return item.url;
+  });
 
-  return Promise.all(uploadPromises)
-}
+  return Promise.all(uploadPromises);
+};
 
 // 上传视频（本地文件上传，网络视频直接使用）
 const uploadVideo = async (): Promise<string | null> => {
-  if (!videoItem.value) return null
+  if (!videoItem.value) return null;
 
   if (videoItem.value.type === 'file' && videoItem.value.file) {
-    const result = await uploadFile(videoItem.value.file, '') // 上传时不标记用途，保存时才标记
-    return result.file_url
+    const result = await uploadFile(videoItem.value.file, ''); // 上传时不标记用途，保存时才标记
+    return result.file_url;
   }
 
-  return videoItem.value.url
-}
+  return videoItem.value.url;
+};
 
 // 上传音频（本地文件上传，网络音频直接使用）
 const uploadAudio = async (): Promise<string | null> => {
-  if (!audioItem.value) return null
+  if (!audioItem.value) return null;
 
   if (audioItem.value.type === 'file' && audioItem.value.file) {
-    const result = await uploadFile(audioItem.value.file, '') // 上传时不标记用途，保存时才标记
-    return result.file_url
+    const result = await uploadFile(audioItem.value.file, ''); // 上传时不标记用途，保存时才标记
+    return result.file_url;
   }
 
-  return audioItem.value.url
-}
+  return audioItem.value.url;
+};
 
 // 提交表单
 const handleCancel = () => {
-  visible.value = false
-  resetForm()
-}
+  visible.value = false;
+  resetForm();
+};
 
 const handleSubmit = async () => {
-  submitLoading.value = true
+  submitLoading.value = true;
   try {
     // 上传图片
-    const uploadedImages = imageItems.value.length ? await uploadImages() : []
+    const uploadedImages = imageItems.value.length ? await uploadImages() : [];
 
     // 上传视频
-    const uploadedVideo = await uploadVideo()
+    const uploadedVideo = await uploadVideo();
 
     // 上传音频
-    const uploadedAudio = await uploadAudio()
+    const uploadedAudio = await uploadAudio();
 
     // 清理数据，只传递有值的字段
-    const content: any = {}
-    if (formData.content.text?.trim()) content.text = formData.content.text.trim()
-    if (formData.content.tags?.trim()) content.tags = formData.content.tags.trim()
-    if (uploadedImages.length) content.images = uploadedImages
-    if (formData.content.location?.trim()) content.location = formData.content.location.trim()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const content: any = {};
+    if (formData.content.text?.trim()) content.text = formData.content.text.trim();
+    if (formData.content.tags?.trim()) content.tags = formData.content.tags.trim();
+    if (uploadedImages.length) content.images = uploadedImages;
+    if (formData.content.location?.trim()) content.location = formData.content.location.trim();
 
     // 复杂对象只在有主要字段时才添加
     if (uploadedVideo?.trim()) {
-      content.video = { url: uploadedVideo.trim() }
+      content.video = { url: uploadedVideo.trim() };
       // 如果是网络视频且已解析出平台和ID，一并发送
       if (videoItem.value?.platform && videoItem.value?.video_id) {
-        content.video.platform = videoItem.value.platform
-        content.video.video_id = videoItem.value.video_id
+        content.video.platform = videoItem.value.platform;
+        content.video.video_id = videoItem.value.video_id;
       }
     }
     if (uploadedAudio?.trim()) {
-      content.audio = { url: uploadedAudio.trim() }
+      content.audio = { url: uploadedAudio.trim() };
     }
     if (formData.content.music?.id?.trim()) {
       content.music = {
         server: formData.content.music.server,
         type: formData.content.music.type,
-        id: formData.content.music.id.trim()
-      }
+        id: formData.content.music.id.trim(),
+      };
     }
     if (formData.content.link?.url?.trim()) {
-      content.link = { url: formData.content.link.url.trim() }
-      if (formData.content.link.title?.trim()) content.link.title = formData.content.link.title.trim()
-      if (formData.content.link.favicon?.trim()) content.link.favicon = formData.content.link.favicon.trim()
+      content.link = { url: formData.content.link.url.trim() };
+      if (formData.content.link.title?.trim())
+        content.link.title = formData.content.link.title.trim();
+      if (formData.content.link.favicon?.trim())
+        content.link.favicon = formData.content.link.favicon.trim();
     }
 
-    const saveData: any = { content, is_publish: formData.is_publish }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const saveData: any = { content, is_publish: formData.is_publish };
     // 如果没有设置发布时间，使用当前时间
-    saveData.publish_time = publishTime.value || formatForBackend(new Date())
+    saveData.publish_time = publishTime.value || formatForBackend(new Date());
 
     if (isEdit.value && props.editMoment) {
-      await updateMoment(props.editMoment.id, saveData as UpdateMomentRequest)
-      ElMessage.success('更新成功')
+      await updateMoment(props.editMoment.id, saveData as UpdateMomentRequest);
+      ElMessage.success('更新成功');
     } else {
-      await createMoment(saveData as CreateMomentRequest)
-      ElMessage.success('创建成功')
+      await createMoment(saveData as CreateMomentRequest);
+      ElMessage.success('创建成功');
     }
 
-    visible.value = false
-    resetForm()
-    emit('success')
+    visible.value = false;
+    resetForm();
+    emit('success');
   } catch (error) {
-    if (error instanceof Error) ElMessage.error(error.message)
+    if (error instanceof Error) ElMessage.error(error.message);
   } finally {
-    submitLoading.value = false
+    submitLoading.value = false;
   }
-}
+};
 </script>
 
 <style scoped lang="scss">
@@ -1258,7 +1393,7 @@ const handleSubmit = async () => {
     background-color: #f8f9fa;
     border-radius: 8px;
 
-    >div {
+    > div {
       display: flex;
       align-items: center;
       gap: 12px;
@@ -1445,6 +1580,10 @@ const handleSubmit = async () => {
       color: #c0c4cc;
       text-align: center;
     }
+  }
+
+  .el-button {
+    margin-left: 0;
   }
 }
 

@@ -3,7 +3,7 @@
 
 // 亮色主题（默认）
 :root,
-[data-theme="light"] {
+[data-theme='light'] {
   // 文本颜色
   --prose-text: #4c4948;
   --prose-heading: #2c3e50;
@@ -28,11 +28,7 @@
   --prose-codeblock-line-border: #d1d5da;
 
   // 引用块颜色
-  --prose-quote-bg: linear-gradient(
-    to right,
-    rgba(73, 177, 245, 0.05),
-    transparent
-  );
+  --prose-quote-bg: linear-gradient(to right, rgba(73, 177, 245, 0.05), transparent);
   --prose-quote-border: #49b1f5;
   --prose-quote-text: #5a6c7d;
 
@@ -84,7 +80,7 @@
 }
 
 // 暗色主题
-[data-theme="dark"] {
+[data-theme='dark'] {
   // 文本颜色
   --prose-text: #ffffffb3;
   --prose-heading: #e0e0e0;
@@ -109,11 +105,7 @@
   --prose-codeblock-line-border: #444;
 
   // 引用块颜色
-  --prose-quote-bg: linear-gradient(
-    to right,
-    rgba(73, 177, 245, 0.08),
-    transparent
-  );
+  --prose-quote-bg: linear-gradient(to right, rgba(73, 177, 245, 0.08), transparent);
   --prose-quote-border: #49b1f5;
   --prose-quote-text: #b8b8b8;
 
@@ -167,8 +159,14 @@
 // ========== Markdown 内容排版样式 ==========
 .markdown-content {
   // ===== 基础设置 =====
-  font-family: "LXGWWenKaiLite", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Helvetica Neue", sans-serif;
+  font-family:
+    'LXGWWenKaiLite',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'Roboto',
+    'Helvetica Neue',
+    sans-serif;
   font-size: 1rem;
   line-height: 1.8;
   color: var(--prose-text);
@@ -258,8 +256,8 @@
     }
 
     // 外部链接图标
-    &[target="_blank"]::after {
-      content: "↗";
+    &[target='_blank']::after {
+      content: '↗';
       margin-left: 0.2em;
       font-size: 0.8em;
       opacity: 0.6;
@@ -311,13 +309,13 @@
 
     // 任务列表
     &.task-list-item,
-    &:has(> input[type="checkbox"]) {
+    &:has(> input[type='checkbox']) {
       list-style-type: none;
       margin-left: -1.5em;
     }
 
     // 任务列表复选框样式
-    input[type="checkbox"] {
+    input[type='checkbox'] {
       margin-right: 0.5em;
       pointer-events: none;
     }
@@ -368,7 +366,7 @@
       font-style: italic;
 
       &::before {
-        content: "—— ";
+        content: '—— ';
       }
     }
   }
@@ -382,7 +380,7 @@
     background-color: var(--prose-code-bg);
     border: 1px solid var(--prose-code-border);
     border-radius: 4px;
-    font-family: "Consolas", "Monaco", "Courier New", monospace;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
     color: var(--prose-code-text);
     font-weight: 500;
   }
@@ -417,7 +415,9 @@
           font-size: 24px;
           font-style: normal;
           color: var(--prose-codeblock-lang);
-          transition: color 0.2s ease, transform 0.3s ease;
+          transition:
+            color 0.2s ease,
+            transform 0.3s ease;
         }
 
         &:hover i {
@@ -468,14 +468,12 @@
         display: block;
         padding: 1em;
         overflow-x: auto;
-        overflow-y: auto;
-        max-height: 500px;
         background: none;
         border: none;
         color: var(--prose-codeblock-text);
         line-height: 1.45;
         font-size: 0.875em;
-        font-family: "Consolas", "Monaco", "Courier New", monospace;
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
 
         .line-number {
           display: inline-block;
@@ -561,7 +559,7 @@
 
     // 中间装饰 - 三段（中间方块，两边长条）
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       left: 50%;
       top: 50%;
@@ -573,7 +571,7 @@
     }
 
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       left: 50%;
       top: 50%;
@@ -581,8 +579,10 @@
       width: 20px;
       height: 2px;
       background: var(--prose-hr-dot);
-      box-shadow: -32px 0 0 0 var(--prose-hr-dot),
-        32px 0 0 0 var(--prose-hr-dot), 0 0 0 3px var(--prose-hr-shadow),
+      box-shadow:
+        -32px 0 0 0 var(--prose-hr-dot),
+        32px 0 0 0 var(--prose-hr-dot),
+        0 0 0 3px var(--prose-hr-shadow),
         -32px 0 0 3px var(--prose-hr-shadow),
         32px 0 0 3px var(--prose-hr-shadow);
     }
@@ -653,7 +653,7 @@
 
   // 标记/高亮
   mark {
-    background: var(--prose-mark-bg);
+    background: linear-gradient(to bottom, transparent 50%, var(--prose-mark-bg) 50%);
     padding: 0.1em 0.2em;
     border-radius: 2px;
     color: inherit;
@@ -681,11 +681,12 @@
     display: inline-block;
     padding: 0.2em 0.5em;
     font-size: 0.875em;
-    font-family: "Consolas", "Monaco", monospace;
+    font-family: 'Consolas', 'Monaco', monospace;
     background: var(--prose-kbd-bg);
     border: 1px solid var(--prose-kbd-border);
     border-radius: 4px;
-    box-shadow: 0 2px 0 var(--prose-kbd-shadow),
+    box-shadow:
+      0 2px 0 var(--prose-kbd-shadow),
       inset 0 1px 0 var(--prose-kbd-inner-shadow);
     color: var(--prose-kbd-text);
     white-space: nowrap;
@@ -696,6 +697,53 @@
     text-decoration: underline dotted;
     cursor: help;
     text-decoration-color: var(--prose-link);
+  }
+
+  // ===== KaTeX 数学公式 =====
+  // 行内公式
+  .katex-inline {
+    display: inline;
+  }
+
+  // 块级公式（独立行展示）
+  .katex-block {
+    display: block;
+    margin: 1.5rem 0;
+    text-align: center;
+    overflow-x: auto;
+    padding: 0.5rem 0;
+
+    .katex {
+      font-size: 1.15em;
+    }
+  }
+
+  // 行内公式中的 katex 容器
+  .katex {
+    font-size: 1em;
+    line-height: 1.6;
+  }
+
+  // 确保公式在暗色主题下可见
+  .katex .base {
+    color: inherit;
+  }
+
+  // MathML 辅助（屏幕阅读器用，视觉上隐藏）
+  .katex .katex-mathml {
+    position: absolute;
+    clip: rect(1px, 1px, 1px, 1px);
+    padding: 0;
+    border: 0;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+  }
+
+  // 公式错误提示样式
+  .katex-error {
+    color: #cc0000;
+    font-style: italic;
   }
 
   // ===== 响应式调整 =====
@@ -1107,176 +1155,24 @@
     }
   }
 
-  // ===== 自定义块响应式调整 =====
-  @media (max-width: 768px) {
-    .custom-note {
-      padding: 0.875em 1em;
-    }
-
-    .custom-tabs {
-      padding: 10px;
-
-      .custom-tabs-header {
-        flex-wrap: wrap;
-        gap: 6px;
-        padding-bottom: 10px;
-
-        button {
-          padding: 5px 12px;
-          font-size: 0.85rem;
-        }
-      }
-    }
-
-    .custom-fold {
-      .custom-fold-header {
-        padding: 8px 12px;
-      }
-
-      .custom-fold-content > div {
-        padding: 0 12px 12px;
-      }
-    }
-
-    .custom-link-card {
-      .custom-link-type {
-        padding: 5px 12px;
-        font-size: 0.7em;
-      }
-
-      .custom-link-main {
-        padding: 10px 12px;
-        gap: 10px;
-      }
-
-      .custom-link-icon {
-        width: 40px;
-        height: 40px;
-
-        i {
-          font-size: 1.4em;
-        }
-      }
-
-      .custom-link-title {
-        font-size: 0.95em;
-      }
-
-      .custom-link-desc {
-        font-size: 0.8em;
-      }
-    }
-  }
-
-  // ===== 照片展示墙 =====
-  .custom-photo-wall {
-    margin: 1em 0;
-    border-radius: 8px;
-    overflow-x: auto;
-  }
-
-  .custom-photo-wall-container {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .custom-photo-wall-row {
-    display: flex;
-    align-items: stretch;
-    flex-wrap: nowrap;
-  }
-
-  .custom-photo-wall-item {
-    flex: 1 1 0;
-    min-width: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 5px;
-    height: 100%;
-  }
-
-  .custom-photo-wall-item img {
-    margin: 0;
-    display: block;
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    cursor: pointer;
-    border-radius: 6px;
-    background: rgba(249, 250, 251, 0.8);
-    aspect-ratio: auto;
-  }
-
-  // ===== KaTeX 数学公式 =====
-  // 行内公式
-  .katex-inline {
-    display: inline;
-  }
-
-  // 块级公式（独立行展示）
-  .katex-block {
-    display: block;
-    margin: 1.5rem 0;
-    text-align: center;
-    overflow-x: auto;
-    padding: 0.5rem 0;
-
-    .katex {
-      font-size: 1.15em;
-    }
-  }
-
-  // 行内公式中的 katex 容器
-  .katex {
-    font-size: 1em;
-    line-height: 1.6;
-  }
-
-  // 确保公式在暗色主题下可见
-  .katex .base {
-    color: inherit;
-  }
-
-  // MathML 辅助（屏幕阅读器用，视觉上隐藏）
-  .katex .katex-mathml {
-    position: absolute;
-    clip: rect(1px, 1px, 1px, 1px);
-    padding: 0;
-    border: 0;
-    height: 1px;
-    width: 1px;
-    overflow: hidden;
-  }
-
-  // 公式错误提示样式
-  .katex-error {
-    color: #cc0000;
-    font-style: italic;
-  }
-
-  // ===== 视频容器 =====
+  // 视频播放器
   .custom-video {
-    position: relative;
-    width: 100%;
-    padding-bottom: 56.25%; // 16:9 宽高比
-    margin: 1.5rem 0;
+    margin: 1.5em 0;
     border-radius: 8px;
     overflow: hidden;
     background: #000;
 
-    iframe,
-    video {
-      position: absolute;
-      top: 0;
-      left: 0;
+    video,
+    iframe {
       width: 100%;
-      height: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
       border: none;
+      display: block;
     }
   }
 
-  // ===== 音频播放器 =====
+  // 音频播放器
   .custom-audio {
     margin: 1.5em 0;
     border-radius: 8px;
@@ -1402,5 +1298,106 @@
       min-width: 80px;
       text-align: right;
     }
+  }
+
+  // ===== 自定义块响应式调整 =====
+  @media (max-width: 768px) {
+    .custom-note {
+      padding: 0.875em 1em;
+    }
+
+    .custom-tabs {
+      padding: 10px;
+
+      .custom-tabs-header {
+        flex-wrap: wrap;
+        gap: 6px;
+        padding-bottom: 10px;
+
+        button {
+          padding: 5px 12px;
+          font-size: 0.85rem;
+        }
+      }
+    }
+
+    .custom-fold {
+      .custom-fold-header {
+        padding: 8px 12px;
+      }
+
+      .custom-fold-content > div {
+        padding: 0 12px 12px;
+      }
+    }
+
+    .custom-link-card {
+      .custom-link-type {
+        padding: 5px 12px;
+        font-size: 0.7em;
+      }
+
+      .custom-link-main {
+        padding: 10px 12px;
+        gap: 10px;
+      }
+
+      .custom-link-icon {
+        width: 40px;
+        height: 40px;
+
+        i {
+          font-size: 1.4em;
+        }
+      }
+
+      .custom-link-title {
+        font-size: 0.95em;
+      }
+
+      .custom-link-desc {
+        font-size: 0.8em;
+      }
+    }
+  }
+
+  // ===== 照片展示墙 =====
+  .custom-photo-wall {
+    margin: 1em 0;
+    border-radius: 8px;
+    overflow-x: auto;
+  }
+
+  .custom-photo-wall-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .custom-photo-wall-row {
+    display: flex;
+    align-items: stretch;
+    flex-wrap: nowrap;
+  }
+
+  .custom-photo-wall-item {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    height: 100%;
+  }
+
+  .custom-photo-wall-item img {
+    margin: 0;
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    cursor: pointer;
+    border-radius: 6px;
+    background: rgba(249, 250, 251, 0.8);
+    aspect-ratio: auto;
   }
 }

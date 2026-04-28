@@ -9,9 +9,9 @@
 功能描述：API 接口定义 - tag
 */
 
-import request from "@/utils/request";
-import type { Tag, TagListData } from "@/types/tag";
-import type { PaginationQuery } from "@/types/request";
+import request from '@/utils/request';
+import type { Tag, TagListData } from '@/types/tag';
+import type { PaginationQuery } from '@/types/request';
 
 /**
  * 获取标签列表
@@ -19,7 +19,7 @@ import type { PaginationQuery } from "@/types/request";
  * @returns Promise<TagListData>
  */
 export function getTags(params?: PaginationQuery): Promise<TagListData> {
-  return request.get("/admin/tags", { params });
+  return request.get('/admin/tags', { params });
 }
 
 /**
@@ -37,7 +37,7 @@ export function getTag(id: number): Promise<Tag> {
  * @returns Promise<Tag>
  */
 export function createTag(data: Partial<Tag>): Promise<Tag> {
-  return request.post("/admin/tags", data);
+  return request.post('/admin/tags', data);
 }
 
 /**

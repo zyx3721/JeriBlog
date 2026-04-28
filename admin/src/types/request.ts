@@ -10,18 +10,15 @@
 */
 
 // API响应数据结构
-export interface ApiResponse<T = any> {
-    code: number
-    message: string
-    data: T
+export interface ApiResponse<T = unknown> {
+  code: number;
+  message: string;
+  data: T;
 }
 
 // 分页查询参数
 export interface PaginationQuery {
-    page: number
-    page_size: number
-    keyword?: string        // 搜索关键词（标题）
-    category_id?: number    // 分类ID
-    tag_id?: number         // 标签ID
-    status?: string         // 状态：all-全部, published-已发布, draft-草稿
+  page: number;
+  page_size: number;
 }
+

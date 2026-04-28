@@ -9,7 +9,7 @@
 功能描述：API 接口定义 - user
 */
 
-import request from "@/utils/request";
+import request from '@/utils/request';
 import type {
   LoginParams,
   LoginResponse,
@@ -20,7 +20,7 @@ import type {
   CreateUserRequest,
   UpdateUserRequest,
   RefreshTokenResponse,
-} from "@/types/user";
+} from '@/types/user';
 
 /**
  * 用户登录
@@ -28,7 +28,7 @@ import type {
  * @returns Promise<LoginResponse>
  */
 export function login(data: LoginParams): Promise<LoginResponse> {
-  return request.post("/auth/login", data);
+  return request.post('/auth/login', data);
 }
 
 /**
@@ -52,7 +52,7 @@ export function refreshToken(): Promise<RefreshTokenResponse> {
  * @returns Promise<void>
  */
 export function logout(): Promise<void> {
-  return request.post("/auth/logout");
+  return request.post('/auth/logout');
 }
 
 /**
@@ -61,7 +61,7 @@ export function logout(): Promise<void> {
  * @returns Promise<UserListData>
  */
 export function getUsers(params: UserListQuery): Promise<UserListData> {
-  return request.get("/admin/users", { params });
+  return request.get('/admin/users', { params });
 }
 
 /**
@@ -98,7 +98,7 @@ export function resetUserPassword(id: number, data: ResetPasswordRequest): Promi
  * @returns Promise<User>
  */
 export function createUser(data: CreateUserRequest): Promise<User> {
-  return request.post("/admin/users", data);
+  return request.post('/admin/users', data);
 }
 
 /**

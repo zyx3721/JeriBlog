@@ -172,15 +172,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
-import { ElMessage } from 'element-plus'
-import { Search, Location } from '@element-plus/icons-vue'
-import FilterPanel from '@/components/common/FilterPanel.vue'
-import type { Category } from '@/types/category'
-import type { Tag } from '@/types/tag'
-import type { ArticleListQuery } from '@/types/article'
-import { getCategories } from '@/api/category'
-import { getTags } from '@/api/tag'
+import { ref, onMounted, watch } from 'vue';
+import { ElMessage } from 'element-plus';
+import { Search, Location } from '@element-plus/icons-vue';
+import FilterPanel from '@/components/common/FilterPanel.vue';
+import type { Category } from '@/types/category';
+import type { Tag } from '@/types/tag';
+import type { ArticleListQuery } from '@/types/article';
+import { getCategories } from '@/api/category';
+import { getTags } from '@/api/tag';
 
 /**
  * 防抖函数
@@ -189,80 +189,80 @@ import { getTags } from '@/api/tag'
  * @returns 防抖后的函数
  */
 function debounce<T extends (...args: unknown[]) => unknown>(fn: T, delay: number) {
-  let timer: ReturnType<typeof setTimeout> | null = null
+  let timer: ReturnType<typeof setTimeout> | null = null;
   return function (this: ThisParameterType<T>, ...args: Parameters<T>) {
-    if (timer) clearTimeout(timer)
+    if (timer) clearTimeout(timer);
     timer = setTimeout(() => {
-      fn.apply(this, args)
-    }, delay)
-  }
+      fn.apply(this, args);
+    }, delay);
+  };
 }
 
 /**
  * 组件属性定义
  */
 const props = defineProps<{
-  modelValue: ArticleListQuery
-}>()
+  modelValue: ArticleListQuery;
+}>();
 
 /**
  * 组件事件定义
  */
 const emit = defineEmits<{
-  'update:modelValue': [value: ArticleListQuery]
-  search: []
-  close: []
-}>()
+  'update:modelValue': [value: ArticleListQuery];
+  search: [];
+  close: [];
+}>();
 
-const filterForm = ref<ArticleListQuery>({ ...props.modelValue })
-const dateRange = ref<[string, string] | null>(null)
-const startDate = ref<string>('')
-const endDate = ref<string>('')
-const categoryList = ref<Category[]>([])
-const tagList = ref<Tag[]>([])
+const filterForm = ref<ArticleListQuery>({ ...props.modelValue });
+const dateRange = ref<[string, string] | null>(null);
+const startDate = ref<string>('');
+const endDate = ref<string>('');
+const categoryList = ref<Category[]>([]);
+const tagList = ref<Tag[]>([]);
 
 // 避免 watch 循环的标记
-let isExternalUpdate = false
-let isResetting = false
+let isExternalUpdate = false;
+let isResetting = false;
 
 // 监听外部数据变化
 watch(
   () => props.modelValue,
   newVal => {
-    isExternalUpdate = true
-    filterForm.value = { ...newVal }
+    isExternalUpdate = true;
+    filterForm.value = { ...newVal };
     if (newVal.start_time && newVal.end_time) {
-      dateRange.value = [newVal.start_time, newVal.end_time]
-      startDate.value = newVal.start_time
-      endDate.value = newVal.end_time
+      dateRange.value = [newVal.start_time, newVal.end_time];
+      startDate.value = newVal.start_time;
+      endDate.value = newVal.end_time;
     } else {
-      dateRange.value = null
-      startDate.value = ''
-      endDate.value = ''
+      dateRange.value = null;
+      startDate.value = '';
+      endDate.value = '';
     }
     setTimeout(() => {
-      isExternalUpdate = false
-    }, 0)
+      isExternalUpdate = false;
+    }, 0);
   },
   { deep: true }
-)
+);
 
 // 防抖的实时搜索
 const debouncedSearch = debounce(() => {
-  emit('update:modelValue', { ...filterForm.value })
-  emit('search')
-}, 500)
+  emit('update:modelValue', { ...filterForm.value });
+  emit('search');
+}, 500);
 
 // 监听表单变化，实时触发搜索
 watch(
   filterForm,
   () => {
     if (!isExternalUpdate && !isResetting) {
-      debouncedSearch()
+      debouncedSearch();
     }
   },
   { deep: true }
-)
+);
 
 /**
  * 处理日期范围变化
@@ -270,16 +270,16 @@ watch(
  */
 const handleDateChange = (val: [string, string] | null) => {
   if (val) {
-    filterForm.value.start_time = val[0]
-    filterForm.value.end_time = val[1]
+    filterForm.value.start_time = val[0];
+    filterForm.value.end_time = val[1];
     // 同步到移动端
-    startDate.value = val[0]
-    endDate.value = val[1]
+    startDate.value = val[0];
+    endDate.value = val[1];
   } else {
-    filterForm.value.start_time = undefined
-    filterForm.value.end_time = undefined
-    startDate.value = ''
-    endDate.value = ''
+    filterForm.value.start_time = undefined;
+    filterForm.value.end_time = undefined;
+    startDate.value = '';
+    endDate.value = '';
   }
 }
 
@@ -289,95 +289,95 @@ const handleDateChange = (val: [string, string] | null) => {
 const handleMobileDateChange = () => {
   // 情况1：两个日期都清空
   if (!startDate.value && !endDate.value) {
-    filterForm.value.start_time = undefined
-    filterForm.value.end_time = undefined
-    dateRange.value = null
+    filterForm.value.start_time = undefined;
+    filterForm.value.end_time = undefined;
+    dateRange.value = null;
     return
   }
 
   // 情况2：只选择了开始日期或结束日期，不触发筛选
   if (!startDate.value || !endDate.value) {
-    return
+    return;
   }
 
   // 情况3：两个日期都已选择，进行合法性校验
   if (startDate.value && endDate.value) {
     // 时间合法性校验：开始时间不能大于结束时间
     if (startDate.value > endDate.value) {
-      ElMessage.error('开始时间不能大于结束时间，请重新选择')
-      return
+      ElMessage.error('开始时间不能大于结束时间，请重新选择');
+      return;
     }
 
     // 校验通过，更新筛选条件
-    filterForm.value.start_time = startDate.value
-    filterForm.value.end_time = endDate.value
+    filterForm.value.start_time = startDate.value;
+    filterForm.value.end_time = endDate.value;
     // 同步到 PC 端
-    dateRange.value = [startDate.value, endDate.value]
+    dateRange.value = [startDate.value, endDate.value];
   }
-}
+};
 
 /**
  * 处理重置
  */
 const handleReset = () => {
-  isResetting = true
-  dateRange.value = null
-  startDate.value = ''
-  endDate.value = ''
+  isResetting = true;
+  dateRange.value = null;
+  startDate.value = '';
+  endDate.value = '';
 
-  const page = filterForm.value.page
-  const pageSize = filterForm.value.page_size
-  filterForm.value = { page, page_size: pageSize }
+  const page = filterForm.value.page;
+  const pageSize = filterForm.value.page_size;
+  filterForm.value = { page, page_size: pageSize };
 
-  emit('update:modelValue', { ...filterForm.value })
-  emit('search')
+  emit('update:modelValue', { ...filterForm.value });
+  emit('search');
 
   setTimeout(() => {
-    isResetting = false
-  }, 100)
-}
+    isResetting = false;
+  }, 100);
+};
 
 /**
  * 加载分类列表
  */
 const loadCategories = async () => {
   try {
-    const result = await getCategories()
-    categoryList.value = result.list
+    const result = await getCategories({ page: 1, page_size: 1000 });
+    categoryList.value = result.list;
   } catch (error) {
-    console.error('加载分类列表失败:', error)
+    console.error('加载分类列表失败:', error);
   }
-}
+};
 
 /**
  * 加载标签列表
  */
 const loadTags = async () => {
   try {
-    const result = await getTags({ page: 1, page_size: 1000 })
-    tagList.value = result.list
+    const result = await getTags({ page: 1, page_size: 1000 });
+    tagList.value = result.list;
   } catch (error) {
-    console.error('加载标签列表失败:', error)
+    console.error('加载标签列表失败:', error);
   }
-}
+};
 
 // 组件挂载时加载数据
 onMounted(() => {
-  loadCategories()
-  loadTags()
+  loadCategories();
+  loadTags();
 
   if (filterForm.value.start_time && filterForm.value.end_time) {
-    dateRange.value = [filterForm.value.start_time, filterForm.value.end_time]
-    startDate.value = filterForm.value.start_time
-    endDate.value = filterForm.value.end_time
+    dateRange.value = [filterForm.value.start_time, filterForm.value.end_time];
+    startDate.value = filterForm.value.start_time;
+    endDate.value = filterForm.value.end_time;
   }
-})
+});
 
 // 暴露方法供父组件调用
 defineExpose({
   loadCategories,
   loadTags
-})
+});
 </script>
 
 <style scoped>

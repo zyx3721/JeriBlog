@@ -175,50 +175,50 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed, watch } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { Search } from '@element-plus/icons-vue'
-import CommonList from '@/components/common/CommonList.vue'
-import MomentFilter from './components/MomentFilter.vue'
-import MomentFormDialog from './components/MomentFormDialog.vue'
-import type { Moment, MomentListQuery } from '@/types/moment'
-import { getMoments, deleteMoment } from '@/api/moment'
-import { formatDateTime } from '@/utils/date'
+import { ref, reactive, onMounted, computed, watch } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { Search } from '@element-plus/icons-vue';
+import CommonList from '@/components/common/CommonList.vue';
+import MomentFilter from './components/MomentFilter.vue';
+import MomentFormDialog from './components/MomentFormDialog.vue';
+import type { Moment, MomentListQuery } from '@/types/moment';
+import { getMoments, deleteMoment } from '@/api/moment';
+import { formatDateTime } from '@/utils/date';
 
-const loading = ref(false)
-const momentList = ref<Moment[]>([])
-const allMomentsForTags = ref<Moment[]>([]) // 用于标签下拉框的全量数据
-const total = ref(0)
-const showFilter = ref(false)
+const loading = ref(false);
+const momentList = ref<Moment[]>([]);
+const allMomentsForTags = ref<Moment[]>([]); // 用于标签下拉框的全量数据
+const total = ref(0);
+const showFilter = ref(false);
 const queryParams = ref<MomentListQuery>({
   page: 1,
   page_size: 20,
-})
+});
 
 // 快速筛选相关
 const quickFilters = reactive({
   keyword: '',
   is_publish: undefined as boolean | undefined,
-})
+});
 
 // 搜索防抖定时器
-let searchTimer: ReturnType<typeof setTimeout> | null = null
+let searchTimer: ReturnType<typeof setTimeout> | null = null;
 
 // 监听关键词变化，实时搜索
 watch(
   () => quickFilters.keyword,
   newVal => {
-    if (searchTimer) clearTimeout(searchTimer)
+    if (searchTimer) clearTimeout(searchTimer);
     searchTimer = setTimeout(() => {
-      queryParams.value.keyword = newVal || undefined
-      queryParams.value.page = 1
-      fetchMoments()
-    }, 500)
+      queryParams.value.keyword = newVal || undefined;
+      queryParams.value.page = 1;
+      fetchMoments();
+    }, 500);
   }
-)
+);
 
-const momentDialogVisible = ref(false)
-const editingMoment = ref<Moment | null>(null)
+const momentDialogVisible = ref(false);
+const editingMoment = ref<Moment | null>(null);
 
 // 音乐平台和类型映射
 const MUSIC_LABELS = {
@@ -232,151 +232,151 @@ const MUSIC_LABELS = {
     netease: '网易云',
     tencent: 'QQ音乐',
   },
-}
+};
 
 /**
  * 计算当前激活的筛选项数量
  */
 const activeFilterCount = computed(() => {
-  let count = 0
-  if (queryParams.value.keyword) count++
-  if (queryParams.value.tags && queryParams.value.tags.length > 0) count++
-  if (queryParams.value.location) count++
-  if (queryParams.value.is_publish !== undefined) count++
-  if (queryParams.value.has_images !== undefined) count++
-  if (queryParams.value.has_video !== undefined) count++
-  if (queryParams.value.has_music !== undefined) count++
-  if (queryParams.value.has_link !== undefined) count++
-  if (queryParams.value.start_time || queryParams.value.end_time) count++
-  return count
-})
+  let count = 0;
+  if (queryParams.value.keyword) count++;
+  if (queryParams.value.tags && queryParams.value.tags.length > 0) count++;
+  if (queryParams.value.location) count++;
+  if (queryParams.value.is_publish !== undefined) count++;
+  if (queryParams.value.has_images !== undefined) count++;
+  if (queryParams.value.has_video !== undefined) count++;
+  if (queryParams.value.has_music !== undefined) count++;
+  if (queryParams.value.has_link !== undefined) count++;
+  if (queryParams.value.start_time || queryParams.value.end_time) count++;
+  return count;
+});
 
 /**
  * 切换筛选面板显示状态
  */
 const toggleFilter = () => {
-  showFilter.value = !showFilter.value
+  showFilter.value = !showFilter.value;
   if (!showFilter.value) {
-    syncQuickFiltersFromQueryParams()
+    syncQuickFiltersFromQueryParams();
   }
-}
+};
 
 /**
  * 从 queryParams 同步筛选条件到快速筛选
  */
 const syncQuickFiltersFromQueryParams = () => {
-  quickFilters.keyword = queryParams.value.keyword || ''
-  quickFilters.is_publish = queryParams.value.is_publish
-}
+  quickFilters.keyword = queryParams.value.keyword || '';
+  quickFilters.is_publish = queryParams.value.is_publish;
+};
 
 /**
  * 处理快速筛选变化
  */
 const handleQuickFilterChange = () => {
   // 将快速筛选条件同步到查询参数
-  queryParams.value.keyword = quickFilters.keyword || undefined
-  queryParams.value.is_publish = quickFilters.is_publish
-  queryParams.value.page = 1
-  fetchMoments()
-}
+  queryParams.value.keyword = quickFilters.keyword || undefined;
+  queryParams.value.is_publish = quickFilters.is_publish;
+  queryParams.value.page = 1;
+  fetchMoments();
+};
 
 // 获取视频平台名称
 const getVideoPlatformName = (platform?: string) => {
-  if (!platform) return '本地视频'
+  if (!platform) return '本地视频';
   const platformMap: Record<string, string> = {
     bilibili: '哔哩哔哩',
     youtube: 'YouTube',
-  }
-  return platformMap[platform.toLowerCase()] || '本地视频'
-}
+  };
+  return platformMap[platform.toLowerCase()] || '本地视频';
+};
 
 // 获取音乐标签
 const getMusicLabel = (music: { server: string; type: string }) => {
   const serverName =
-    MUSIC_LABELS.server[music.server as keyof typeof MUSIC_LABELS.server] || music.server
-  const typeName = MUSIC_LABELS.type[music.type as keyof typeof MUSIC_LABELS.type] || music.type
-  return `${serverName} - ${typeName}`
-}
+    MUSIC_LABELS.server[music.server as keyof typeof MUSIC_LABELS.server] || music.server;
+  const typeName = MUSIC_LABELS.type[music.type as keyof typeof MUSIC_LABELS.type] || music.type;
+  return `${serverName} - ${typeName}`;
+};
 
-let errorMessageShown = false
+let errorMessageShown = false;
 
 /**
  * 获取全量动态（用于标签下拉框）
  */
 const fetchAllMomentsForTags = async () => {
   try {
-    const result = await getMoments({ page: 1, page_size: 1000 })
-    allMomentsForTags.value = result.list
+    const result = await getMoments({ page: 1, page_size: 1000 });
+    allMomentsForTags.value = result.list;
   } catch (error) {
-    console.error('获取全量动态失败:', error)
+    console.error('获取全量动态失败:', error);
     // 静默失败，不影响主流程
   }
-}
+};
 
 /**
  * 获取动态列表
  */
 const fetchMoments = async () => {
-  loading.value = true
+  loading.value = true;
   try {
     const [result] = await Promise.all([
       getMoments(queryParams.value),
       new Promise(resolve => setTimeout(resolve, 300)),
-    ])
-    momentList.value = result.list
-    total.value = result.total
+    ]);
+    momentList.value = result.list;
+    total.value = result.total;
   } catch {
     if (!errorMessageShown) {
-      errorMessageShown = true
-      ElMessage.error('获取动态列表失败')
+      errorMessageShown = true;
+      ElMessage.error('获取动态列表失败');
       // 3秒后重置标记，允许再次提示
       setTimeout(() => {
-        errorMessageShown = false
-      }, 3000)
+        errorMessageShown = false;
+      }, 3000);
     }
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const handleCreate = () => {
-  editingMoment.value = null
-  momentDialogVisible.value = true
-}
+  editingMoment.value = null;
+  momentDialogVisible.value = true;
+};
 
 const handleEdit = (id: number) => {
-  const moment = momentList.value.find(item => item.id === id)
+  const moment = momentList.value.find(item => item.id === id);
   if (moment) {
-    editingMoment.value = moment
-    momentDialogVisible.value = true
+    editingMoment.value = moment;
+    momentDialogVisible.value = true;
   }
-}
+};
 
 const handleDialogSuccess = () => {
-  fetchMoments()
-  fetchAllMomentsForTags()
+  fetchMoments();
+  fetchAllMomentsForTags();
 }
 
 const handleDelete = async (id: number) => {
   try {
     await ElMessageBox.confirm('确定要删除这条动态吗？', '提示', {
       type: 'warning',
-    })
-    await deleteMoment(id)
-    ElMessage.success('删除成功')
-    fetchMoments()
-    fetchAllMomentsForTags()
+    });
+    await deleteMoment(id);
+    ElMessage.success('删除成功');
+    fetchMoments();
+    fetchAllMomentsForTags();
   } catch (error) {
-    if (error instanceof Error) ElMessage.error(error.message)
+    if (error instanceof Error) ElMessage.error(error.message);
   }
-}
+};
 
 onMounted(() => {
   // 初始化快速筛选值（从 queryParams）
-  syncQuickFiltersFromQueryParams()
-  fetchMoments()
-  fetchAllMomentsForTags() // 获取全量数据用于标签下拉框
-})
+  syncQuickFiltersFromQueryParams();
+  fetchMoments();
+  fetchAllMomentsForTags(); // 获取全量数据用于标签下拉框
+});
 </script>
 
 <style scoped lang="scss">
@@ -412,13 +412,6 @@ onMounted(() => {
 .moment-list-page > :deep(.common-list) {
   flex: 1;
   min-height: 0;
-}
-
-/* 移动端隐藏发布状态筛选框 */
-@media (max-width: 768px) {
-  :deep(.quick-filter-769) {
-    display: none !important;
-  }
 }
 
 .moment-content {

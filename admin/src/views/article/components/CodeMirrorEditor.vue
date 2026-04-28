@@ -10,7 +10,10 @@
 -->
 
 <template>
-  <div class="codemirror-editor-wrapper" :class="{ 'is-fullscreen': isBrowserFullscreen || isPageFullscreen }">
+  <div
+    class="codemirror-editor-wrapper"
+    :class="{ 'is-fullscreen': isBrowserFullscreen || isPageFullscreen }"
+  >
     <!-- 工具栏 -->
     <div class="editor-toolbar">
       <template v-for="(item, index) in toolbarItems" :key="index">
@@ -27,12 +30,22 @@
                 <i :class="item.icon"></i>
               </button>
             </template>
-            <div style="padding: 8px 0;">
-              <el-input v-model="onlineImageUrl" placeholder="输入图片URL，按回车下载" size="small" clearable
-                @keyup.enter="handleOnlineImageDownload" style="width: 100%;">
+            <div style="padding: 8px 0">
+              <el-input
+                v-model="onlineImageUrl"
+                placeholder="输入图片URL，按回车下载"
+                size="small"
+                clearable
+                @keyup.enter="handleOnlineImageDownload"
+                style="width: 100%"
+              >
                 <template #append>
-                  <el-button @click="handleOnlineImageDownload" :loading="downloadingImage"
-                    :disabled="!onlineImageUrl.trim()" size="small">
+                  <el-button
+                    @click="handleOnlineImageDownload"
+                    :loading="downloadingImage"
+                    :disabled="!onlineImageUrl.trim()"
+                    size="small"
+                  >
                     下载
                   </el-button>
                 </template>
@@ -42,26 +55,50 @@
         </template>
         <!-- 表情选择器按钮 -->
         <template v-else-if="item.title === '表情'">
-          <el-popover :width="320" trigger="click" placement="bottom" v-model:visible="emojiState.visible"
-            @show="handleEmojiPickerShow">
+          <el-popover
+            :width="320"
+            trigger="click"
+            placement="bottom"
+            v-model:visible="emojiState.visible"
+            @show="handleEmojiPickerShow"
+          >
             <template #reference>
-              <button :title="item.title" class="toolbar-btn" :class="{ active: emojiState.visible }">
+              <button
+                :title="item.title"
+                class="toolbar-btn"
+                :class="{ active: emojiState.visible }"
+              >
                 <i :class="item.icon"></i>
               </button>
             </template>
             <!-- 表情内容 -->
             <div class="emoji-wrap">
               <div class="emoji-bar">
-                <button v-for="(group, index) in emojiState.groups" :key="index" class="emoji-tab"
-                  :class="{ active: emojiState.activeTab === index }" @click="emojiState.activeTab = index">
+                <button
+                  v-for="(group, index) in emojiState.groups"
+                  :key="index"
+                  class="emoji-tab"
+                  :class="{ active: emojiState.activeTab === index }"
+                  @click="emojiState.activeTab = index"
+                >
                   {{ group.name }}
                 </button>
               </div>
               <div class="emoji-list">
-                <div v-for="(group, index) in emojiState.groups" v-show="emojiState.activeTab === index" :key="index"
-                  class="emoji-group" :class="{ 'emoji-text': group.type === 'emoticon' }">
-                  <button v-for="item in group.items" :key="item.key" class="emoji-btn" :title="item.key"
-                    @click="selectEmoji(item, group.type)">
+                <div
+                  v-for="(group, index) in emojiState.groups"
+                  v-show="emojiState.activeTab === index"
+                  :key="index"
+                  class="emoji-group"
+                  :class="{ 'emoji-text': group.type === 'emoticon' }"
+                >
+                  <button
+                    v-for="item in group.items"
+                    :key="item.key"
+                    class="emoji-btn"
+                    :title="item.key"
+                    @click="selectEmoji(item, group.type)"
+                  >
                     <img v-if="group.type === 'image'" :src="item.val" :alt="item.key" />
                     <span v-else>{{ item.val }}</span>
                   </button>
@@ -72,9 +109,18 @@
         </template>
         <!-- 提示框按钮 -->
         <template v-else-if="item.title === '提示框'">
-          <el-popover :width="300" trigger="click" placement="bottom" v-model:visible="noteDialog.visible">
+          <el-popover
+            :width="300"
+            trigger="click"
+            placement="bottom"
+            v-model:visible="noteDialog.visible"
+          >
             <template #reference>
-              <button :title="item.title" class="toolbar-btn" :class="{ active: noteDialog.visible }">
+              <button
+                :title="item.title"
+                class="toolbar-btn"
+                :class="{ active: noteDialog.visible }"
+              >
                 <i :class="item.icon"></i>
               </button>
             </template>
@@ -88,20 +134,34 @@
                 </el-radio-group>
               </div>
               <div class="note-form-item">
-                <el-input v-model="noteDialog.title" placeholder="标题" size="small" clearable
-                  @keyup.enter="handleInsertNote" />
+                <el-input
+                  v-model="noteDialog.title"
+                  placeholder="标题"
+                  size="small"
+                  clearable
+                  @keyup.enter="handleInsertNote"
+                />
               </div>
               <div class="note-form-actions">
-                <el-button type="primary" size="small" @click="handleInsertNote">插入</el-button>
+                <el-button type="primary" size="small" @click="handleInsertNote"> 插入 </el-button>
               </div>
             </div>
           </el-popover>
         </template>
         <!-- 标签页按钮 -->
         <template v-else-if="item.title === '标签页'">
-          <el-popover :width="320" trigger="click" placement="bottom" v-model:visible="tabsDialog.visible">
+          <el-popover
+            :width="320"
+            trigger="click"
+            placement="bottom"
+            v-model:visible="tabsDialog.visible"
+          >
             <template #reference>
-              <button :title="item.title" class="toolbar-btn" :class="{ active: tabsDialog.visible }">
+              <button
+                :title="item.title"
+                class="toolbar-btn"
+                :class="{ active: tabsDialog.visible }"
+              >
                 <i :class="item.icon"></i>
               </button>
             </template>
@@ -109,49 +169,81 @@
               <div class="tabs-list">
                 <div v-for="(tab, index) in tabsDialog.tabs" :key="index" class="tabs-item">
                   <el-input v-model="tabsDialog.tabs[index]" size="small" placeholder="标签名称" />
-                  <el-button v-if="tabsDialog.tabs.length > 1" type="danger" size="small" text
-                    @click="removeTabsDialogTab(index)">
+                  <el-button
+                    v-if="tabsDialog.tabs.length > 1"
+                    type="danger"
+                    size="small"
+                    text
+                    @click="removeTabsDialogTab(index)"
+                  >
                     <i class="ri-close-line"></i>
                   </el-button>
                 </div>
               </div>
               <div class="tabs-footer">
-                <el-button type="primary" size="small" @click="addTabsDialogTab"
-                  :disabled="tabsDialog.tabs.length >= 10">
+                <el-button
+                  type="primary"
+                  size="small"
+                  @click="addTabsDialogTab"
+                  :disabled="tabsDialog.tabs.length >= 10"
+                >
                   添加标签
                 </el-button>
-                <el-button type="primary" size="small" @click="handleInsertTabs">插入</el-button>
+                <el-button type="primary" size="small" @click="handleInsertTabs"> 插入 </el-button>
               </div>
             </div>
           </el-popover>
         </template>
         <!-- 折叠面板按钮 -->
         <template v-else-if="item.title === '折叠面板'">
-          <el-popover :width="300" trigger="click" placement="bottom" v-model:visible="foldDialog.visible">
+          <el-popover
+            :width="300"
+            trigger="click"
+            placement="bottom"
+            v-model:visible="foldDialog.visible"
+          >
             <template #reference>
-              <button :title="item.title" class="toolbar-btn" :class="{ active: foldDialog.visible }">
+              <button
+                :title="item.title"
+                class="toolbar-btn"
+                :class="{ active: foldDialog.visible }"
+              >
                 <i :class="item.icon"></i>
               </button>
             </template>
             <div class="fold-dialog-wrap">
               <div class="fold-form-item">
-                <el-input v-model="foldDialog.title" placeholder="标题" size="small" clearable
-                  @keyup.enter="handleInsertFold" />
+                <el-input
+                  v-model="foldDialog.title"
+                  placeholder="标题"
+                  size="small"
+                  clearable
+                  @keyup.enter="handleInsertFold"
+                />
               </div>
               <div class="fold-form-item">
                 <el-checkbox v-model="foldDialog.open" size="small">默认展开</el-checkbox>
               </div>
               <div class="fold-form-actions">
-                <el-button type="primary" size="small" @click="handleInsertFold">插入</el-button>
+                <el-button type="primary" size="small" @click="handleInsertFold"> 插入 </el-button>
               </div>
             </div>
           </el-popover>
         </template>
         <!-- 链接卡片按钮 -->
         <template v-else-if="item.title === '链接卡片'">
-          <el-popover :width="320" trigger="click" placement="bottom" v-model:visible="linkDialog.visible">
+          <el-popover
+            :width="320"
+            trigger="click"
+            placement="bottom"
+            v-model:visible="linkDialog.visible"
+          >
             <template #reference>
-              <button :title="item.title" class="toolbar-btn" :class="{ active: linkDialog.visible }">
+              <button
+                :title="item.title"
+                class="toolbar-btn"
+                :class="{ active: linkDialog.visible }"
+              >
                 <i :class="item.icon"></i>
               </button>
             </template>
@@ -174,19 +266,33 @@
                 />
               </div>
               <div class="link-form-item">
-                <el-input v-model="linkDialog.description" placeholder="描述（可选）" size="small" clearable />
+                <el-input
+                  v-model="linkDialog.description"
+                  placeholder="描述（可选）"
+                  size="small"
+                  clearable
+                />
               </div>
               <div class="link-form-actions">
-                <el-button type="primary" size="small" @click="handleInsertLink">插入</el-button>
+                <el-button type="primary" size="small" @click="handleInsertLink"> 插入 </el-button>
               </div>
             </div>
           </el-popover>
         </template>
         <!-- 照片墙按钮 -->
         <template v-else-if="item.title === '照片墙'">
-          <el-popover :width="photoDialogWidth" trigger="click" placement="bottom" v-model:visible="photoDialog.visible">
+          <el-popover
+            :width="520"
+            trigger="click"
+            placement="bottom"
+            v-model:visible="photoDialog.visible"
+          >
             <template #reference>
-              <button :title="item.title" class="toolbar-btn" :class="{ active: photoDialog.visible }">
+              <button
+                :title="item.title"
+                class="toolbar-btn"
+                :class="{ active: photoDialog.visible }"
+              >
                 <i :class="item.icon"></i>
               </button>
             </template>
@@ -195,28 +301,55 @@
                 <div v-for="(row, rowIndex) in photoDialog.rows" :key="rowIndex" class="photo-row">
                   <div class="photo-row-header">
                     <div class="photo-row-actions">
-                      <el-button :disabled="rowIndex === 0" size="small" text @click="movePhotoRowUp(rowIndex)">
+                      <el-button
+                        :disabled="rowIndex === 0"
+                        size="small"
+                        text
+                        @click="movePhotoRowUp(rowIndex)"
+                      >
                         <i class="ri-arrow-up-line"></i>
                       </el-button>
-                      <el-button :disabled="rowIndex === photoDialog.rows.length - 1" size="small" text
-                        @click="movePhotoRowDown(rowIndex)">
+                      <el-button
+                        :disabled="rowIndex === photoDialog.rows.length - 1"
+                        size="small"
+                        text
+                        @click="movePhotoRowDown(rowIndex)"
+                      >
                         <i class="ri-arrow-down-line"></i>
                       </el-button>
                     </div>
-                    <el-button v-if="photoDialog.rows.length > 1" type="danger" size="small" text
-                      @click="removePhotoDialogRow(rowIndex)">
+                    <el-button
+                      v-if="photoDialog.rows.length > 1"
+                      type="danger"
+                      size="small"
+                      text
+                      @click="removePhotoDialogRow(rowIndex)"
+                    >
                       <i class="ri-close-line"></i>
                     </el-button>
                   </div>
                   <div class="photo-images">
                     <div v-for="(img, imgIndex) in row" :key="imgIndex" class="photo-image-item">
-                      <el-input :model-value="getPhotoImageUrl(rowIndex, imgIndex)" placeholder="图片URL" size="small"
-                        @update:model-value="(val: string) => setPhotoImageUrl(rowIndex, imgIndex, val)">
+                      <el-input
+                        :model-value="getPhotoImageUrl(rowIndex, imgIndex)"
+                        placeholder="图片URL"
+                        size="small"
+                        @update:model-value="
+                          (val: string) => setPhotoImageUrl(rowIndex, imgIndex, val)
+                        "
+                      >
                         <template #append>
-                          <el-upload :show-file-list="false" accept="image/*" :before-upload="(file: File) => {
-                            handlePhotoImageUpload(rowIndex, imgIndex, file);
-                            return false;
-                          }" :disabled="photoDialog.uploading">
+                          <el-upload
+                            :show-file-list="false"
+                            accept="image/*"
+                            :before-upload="
+                              (file: File) => {
+                                handlePhotoImageUpload(rowIndex, imgIndex, file);
+                                return false;
+                              }
+                            "
+                            :disabled="photoDialog.uploading"
+                          >
                             <el-button :loading="photoDialog.uploading" size="small">
                               <i class="ri-upload-line"></i>
                             </el-button>
@@ -224,42 +357,73 @@
                         </template>
                       </el-input>
                       <div class="photo-image-actions">
-                        <el-button :disabled="imgIndex === 0" size="small" text
-                          @click="movePhotoImageUp(rowIndex, imgIndex)">
+                        <el-button
+                          :disabled="imgIndex === 0"
+                          size="small"
+                          text
+                          @click="movePhotoImageUp(rowIndex, imgIndex)"
+                        >
                           <i class="ri-arrow-up-line"></i>
                         </el-button>
-                        <el-button :disabled="imgIndex === row.length - 1" size="small" text
-                          @click="movePhotoImageDown(rowIndex, imgIndex)">
+                        <el-button
+                          :disabled="imgIndex === row.length - 1"
+                          size="small"
+                          text
+                          @click="movePhotoImageDown(rowIndex, imgIndex)"
+                        >
                           <i class="ri-arrow-down-line"></i>
                         </el-button>
-                        <el-button v-if="row.length > 1" type="danger" size="small" text
-                          @click="removePhotoDialogImage(rowIndex, imgIndex)">
+                        <el-button
+                          v-if="row.length > 1"
+                          type="danger"
+                          size="small"
+                          text
+                          @click="removePhotoDialogImage(rowIndex, imgIndex)"
+                        >
                           <i class="ri-close-line"></i>
                         </el-button>
                       </div>
                     </div>
-                    <el-button v-if="row.length < 4" type="primary" size="small" text
-                      @click="addPhotoDialogImage(rowIndex)">
+                    <el-button
+                      v-if="row.length < 4"
+                      type="primary"
+                      size="small"
+                      text
+                      @click="addPhotoDialogImage(rowIndex)"
+                    >
                       <i class="ri-add-line"></i> 添加图片
                     </el-button>
                   </div>
                 </div>
               </div>
               <div class="photo-footer">
-                <el-button type="primary" size="small" @click="addPhotoDialogRow"
-                  :disabled="photoDialog.rows.length >= 6">
+                <el-button
+                  type="primary"
+                  size="small"
+                  @click="addPhotoDialogRow"
+                  :disabled="photoDialog.rows.length >= 6"
+                >
                   添加行
                 </el-button>
-                <el-button type="primary" size="small" @click="handleInsertPhoto">插入</el-button>
+                <el-button type="primary" size="small" @click="handleInsertPhoto"> 插入 </el-button>
               </div>
             </div>
           </el-popover>
         </template>
         <!-- 视频按钮 -->
         <template v-else-if="item.title === '视频'">
-          <el-popover :width="320" trigger="click" placement="bottom" v-model:visible="videoDialog.visible">
+          <el-popover
+            :width="320"
+            trigger="click"
+            placement="bottom"
+            v-model:visible="videoDialog.visible"
+          >
             <template #reference>
-              <button :title="item.title" class="toolbar-btn" :class="{ active: videoDialog.visible }">
+              <button
+                :title="item.title"
+                class="toolbar-btn"
+                :class="{ active: videoDialog.visible }"
+              >
                 <i :class="item.icon"></i>
               </button>
             </template>
@@ -271,15 +435,32 @@
                 </el-radio-group>
               </div>
               <div v-if="videoDialog.type === 'url'" class="video-form-item">
-                <el-input v-model="videoDialog.videoUrl" placeholder="输入视频链接，支持B站、YouTube等" size="small" clearable
-                  @keyup.enter="handleInsertVideo" />
+                <el-input
+                  v-model="videoDialog.videoUrl"
+                  placeholder="输入视频链接，支持B站、YouTube等"
+                  size="small"
+                  clearable
+                  @keyup.enter="handleInsertVideo"
+                />
               </div>
               <div v-else class="video-form-item">
-                <el-upload :show-file-list="false" accept="video/*" :before-upload="(file: File) => {
-                  handleVideoUpload(file);
-                  return false;
-                }" :disabled="videoDialog.uploading">
-                  <el-button type="primary" :loading="videoDialog.uploading" size="small" style="width: 100%">
+                <el-upload
+                  :show-file-list="false"
+                  accept="video/*"
+                  :before-upload="
+                    (file: File) => {
+                      handleVideoUpload(file);
+                      return false;
+                    }
+                  "
+                  :disabled="videoDialog.uploading"
+                >
+                  <el-button
+                    type="primary"
+                    :loading="videoDialog.uploading"
+                    size="small"
+                    style="width: 100%"
+                  >
                     <i v-if="!videoDialog.uploading" class="ri-upload-line"></i>
                     {{ videoDialog.videoUrl ? '已上传' : '选择视频文件' }}
                   </el-button>
@@ -289,7 +470,12 @@
                 </div>
               </div>
               <div class="video-form-actions">
-                <el-button type="primary" size="small" :loading="videoDialog.loading" @click="handleInsertVideo">
+                <el-button
+                  type="primary"
+                  size="small"
+                  :loading="videoDialog.loading"
+                  @click="handleInsertVideo"
+                >
                   插入
                 </el-button>
               </div>
@@ -298,9 +484,18 @@
         </template>
         <!-- 音乐按钮 -->
         <template v-else-if="item.title === '音乐'">
-          <el-popover :width="320" trigger="click" placement="bottom" v-model:visible="audioDialog.visible">
+          <el-popover
+            :width="320"
+            trigger="click"
+            placement="bottom"
+            v-model:visible="audioDialog.visible"
+          >
             <template #reference>
-              <button :title="item.title" class="toolbar-btn" :class="{ active: audioDialog.visible }">
+              <button
+                :title="item.title"
+                class="toolbar-btn"
+                :class="{ active: audioDialog.visible }"
+              >
                 <i :class="item.icon"></i>
               </button>
             </template>
@@ -313,14 +508,31 @@
               </div>
               <template v-if="audioDialog.type === 'upload'">
                 <div class="audio-form-item">
-                  <el-input v-model="audioDialog.title" placeholder="音频标题" size="small" clearable />
+                  <el-input
+                    v-model="audioDialog.title"
+                    placeholder="音频标题"
+                    size="small"
+                    clearable
+                  />
                 </div>
                 <div class="audio-form-item">
-                  <el-upload :show-file-list="false" accept="audio/*" :before-upload="(file: File) => {
-                    handleAudioUpload(file);
-                    return false;
-                  }" :disabled="audioDialog.uploading">
-                    <el-button type="primary" :loading="audioDialog.uploading" size="small" style="width: 100%">
+                  <el-upload
+                    :show-file-list="false"
+                    accept="audio/*"
+                    :before-upload="
+                      (file: File) => {
+                        handleAudioUpload(file);
+                        return false;
+                      }
+                    "
+                    :disabled="audioDialog.uploading"
+                  >
+                    <el-button
+                      type="primary"
+                      :loading="audioDialog.uploading"
+                      size="small"
+                      style="width: 100%"
+                    >
                       <i v-if="!audioDialog.uploading" class="ri-upload-line"></i>
                       {{ audioDialog.audioUrl ? '已上传' : '选择音频文件' }}
                     </el-button>
@@ -338,11 +550,21 @@
                   </el-select>
                 </div>
                 <div class="audio-form-item">
-                  <el-input v-model="audioDialog.musicId" placeholder="输入音乐ID" size="small" clearable />
+                  <el-input
+                    v-model="audioDialog.musicId"
+                    placeholder="输入音乐ID"
+                    size="small"
+                    clearable
+                  />
                 </div>
                 <div class="audio-form-item">
-                  <el-button type="primary" size="small" :loading="audioDialog.loading" style="width: 100%"
-                    @click="handleParseMusic">
+                  <el-button
+                    type="primary"
+                    size="small"
+                    :loading="audioDialog.loading"
+                    style="width: 100%"
+                    @click="handleParseMusic"
+                  >
                     解析
                   </el-button>
                 </div>
@@ -352,40 +574,64 @@
                 </div>
               </template>
               <div class="audio-form-actions">
-                <el-button type="primary" size="small" @click="handleInsertAudio">插入</el-button>
+                <el-button type="primary" size="small" @click="handleInsertAudio"> 插入 </el-button>
               </div>
             </div>
           </el-popover>
         </template>
         <!-- 普通按钮 -->
-        <button v-else @click="item.action" :title="item.title" :class="{
-          active: item.isActive?.(),
-          'mobile-only': item.mobileOnly
-        }" class="toolbar-btn">
+        <button
+          v-else
+          @click="item.action"
+          :title="item.title"
+          :class="{
+            active: item.isActive?.(),
+            'mobile-only': item.mobileOnly,
+          }"
+          class="toolbar-btn"
+        >
           <i v-if="item.icon" :class="item.icon"></i>
           <span v-else>{{ item.label }}</span>
         </button>
       </template>
 
-      <input ref="imageInputRef" type="file" accept="image/*" multiple style="display: none"
-        @change="handleImageSelect" />
+      <input
+        ref="imageInputRef"
+        type="file"
+        accept="image/*"
+        multiple
+        style="display: none"
+        @change="handleImageSelect"
+      />
     </div>
 
     <!-- 编辑器主体 -->
     <div class="editor-container">
       <!-- 编辑器面板 -->
-      <div ref="editorPaneRef" class="editor-pane" :class="{
-        'full-width': viewMode === 'editor',
-        'hidden': viewMode === 'preview'
-      }" @scroll="handleEditorScroll" @mousedown="handleEditorPaneMouseDown">
+      <div
+        ref="editorPaneRef"
+        class="editor-pane"
+        :class="{
+          'full-width': viewMode === 'editor',
+          'hidden': viewMode === 'preview',
+        }"
+        @scroll="handleEditorScroll"
+        @mousedown="handleEditorPaneMouseDown"
+      >
         <div ref="editorRef" class="cm-host"></div>
       </div>
 
       <!-- 预览面板 -->
-      <div v-show="viewMode !== 'editor'" ref="previewPaneRef" class="preview-pane" :class="{
-        'full-width': viewMode === 'preview',
-        'html-mode': viewMode === 'html'
-      }" @scroll="handlePreviewScroll">
+      <div
+        v-show="viewMode !== 'editor'"
+        ref="previewPaneRef"
+        class="preview-pane"
+        :class="{
+          'full-width': viewMode === 'preview',
+          'html-mode': viewMode === 'html',
+        }"
+        @scroll="handlePreviewScroll"
+      >
         <div v-if="viewMode === 'html'" class="html-code">
           <pre><code>{{ renderedHtml }}</code></pre>
         </div>
@@ -401,13 +647,15 @@
           </button>
         </div>
         <div class="toc-content">
-          <div v-for="(heading, index) in tableOfContents" :key="index" :class="`toc-item toc-level-${heading.level}`"
-            @click="scrollToHeading(heading)">
+          <div
+            v-for="(heading, index) in tableOfContents"
+            :key="index"
+            :class="`toc-item toc-level-${heading.level}`"
+            @click="scrollToHeading(heading)"
+          >
             {{ heading.text }}
           </div>
-          <div v-if="tableOfContents.length === 0" class="toc-empty">
-            暂无目录
-          </div>
+          <div v-if="tableOfContents.length === 0" class="toc-empty">暂无目录</div>
         </div>
       </div>
     </div>
@@ -423,10 +671,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef, reactive, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
-import { ElMessage } from 'element-plus'
-import { uploadFile } from '@/api/file'
-import { getSettingGroup } from '@/api/sysconfig'
+import {
+  ref,
+  shallowRef,
+  reactive,
+  computed,
+  onMounted,
+  onBeforeUnmount,
+  watch,
+  nextTick,
+} from 'vue';
+import { ElMessage } from 'element-plus';
+import { uploadFile } from '@/api/file';
+import { parseVideo } from '@/api/tools';
+import { getSettingGroup } from '@/api/sysconfig';
 import {
   renderMarkdown,
   renderMarkdownWithSourceMap,
@@ -434,101 +692,135 @@ import {
   countWords,
   extractToc,
   estimateReadingTime,
-  type TocItem
-} from '@/utils/markdown'
-import { EditorView, keymap, showPanel } from '@codemirror/view'
-import { EditorState, StateField, StateEffect, RangeSetBuilder } from '@codemirror/state'
-import { Decoration } from '@codemirror/view'
-import type { Panel, DecorationSet } from '@codemirror/view'
-import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
-import { markdown } from '@codemirror/lang-markdown'
-import { SearchCursor } from '@codemirror/search'
+  type TocItem,
+} from '@/utils/markdown';
+import { EditorView, keymap, showPanel } from '@codemirror/view';
+import { EditorState, StateField, StateEffect, RangeSetBuilder } from '@codemirror/state';
+import { Decoration } from '@codemirror/view';
+import type { Panel, DecorationSet } from '@codemirror/view';
+import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
+import { markdown } from '@codemirror/lang-markdown';
+import { SearchCursor } from '@codemirror/search';
 import mermaid from 'mermaid'
 
 // 简易搜索功能
-const setSearchQuery = StateEffect.define<string>()
-const setSearchIndex = StateEffect.define<number>()
+const setSearchQuery = StateEffect.define<string>();
+const setSearchIndex = StateEffect.define<number>();
 
-const searchStateField = StateField.define<{ matches: { from: number; to: number }[]; idx: number }>({
+const searchStateField = StateField.define<{
+  matches: { from: number; to: number }[];
+  idx: number;
+}>({
   create: () => ({ matches: [], idx: 0 }),
   update: (v, tr) => {
     for (const e of tr.effects) {
       if (e.is(setSearchQuery)) {
-        if (!e.value) return { matches: [], idx: 0 }
-        const matches: { from: number; to: number }[] = []
-        const cursor = new SearchCursor(tr.state.doc, e.value, 0, undefined, s => s.toLowerCase())
-        while (!cursor.next().done) matches.push({ from: cursor.value.from, to: cursor.value.to })
-        return { matches, idx: 0 }
+        if (!e.value) return { matches: [], idx: 0 };
+        const matches: { from: number; to: number }[] = [];
+        const cursor = new SearchCursor(tr.state.doc, e.value, 0, undefined, s => s.toLowerCase());
+        while (!cursor.next().done) matches.push({ from: cursor.value.from, to: cursor.value.to });
+        return { matches, idx: 0 };
       }
-      if (e.is(setSearchIndex)) return { ...v, idx: e.value }
+      if (e.is(setSearchIndex)) return { ...v, idx: e.value };
     }
-    return v
-  }
-})
+    return v;
+  },
+});
 
 const searchDecorations = StateField.define<DecorationSet>({
   create: () => Decoration.none,
   update: (_, tr) => {
-    const { matches, idx } = tr.state.field(searchStateField)
-    if (!matches.length) return Decoration.none
-    const builder = new RangeSetBuilder<Decoration>()
-    matches.forEach((m, i) => builder.add(m.from, m.to, Decoration.mark({ class: i === idx ? 'cm-searchMatch-selected' : 'cm-searchMatch' })))
-    return builder.finish()
+    const { matches, idx } = tr.state.field(searchStateField);
+    if (!matches.length) return Decoration.none;
+    const builder = new RangeSetBuilder<Decoration>();
+    matches.forEach((m, i) =>
+      builder.add(
+        m.from,
+        m.to,
+        Decoration.mark({
+          class: i === idx ? 'cm-searchMatch-selected' : 'cm-searchMatch',
+        })
+      )
+    );
+    return builder.finish();
   },
-  provide: f => EditorView.decorations.from(f)
-})
+  provide: f => EditorView.decorations.from(f),
+});
 
-let searchPanel: { dom: HTMLElement; show: () => void } | null = null
+let searchPanel: { dom: HTMLElement; show: () => void } | null = null;
 
 function createSearchPanel(view: EditorView): Panel {
-  const dom = document.createElement('div')
-  dom.style.cssText = 'display:none;align-items:center;padding:8px;background:#f5f5f5;border-top:1px solid #ddd'
+  const dom = document.createElement('div');
+  dom.style.cssText =
+    'display:none;align-items:center;padding:8px;background:#f5f5f5;border-top:1px solid #ddd';
   dom.innerHTML = `
     <input placeholder="查找..." style="width:180px;padding:4px 8px;border:1px solid #ddd;border-radius:4px;outline:none">
     <span style="margin:0 8px;color:#666;font-size:13px"></span>
     <button style="padding:4px 8px;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer">↑</button>
     <button style="padding:4px 8px;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;margin-left:4px">↓</button>
     <button style="padding:4px 8px;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;margin-left:8px">×</button>
-  `
-  const [input, count, prev, next, close] = [dom.querySelector('input')!, dom.querySelector('span')!, ...dom.querySelectorAll('button')] as [HTMLInputElement, HTMLSpanElement, HTMLButtonElement, HTMLButtonElement, HTMLButtonElement]
+  `;
+  const [input, count, prev, next, close] = [
+    dom.querySelector('input')!,
+    dom.querySelector('span')!,
+    ...dom.querySelectorAll('button'),
+  ] as [HTMLInputElement, HTMLSpanElement, HTMLButtonElement, HTMLButtonElement, HTMLButtonElement];
 
   const update = () => {
-    const { matches, idx } = view.state.field(searchStateField)
-    count.textContent = matches.length ? `${idx + 1}/${matches.length}` : input.value ? '无匹配' : ''
-  }
+    const { matches, idx } = view.state.field(searchStateField);
+    count.textContent = matches.length
+      ? `${idx + 1}/${matches.length}`
+      : input.value
+        ? '无匹配'
+        : '';
+  };
 
   const search = () => {
-    view.dispatch({ effects: setSearchQuery.of(input.value) })
-    update()
-  }
+    view.dispatch({ effects: setSearchQuery.of(input.value) });
+    update();
+  };
 
   const go = (d: number) => {
-    const { matches, idx } = view.state.field(searchStateField)
-    if (!matches.length) return
-    const i = (idx + d + matches.length) % matches.length
+    const { matches, idx } = view.state.field(searchStateField);
+    if (!matches.length) return;
+    const i = (idx + d + matches.length) % matches.length;
     view.dispatch({
       effects: setSearchIndex.of(i),
       selection: { anchor: matches[i]!.from, head: matches[i]!.to },
-      scrollIntoView: true
-    })
-    update()
-  }
+      scrollIntoView: true,
+    });
+    update();
+  };
 
-  input.oninput = search
+  input.oninput = search;
   input.onkeydown = e => {
-    if (e.key === 'Enter') { e.preventDefault(); go(e.shiftKey ? -1 : 1) }
-    if (e.key === 'Escape') { view.dispatch({ effects: setSearchQuery.of('') }); input.value = ''; update() }
-  }
-  prev.onclick = () => go(-1)
-  next.onclick = () => go(1)
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      go(e.shiftKey ? -1 : 1);
+    }
+    if (e.key === 'Escape') {
+      view.dispatch({ effects: setSearchQuery.of('') });
+      input.value = '';
+      update();
+    }
+  };
+  prev.onclick = () => go(-1);
+  next.onclick = () => go(1);
   close.onclick = () => {
-    view.dispatch({ effects: setSearchQuery.of('') })
-    input.value = ''
-    dom.style.display = 'none'
-  }
+    view.dispatch({ effects: setSearchQuery.of('') });
+    input.value = '';
+    dom.style.display = 'none';
+  };
 
-  searchPanel = { dom, show: () => { dom.style.display = 'flex'; input.focus(); input.select() } }
-  return { dom, top: false }
+  searchPanel = {
+    dom,
+    show: () => {
+      dom.style.display = 'flex';
+      input.focus();
+      input.select();
+    },
+  };
+  return { dom, top: false };
 }
 
 function openSearchPanelCustom() {
@@ -538,25 +830,25 @@ function openSearchPanelCustom() {
 
 // 类型定义
 interface ToolbarItem {
-  type?: 'divider' | 'spacer'
-  icon?: string
-  label?: string
-  title?: string
-  action?: () => void
-  isActive?: () => boolean
-  mobileOnly?: boolean
+  type?: 'divider' | 'spacer';
+  icon?: string;
+  label?: string;
+  title?: string;
+  action?: () => void;
+  isActive?: () => boolean;
+  mobileOnly?: boolean;
 }
 
 interface ScrollNode {
-  line: number
-  previewTop: number
-  editorTop: number
+  line: number;
+  previewTop: number;
+  editorTop: number;
 }
 
-type ViewMode = 'split' | 'editor' | 'preview' | 'html'
+type ViewMode = 'split' | 'editor' | 'preview' | 'html';
 
 // 常量
-const SCROLL_DURATION = 100
+const SCROLL_DURATION = 100;
 
 const props = withDefaults(defineProps<{ modelValue: string }>(), { modelValue: '' })
 const emit = defineEmits<{ 'update:modelValue': [value: string], 'save': [content: string] }>()

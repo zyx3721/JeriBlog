@@ -60,86 +60,91 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { getCategories, createCategory, updateCategory, deleteCategory } from '@/api/category'
-import type { Category } from '@/types/category'
-const props = defineProps<{ modelValue: boolean }>()
-const emit = defineEmits(['update:modelValue', 'success'])
+import { ref, computed, watch } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { getCategories, createCategory, updateCategory, deleteCategory } from '@/api/category';
+import type { Category } from '@/types/category';
+const props = defineProps<{ modelValue: boolean }>();
+const emit = defineEmits(['update:modelValue', 'success']);
 
 const visible = computed({
   get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val)
-})
+  set: val => emit('update:modelValue', val),
+});
 
-const loading = ref(false)
-const list = ref<Category[]>([])
+const loading = ref(false);
+const list = ref<Category[]>([]);
 
-const formVisible = ref(false)
-const current = ref<Partial<Category>>({ id: 0, name: '', description: '', sort: 0 })
+const formVisible = ref(false);
+const current = ref<Partial<Category>>({
+  id: 0,
+  name: '',
+  description: '',
+  sort: 0,
+});
 
 // 弹窗打开时加载数据（immediate 确保懒挂载组件首次打开时也能加载）
 watch(
   visible,
-  (val) => {
-    if (val) loadData()
+  val => {
+    if (val) loadData();
   },
   { immediate: true }
-)
+);
 
 // 加载分类列表
 async function loadData() {
-  loading.value = true
+  loading.value = true;
   try {
-    const res = await getCategories()
-    list.value = res.list
+    const res = await getCategories();
+    list.value = res.list;
   } catch (_error) {
-    ElMessage.error('加载分类列表失败')
+    ElMessage.error('加载分类列表失败');
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 // 打开表单
 function openForm(row?: Category) {
   if (row) {
-    current.value = { ...row }
+    current.value = { ...row };
   } else {
-    current.value = { id: 0, name: '', description: '', sort: 0 }
+    current.value = { id: 0, name: '', description: '', sort: 0 };
   }
-  formVisible.value = true
+  formVisible.value = true;
 }
 
 async function remove(row: Category) {
   try {
-    await ElMessageBox.confirm('确定要删除这个分类吗？')
-    await deleteCategory(row.id)
-    await loadData()
-    emit('success')
-    ElMessage.success('删除成功')
+    await ElMessageBox.confirm('确定要删除这个分类吗？');
+    await deleteCategory(row.id);
+    await loadData();
+    emit('success');
+    ElMessage.success('删除成功');
   } catch {}
 }
 
 async function save() {
   if (!current.value.name?.trim()) {
-    return ElMessage.warning('请输入分类名称')
+    return ElMessage.warning('请输入分类名称');
   }
 
-  loading.value = true
+  loading.value = true;
   try {
     if (current.value.id) {
-      await updateCategory(current.value.id, current.value)
+      await updateCategory(current.value.id, current.value);
     } else {
-      await createCategory(current.value)
+      await createCategory(current.value);
     }
-    await loadData()
-    formVisible.value = false
-    emit('success')
-    ElMessage.success('保存成功')
+    await loadData();
+    formVisible.value = false;
+    emit('success');
+    ElMessage.success('保存成功');
   } catch (_error) {
-    ElMessage.error('保存失败')
+    ElMessage.error('保存失败');
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 </script>

@@ -81,12 +81,3 @@ export function getVisits(params: VisitListQuery): Promise<VisitListData> {
 export function deleteVisit(id: number): Promise<void> {
   return request.delete(`/admin/stats/visits/${id}`);
 }
-
-/**
- * 批量删除访问日志
- * @param params 搜索条件
- * @returns Promise<void>
- */
-export function batchDeleteVisits(params: Omit<VisitListQuery, 'page' | 'page_size'>): Promise<void> {
-  return request.delete("/admin/stats/visits/batch", { params });
-}

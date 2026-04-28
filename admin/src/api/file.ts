@@ -9,55 +9,54 @@
 功能描述：API 接口定义 - file
 */
 
-import request from "@/utils/request";
-import type { FileInfo, FileListData, FileListQuery, FileQuery } from "@/types/file";
+import request from '@/utils/request';
+import type { FileListData, FileListQuery } from '@/types/file';
 
 /**
  * 上传文件响应接口
  */
 export interface UploadResponse {
-  file_url: string
-  file_name: string
-  file_size: number
+  file_url: string;
+  file_name: string;
+  file_size: number;
 }
 
 /**
  * 上传文件
- * @param {File} file - 要上传的文件
- * @param {string} [type=''] - 文件类型（默认为空，由文章保存时设置）
- * @returns {Promise<UploadResponse>} 上传结果
+ * @param file 要上传的文件
+ * @param type 文件类型（默认为'image'）
+ * @returns Promise<UploadResponse>
  */
 export async function uploadFile(file: File, type = ''): Promise<UploadResponse> {
   const formData = new FormData();
-  formData.append("file", file);
-  formData.append("type", type);
+  formData.append('file', file);
+  formData.append('type', type);
   try {
-    return await request.post("/admin/files", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
+    return await request.post('/admin/files', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
       timeout: 300000 // 5分钟超时，支持大文件上传
     });
   } catch (error: unknown) {
-    // 尝试从响应中提取详细错误信息
-    if (error.response?.data?.message) {
-      throw new Error(error.response.data.message);
-    }
-    throw error;
+    const err = error as { response?: { data?: { message?: string } }; message?: string };
+    const serverMessage = err.response?.data?.message;
+    const errorMessage = serverMessage || err.message || '上传失败';
+    throw new Error(errorMessage);
   }
 }
 
 /**
  * 获取文件列表
- * @param {FileQuery} params - 查询参数
- * @returns {Promise<FileListData>} 文件列表
+ * @param params 查询参数
+ * @returns Promise<FileListData>
  */
-export function getFileList(params: FileQuery): Promise<FileListData> {
-  return request.get("/admin/files", { params });
+export function getFileList(params: FileListQuery): Promise<FileListData> {
+  return request.get('/admin/files', { params });
 }
 
 /**
  * 删除文件
- * @param {number} id - 文件ID
- * @returns {Promise<void>}
+ * @param id 文件ID
+ * @returns Promise<void>
  */
 export function deleteFile(id: number): Promise<void> {
   return request.delete(`/admin/files/${id}`);
@@ -76,8 +75,8 @@ export interface FileReference {
 
 /**
  * 获取文件引用详情
- * @param {number} id - 文件ID
- * @returns {Promise<FileReference[]>} 引用列表
+ * @param id 文件ID
+ * @returns Promise<FileReference[]> 引用列表
  */
 export function getFileReferences(id: number): Promise<FileReference[]> {
   return request.get(`/admin/files/${id}/references`);

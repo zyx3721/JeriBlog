@@ -55,7 +55,7 @@
         </div>
 
         <!-- 表格 - 完全由外部控制 -->
-        <el-table v-else :data="data" border style="width: 100%; height: 100%" v-bind="$attrs" :row-key="rowKey">
+        <el-table v-else :data="data" border style="width: 100%; height: 100%" v-bind="$attrs">
           <slot />
         </el-table>
       </div>
@@ -77,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import { Refresh, Filter, Plus } from '@element-plus/icons-vue'
+import { Refresh, Filter, Plus } from '@element-plus/icons-vue';
 
 withDefaults(
   defineProps<{
@@ -104,17 +104,17 @@ withDefaults(
     createText: '新增',
     showFilter: true,
     filterActive: false,
-    filterCount: 0
+    filterCount: 0,
   }
-)
+);
 
 defineEmits<{
-  create: []
-  refresh: []
-  filter: []
-  'update:page': [page: number]
-  'update:pageSize': [size: number]
-}>()
+  create: [];
+  refresh: [];
+  filter: [];
+  'update:page': [page: number];
+  'update:pageSize': [size: number];
+}>();
 </script>
 
 <style scoped lang="scss">

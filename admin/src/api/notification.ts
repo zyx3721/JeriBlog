@@ -9,11 +9,8 @@
 功能描述：API 接口定义 - notification
 */
 
-import request from "@/utils/request";
-import type {
-  NotificationListData,
-  NotificationQueryParams
-} from "@/types/notification";
+import request from '@/utils/request';
+import type { NotificationListData, NotificationQueryParams } from '@/types/notification';
 
 /**
  * 获取管理员通知列表
@@ -21,7 +18,7 @@ import type {
  * @returns Promise<NotificationListData>
  */
 export function getNotifications(params: NotificationQueryParams): Promise<NotificationListData> {
-  return request.get("/admin/notifications", { params });
+  return request.get('/admin/notifications', { params });
 }
 
 /**
@@ -38,7 +35,7 @@ export function markAsRead(id: number): Promise<void> {
  * @returns Promise<void>
  */
 export function markAllAsRead(): Promise<void> {
-  return request.put("/admin/notifications/read-all");
+  return request.put('/admin/notifications/read-all');
 }
 
 /**
@@ -46,7 +43,7 @@ export function markAllAsRead(): Promise<void> {
  * @returns Promise<void>
  */
 export function clearAllNotifications(): Promise<void> {
-  return request.delete("/admin/notifications/clear-all");
+  return request.delete('/admin/notifications/clear-all');
 }
 
 /**
@@ -54,6 +51,6 @@ export function clearAllNotifications(): Promise<void> {
  * @returns Promise<void>
  */
 export function clearReadNotifications(): Promise<void> {
-  return request.delete("/admin/notifications/clear-read");
+  return request.delete('/admin/notifications/clear-read');
 }
 

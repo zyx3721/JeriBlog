@@ -70,8 +70,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted } from 'vue'
-import { Filter, Refresh, Close } from '@element-plus/icons-vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue';
+import { Filter, Refresh, Close } from '@element-plus/icons-vue';
 
 /**
  * 组件属性定义
@@ -79,67 +79,67 @@ import { Filter, Refresh, Close } from '@element-plus/icons-vue'
 const props = withDefaults(
   defineProps<{
     /** 筛选面板标题 */
-    title?: string
+    title?: string;
     /** 表单数据 */
-    modelValue: Record<string, unknown>
+    modelValue: Record<string, unknown>;
   }>(),
   {
     title: '筛选条件',
   }
-)
+);
 
 /**
  * 组件事件定义
  */
 const emit = defineEmits<{
-  'update:modelValue': [value: Record<string, unknown>]
-  reset: []
-  close: []
-}>()
+  'update:modelValue': [value: Record<string, unknown>];
+  reset: [];
+  close: [];
+}>();
 
-const formData = ref<Record<string, unknown>>({ ...props.modelValue })
-const isMobile = ref(false)
+const formData = ref<Record<string, unknown>>({ ...props.modelValue });
+const isMobile = ref(false);
 
 const checkMobile = () => {
-  isMobile.value = window.innerWidth < 600
-}
+  isMobile.value = window.innerWidth < 600;
+};
 
 onMounted(() => {
-  checkMobile()
-  window.addEventListener('resize', checkMobile)
-})
+  checkMobile();
+  window.addEventListener('resize', checkMobile);
+});
 
 onUnmounted(() => {
-  window.removeEventListener('resize', checkMobile)
-})
+  window.removeEventListener('resize', checkMobile);
+});
 
 watch(
   () => props.modelValue,
   newVal => {
-    formData.value = { ...newVal }
+    formData.value = { ...newVal };
   },
   { deep: true }
-)
+);
 
 /**
  * 处理重置
  */
 const handleReset = () => {
-  const pageSize = formData.value.page_size
+  const pageSize = formData.value.page_size;
   formData.value = {
     page: 1,
     ...(pageSize !== undefined && { page_size: pageSize }),
-  }
-  emit('update:modelValue', { ...formData.value })
-  emit('reset')
-}
+  };
+  emit('update:modelValue', { ...formData.value });
+  emit('reset');
+};
 
 /**
  * 处理关闭
  */
 const handleClose = () => {
-  emit('close')
-}
+  emit('close');
+};
 </script>
 
 <style scoped lang="scss">

@@ -14,8 +14,15 @@
     <div class="logo">
       <span v-show="!isCollapse">Jeri 管理系统</span>
     </div>
-    <el-menu :default-active="route.path" :collapse="isCollapse" background-color="#304156" text-color="#bfcbd9"
-      active-text-color="#409eff" router @select="handleMenuSelect">
+    <el-menu
+      :default-active="route.path"
+      :collapse="isCollapse"
+      background-color="#304156"
+      text-color="#bfcbd9"
+      active-text-color="#409eff"
+      router
+      @select="handleMenuSelect"
+    >
       <el-menu-item index="/" @click="handleItemClick('/')">
         <i class="ri-dashboard-2-line ri-lg"></i>
         <template #title><span>仪表盘</span></template>
