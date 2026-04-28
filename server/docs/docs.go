@@ -1931,6 +1931,48 @@ const docTemplate = `{
                         "description": "每页数量（不传则返回全部）",
                         "name": "page_size",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键词搜索（名称、链接、描述）",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "友链类型ID",
+                        "name": "type_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否失效",
+                        "name": "is_invalid",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否待审核",
+                        "name": "is_pending",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "可访问性状态: normal=正常, abnormal=异常, ignored=忽略检查",
+                        "name": "accessible_status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "RSS状态: no_rss=无订阅, normal=正常订阅, warning=三个月未更新, danger=六个月未更新",
+                        "name": "rss_status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否包含截图",
+                        "name": "has_screenshot",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -2123,7 +2165,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "通过 ID 获取友链类型信息",
+                "description": "获取友链类型详细信息",
                 "produces": [
                     "application/json"
                 ],
@@ -2247,7 +2289,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "删除友链类型（关联的友链 type_id 会被设置为 NULL）",
+                "description": "删除友链类型，关联友链的类型会被设置为 NULL",
                 "produces": [
                     "application/json"
                 ],
@@ -2305,7 +2347,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "通过 ID 获取友链信息",
+                "description": "获取友链详细信息",
                 "consumes": [
                     "application/json"
                 ],
@@ -2432,7 +2474,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "软删除友链",
+                "description": "硬删除友链，不可恢复",
                 "consumes": [
                     "application/json"
                 ],
@@ -6495,7 +6537,7 @@ const docTemplate = `{
         },
         "/friends": {
             "get": {
-                "description": "获取友链列表（按类型分组并排序，包括失效友链，通过 is_invalid 字段标识）",
+                "description": "按类型获取友链列表",
                 "produces": [
                     "application/json"
                 ],
@@ -9742,7 +9784,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "Jeri-Server",
+	Title:            "JeriBlog",
 	Description:      "一个基于 Go 语言的现代化博客后端服务",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

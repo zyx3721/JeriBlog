@@ -17,7 +17,7 @@ import (
 	_ "jeri_blog/docs" // swagger docs
 )
 
-// @title           Jeri-Server
+// @title           JeriBlog
 // @version         v1
 // @description     一个基于 Go 语言的现代化博客后端服务
 

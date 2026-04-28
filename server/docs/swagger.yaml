@@ -1691,7 +1691,7 @@ info:
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-  title: Jeri-Server
+  title: JeriBlog
   version: v1
 paths:
   /admin/ai/ai-summary:
@@ -2865,6 +2865,34 @@ paths:
         in: query
         name: page_size
         type: integer
+      - description: 关键词搜索（名称、链接、描述）
+        in: query
+        name: keyword
+        type: string
+      - description: 友链类型ID
+        in: query
+        name: type_id
+        type: integer
+      - description: 是否失效
+        in: query
+        name: is_invalid
+        type: boolean
+      - description: 是否待审核
+        in: query
+        name: is_pending
+        type: boolean
+      - description: '可访问性状态: normal=正常, abnormal=异常, ignored=忽略检查'
+        in: query
+        name: accessible_status
+        type: string
+      - description: 'RSS状态: no_rss=无订阅, normal=正常订阅, warning=三个月未更新, danger=六个月未更新'
+        in: query
+        name: rss_status
+        type: string
+      - description: 是否包含截图
+        in: query
+        name: has_screenshot
+        type: boolean
       produces:
       - application/json
       responses:
@@ -2924,7 +2952,7 @@ paths:
     delete:
       consumes:
       - application/json
-      description: 软删除友链
+      description: 硬删除友链，不可恢复
       parameters:
       - description: 友链 ID
         in: path
@@ -2962,7 +2990,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: 通过 ID 获取友链信息
+      description: 获取友链详细信息
       parameters:
       - description: 友链 ID
         in: path
@@ -3110,7 +3138,7 @@ paths:
       - 友链管理
   /admin/friends/types/{id}:
     delete:
-      description: 删除友链类型（关联的友链 type_id 会被设置为 NULL）
+      description: 删除友链类型，关联友链的类型会被设置为 NULL
       parameters:
       - description: 类型 ID
         in: path
@@ -3146,7 +3174,7 @@ paths:
       tags:
       - 友链管理
     get:
-      description: 通过 ID 获取友链类型信息
+      description: 获取友链类型详细信息
       parameters:
       - description: 类型 ID
         in: path
@@ -5697,7 +5725,7 @@ paths:
       - 评论
   /friends:
     get:
-      description: 获取友链列表（按类型分组并排序，包括失效友链，通过 is_invalid 字段标识）
+      description: 按类型获取友链列表
       produces:
       - application/json
       responses:

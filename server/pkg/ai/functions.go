@@ -27,14 +27,6 @@ const (
 	defaultTitlePrompt     = "你是一位资深技术作者，请根据文章内容生成1个中文标题。要求：1. 突出主题亮点和核心价值；2. 控制在15到25字之间；3. 尽量不用标点符号；4. 只返回标题本身，不要解释。"
 )
 
-// truncateContent 截断内容到指定长度
-func truncateContent(content string, maxLength int) string {
-	if len(content) > maxLength {
-		return content[:maxLength] + "\n\n... (内容已截断)"
-	}
-	return content
-}
-
 func resolvePrompt(customPrompt, defaultPrompt string) string {
 	if strings.TrimSpace(customPrompt) != "" {
 		return strings.TrimSpace(customPrompt)
@@ -74,7 +66,9 @@ func (c *OpenAIClient) callOpenAI(prompt string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("发送请求失败: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -128,7 +122,9 @@ func (c *OpenAIClient) Test() error {
 	if err != nil {
 		return fmt.Errorf("连接失败: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	body, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
@@ -144,22 +140,18 @@ func (c *OpenAIClient) Test() error {
 
 // GenerateSummary 生成文章摘要（50-100字，创作者角度）
 func (c *OpenAIClient) GenerateSummary(content string) (string, error) {
-	content = truncateContent(content, 10000)
 	prompt := resolvePrompt(c.SummaryPrompt, defaultSummaryPrompt) + "\n\n文章内容：\n" + content
 	return c.callOpenAI(prompt)
 }
 
 // GenerateAISummary 生成AI摘要（150-200字，旁观者角度）
 func (c *OpenAIClient) GenerateAISummary(content string) (string, error) {
-	content = truncateContent(content, 10000)
 	prompt := resolvePrompt(c.AISummaryPrompt, defaultAISummaryPrompt) + "\n\n文章内容：\n" + content
 	return c.callOpenAI(prompt)
 }
 
 // GenerateTitle 生成标题
 func (c *OpenAIClient) GenerateTitle(content string) ([]string, error) {
-	content = truncateContent(content, 3000)
-
 	for i := 0; i < 3; i++ { // 最多重试3次
 		prompt := resolvePrompt(c.TitlePrompt, defaultTitlePrompt) + "\n\n文章核心内容：\n" + content + "\n\n标题："
 		result, err := c.callOpenAI(prompt)
