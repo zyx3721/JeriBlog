@@ -81,7 +81,7 @@ const handleUnsubscribe = async (token: string) => {
     const res: any = await $fetch(`${apiUrl}/subscribe/unsubscribe?token=${token}`)
     unsubscribeSuccess.value = res.code === 0
     unsubscribeMessage.value = res.code === 0 ? '退订成功！' : (res.message || '退订失败')
-  } catch (error: any) {
+  } catch (error: unknown) {
     unsubscribeSuccess.value = false
     unsubscribeMessage.value = error.data?.message || '退订失败'
   } finally {

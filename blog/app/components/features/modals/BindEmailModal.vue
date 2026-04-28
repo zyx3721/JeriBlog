@@ -48,7 +48,7 @@ const handleSubmit = async () => {
     showSuccess('邮箱绑定成功')
     emit('success')
     emit('update:modelValue', false)
-  } catch (error: any) {
+  } catch (error: unknown) {
     showError(error.message || '绑定失败')
   } finally {
     loading.value = false

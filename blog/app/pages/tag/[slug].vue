@@ -38,7 +38,7 @@ const { data: initialData } = await useAsyncData(`tag-${route.params.slug}`, asy
       })
     ]);
     return { tag: tagData, articles: articlesData.list, total: articlesData.total };
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error.response?.status === 404) {
       router.replace('/404');
     }
@@ -76,7 +76,7 @@ const fetchData = async (page = 1) => {
     });
     articles.value = articlesData.list;
     total.value = articlesData.total;
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error.response?.status === 404) {
       router.replace('/404');
     }

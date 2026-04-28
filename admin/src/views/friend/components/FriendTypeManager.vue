@@ -77,52 +77,52 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { getFriendTypes, createFriendType, updateFriendType, deleteFriendType } from '@/api/friend'
-import type { FriendType } from '@/types/friend'
-const props = defineProps<{ modelValue: boolean }>()
-const emit = defineEmits(['update:modelValue', 'success'])
+import { ref, computed, watch } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { getFriendTypes, createFriendType, updateFriendType, deleteFriendType } from '@/api/friend';
+import type { FriendType } from '@/types/friend';
+const props = defineProps<{ modelValue: boolean }>();
+const emit = defineEmits(['update:modelValue', 'success']);
 
 // 暴露方法给父组件调用
 defineExpose({
-  refreshData: loadData
-})
+  refreshData: loadData,
+});
 
 const visible = computed({
   get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val)
-})
+  set: val => emit('update:modelValue', val),
+});
 
 const loading = ref(false);
-const list = ref<FriendType[]>([])
+const list = ref<FriendType[]>([]);
 
-const formVisible = ref(false)
+const formVisible = ref(false);
 const current = ref<Partial<FriendType>>({
   id: 0,
   name: '',
   sort: 5,
   is_visible: true,
-  count: 0
-})
+  count: 0,
+});
 
 // 弹窗打开时加载数据（immediate 确保懒挂载组件首次打开时也能加载）
 watch(
   visible,
   val => {
-    if (val) loadData()
+    if (val) loadData();
   },
   { immediate: true }
-)
+);
 
 // 加载友链类型列表
 async function loadData() {
-  loading.value = true
+  loading.value = true;
   try {
-    const res = await getFriendTypes()
-    list.value = res.list
+    const res = await getFriendTypes();
+    list.value = res.list;
   } catch (_error) {
-    ElMessage.error('加载友链类型列表失败')
+    ElMessage.error('加载友链类型列表失败');
   } finally {
     loading.value = false;
   }
@@ -131,17 +131,17 @@ async function loadData() {
 // 打开表单
 function openForm(row?: FriendType) {
   if (row) {
-    current.value = { ...row }
+    current.value = { ...row };
   } else {
     current.value = {
       id: 0,
       name: '',
       sort: 5,
       is_visible: true,
-      count: 0
-    }
+      count: 0,
+    };
   }
-  formVisible.value = true
+  formVisible.value = true;
 }
 
 // 删除友链类型
@@ -151,16 +151,16 @@ async function remove(row: FriendType) {
       '删除类型后，关联的友链type_id会被设置为NULL。确定要删除这个类型吗？',
       '提示',
       {
-        type: 'warning'
+        type: 'warning',
       }
-    )
-    await deleteFriendType(row.id)
-    await loadData()
-    emit('success') // 通知父组件刷新
-    ElMessage.success('删除成功')
+    );
+    await deleteFriendType(row.id);
+    await loadData();
+    emit('success'); // 通知父组件刷新
+    ElMessage.success('删除成功');
   } catch (error) {
     if (error !== 'cancel') {
-      console.error(error)
+      console.error(error);
     }
   }
 }
@@ -168,34 +168,34 @@ async function remove(row: FriendType) {
 // 保存友链类型
 async function save() {
   if (!current.value.name?.trim()) {
-    return ElMessage.warning('请输入类型名称')
+    return ElMessage.warning('请输入类型名称');
   }
 
-  loading.value = true
+  loading.value = true;
   try {
     if (current.value.id) {
       // 编辑类型
       await updateFriendType(current.value.id, {
         name: current.value.name,
         sort: current.value.sort,
-        is_visible: current.value.is_visible
-      })
+        is_visible: current.value.is_visible,
+      });
     } else {
       // 新增类型
       await createFriendType({
         name: current.value.name,
         sort: current.value.sort,
-        is_visible: current.value.is_visible
-      })
+        is_visible: current.value.is_visible,
+      });
     }
-    await loadData()
-    formVisible.value = false
-    emit('success') // 通知父组件刷新
-    ElMessage.success('保存成功')
+    await loadData();
+    formVisible.value = false;
+    emit('success');
+    ElMessage.success('保存成功');
   } catch (_error) {
-    ElMessage.error('保存失败')
+    ElMessage.error('保存失败');
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 </script>

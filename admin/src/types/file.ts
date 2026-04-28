@@ -11,39 +11,36 @@
 
 // 文件信息
 export interface FileInfo {
-  id: number
-  file_name: string
-  original_name: string
-  file_url: string
-  file_type: string
-  file_size: number
-  upload_type: string
-  upload_time: string
-  status: number // 0:未使用 1:使用中
-  reference_count?: number // 引用次数
+  id: number;
+  file_name: string;
+  original_name: string;
+  file_url: string;
+  file_type: string;
+  file_size: number;
+  upload_type: string;
+  upload_time: string;
+  status: number; // 0:未使用 1:使用中
+  reference_count?: number; // 引用次数
 }
 
 // 文件列表查询
 export interface FileListQuery {
-  page?: number
-  page_size?: number
-  type?: string
-}
-
-// 文件查询参数
-export interface FileQuery {
-  page: number
-  page_size: number
-  keyword?: string
-  status?: number
-  type?: string
-  upload_type?: string
+  page?: number;
+  page_size?: number;
+  keyword?: string;
+  file_type?: string;
+  status?: number;
+  upload_type?: string;
+  min_size?: number;
+  max_size?: number;
+  start_time?: string;
+  end_time?: string;
 }
 
 // 文件列表响应
 export interface FileListData {
-  list: FileInfo[]
-  total: number
-  page: number
-  page_size: number
+  list: FileInfo[];
+  total: number;
+  page: number;
+  page_size: number;
 }

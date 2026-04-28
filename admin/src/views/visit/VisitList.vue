@@ -197,7 +197,7 @@ const handleDelete = async (id: number) => {
         await deleteVisit(id)
         ElMessage.success('删除成功')
         fetchVisits()
-    } catch (error: any) {
+    } catch (error: unknown) {
         if (error !== 'cancel') {
             ElMessage.error(error.message || '删除失败')
         }
@@ -223,7 +223,7 @@ const handleBatchDelete = async () => {
         })
         ElMessage.success('批量删除成功')
         fetchVisits()
-    } catch (error: any) {
+    } catch (error: unknown) {
         if (error !== 'cancel') {
             ElMessage.error(error.message || '批量删除失败')
         }

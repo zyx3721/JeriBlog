@@ -208,7 +208,7 @@ const handleSubmit = async () => {
         if (uploadedUrl) {
           formData.value.avatar = uploadedUrl
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         submitLoading.value = false
         ElMessage.error(error.message || '头像上传失败')
         return

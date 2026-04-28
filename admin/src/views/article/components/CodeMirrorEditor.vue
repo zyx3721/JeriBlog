@@ -1103,7 +1103,7 @@ const handleImageSelect = async (event: Event) => {
     const results = await Promise.all(files.map(f => uploadFile(f, '')))
     insertText(results.map(r => `![图片](${r.file_url})`).join('\n'))
     ElMessage.success(`成功上传 ${files.length} 张图片`)
-  } catch (error: any) {
+  } catch (error: unknown) {
     ElMessage.error(error.message || '图片上传失败')
   } finally {
     loading.close()
@@ -1128,7 +1128,7 @@ const handlePasteImage = async (files: File[]) => {
     const results = await Promise.all(imageFiles.map(f => uploadFile(f, '')))
     insertText(results.map(r => `![图片](${r.file_url})`).join('\n'))
     ElMessage.success(`成功上传 ${imageFiles.length} 张图片`)
-  } catch (error: any) {
+  } catch (error: unknown) {
     ElMessage.error(error.message || '图片上传失败')
   } finally {
     loading.close()
@@ -1182,7 +1182,7 @@ const handleOnlineImageDownload = async () => {
 
     // 关闭 Popover
     document.body.click()
-  } catch (error: any) {
+  } catch (error: unknown) {
     ElMessage.error(error.message || '图片下载失败')
   } finally {
     downloadingImage.value = false
@@ -1370,7 +1370,7 @@ const handleVideoUpload = async (file: File) => {
     const results = await uploadFile(file, '')
     videoDialog.videoUrl = results.file_url
     ElMessage.success('视频上传成功')
-  } catch (error: any) {
+  } catch (error: unknown) {
     ElMessage.error(error?.message || '视频上传失败')
   } finally {
     videoDialog.uploading = false
@@ -1449,7 +1449,7 @@ const handleAudioUpload = async (file: File) => {
     const results = await uploadFile(file, '')
     audioDialog.audioUrl = results.file_url
     ElMessage.success('音频上传成功')
-  } catch (error: any) {
+  } catch (error: unknown) {
     ElMessage.error(error?.message || '音频上传失败')
   } finally {
     audioDialog.uploading = false
@@ -1565,7 +1565,7 @@ const handlePhotoImageUpload = async (rowIndex: number, imgIndex: number, file: 
       row[imgIndex] = results.file_url
     }
     ElMessage.success('图片上传成功')
-  } catch (error: any) {
+  } catch (error: unknown) {
     ElMessage.error(error?.message || '图片上传失败')
   } finally {
     photoDialog.uploading = false

@@ -19,26 +19,33 @@
 
 // 类型声明
 export interface TrackerPlugin {
-  trackPageView: (path?: string, articleId?: number) => void
-  trackEvent: (name: string, data?: Record<string, any>) => void
-  setArticleId: (id?: number) => void
+  trackPageView: (path?: string, articleId?: number) => void;
+  trackEvent: (name: string, data?: Record<string, unknown>) => void;
+  setArticleId: (id?: number) => void;
 }
 
 declare module '#app' {
   interface NuxtApp {
-    $tracker: TrackerPlugin
+    $tracker: TrackerPlugin;
   }
 }
 
 export default defineNuxtPlugin({
-  parallel: true, // 并行加载，不阻塞其他插件
+  parallel: true,
   setup() {
     const router = useRouter();
     const endpoint = `${useRuntimeConfig().public.apiUrl}/collect`;
+    const { userInfo } = useUser();
 
     let pageStartTime = Date.now();
     let lastPageUrl = location.pathname + location.search;
     let currentArticleId: number | undefined;
+
+    // 检查是否为超级管理员
+    const isSuperAdmin = () => {
+      // 从响应式状态读取
+      return userInfo.value?.role === 'super_admin';
+    };
 
     const getBaseData = (url?: string, articleId?: number) => ({
       url: url || location.pathname + location.search,
@@ -53,47 +60,44 @@ export default defineNuxtPlugin({
 
     const send = (
       type: string,
-      extra: Record<string, any> = {},
+      extra: Record<string, unknown> = {},
       url?: string,
       articleId?: number
     ) => {
-      const payload = {
-        ...getBaseData(url, articleId),
-        type,
-        ...extra,
-      };
-      const blob = new Blob([JSON.stringify(payload)], {
-        type: "application/json",
-      });
-      navigator.sendBeacon?.(endpoint, blob) ||
-        fetch(endpoint, { method: "POST", body: blob, keepalive: true }).catch(
-          () => {}
-        );
+      if (isSuperAdmin()) return;
+
+      const payload = { ...getBaseData(url, articleId), type, ...extra };
+      const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(endpoint, blob);
+      } else {
+        fetch(endpoint, { method: 'POST', body: blob, keepalive: true }).catch(() => {});
+      }
     };
 
     const sendDuration = (url?: string, articleId?: number) => {
       const sec = Math.floor((Date.now() - pageStartTime) / 1000);
-      if (sec > 0) send("duration", { duration: sec }, url, articleId);
+      if (sec > 0) send('duration', { duration: sec }, url, articleId);
     };
 
     // 页面隐藏/卸载时发送停留时长
-    document.addEventListener("visibilitychange", () => {
-      document.hidden
-        ? sendDuration(undefined, currentArticleId)
-        : (pageStartTime = Date.now());
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        sendDuration(undefined, currentArticleId);
+      } else {
+        pageStartTime = Date.now();
+      }
     });
-    window.addEventListener("beforeunload", () =>
-      sendDuration(undefined, currentArticleId)
-    );
+    window.addEventListener('beforeunload', () => sendDuration(undefined, currentArticleId));
 
     // 路由变化时统计
-    router.afterEach((to) => {
+    router.afterEach(to => {
       setTimeout(() => {
         sendDuration(lastPageUrl, currentArticleId);
         pageStartTime = Date.now();
         lastPageUrl = to.path;
         currentArticleId = undefined;
-        send("pageview", {}, to.path);
+        send('pageview', {}, to.path);
       }, 100);
     });
 
@@ -101,9 +105,9 @@ export default defineNuxtPlugin({
       provide: {
         tracker: {
           trackPageView: (path?: string, articleId?: number) =>
-            send("pageview", {}, path, articleId),
-          trackEvent: (name: string, data?: Record<string, any>) =>
-            name && send("event", { event_name: name, event_data: data }),
+            send('pageview', {}, path, articleId),
+          trackEvent: (name: string, data?: Record<string, unknown>) =>
+            name && send('event', { event_name: name, event_data: data }),
           setArticleId: (id?: number) => {
             currentArticleId = id;
           },

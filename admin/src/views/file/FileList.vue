@@ -10,202 +10,227 @@
 -->
 
 <template>
-  <common-list title="文件管理" :data="fileList" :loading="loading" :total="total" :show-create="false"
-    v-model:page="query.page" v-model:page-size="query.page_size" @refresh="loadList" @update:page="loadList"
-    @update:pageSize="loadList" row-key="id">
-    <!-- 搜索表单 -->
-    <template #toolbar-before>
-      <div class="search-form file-search">
-        <el-input
-          v-model="query.keyword"
-          placeholder="搜索文件名、原始文件名..."
-          clearable
-          style="width: 220px"
-          @keyup.enter="handleSearch"
-          @clear="handleSearch"
-        />
-        <el-select
-          v-model="query.upload_type"
-          placeholder="用途"
-          clearable
-          style="width: 140px"
-          @change="handleSearch"
+  <div class="file-list-page">
+    <transition name="filter-slide">
+      <file-filter
+        v-if="showFilter"
+        v-model="query"
+        @close="showFilter = false"
+        @search="loadList"
+      />
+    </transition>
+
+    <common-list
+      title="文件管理"
+      :data="fileList"
+      :loading="loading"
+      :total="total"
+      :show-create="false"
+      :filter-active="showFilter"
+      :filter-count="activeFilterCount"
+      v-model:page="query.page"
+      v-model:page-size="query.page_size"
+      @refresh="loadList"
+      @filter="toggleFilter"
+      @update:page="loadList"
+      @update:pageSize="loadList"
+    >
+      <template #toolbar-before>
+        <template v-if="!showFilter">
+          <el-select
+            v-model="query.upload_type"
+            placeholder="用途"
+            clearable
+            style="width: 140px"
+            @change="handleSearch"
+          >
+            <el-option-group label="用户相关">
+              <el-option label="用户头像" value="用户头像" />
+            </el-option-group>
+            <el-option-group label="文章相关">
+              <el-option label="文章封面" value="文章封面" />
+              <el-option label="文章配图" value="文章配图" />
+              <el-option label="文章视频" value="文章视频" />
+              <el-option label="文章音频" value="文章音频" />
+              <el-option label="文章附件" value="文章附件" />
+            </el-option-group>
+            <el-option-group label="动态相关">
+              <el-option label="动态配图" value="动态配图" />
+              <el-option label="动态视频" value="动态视频" />
+              <el-option label="动态音频" value="动态音频" />
+            </el-option-group>
+            <el-option-group label="评论相关">
+              <el-option label="评论贴图" value="评论贴图" />
+            </el-option-group>
+            <el-option-group label="友链相关">
+              <el-option label="友情链接A" value="友情链接A" />
+              <el-option label="友情链接S" value="友情链接S" />
+            </el-option-group>
+            <el-option-group label="系统设置">
+              <el-option label="站长头像" value="站长头像" />
+              <el-option label="站长形象" value="站长形象" />
+              <el-option label="博客图标" value="博客图标" />
+              <el-option label="博客背景" value="博客背景" />
+              <el-option label="博客截图" value="博客截图" />
+              <el-option label="展览图片" value="展览图片" />
+              <el-option label="微信收款码" value="微信收款码" />
+              <el-option label="支付宝收款码" value="支付宝收款码" />
+            </el-option-group>
+            <el-option-group label="其他">
+              <el-option label="菜单图标" value="菜单图标" />
+              <el-option label="反馈投诉" value="反馈投诉" />
+            </el-option-group>
+          </el-select>
+          <el-select
+            v-model="quickFilters.file_type"
+            placeholder="全部类型"
+            clearable
+            class="quick-filter-769"
+            style="width: 120px"
+            @change="handleQuickFilterChange"
+          >
+            <el-option label="图片" value="image" />
+            <el-option label="视频" value="video" />
+            <el-option label="音频" value="audio" />
+            <el-option label="文档" value="application" />
+          </el-select>
+          <el-select
+            v-model="quickFilters.status"
+            placeholder="使用状态"
+            clearable
+            class="quick-filter-769"
+            style="width: 100px"
+            @change="handleQuickFilterChange"
+          >
+            <el-option label="使用中" :value="1" />
+            <el-option label="未使用" :value="0" />
+          </el-select>
+        </template>
+      </template>
+
+      <el-table-column label="预览" width="80" align="center">
+        <template #default="{ row }">
+          <el-image
+            v-if="isImage(row)"
+            :src="row.file_url"
+            fit="cover"
+            style="width: 50px; height: 50px; border-radius: 4px"
+          />
+        </template>
+      </el-table-column>
+
+      <el-table-column label="文件名" min-width="180" align="center">
+        <template #default="{ row }">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+            <span style="margin-right: 8px; font-weight: 500">{{ row.file_name }}</span>
+            <span style="font-size: 12px; color: #909399">{{ formatFileSize(row.file_size) }}</span>
+          </div>
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        prop="original_name"
+        label="原始文件名"
+        align="center"
+        min-width="200"
+        show-overflow-tooltip
+      />
+
+      <el-table-column prop="file_type" label="类型" width="120" align="center" />
+
+      <el-table-column label="状态" width="100" align="center">
+        <template #default="{ row }">
+          <el-tag :type="getStatusTagType(row.status)" size="small" effect="light">
+            {{ getStatusText(row.status) }}
+          </el-tag>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="引用数" width="100" align="center">
+        <template #default="{ row }">
+          <el-link
+            type="primary"
+            @click="handleShowReferences(row)"
+            :disabled="!row.reference_count || row.reference_count === 0"
+          >
+            {{ row.reference_count || 0 }}
+          </el-link>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="上传时间" width="180" align="center">
+        <template #default="{ row }">
+          {{ formatDateTime(row.upload_time) }}
+        </template>
+      </el-table-column>
+
+      <el-table-column label="操作" width="180" align="center" fixed="right">
+        <template #default="{ row }">
+          <el-button link type="primary" size="small" @click="copyUrl(row)">复制链接</el-button>
+          <el-button link type="danger" size="small" @click="handleDelete(row.id)">删除</el-button>
+        </template>
+      </el-table-column>
+
+      <!-- 额外挂载区域 -->
+      <template #extra>
+        <!-- 文件引用详情对话框 -->
+        <el-dialog
+          v-model="referencesDialogVisible"
+          title="文件引用详情"
+          width="600px"
+          :close-on-click-modal="false"
         >
-          <el-option-group label="用户相关">
-            <el-option label="用户头像" value="用户头像" />
-          </el-option-group>
-          <el-option-group label="文章相关">
-            <el-option label="文章封面" value="文章封面" />
-            <el-option label="文章配图" value="文章配图" />
-            <el-option label="文章视频" value="文章视频" />
-            <el-option label="文章音频" value="文章音频" />
-            <el-option label="文章附件" value="文章附件" />
-          </el-option-group>
-          <el-option-group label="动态相关">
-            <el-option label="动态配图" value="动态配图" />
-            <el-option label="动态视频" value="动态视频" />
-            <el-option label="动态音频" value="动态音频" />
-          </el-option-group>
-          <el-option-group label="评论相关">
-            <el-option label="评论贴图" value="评论贴图" />
-          </el-option-group>
-          <el-option-group label="友链相关">
-            <el-option label="友情链接A" value="友情链接A" />
-            <el-option label="友情链接S" value="友情链接S" />
-          </el-option-group>
-          <el-option-group label="系统设置">
-            <el-option label="站长头像" value="站长头像" />
-            <el-option label="站长形象" value="站长形象" />
-            <el-option label="博客图标" value="博客图标" />
-            <el-option label="博客背景" value="博客背景" />
-            <el-option label="博客截图" value="博客截图" />
-            <el-option label="展览图片" value="展览图片" />
-            <el-option label="微信收款码" value="微信收款码" />
-            <el-option label="支付宝收款码" value="支付宝收款码" />
-          </el-option-group>
-          <el-option-group label="其他">
-            <el-option label="菜单图标" value="菜单图标" />
-            <el-option label="反馈投诉" value="反馈投诉" />
-          </el-option-group>
-        </el-select>
-        <el-select
-          v-model="query.status"
-          placeholder="状态"
-          clearable
-          style="width: 100px"
-          @change="handleSearch"
-        >
-          <el-option label="未使用" :value="0" />
-          <el-option label="使用中" :value="1" />
-        </el-select>
-        <el-button type="primary" @click="handleSearch">搜索</el-button>
-        <el-button @click="handleReset">重置</el-button>
-      </div>
-    </template>
+          <div v-loading="referencesLoading" class="references-content">
+            <el-empty v-if="!referencesLoading && references.length === 0" description="暂无引用" />
 
-    <!-- 右上角工具栏 -->
-    <template #toolbar-after>
-      <!-- 上传配置已移至系统设置 -->
-    </template>
+            <div v-else class="reference-list">
+              <div v-for="(ref, index) in references" :key="index" class="reference-item">
+                <div class="reference-header">
+                  <el-tag :type="getReferenceTypeTag(ref.type)" size="small">
+                    {{ getReferenceTypeName(ref.type) }}
+                  </el-tag>
+                  <span class="reference-field">{{ ref.field }}</span>
+                </div>
 
-    <!-- 表格列 -->
-    <el-table-column label="预览" width="80" align="center">
-      <template #default="{ row }">
-        <el-image v-if="isImage(row)" :src="row.file_url" fit="cover"
-          style="width: 50px; height: 50px; border-radius: 4px" />
-      </template>
-    </el-table-column>
-
-    <el-table-column label="文件名" min-width="180" align="center">
-      <template #default="{ row }">
-        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
-          <span style="font-weight: 500">{{ row.file_name }}</span>
-          <span style="font-size: 12px; color: #909399">{{ formatFileSize(row.file_size) }}</span>
-        </div>
-      </template>
-    </el-table-column>
-
-    <el-table-column prop="original_name" label="原始文件名" min-width="200" align="center" show-overflow-tooltip />
-
-    <el-table-column prop="file_type" label="类型" width="100" align="center" />
-
-    <el-table-column label="状态" width="100" align="center">
-      <template #default="{ row }">
-        <el-tag :type="getStatusTagType(row.status)" size="small" effect="light">
-          {{ getStatusText(row.status) }}
-        </el-tag>
-      </template>
-    </el-table-column>
-
-    <el-table-column label="引用数" width="100" align="center">
-      <template #default="{ row }">
-        <el-link
-          type="primary"
-          @click="handleShowReferences(row)"
-          :disabled="!row.reference_count || row.reference_count === 0"
-        >
-          {{ row.reference_count || 0 }}
-        </el-link>
-      </template>
-    </el-table-column>
-
-    <el-table-column label="上传时间" width="180" align="center">
-      <template #default="{ row }">
-        {{ formatDateTime(row.upload_time) }}
-      </template>
-    </el-table-column>
-
-    <el-table-column label="操作" width="180" align="center" fixed="right">
-      <template #default="{ row }">
-        <el-button link type="primary" size="small" @click="copyUrl(row)">复制链接</el-button>
-        <el-button link type="danger" size="small" @click="handleDelete(row.id)">删除</el-button>
-      </template>
-    </el-table-column>
-    <!-- 额外挂载区域 -->
-    <template #extra>
-      <!-- 文件引用详情对话框 -->
-      <el-dialog
-        v-model="referencesDialogVisible"
-        title="文件引用详情"
-        width="600px"
-        :close-on-click-modal="false"
-      >
-        <div v-loading="referencesLoading" class="references-content">
-          <el-empty v-if="!referencesLoading && references.length === 0" description="暂无引用" />
-
-          <div v-else class="reference-list">
-            <div v-for="(ref, index) in references" :key="index" class="reference-item">
-              <div class="reference-header">
-                <el-tag :type="getReferenceTypeTag(ref.type)" size="small">
-                  {{ getReferenceTypeName(ref.type) }}
-                </el-tag>
-                <span class="reference-field">{{ ref.field }}</span>
-              </div>
-
-              <div class="reference-body">
-                <div class="reference-title">{{ getReferenceTitle(ref) }}</div>
-                <el-link
-                  type="primary"
-                  class="reference-link"
-                  @click="handleReferenceClick(ref)"
-                >
-                  <i class="ri-external-link-line"></i>
-                  查看详情
-                </el-link>
+                <div class="reference-body">
+                  <div class="reference-title">{{ getReferenceTitle(ref) }}</div>
+                  <el-link
+                    type="primary"
+                    class="reference-link"
+                    @click="handleReferenceClick(ref)"
+                  >
+                    <i class="ri-external-link-line"></i>
+                    查看详情
+                  </el-link>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <template #footer>
-          <el-button @click="referencesDialogVisible = false">关闭</el-button>
-        </template>
-      </el-dialog>
-    </template>
-  </common-list>
-</template>
+          <template #footer>
+            <el-button @click="referencesDialogVisible = false">关闭</el-button>
+          </template>
+        </el-dialog>
+      </template>
+    </common-list>
+  </div>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { useRouter } from 'vue-router'
-import CommonList from '@/components/common/CommonList.vue'
-import { getFileList, deleteFile, getFileReferences, type FileReference } from '@/api/file'
-import type { FileInfo, FileQuery } from '@/types/file'
-import { formatDateTime } from '@/utils/date'
+import { ref, reactive, onMounted, computed } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { useRouter } from 'vue-router';
+import CommonList from '@/components/common/CommonList.vue';
+import FileFilter from './components/FileFilter.vue';
+import { getFileList, deleteFile, getFileReferences, type FileReference } from '@/api/file';
+import type { FileInfo, FileListQuery } from '@/types/file';
+import { formatDateTime } from '@/utils/date';
 
-const router = useRouter()
-
-const query = reactive<FileQuery>({
-  page: 1,
-  page_size: 20,
-  keyword: undefined,
-  status: undefined,
-  upload_type: undefined
-})
-const fileList = ref<FileInfo[]>([])
-const total = ref(0)
-const loading = ref(false)
+const query = ref<FileListQuery>({ page: 1, page_size: 20 });
+const fileList = ref<FileInfo[]>([]);
+const router = useRouter();
+const total = ref(0);
+const loading = ref(false);
+const showFilter = ref(false);
 
 // 引用详情相关
 const referencesDialogVisible = ref(false)
@@ -213,77 +238,115 @@ const referencesLoading = ref(false)
 const references = ref<FileReference[]>([])
 const currentFile = ref<FileInfo | null>(null)
 
+const quickFilters = reactive({
+  file_type: undefined as string | undefined,
+  status: undefined as number | undefined,
+});
+
+/**
+ * 计算当前激活的筛选项数量
+ */
+const activeFilterCount = computed(() => {
+  let count = 0;
+  if (query.value.keyword) count++;
+  if (query.value.file_type !== undefined) count++;
+  if (query.value.status !== undefined) count++;
+  if (query.value.upload_type) count++;
+  if (query.value.min_size || query.value.max_size) count++;
+  if (query.value.start_time || query.value.end_time) count++;
+  return count;
+});
+
+/**
+ * 切换筛选面板显示状态
+ */
+const toggleFilter = () => {
+  showFilter.value = !showFilter.value;
+  if (!showFilter.value) {
+    syncQuickFiltersFromQuery();
+  }
+};
+
+/**
+ * 从 query 同步筛选条件到快速筛选
+ */
+const syncQuickFiltersFromQuery = () => {
+  quickFilters.file_type = query.value.file_type;
+  quickFilters.status = query.value.status;
+};
+
+/**
+ * 处理快速筛选变化
+ */
+const handleQuickFilterChange = () => {
+  query.value.file_type = quickFilters.file_type;
+  query.value.status = quickFilters.status;
+  query.value.page = 1;
+  loadList();
+};
+
 const loadList = async () => {
-  loading.value = true
+  loading.value = true;
   try {
     const [data] = await Promise.all([
-      getFileList(query),
-      new Promise(resolve => setTimeout(resolve, 300))
-    ])
-    fileList.value = data.list
-    total.value = data.total
+      getFileList(query.value),
+      new Promise(resolve => setTimeout(resolve, 300)),
+    ]);
+    fileList.value = data.list;
+    total.value = data.total;
   } catch {
-    ElMessage.error('加载失败')
+    ElMessage.error('加载失败');
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const handleSearch = () => {
-  query.page = 1
-  loadList()
-}
-
-const handleReset = () => {
-  query.keyword = undefined
-  query.status = undefined
-  query.upload_type = undefined
-  query.page = 1
-  loadList()
-}
+  query.page = 1;
+  loadList();
+};
 
 const copyUrl = async (file: FileInfo) => {
   try {
-    await navigator.clipboard.writeText(file.file_url)
-    ElMessage.success('已复制')
+    await navigator.clipboard.writeText(file.file_url);
+    ElMessage.success('已复制');
   } catch {
-    ElMessage.error('复制失败')
+    ElMessage.error('复制失败');
   }
-}
+};
 
 const handleDelete = async (id: number) => {
   try {
-    await ElMessageBox.confirm('确定要删除这个文件吗？', '提示', { type: 'warning' })
-    await deleteFile(id)
-    ElMessage.success('删除成功')
-    loadList()
+    await ElMessageBox.confirm('确定要删除这个文件吗？', '提示', {
+      type: 'warning',
+    });
+    await deleteFile(id);
+    ElMessage.success('删除成功');
+    loadList();
   } catch (error) {
-    if (error !== 'cancel' && error instanceof Error) ElMessage.error(error.message)
+    if (error !== 'cancel' && error instanceof Error) ElMessage.error(error.message);
   }
-}
+};
 
 // 显示文件引用详情
 const handleShowReferences = async (file: FileInfo) => {
   if (!file.reference_count || file.reference_count === 0) {
-    return
+    return;
   }
 
-  currentFile.value = file
-  referencesDialogVisible.value = true
-  referencesLoading.value = true
-  references.value = []
+  currentFile.value = file;
+  referencesDialogVisible.value = true;
+  referencesLoading.value = true;
+  references.value = [];
 
   try {
-    references.value = await getFileReferences(file.id)
-    console.log('📊 引用详情数据:', references.value)
-    console.log('📊 引用数量:', references.value.length)
-  } catch (error: any) {
-    console.error('加载引用详情失败:', error)
-    ElMessage.error('加载引用详情失败')
+    references.value = await getFileReferences(file.id);
+  } catch (error: unknown) {
+    ElMessage.error(error.message);
   } finally {
-    referencesLoading.value = false
+    referencesLoading.value = false;
   }
-}
+};
 
 // 处理引用详情点击跳转
 const handleReferenceClick = (ref: FileReference) => {
@@ -350,7 +413,7 @@ const handleReferenceClick = (ref: FileReference) => {
     default:
       ElMessage.warning('未知的引用类型')
   }
-}
+};
 
 // 获取引用类型标签颜色
 const getReferenceTypeTag = (type: string): 'primary' | 'success' | 'warning' | 'info' | 'danger' => {
@@ -365,7 +428,7 @@ const getReferenceTypeTag = (type: string): 'primary' | 'success' | 'warning' | 
     feedback: 'danger'
   }
   return typeMap[type] || 'info'
-}
+};
 
 // 获取引用类型名称
 const getReferenceTypeName = (type: string) => {
@@ -380,7 +443,7 @@ const getReferenceTypeName = (type: string) => {
     feedback: '反馈'
   }
   return nameMap[type] || type
-}
+};
 
 // 获取引用标题显示内容
 const getReferenceTitle = (ref: FileReference) => {
@@ -400,29 +463,65 @@ const getReferenceTitle = (ref: FileReference) => {
 
   // 其他类型返回原始 title
   return ref.title
-}
+};
 
-const isImage = (file: FileInfo) => file.file_type?.startsWith('image/')
+const isImage = (file: FileInfo) => file.file_type?.startsWith('image/');
 
 const formatFileSize = (size: number) => {
-  if (size < 1024) return size + ' B'
-  if (size < 1024 * 1024) return (size / 1024).toFixed(1) + ' KB'
-  return (size / (1024 * 1024)).toFixed(1) + ' MB'
+  if (size < 1024) return size + ' B';
+  if (size < 1024 * 1024) return (size / 1024).toFixed(1) + ' KB';
+  return (size / (1024 * 1024)).toFixed(1) + ' MB';
 }
 
 const getStatusTagType = (status: number) => {
-  return status === 1 ? 'success' : 'info'
+  return status === 1 ? 'success' : 'info';
 }
 
 const getStatusText = (status: number) => {
-  return status === 1 ? '使用中' : '未使用'
+  return status === 1 ? '使用中' : '未使用';
 }
 
-onMounted(loadList)
+onMounted(() => {
+  syncQuickFiltersFromQuery();
+  loadList();
+});
 </script>
 
 <style scoped lang="scss">
 /* 搜索表单样式已移至全局样式 main.scss */
+
+.file-list-page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.filter-slide-enter-active,
+.filter-slide-leave-active {
+  transition: all 0.1s linear;
+}
+
+.filter-slide-enter-from,
+.filter-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+.filter-slide-enter-to,
+.filter-slide-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.file-list-page > :deep(.filter-panel) {
+  flex-shrink: 0;
+}
+
+.file-list-page > :deep(.common-list) {
+  flex: 1;
+  min-height: 0;
+}
 
 .references-content {
   min-height: 150px;
@@ -512,3 +611,4 @@ onMounted(loadList)
   }
 }
 </style>
+

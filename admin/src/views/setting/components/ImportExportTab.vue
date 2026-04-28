@@ -197,7 +197,7 @@ const handleArticleImport = async () => {
     } else {
       ElMessage.error('导入失败')
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     ElMessage.error(error.message || '导入失败')
   } finally {
     articleUploading.value = false
@@ -267,7 +267,7 @@ const handleCommentImport = async () => {
     } else {
       ElMessage.error('导入失败，请检查文件格式')
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     ElMessage.error(error.message || '导入失败')
   } finally {
     commentUploading.value = false

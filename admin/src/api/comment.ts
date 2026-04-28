@@ -10,15 +10,19 @@
 */
 
 import request from "@/utils/request";
-import type { Comment, CommentListData, CommentQuery, ImportCommentsResult } from "@/types/comment";
-import type { PaginationQuery } from "@/types/request";
+import type {
+  Comment,
+  CommentListData,
+  CommentListQuery,
+  ImportCommentsResult,
+} from '@/types/comment';
 
 /**
  * 获取评论列表
  * @param params 查询参数
  * @returns Promise<CommentListData>
  */
-export function getComments(params?: CommentQuery): Promise<CommentListData> {
+export function getComments(params?: CommentListQuery): Promise<CommentListData> {
   return request.get("/admin/comments", { params });
 }
 

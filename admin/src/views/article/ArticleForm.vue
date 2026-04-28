@@ -503,7 +503,7 @@ const handleSave = async (autoRedirect: boolean = true) => {
 
           // 清空在线图片URL
           onlineImageUrl.value = ''
-        } catch (error: any) {
+        } catch (error: unknown) {
           ElMessage.error(error.message || '在线图片下载失败')
           return
         } finally {
@@ -520,7 +520,7 @@ const handleSave = async (autoRedirect: boolean = true) => {
       else if (coverUploaderRef.value) {
         await coverUploaderRef.value.uploadPendingFile()
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       loading.value = false
       ElMessage.error(error.message || '封面上传失败')
       return
@@ -657,7 +657,7 @@ const handleGenerateAISummary = async () => {
     const result = await generateAISummary({ content: formData.content })
     formData.ai_summary = result.summary
     ElMessage.success('AI总结生成成功')
-  } catch (error: any) {
+  } catch (error: unknown) {
     ElMessage.error(error.message || 'AI总结生成失败')
   } finally {
     generatingAISummary.value = false
@@ -676,7 +676,7 @@ const handleGenerateSummary = async () => {
     const result = await generateSummary({ content: formData.content })
     formData.summary = result.summary
     ElMessage.success('文章摘要生成成功')
-  } catch (error: any) {
+  } catch (error: unknown) {
     ElMessage.error(error.message || '文章摘要生成失败')
   } finally {
     generatingSummary.value = false
@@ -699,7 +699,7 @@ const handleGenerateTitle = async () => {
     } else {
       ElMessage.warning('未生成有效标题')
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     ElMessage.error(error.message || '标题生成失败')
   } finally {
     generatingTitle.value = false

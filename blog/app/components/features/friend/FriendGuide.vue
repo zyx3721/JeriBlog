@@ -119,7 +119,7 @@ const submitApplyForm = async () => {
 
     // 关闭弹窗（表单会被watch自动重置）
     showForm.value = false
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('申请失败:', error)
     // 这里应该用error toast，暂时用alert
     alert(error.message || '申请失败，请稍后重试')

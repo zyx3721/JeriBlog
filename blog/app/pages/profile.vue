@@ -113,7 +113,7 @@ const handleAvatarUpload = async () => {
       editErrors.value = {}
       const result = await uploadFile(file, '用户头像')
       editForm.value.avatar = result.file_url
-    } catch (error: any) {
+    } catch (error: unknown) {
       editErrors.value.avatar = error.message || '头像上传失败'
     } finally {
       uploading.value = false
@@ -148,7 +148,7 @@ const handleEditSubmit = async () => {
       userInfo.value = data
       showEditDialog.value = false
     }, 1000)
-  } catch (error: any) {
+  } catch (error: unknown) {
     showError(error.message || '保存失败')
   } finally {
     editLoading.value = false
@@ -183,7 +183,7 @@ const handleBadgeSubmit = async () => {
       userInfo.value = data
       showBadgeDialog.value = false
     }, 1000)
-  } catch (error: any) {
+  } catch (error: unknown) {
     showError(error.message || '设置失败')
   } finally {
     badgeLoading.value = false
@@ -222,7 +222,7 @@ const handlePasswordSubmit = async () => {
       logout()
       router.push('/')
     }, 1500)
-  } catch (error: any) {
+  } catch (error: unknown) {
     const errorMsg = error?.message || '密码修改失败'
     if (errorMsg.includes('旧密码')) {
       passwordErrors.value.old_password = '原密码错误'
@@ -260,7 +260,7 @@ const handleSetPasswordSubmit = async () => {
     showSuccess('密码设置成功')
     showSetPasswordDialog.value = false
     await fetchProfile() // 刷新用户信息
-  } catch (error: any) {
+  } catch (error: unknown) {
     showError(error?.message || '密码设置失败')
   } finally {
     setPasswordLoading.value = false

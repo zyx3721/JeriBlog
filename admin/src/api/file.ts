@@ -36,7 +36,7 @@ export async function uploadFile(file: File, type = ''): Promise<UploadResponse>
       headers: { "Content-Type": "multipart/form-data" },
       timeout: 300000 // 5分钟超时，支持大文件上传
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     // 尝试从响应中提取详细错误信息
     if (error.response?.data?.message) {
       throw new Error(error.response.data.message);

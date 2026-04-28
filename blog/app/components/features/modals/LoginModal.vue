@@ -10,219 +10,225 @@
 -->
 
 <script setup lang="ts">
-import { login, register, forgotPassword, resetPassword } from '@/composables/api/user'
+import { login, register, forgotPassword, resetPassword } from '@/composables/api/user';
+import { setAccessToken } from '@/utils/auth';
 
-const props = defineProps<{
-  modelValue: boolean
-}>()
+defineProps<{
+  modelValue: boolean;
+}>();
 
 const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
-  'loginSuccess': []
-}>()
+  'update:modelValue': [value: boolean];
+  loginSuccess: [];
+}>();
 
-const mode = ref<'login' | 'register' | 'forgot'>('login')
+const mode = ref<'login' | 'register' | 'forgot'>('login');
 
-const { oauthConfig } = useSysConfig()
-const route = useRoute()
-const config = useRuntimeConfig()
+const { oauthConfig } = useSysConfig();
+const route = useRoute();
+const config = useRuntimeConfig();
 
-const currentPath = computed(() => route.fullPath)
+const currentPath = computed(() => route.fullPath);
 
-const oauthLoading = ref<string | null>(null)
+const oauthLoading = ref<string | null>(null);
 
 const getOAuthUrl = (provider: string) => {
-  const redirect = encodeURIComponent(currentPath.value)
-  return `${config.public.apiUrl}/auth/${provider}?redirect=${redirect}`
-}
+  const redirect = encodeURIComponent(currentPath.value);
+  return `${config.public.apiUrl}/auth/${provider}?redirect=${redirect}`;
+};
 
 const handleOAuthClick = (provider: string) => {
-  oauthLoading.value = provider
-  window.location.href = getOAuthUrl(provider)
-}
-
+  oauthLoading.value = provider;
+  window.location.href = getOAuthUrl(provider);
+};
 
 const formData = ref({
   email: '',
   nickname: '',
   password: '',
   website: '',
-  code: ''
-})
+  code: '',
+});
 
-const confirmPassword = ref('')
-const loading = ref(false)
-const errorMessage = ref('')
-const successMessage = ref('')
-const showPassword = ref(false)
-const showConfirmPassword = ref(false)
+const confirmPassword = ref('');
+const loading = ref(false);
+const errorMessage = ref('');
+const successMessage = ref('');
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
 
-const sendingCode = ref(false)
-const countdown = ref(0)
+const sendingCode = ref(false);
+const countdown = ref(0);
 
-const { pause: pauseCountdown, resume: startCountdown } = useIntervalFn(() => {
-  if (--countdown.value <= 0) {
-    pauseCountdown()
-  }
-}, 1000, { immediate: false })
+const { pause: pauseCountdown, resume: startCountdown } = useIntervalFn(
+  () => {
+    if (--countdown.value <= 0) {
+      pauseCountdown();
+    }
+  },
+  1000,
+  { immediate: false }
+);
 
 const clearMessages = () => {
-  errorMessage.value = ''
-  successMessage.value = ''
-}
+  errorMessage.value = '';
+  successMessage.value = '';
+};
 
 const toggleMode = () => {
-  mode.value = mode.value === 'login' ? 'register' : 'login'
-  clearMessages()
-}
+  mode.value = mode.value === 'login' ? 'register' : 'login';
+  clearMessages();
+};
 
 const closeModal = () => {
-  emit('update:modelValue', false)
-  pauseCountdown()
+  emit('update:modelValue', false);
+  pauseCountdown();
   setTimeout(() => {
-    formData.value = { email: '', nickname: '', password: '', website: '', code: '' }
-    confirmPassword.value = ''
-    clearMessages()
-    countdown.value = 0
-    mode.value = 'login'
-  }, 300)
-}
+    formData.value = { email: '', nickname: '', password: '', website: '', code: '' };
+    confirmPassword.value = '';
+    clearMessages();
+    countdown.value = 0;
+    mode.value = 'login';
+  }, 300);
+};
 
 const sendCode = async () => {
   if (!formData.value.email.trim()) {
-    errorMessage.value = '请输入邮箱'
-    return
+    errorMessage.value = '请输入邮箱';
+    return;
   }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.value.email)) {
-    errorMessage.value = '请输入正确的邮箱格式'
-    return
+    errorMessage.value = '请输入正确的邮箱格式';
+    return;
   }
-  sendingCode.value = true
-  clearMessages()
+  sendingCode.value = true;
+  clearMessages();
   try {
-    await forgotPassword({ email: formData.value.email })
-    successMessage.value = '验证码已发送'
-    countdown.value = 60
-    startCountdown()
-    setTimeout(() => successMessage.value = '', 2000)
-  } catch (error: any) {
-    errorMessage.value = error.message || error.response?.data?.message || '发送失败'
+    await forgotPassword({ email: formData.value.email });
+    successMessage.value = '验证码已发送';
+    countdown.value = 60;
+    startCountdown();
+    setTimeout(() => (successMessage.value = ''), 2000);
+  } catch (error: unknown) {
+    const err = error as Error & { response?: { data?: { message?: string } } };
+    errorMessage.value = err.message || err.response?.data?.message || '发送失败';
   } finally {
-    sendingCode.value = false
+    sendingCode.value = false;
   }
-}
+};
 
 const handleSubmit = async () => {
-  const { email, nickname, password, website, code } = formData.value
+  const { email, nickname, password, website, code } = formData.value;
 
   if (!email.trim()) {
-    errorMessage.value = '请输入邮箱'
-    return
+    errorMessage.value = '请输入邮箱';
+    return;
   }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    errorMessage.value = '请输入正确的邮箱格式'
-    return
+    errorMessage.value = '请输入正确的邮箱格式';
+    return;
   }
 
   if (mode.value === 'login') {
     if (!password.trim()) {
-      errorMessage.value = '请输入密码'
-      return
+      errorMessage.value = '请输入密码';
+      return;
     }
   }
 
   if (mode.value === 'register') {
     if (!nickname.trim()) {
-      errorMessage.value = '请输入昵称'
-      return
+      errorMessage.value = '请输入昵称';
+      return;
     }
     if (nickname.trim().length < 2) {
-      errorMessage.value = '昵称至少需要2个字符'
-      return
+      errorMessage.value = '昵称至少需要2个字符';
+      return;
     }
     if (nickname.trim().length > 32) {
-      errorMessage.value = '昵称不能超过32个字符'
-      return
+      errorMessage.value = '昵称不能超过32个字符';
+      return;
     }
 
     if (!password.trim()) {
-      errorMessage.value = '请输入密码'
-      return
+      errorMessage.value = '请输入密码';
+      return;
     }
     if (password.length < 6) {
-      errorMessage.value = '密码长度不能少于6位'
-      return
+      errorMessage.value = '密码长度不能少于6位';
+      return;
     }
     if (password.length > 32) {
-      errorMessage.value = '密码长度不能超过32位'
-      return
+      errorMessage.value = '密码长度不能超过32位';
+      return;
     }
 
     if (password !== confirmPassword.value) {
-      errorMessage.value = '两次密码输入不一致'
-      return
+      errorMessage.value = '两次密码输入不一致';
+      return;
     }
 
     if (website && !/^https?:\/\/.+/.test(website.trim())) {
-      errorMessage.value = '网站地址格式不正确，请以 http:// 或 https:// 开头'
-      return
+      errorMessage.value = '网站地址格式不正确，请以 http:// 或 https:// 开头';
+      return;
     }
   }
 
   if (mode.value === 'forgot') {
     if (!password.trim()) {
-      errorMessage.value = '请输入密码'
-      return
+      errorMessage.value = '请输入密码';
+      return;
     }
     if (password.length < 6) {
-      errorMessage.value = '密码长度不能少于6位'
-      return
+      errorMessage.value = '密码长度不能少于6位';
+      return;
     }
     if (password.length > 32) {
-      errorMessage.value = '密码长度不能超过32位'
-      return
+      errorMessage.value = '密码长度不能超过32位';
+      return;
     }
 
     if (password !== confirmPassword.value) {
-      errorMessage.value = '两次密码输入不一致'
-      return
+      errorMessage.value = '两次密码输入不一致';
+      return;
     }
 
     if (!code.trim()) {
-      errorMessage.value = '请输入验证码'
-      return
+      errorMessage.value = '请输入验证码';
+      return;
     }
   }
 
-  loading.value = true
-  clearMessages()
+  loading.value = true;
+  clearMessages();
 
   try {
-    let response
+    let response;
     if (mode.value === 'login') {
-      response = await login({ email, password })
-      setTokens(response.access_token, response.refresh_token)
-      emit('loginSuccess')
-      closeModal()
+      response = await login({ email, password });
+      setAccessToken(response.access_token);
+      emit('loginSuccess');
+      closeModal();
     } else if (mode.value === 'register') {
-      response = await register({ email, nickname, password, website })
-      setTokens(response.access_token, response.refresh_token)
-      emit('loginSuccess')
-      closeModal()
+      response = await register({ email, nickname, password, website });
+      setAccessToken(response.access_token);
+      emit('loginSuccess');
+      closeModal();
     } else {
-      await resetPassword({ email, code, password })
-      successMessage.value = '密码重置成功'
+      await resetPassword({ email, code, password });
+      successMessage.value = '密码重置成功';
       setTimeout(() => {
-        mode.value = 'login'
-        clearMessages()
-      }, 2000)
+        mode.value = 'login';
+        clearMessages();
+      }, 2000);
     }
-  } catch (error: any) {
-    errorMessage.value = error.message || error.response?.data?.message || '操作失败，请稍后重试'
+  } catch (error: unknown) {
+    const err = error as Error & { response?: { data?: { message?: string } } };
+    errorMessage.value = err.message || err.response?.data?.message || '操作失败，请稍后重试';
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 </script>
 
 <template>
@@ -232,53 +238,101 @@ const handleSubmit = async () => {
         <div class="modal-container">
           <!-- 关闭按钮 -->
           <button class="close-btn" @click="closeModal">
-            <i class="ri-close-line"></i>
+            <i class="ri-close-line" />
           </button>
 
           <!-- 标题 -->
           <div class="modal-header">
             <i
-              :class="mode === 'login' ? 'ri-user-line' : mode === 'register' ? 'ri-user-add-line' : 'ri-lock-password-line'"></i>
-            <h2>{{ mode === 'login' ? '欢迎回来' : mode === 'register' ? '创建账户' : '找回密码' }}</h2>
-            <p>{{ mode === 'login' ? '登录到您的账户' : mode === 'register' ? '注册一个新账户' : '输入邮箱获取验证码并设置新密码' }}</p>
+              :class="
+                mode === 'login'
+                  ? 'ri-user-line'
+                  : mode === 'register'
+                    ? 'ri-user-add-line'
+                    : 'ri-lock-password-line'
+              "
+            />
+            <h2>
+              {{ mode === 'login' ? '欢迎回来' : mode === 'register' ? '创建账户' : '找回密码' }}
+            </h2>
+            <p>
+              {{
+                mode === 'login'
+                  ? '登录到您的账户'
+                  : mode === 'register'
+                    ? '注册一个新账户'
+                    : '输入邮箱获取验证码并设置新密码'
+              }}
+            </p>
           </div>
 
           <!-- 表单 -->
-          <form @submit.prevent="handleSubmit" class="login-form" novalidate>
+          <form class="login-form" novalidate @submit.prevent="handleSubmit">
             <!-- 邮箱（登录） -->
             <div v-if="mode === 'login'" class="form-group">
-              <label><i class="ri-mail-line"></i> 邮箱</label>
-              <input v-model="formData.email" type="email" placeholder="请输入邮箱" :disabled="loading"
-                autocomplete="email" />
+              <label><i class="ri-mail-line" /> 邮箱</label>
+              <input
+                v-model="formData.email"
+                type="email"
+                placeholder="请输入邮箱"
+                :disabled="loading"
+                autocomplete="email"
+              />
             </div>
 
             <!-- 邮箱（注册 - 第一行） -->
             <div v-if="mode === 'register'" class="form-group">
-              <label><i class="ri-mail-line"></i> 邮箱</label>
-              <input v-model="formData.email" type="email" placeholder="请输入邮箱" :disabled="loading" required
-                autocomplete="email" />
+              <label><i class="ri-mail-line" /> 邮箱</label>
+              <input
+                v-model="formData.email"
+                type="email"
+                placeholder="请输入邮箱"
+                :disabled="loading"
+                required
+                autocomplete="email"
+              />
             </div>
 
             <!-- 昵称和网站地址（注册 - 第二行并排显示） -->
             <div v-if="mode === 'register'" class="form-row">
               <div class="form-group">
-                <label><i class="ri-user-line"></i> 昵称</label>
-                <input v-model="formData.nickname" type="text" placeholder="请输入昵称" :disabled="loading" required />
+                <label><i class="ri-user-line" /> 昵称</label>
+                <input
+                  v-model="formData.nickname"
+                  type="text"
+                  placeholder="请输入昵称"
+                  :disabled="loading"
+                  required
+                />
               </div>
               <div class="form-group">
-                <label><i class="ri-global-line"></i> 网站地址（可选）</label>
-                <input v-model="formData.website" type="url" placeholder="https://example.com" :disabled="loading" />
+                <label><i class="ri-global-line" /> 网站地址（可选）</label>
+                <input
+                  v-model="formData.website"
+                  type="url"
+                  placeholder="https://example.com"
+                  :disabled="loading"
+                />
               </div>
             </div>
 
             <!-- 邮箱（找回密码） -->
             <div v-if="mode === 'forgot'" class="form-group">
-              <label><i class="ri-mail-line"></i> 邮箱地址</label>
+              <label><i class="ri-mail-line" /> 邮箱地址</label>
               <div class="email-input-group">
-                <input v-model="formData.email" type="email" placeholder="请输入注册邮箱" :disabled="loading || sendingCode" />
-                <button type="button" class="send-code-btn" @click="sendCode"
-                  :disabled="sendingCode || countdown > 0 || loading">
-                  <i v-if="sendingCode" class="ri-loader-4-line spin"></i>
+                <input
+                  v-model="formData.email"
+                  type="email"
+                  placeholder="请输入注册邮箱"
+                  :disabled="loading || sendingCode"
+                />
+                <button
+                  type="button"
+                  class="send-code-btn"
+                  :disabled="sendingCode || countdown > 0 || loading"
+                  @click="sendCode"
+                >
+                  <i v-if="sendingCode" class="ri-loader-4-line spin" />
                   {{ sendingCode ? '发送中' : countdown > 0 ? `${countdown}s` : '发送验证码' }}
                 </button>
               </div>
@@ -286,30 +340,47 @@ const handleSubmit = async () => {
 
             <!-- 验证码 -->
             <div v-if="mode === 'forgot'" class="form-group">
-              <label><i class="ri-shield-check-line"></i> 验证码</label>
-              <input v-model="formData.code" type="text" placeholder="请输入邮件中的验证码" :disabled="loading" />
+              <label><i class="ri-shield-check-line" /> 验证码</label>
+              <input
+                v-model="formData.code"
+                type="text"
+                placeholder="请输入邮件中的验证码"
+                :disabled="loading"
+              />
             </div>
 
             <!-- 密码 -->
             <div class="form-group">
-              <label><i class="ri-lock-line"></i> {{ mode === 'forgot' ? '新密码' : '密码' }}</label>
+              <label><i class="ri-lock-line" /> {{ mode === 'forgot' ? '新密码' : '密码' }}</label>
               <div class="password-input">
-                <input v-model="formData.password" :type="showPassword ? 'text' : 'password'"
-                  :placeholder="mode === 'login' ? '请输入密码' : '请输入密码（至少6位）'" :disabled="loading" />
+                <input
+                  v-model="formData.password"
+                  :type="showPassword ? 'text' : 'password'"
+                  :placeholder="mode === 'login' ? '请输入密码' : '请输入密码（至少6位）'"
+                  :disabled="loading"
+                />
                 <button type="button" class="toggle-password" @click="showPassword = !showPassword">
-                  <i :class="showPassword ? 'ri-eye-off-line' : 'ri-eye-line'"></i>
+                  <i :class="showPassword ? 'ri-eye-off-line' : 'ri-eye-line'" />
                 </button>
               </div>
             </div>
 
             <!-- 确认密码 -->
             <div v-if="mode !== 'login'" class="form-group">
-              <label><i class="ri-lock-line"></i> 确认密码</label>
+              <label><i class="ri-lock-line" /> 确认密码</label>
               <div class="password-input">
-                <input v-model="confirmPassword" :type="showConfirmPassword ? 'text' : 'password'" placeholder="请再次输入密码"
-                  :disabled="loading" />
-                <button type="button" class="toggle-password" @click="showConfirmPassword = !showConfirmPassword">
-                  <i :class="showConfirmPassword ? 'ri-eye-off-line' : 'ri-eye-line'"></i>
+                <input
+                  v-model="confirmPassword"
+                  :type="showConfirmPassword ? 'text' : 'password'"
+                  placeholder="请再次输入密码"
+                  :disabled="loading"
+                />
+                <button
+                  type="button"
+                  class="toggle-password"
+                  @click="showConfirmPassword = !showConfirmPassword"
+                >
+                  <i :class="showConfirmPassword ? 'ri-eye-off-line' : 'ri-eye-line'" />
                 </button>
               </div>
             </div>
@@ -322,17 +393,25 @@ const handleSubmit = async () => {
             <!-- 提示信息 -->
             <Transition name="fade">
               <div v-if="errorMessage" class="message error">
-                <i class="ri-error-warning-line"></i>{{ errorMessage }}
+                <i class="ri-error-warning-line" />{{ errorMessage }}
               </div>
               <div v-else-if="successMessage" class="message success">
-                <i class="ri-checkbox-circle-line"></i>{{ successMessage }}
+                <i class="ri-checkbox-circle-line" />{{ successMessage }}
               </div>
             </Transition>
 
             <!-- 提交按钮 -->
             <button type="submit" class="submit-btn" :disabled="loading">
-              <i v-if="loading" class="ri-loader-4-line spin"></i>
-              {{ loading ? '处理中...' : mode === 'login' ? '登录' : mode === 'register' ? '注册' : '重置密码' }}
+              <i v-if="loading" class="ri-loader-4-line spin" />
+              {{
+                loading
+                  ? '处理中...'
+                  : mode === 'login'
+                    ? '登录'
+                    : mode === 'register'
+                      ? '注册'
+                      : '重置密码'
+              }}
             </button>
           </form>
 
@@ -342,33 +421,55 @@ const handleSubmit = async () => {
               <span>其他登录方式</span>
             </div>
             <div class="social-buttons">
-              <button v-if="oauthConfig['github.enabled'] === 'true'" @click="handleOAuthClick('github')"
-                class="social-btn github" :disabled="oauthLoading !== null">
-                <i v-if="oauthLoading === 'github'" class="ri-loader-4-line spin"></i>
-                <i v-else class="ri-github-fill"></i>
+              <button
+                v-if="oauthConfig['github.enabled'] === 'true'"
+                class="social-btn github"
+                :disabled="oauthLoading !== null"
+                @click="handleOAuthClick('github')"
+              >
+                <i v-if="oauthLoading === 'github'" class="ri-loader-4-line spin" />
+                <i v-else class="ri-github-fill" />
               </button>
-              <button v-if="oauthConfig['google.enabled'] === 'true'" @click="handleOAuthClick('google')"
-                class="social-btn google" :disabled="oauthLoading !== null">
-                <i v-if="oauthLoading === 'google'" class="ri-loader-4-line spin"></i>
-                <i v-else class="ri-google-fill"></i>
+              <button
+                v-if="oauthConfig['google.enabled'] === 'true'"
+                class="social-btn google"
+                :disabled="oauthLoading !== null"
+                @click="handleOAuthClick('google')"
+              >
+                <i v-if="oauthLoading === 'google'" class="ri-loader-4-line spin" />
+                <i v-else class="ri-google-fill" />
               </button>
-              <button v-if="oauthConfig['qq.enabled'] === 'true'" @click="handleOAuthClick('qq')"
-                class="social-btn qq" :disabled="oauthLoading !== null">
-                <i v-if="oauthLoading === 'qq'" class="ri-loader-4-line spin"></i>
-                <i v-else class="ri-qq-fill"></i>
+              <button
+                v-if="oauthConfig['qq.enabled'] === 'true'"
+                class="social-btn qq"
+                :disabled="oauthLoading !== null"
+                @click="handleOAuthClick('qq')"
+              >
+                <i v-if="oauthLoading === 'qq'" class="ri-loader-4-line spin" />
+                <i v-else class="ri-qq-fill" />
               </button>
-              <button v-if="oauthConfig['microsoft.enabled'] === 'true'" @click="handleOAuthClick('microsoft')"
-                class="social-btn microsoft" :disabled="oauthLoading !== null">
-                <i v-if="oauthLoading === 'microsoft'" class="ri-loader-4-line spin"></i>
-                <i v-else class="ri-microsoft-fill"></i>
+              <button
+                v-if="oauthConfig['microsoft.enabled'] === 'true'"
+                class="social-btn microsoft"
+                :disabled="oauthLoading !== null"
+                @click="handleOAuthClick('microsoft')"
+              >
+                <i v-if="oauthLoading === 'microsoft'" class="ri-loader-4-line spin" />
+                <i v-else class="ri-microsoft-fill" />
               </button>
             </div>
           </div>
 
           <!-- 底部链接 -->
           <div class="modal-footer">
-            <span>{{ mode === 'login' ? '还没有账号？' : mode === 'register' ? '已有账号？' : '想起密码了？' }}</span>
-            <a @click.prevent="mode === 'login' ? toggleMode() : mode = 'login'">
+            <span>{{
+              mode === 'login'
+                ? '还没有账号？'
+                : mode === 'register'
+                  ? '已有账号？'
+                  : '想起密码了？'
+            }}</span>
+            <a @click.prevent="mode === 'login' ? toggleMode() : (mode = 'login')">
               {{ mode === 'login' ? '立即注册' : mode === 'register' ? '立即登录' : '返回登录' }}
             </a>
           </div>
@@ -691,7 +792,7 @@ const handleSubmit = async () => {
 }
 
 .modal-footer {
-  margin-top: .5rem;
+  margin-top: 0.5rem;
   text-align: center;
   font-size: 0.9rem;
   color: var(--theme-meta-color);

@@ -182,7 +182,7 @@ const handleClearAll = async () => {
     notifications.value = notifications.value.filter(n => !n.is_read)
 
     ElMessage.success('已清空所有已读通知')
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error !== 'cancel') {
       ElMessage.error('操作失败')
     }

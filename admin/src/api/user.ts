@@ -10,7 +10,17 @@
 */
 
 import request from "@/utils/request";
-import type { LoginParams, LoginResponse, User, UserListData, ResetPasswordRequest, CreateUserRequest, UpdateUserRequest, RefreshTokenRequest, RefreshTokenResponse, UserQuery } from "@/types/user";
+import type {
+  LoginParams,
+  LoginResponse,
+  User,
+  UserListData,
+  UserListQuery,
+  ResetPasswordRequest,
+  CreateUserRequest,
+  UpdateUserRequest,
+  RefreshTokenResponse,
+} from "@/types/user";
 
 /**
  * 用户登录
@@ -22,12 +32,19 @@ export function login(data: LoginParams): Promise<LoginResponse> {
 }
 
 /**
+ * 获取当前登录用户信息
+ * @returns Promise<User>
+ */
+export function getProfile(): Promise<User> {
+  return request.get('/user/profile');
+}
+
+/**
  * 刷新Token
- * @param data 刷新Token参数
  * @returns Promise<RefreshTokenResponse>
  */
-export function refreshToken(data: RefreshTokenRequest): Promise<RefreshTokenResponse> {
-  return request.post("/auth/refresh", data);
+export function refreshToken(): Promise<RefreshTokenResponse> {
+  return request.post('/auth/refresh');
 }
 
 /**
@@ -43,7 +60,7 @@ export function logout(): Promise<void> {
  * @param params 查询参数
  * @returns Promise<UserListData>
  */
-export function getUsers(params: UserQuery): Promise<UserListData> {
+export function getUsers(params: UserListQuery): Promise<UserListData> {
   return request.get("/admin/users", { params });
 }
 

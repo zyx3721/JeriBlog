@@ -147,7 +147,7 @@ const handleSubmitComment = async () => {
       isUploading.value = true
       try {
         await uploadPendingImages()
-      } catch (error: any) {
+      } catch (error: unknown) {
         info(error.message || '图片上传失败')
         return
       } finally {
@@ -181,7 +181,7 @@ const handleSubmitComment = async () => {
     success('评论发表成功')
 
     if (isLoggedIn.value) triggerOnComment()
-  } catch (error: any) {
+  } catch (error: unknown) {
     errors.value.email = error.message || error.response?.data?.message || '评论发表失败'
   } finally {
     isSubmitting.value = false

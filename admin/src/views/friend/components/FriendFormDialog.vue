@@ -175,71 +175,71 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
-import type { Friend, FriendType, CreateFriendRequest, UpdateFriendRequest } from '@/types/friend'
-import { createFriend, updateFriend, getFriendTypes } from '@/api/friend'
-import { fetchLinkInfo } from '@/api/tools'
-import request from '@/utils/request'
-import ImageUploader from '@/components/common/ImageUploader.vue'
-import FilePickerDialog from '@/components/common/FilePickerDialog.vue'
+import { ref, computed, watch } from 'vue';
+import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
+import type { Friend, FriendType, CreateFriendRequest, UpdateFriendRequest } from '@/types/friend';
+import { createFriend, updateFriend, getFriendTypes } from '@/api/friend';
+import { fetchLinkInfo } from '@/api/tools';
+import request from '@/utils/request';
+import ImageUploader from '@/components/common/ImageUploader.vue';
+import FilePickerDialog from '@/components/common/FilePickerDialog.vue';
 const props = defineProps<{
-  modelValue: boolean
-  editFriend?: Friend | null
-}>()
+  modelValue: boolean;
+  editFriend?: Friend | null;
+}>();
 
-const emit = defineEmits(['update:modelValue', 'success'])
+const emit = defineEmits(['update:modelValue', 'success']);
 
 const visible = computed({
   get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val)
-})
+  set: val => emit('update:modelValue', val),
+});
 
-const isEdit = computed(() => !!props.editFriend)
-const dialogTitle = computed(() => isEdit.value ? '编辑友链' : '新增友链')
+const isEdit = computed(() => !!props.editFriend);
+const dialogTitle = computed(() => (isEdit.value ? '编辑友链' : '新增友链'));
 
-const submitLoading = ref(false)
-const parseLoading = ref(false)
-const formRef = ref<FormInstance>()
-const avatarUploaderRef = ref<InstanceType<typeof ImageUploader>>()
-const screenshotUploaderRef = ref<InstanceType<typeof ImageUploader>>()
+const submitLoading = ref(false);
+const parseLoading = ref(false);
+const formRef = ref<FormInstance>();
+const avatarUploaderRef = ref<InstanceType<typeof ImageUploader>>();
+const screenshotUploaderRef = ref<InstanceType<typeof ImageUploader>>();
 
 // 文件选择对话框
-const filePickerVisible = ref(false)
-const currentField = ref<'avatar' | 'screenshot'>('avatar')
+const filePickerVisible = ref(false);
+const currentField = ref<'avatar' | 'screenshot'>('avatar');
 
 // 打开文件选择对话框
 const handleSelectFile = (field: 'avatar' | 'screenshot') => {
-  currentField.value = field
-  filePickerVisible.value = true
-}
+  currentField.value = field;
+  filePickerVisible.value = true;
+};
 
 // 处理文件选择
 const handleFileSelect = (file: any) => {
   if (currentField.value === 'avatar') {
-    formData.value.avatar = file.file_url
+    formData.value.avatar = file.file_url;
   } else {
-    formData.value.screenshot = file.file_url
+    formData.value.screenshot = file.file_url;
   }
-  ElMessage.success('已选择文件')
-}
+  ElMessage.success('已选择文件');
+};
 
 // 友链类型选项
-const friendTypeOptions = ref<FriendType[]>([])
+const friendTypeOptions = ref<FriendType[]>([]);
 
 // 表单数据类型（编辑时使用）
 interface FriendFormData {
-  name: string
-  url: string
-  description?: string
-  avatar?: string
-  screenshot?: string
-  sort?: number
-  type_id: number | null
-  is_invalid?: boolean
-  is_pending?: boolean
-  rss_url?: string
-  ignoreCheck?: boolean
+  name: string;
+  url: string;
+  description?: string;
+  avatar?: string;
+  screenshot?: string;
+  sort?: number;
+  type_id: number | null;
+  is_invalid?: boolean;
+  is_pending?: boolean;
+  rss_url?: string;
+  ignoreCheck?: boolean;
 }
 
 // 表单数据
@@ -254,45 +254,45 @@ const formData = ref<FriendFormData>({
   is_invalid: false,
   is_pending: false,
   rss_url: '',
-  ignoreCheck: false
-})
+  ignoreCheck: false,
+});
 
 // 表单验证规则
 const formRules: FormRules = {
   name: [
     { required: true, message: '请输入友链名称', trigger: 'blur' },
-    { min: 1, max: 50, message: '友链名称长度为1-50个字符', trigger: 'blur' }
+    { min: 1, max: 50, message: '友链名称长度为1-50个字符', trigger: 'blur' },
   ],
   url: [
     { required: true, message: '请输入链接地址', trigger: 'blur' },
     {
       pattern: /^https?:\/\/.+/,
       message: '请输入正确的链接地址，必须以http://或https://开头',
-      trigger: 'blur'
+      trigger: 'blur',
     },
-    { max: 255, message: '链接地址长度不能超过255个字符', trigger: 'blur' }
+    { max: 255, message: '链接地址长度不能超过255个字符', trigger: 'blur' },
   ],
   description: [
-    { max: 500, message: '描述长度不能超过500个字符', trigger: 'blur' }
+    { max: 500, message: '描述长度不能超过500个字符', trigger: 'blur' },
   ],
   type_id: [
-    { required: true, message: '请选择友链类型', trigger: 'change' }
+    { required: true, message: '请选择友链类型', trigger: 'change' },
   ],
   sort: [
     { required: true, message: '请输入排序值', trigger: 'blur' },
-    { type: 'number', min: 1, max: 10, message: '排序值必须在 1-10 之间', trigger: 'blur' }
+    { type: 'number', min: 1, max: 10, message: '排序值必须在 1-10 之间', trigger: 'blur' },
   ]
 }
 
 // 加载友链类型列表
 const loadFriendTypes = async () => {
   try {
-    const res = await getFriendTypes()
-    friendTypeOptions.value = res.list
+    const res = await getFriendTypes();
+    friendTypeOptions.value = res.list;
   } catch (error) {
-    console.error('加载友链类型失败:', error)
+    console.error('加载友链类型失败:', error);
   }
-}
+};
 
 // 重置表单数据
 const resetFormData = () => {
@@ -307,27 +307,27 @@ const resetFormData = () => {
     is_invalid: false,
     is_pending: false,
     rss_url: '',
-    ignoreCheck: false
-  }
+    ignoreCheck: false,
+  };
   // 清除表单验证状态
   setTimeout(() => {
-    formRef.value?.clearValidate()
-  }, 0)
-}
+    formRef.value?.clearValidate();
+  }, 0);
+};
 
 // 弹窗打开时加载友链类型（immediate 确保懒挂载组件首次打开时也能加载）
 watch(
   visible,
   val => {
-    if (val) loadFriendTypes()
+    if (val) loadFriendTypes();
   },
   { immediate: true }
-)
+);
 
 // 监听编辑友链变化
 watch(
   () => props.editFriend,
-  (friend) => {
+  friend => {
     if (friend) {
       formData.value = {
         name: friend.name,
@@ -340,29 +340,29 @@ watch(
         is_invalid: friend.is_invalid ?? false,
         is_pending: friend.is_pending ?? false,
         rss_url: friend.rss_url || '',
-        ignoreCheck: friend.accessible === -1
-      }
+        ignoreCheck: friend.accessible === -1,
+      };
       // 清除表单验证
       setTimeout(() => {
-        formRef.value?.clearValidate()
-      }, 0)
+        formRef.value?.clearValidate();
+      }, 0);
     } else {
-      resetFormData()
+      resetFormData();
     }
   },
   { immediate: true}
-)
+);
 
 // 取消
 const handleCancel = () => {
-  resetFormData()
-  visible.value = false
-}
+  resetFormData();
+  visible.value = false;
+};
 
 // 下载预览图片并返回完整信息
 interface PreviewImageInfo {
-  blobUrl: string
-  file: File
+  blobUrl: string;
+  file: File;
 }
 
 const downloadPreviewImage = async (
@@ -390,7 +390,7 @@ const downloadPreviewImage = async (
     console.error('下载图片失败:', error);
     return null;
   }
-}
+};
 
 // 解析链接
 const handleParseLink = async () => {
@@ -407,7 +407,7 @@ const handleParseLink = async () => {
     formData.value = {
       ...formData.value,
       name: result.title || formData.value.name,
-      description: result.description || formData.value.description
+      description: result.description || formData.value.description,
     };
 
     // 下载并设置favicon（如果存在）
@@ -425,15 +425,15 @@ const handleParseLink = async () => {
   } finally {
     parseLoading.value = false;
   }
-}
+};
 
 // 提交表单
 const handleSubmit = async () => {
-  if (!formRef.value) return
+  if (!formRef.value) return;
 
   try {
-    await formRef.value.validate()
-    submitLoading.value = true
+    await formRef.value.validate();
+    submitLoading.value = true;
 
     // 收集待上传的图片（并行上传）
     const uploadPromises: Promise<void>[] = [];
@@ -489,10 +489,10 @@ const handleSubmit = async () => {
         is_invalid: formData.value.is_invalid,
         is_pending: formData.value.is_pending,
         rss_url: formData.value.rss_url,
-        accessible: formData.value.ignoreCheck ? -1 : 0
-      }
-      await updateFriend(props.editFriend.id, updateData)
-      ElMessage.success('更新友链成功')
+        accessible: formData.value.ignoreCheck ? -1 : 0,
+      };
+      await updateFriend(props.editFriend.id, updateData);
+      ElMessage.success('更新友链成功');
     } else {
       // 新增友链
       const createData: CreateFriendRequest = {
@@ -503,23 +503,23 @@ const handleSubmit = async () => {
         screenshot: formData.value.screenshot,
         sort: formData.value.sort,
         type_id: formData.value.type_id!,
-        rss_url: formData.value.rss_url
-      }
-      await createFriend(createData)
-      ElMessage.success('创建友链成功')
+        rss_url: formData.value.rss_url,
+      };
+      await createFriend(createData);
+      ElMessage.success('创建友链成功');
     }
 
-    resetFormData()
-    visible.value = false
-    emit('success')
+    resetFormData();
+    visible.value = false;
+    emit('success');
   } catch (error) {
     if (error instanceof Error) {
-      ElMessage.error(error.message)
+      ElMessage.error(error.message);
     }
   } finally {
-    submitLoading.value = false
+    submitLoading.value = false;
   }
-}
+};
 </script>
 
 <style scoped lang="scss">
