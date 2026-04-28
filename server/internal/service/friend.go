@@ -125,7 +125,7 @@ func (s *FriendService) DeleteType(ctx context.Context, id uint) error {
 // ListForWeb 获取友链分组列表（包括失效友链，前端可根据 is_invalid 字段处理展示）
 func (s *FriendService) ListForWeb(ctx context.Context) (*dto.GroupedFriendsResponse, error) {
 	// 1. 获取所有数据
-	types, allFriends, err := s.repo.GetFriendsForWeb(ctx)
+	types, allFriends, err := s.repo.ListForWeb(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -198,7 +198,7 @@ func convertToFriendInGroupResponse(friends []model.Friend) []dto.FriendInGroupR
 
 // List 获取友链列表
 func (s *FriendService) List(ctx context.Context, req *dto.ListFriendRequest) ([]dto.FriendListResponse, int64, error) {
-	friends, total, err := s.repo.List(ctx, req.Page, req.PageSize, req.Keyword, req.TypeID)
+	friends, total, err := s.repo.List(ctx, req.Page, req.PageSize, req.Keyword, req.TypeID, req.IsInvalid, req.IsPending, req.AccessibleStatus, req.RSSStatus, req.HasScreenshot)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -240,7 +240,7 @@ func (s *FriendService) Get(ctx context.Context, id uint) (*model.Friend, error)
 }
 
 // Create 创建友链
-func (s *FriendService) Create(ctx context.Context, req *dto.CreateFriendRequest) error {
+func (s *FriendService) Create(ctx context.Context, req *dto.CreateFriendRequest) (*model.Friend, error) {
 	if req.Sort == 0 {
 		req.Sort = 5
 	}
@@ -249,7 +249,7 @@ func (s *FriendService) Create(ctx context.Context, req *dto.CreateFriendRequest
 	if req.TypeID != nil {
 		_, err := s.repo.GetTypeByID(ctx, *req.TypeID)
 		if err != nil {
-			return errors.New("指定的友链类型不存在")
+			return nil, errors.New("指定的友链类型不存在")
 		}
 	}
 
@@ -266,7 +266,7 @@ func (s *FriendService) Create(ctx context.Context, req *dto.CreateFriendRequest
 	}
 
 	if err := s.repo.Create(ctx, friend); err != nil {
-		return err
+		return nil, err
 	}
 
 	// 标记文件为使用中
@@ -279,7 +279,7 @@ func (s *FriendService) Create(ctx context.Context, req *dto.CreateFriendRequest
 		}
 	}
 
-	return nil
+	return friend, nil
 }
 
 // Update 更新友链
@@ -317,6 +317,10 @@ func (s *FriendService) Update(ctx context.Context, id uint, req *dto.UpdateFrie
 	// 如果请求中指定了失效状态
 	if req.IsInvalid != nil {
 		existingFriend.IsInvalid = *req.IsInvalid
+		// 如果标记为失效，同时清除异常状态
+		if *req.IsInvalid {
+			existingFriend.Accessible = 0
+		}
 	}
 
 	// 如果请求中指定了待审核状态
@@ -325,7 +329,7 @@ func (s *FriendService) Update(ctx context.Context, id uint, req *dto.UpdateFrie
 	}
 
 	// 如果请求中指定了可访问性状态
-	if req.Accessible != nil {
+	if req.Accessible != nil && !existingFriend.IsInvalid {
 		existingFriend.Accessible = *req.Accessible
 	}
 
@@ -405,6 +409,15 @@ func (s *FriendService) ApplyFriend(ctx context.Context, req *dto.ApplyFriendReq
 		return err
 	}
 
+	if s.fileService != nil {
+		if req.Avatar != "" {
+			_ = s.fileService.MarkAsUsed(req.Avatar, "友情链接A")
+		}
+		if req.Screenshot != "" {
+			_ = s.fileService.MarkAsUsed(req.Screenshot, "友情链接S")
+		}
+	}
+
 	// 发送友链申请通知给管理员
 	if s.notificationService != nil {
 		_ = s.notificationService.NotifyFriendApply(ctx, friend.ID, req.Name, req.URL, req.Description, req.Avatar, req.Screenshot, &userID)
@@ -443,9 +456,7 @@ func (s *FriendService) CheckAllFriends() error {
 		newStatus := 0
 		if !s.checkAccessibility(ctx, friend.URL) {
 			newStatus = friend.Accessible + 1
-
-			// 如果是首次检测到异常，发送通知
-			if friend.Accessible == 0 {
+			if s.notificationService != nil {
 				_ = s.notificationService.NotifyFriendAbnormal(ctx, friend.ID, friend.Name, newStatus)
 			}
 		}
@@ -466,7 +477,9 @@ func (s *FriendService) checkAccessibility(ctx context.Context, targetURL string
 	if err != nil {
 		return false
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	return resp.StatusCode >= 200 && resp.StatusCode < 300
 }

@@ -10,105 +10,162 @@
 -->
 
 <template>
-  <el-dialog v-model="visible" :title="dialogTitle" width="600px" :close-on-click-modal="false">
-    <el-form ref="formRef" :model="formData" :rules="formRules" label-width="100px">
-      <el-form-item label="友链名称" prop="name">
-        <el-input v-model="formData.name" placeholder="请输入友链名称" clearable />
-      </el-form-item>
+  <el-dialog
+    v-model="visible"
+    :title="dialogTitle"
+    width="90%"
+    style="max-width: 600px"
+    :close-on-click-modal="false"
+    align-center
+    class="friend-form-dialog"
+  >
+    <div class="dialog-scroll-content">
+      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="80px">
+        <el-form-item label="友链名称" prop="name">
+          <el-input v-model="formData.name" placeholder="请输入友链名称" clearable />
+        </el-form-item>
 
-      <el-form-item label="链接地址" prop="url">
-        <el-input v-model="formData.url" placeholder="请输入链接地址，如：https://example.com" clearable>
-          <template #append>
-            <el-button type="primary" @click="handleParseLink" :disabled="!formData.url || parseLoading">
-              {{ parseLoading ? '解析中...' : '解析' }}
-            </el-button>
-          </template>
-        </el-input>
-      </el-form-item>
-
-      <el-form-item label="友链描述" prop="description">
-        <el-input v-model="formData.description" type="textarea" :rows="3" placeholder="请输入友链描述" clearable />
-      </el-form-item>
-
-      <el-form-item label="RSS地址" prop="rss_url">
-        <el-input v-model="formData.rss_url" placeholder="请输入RSS订阅地址，如：https://example.com/feed" clearable />
-      </el-form-item>
-
-      <el-row :gutter="20">
-        <el-col :span="9">
-          <el-form-item label="友链头像" prop="avatar">
-            <div class="image-upload-wrapper">
-              <ImageUploader ref="avatarUploaderRef" v-model="formData.avatar" upload-type="友情链接A" width="120px"
-                height="120px" />
-              <el-button class="select-file-btn" @click="handleSelectFile('avatar')">
-                <i class="ri-folder-image-line"></i>
-                选择文件
+        <el-form-item label="链接地址" prop="url">
+          <el-input
+            v-model="formData.url"
+            placeholder="请输入链接地址，如：https://example.com"
+            clearable
+          >
+            <template #append>
+              <el-button
+                type="primary"
+                @click="handleParseLink"
+                :disabled="!formData.url || parseLoading"
+              >
+                {{ parseLoading ? '解析中...' : '解析' }}
               </el-button>
-            </div>
-          </el-form-item>
-        </el-col>
+            </template>
+          </el-input>
+        </el-form-item>
 
-        <el-col :span="15">
-          <el-form-item label="网站截图" prop="screenshot">
-            <div class="image-upload-wrapper">
-              <ImageUploader ref="screenshotUploaderRef" v-model="formData.screenshot" upload-type="友情链接S" width="213px"
-                height="120px" />
-              <el-button class="select-file-btn" @click="handleSelectFile('screenshot')">
-                <i class="ri-folder-image-line"></i>
-                选择文件
-              </el-button>
-            </div>
-          </el-form-item>
-        </el-col>
-      </el-row>
+        <el-form-item label="友链描述" prop="description">
+          <el-input
+            v-model="formData.description"
+            type="textarea"
+            :rows="3"
+            placeholder="请输入友链描述"
+            clearable
+          />
+        </el-form-item>
 
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="友链类型" prop="type_id">
-            <el-select v-model="formData.type_id" placeholder="请选择友链类型" style="width: 100%">
-              <el-option v-for="type in friendTypeOptions" :key="type.id" :label="type.name" :value="type.id">
-                <span>{{ type.name }}</span>
-                <el-tag v-if="!type.is_visible" size="small" type="info" style="margin-left: 8px">已隐藏</el-tag>
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
+        <el-form-item label="RSS地址" prop="rss_url">
+          <el-input
+            v-model="formData.rss_url"
+            placeholder="请输入RSS订阅地址，如：https://example.com/feed"
+            clearable
+          />
+        </el-form-item>
 
-        <el-col :span="12">
-          <el-form-item label="排序值" prop="sort">
-            <el-input-number v-model="formData.sort" :min="1" :max="10" placeholder="排序值，范围1-10，数值越大排序越靠前"
-              style="width: 100%" />
-          </el-form-item>
-        </el-col>
-      </el-row>
+        <el-row :gutter="20">
+          <el-col :span="9">
+            <el-form-item label="友链头像" prop="avatar">
+              <div class="image-upload-wrapper">
+                <ImageUploader
+                  ref="avatarUploaderRef"
+                  v-model="formData.avatar"
+                  upload-type="友情链接A"
+                  width="120px"
+                  height="120px"
+                />
+                <el-button
+                  class="select-file-btn"
+                  @click="handleSelectFile('avatar')"
+                >
+                  <i class="ri-folder-image-line"></i>
+                  选择文件
+                </el-button>
+              </div>
+            </el-form-item>
+          </el-col>
 
-      <!-- 只有编辑时才显示状态控制 -->
-      <el-row v-if="isEdit" :gutter="20">
-        <el-col :span="8">
-          <el-form-item label="已失效">
-            <el-switch v-model="formData.is_invalid" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="待审核">
-            <el-switch v-model="formData.is_pending" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="忽略检查">
-            <el-switch v-model="formData.ignoreCheck" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
+          <el-col :span="15">
+            <el-form-item label="网站截图" prop="screenshot">
+              <div class="image-upload-wrapper">
+                <ImageUploader
+                  ref="screenshotUploaderRef"
+                  v-model="formData.screenshot"
+                  upload-type="友情链接S"
+                  width="213px"
+                  height="120px"
+                />
+                <el-button
+                  class="select-file-btn"
+                  @click="handleSelectFile('screenshot')"
+                >
+                  <i class="ri-folder-image-line"></i>
+                  选择文件
+                </el-button>
+              </div>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="友链类型" prop="type_id">
+              <el-select
+                v-model="formData.type_id"
+                placeholder="请选择友链类型"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="type in friendTypeOptions"
+                  :key="type.id"
+                  :label="type.name"
+                  :value="type.id"
+                >
+                  <span>{{ type.name }}</span>
+                  <el-tag v-if="!type.is_visible" size="small" type="info" style="margin-left: 8px"
+                    >已隐藏</el-tag
+                  >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="排序值" prop="sort">
+              <el-input-number
+                v-model="formData.sort"
+                :min="1"
+                :max="10"
+                placeholder="排序值，范围1-10，数值越大排序越靠前"
+                style="width: 100%"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <!-- 只有编辑时才显示状态控制 -->
+        <el-row v-if="isEdit" :gutter="20">
+          <el-col :span="8">
+            <el-form-item label="已失效">
+              <el-switch v-model="formData.is_invalid" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="待审核">
+              <el-switch v-model="formData.is_pending" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="忽略检查">
+              <el-switch v-model="formData.ignoreCheck" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+    </div>
 
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="handleCancel">取消</el-button>
-        <el-button type="primary" @click="handleSubmit" :loading="submitLoading"
-          :disabled="parseLoading">
-          确定
-        </el-button>
+        <el-button type="primary" @click="handleSubmit" :loading="submitLoading"> 确定 </el-button>
       </span>
     </template>
   </el-dialog>
@@ -118,11 +175,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import type { Friend, FriendType, CreateFriendRequest, UpdateFriendRequest } from '@/types/friend'
 import { createFriend, updateFriend, getFriendTypes } from '@/api/friend'
-import { fetchLinkInfo, downloadImage } from '@/api/tools'
+import { fetchLinkInfo } from '@/api/tools'
 import request from '@/utils/request'
 import ImageUploader from '@/components/common/ImageUploader.vue'
 import FilePickerDialog from '@/components/common/FilePickerDialog.vue'
@@ -258,35 +315,43 @@ const resetFormData = () => {
   }, 0)
 }
 
-// 初始化加载友链类型
-onMounted(() => {
-  loadFriendTypes()
-})
+// 弹窗打开时加载友链类型（immediate 确保懒挂载组件首次打开时也能加载）
+watch(
+  visible,
+  val => {
+    if (val) loadFriendTypes()
+  },
+  { immediate: true }
+)
 
 // 监听编辑友链变化
-watch(() => props.editFriend, (friend) => {
-  if (friend) {
-    formData.value = {
-      name: friend.name,
-      url: friend.url,
-      description: friend.description || '',
-      avatar: friend.avatar || '',
-      screenshot: friend.screenshot || '',
-      sort: friend.sort || 5,
-      type_id: friend.type_id ?? null,
-      is_invalid: friend.is_invalid ?? false,
-      is_pending: friend.is_pending ?? false,
-      rss_url: friend.rss_url || '',
-      ignoreCheck: friend.accessible === -1
+watch(
+  () => props.editFriend,
+  (friend) => {
+    if (friend) {
+      formData.value = {
+        name: friend.name,
+        url: friend.url,
+        description: friend.description || '',
+        avatar: friend.avatar || '',
+        screenshot: friend.screenshot || '',
+        sort: friend.sort || 5,
+        type_id: friend.type_id ?? null,
+        is_invalid: friend.is_invalid ?? false,
+        is_pending: friend.is_pending ?? false,
+        rss_url: friend.rss_url || '',
+        ignoreCheck: friend.accessible === -1
+      }
+      // 清除表单验证
+      setTimeout(() => {
+        formRef.value?.clearValidate()
+      }, 0)
+    } else {
+      resetFormData()
     }
-    // 清除表单验证
-    setTimeout(() => {
-      formRef.value?.clearValidate()
-    }, 0)
-  } else {
-    resetFormData()
-  }
-}, { immediate: true })
+  },
+  { immediate: true}
+)
 
 // 取消
 const handleCancel = () => {
@@ -300,7 +365,10 @@ interface PreviewImageInfo {
   file: File
 }
 
-const downloadPreviewImage = async (url: string, filename: string): Promise<PreviewImageInfo | null> => {
+const downloadPreviewImage = async (
+  url: string,
+  filename: string
+): Promise<PreviewImageInfo | null> => {
   try {
     // 使用更长的超时时间（5分钟）下载图片
     const response = await request.post('/admin/tools/download-image', { url }, { timeout: 300000 })
@@ -366,22 +434,44 @@ const handleSubmit = async () => {
   try {
     await formRef.value.validate()
     submitLoading.value = true
-    // 上传待处理的图片（头像和截图）
-    for (const [uploader, field] of [
-      [avatarUploaderRef.value, 'avatar'],
-      [screenshotUploaderRef.value, 'screenshot']
-    ] as const) {
-      if (!uploader || !(uploader.getPendingCount() > 0 ||
-        (formData.value[field] && formData.value[field].startsWith('blob:')))) continue;
 
-      try {
-        const uploadedUrl = await uploader.uploadPendingFile();
-        if (uploadedUrl) {
-          formData.value[field] = uploadedUrl;
-        }
-      } catch (error: any) {
+    // 收集待上传的图片（并行上传）
+    const uploadPromises: Promise<void>[] = [];
+    const uploadFields: Array<{
+      uploader: typeof avatarUploaderRef.value;
+      field: 'avatar' | 'screenshot';
+    }> = [
+      { uploader: avatarUploaderRef.value, field: 'avatar' },
+      { uploader: screenshotUploaderRef.value, field: 'screenshot' },
+    ];
+
+    for (const { uploader, field } of uploadFields) {
+      if (!uploader) continue;
+      const hasPending = uploader.getPendingCount() > 0;
+      const hasBlobUrl = formData.value[field]?.startsWith('blob:');
+      if (!hasPending && !hasBlobUrl) continue;
+
+      uploadPromises.push(
+        uploader
+          .uploadPendingFile()
+          .then(uploadedUrl => {
+            if (uploadedUrl) formData.value[field] = uploadedUrl;
+          })
+          .catch((error: unknown) => {
+            ElMessage.error(
+              (error as Error)?.message || `${field === 'avatar' ? '头像' : '截图'}上传失败`
+            );
+          })
+      );
+    }
+
+    // 等待所有上传完成（使用 allSettled 确保即使部分失败也继续）
+    if (uploadPromises.length > 0) {
+      const results = await Promise.allSettled(uploadPromises);
+      const failedCount = results.filter(r => r.status === 'rejected').length;
+      if (failedCount > 0) {
         submitLoading.value = false;
-        ElMessage.error(error.message || `${field === 'avatar' ? '头像' : '截图'}上传失败`);
+        ElMessage.error(`${failedCount} 个文件上传失败，请重试`);
         return;
       }
     }
@@ -443,6 +533,32 @@ const handleSubmit = async () => {
 
     i {
       margin-right: 4px;
+    }
+  }
+}
+
+.friend-form-dialog {
+  :deep(.el-dialog) {
+    max-height: 85vh;
+  }
+
+  .dialog-scroll-content {
+    max-height: calc(85vh - 140px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 8px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  :deep(.el-row) {
+    display: flex;
+    flex-direction: column;
+
+    .el-col {
+      width: 100% !important;
+      max-width: 100% !important;
+      flex: 0 0 100% !important;
     }
   }
 }
