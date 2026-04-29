@@ -15,7 +15,6 @@ import (
 	"jeri_blog/internal/dto"
 	"jeri_blog/internal/service"
 	"jeri_blog/pkg/response"
-	"jeri_blog/pkg/utils"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -52,7 +51,7 @@ func (h *StatsHandler) Collect(c *gin.Context) {
 		return
 	}
 
-	ip := utils.GetRealIP(c)
+	ip :=c.ClientIP()
 	userAgent := c.Request.UserAgent()
 
 	if req.Type == "pageview" || req.Type == "" {
@@ -228,13 +227,21 @@ func (h *StatsHandler) GetArticleContribution(c *gin.Context) {
 // GetVisitLogs 获取访问日志列表
 //
 //	@Summary		访问日志
-//	@Description	获取访问日志列表，支持分页查询
+//	@Description	获取访问日志列表，支持分页和多种筛选条件
 //	@Tags			统计管理
 //	@Accept			json
 //	@Produce		json
 //	@Security		BearerAuth
-//	@Param			page		query		int	false	"页码"	default(1)	minimum(1)
-//	@Param			page_size	query		int	false	"每页数量"	default(20)	minimum(1)	maximum(100)
+//	@Param			page		query		int		false	"页码"	default(1)	minimum(1)
+//	@Param			page_size	query		int		false	"每页数量"	default(20)	minimum(1)	maximum(100)
+//	@Param			keyword		query		string	false	"搜索关键词（页面URL）"
+//	@Param			visitor_id	query		string	false	"访客ID"
+//	@Param			ip			query		string	false	"IP地址"
+//	@Param			location	query		string	false	"地理位置"
+//	@Param			browser		query		string	false	"浏览器"
+//	@Param			os			query		string	false	"操作系统"
+//	@Param			start_time	query		string	false	"开始时间（格式：2006-01-02）"
+//	@Param			end_time	query		string	false	"结束时间（格式：2006-01-02）"
 //	@Success		200			{object}	response.Response{data=response.PageResult}
 //	@Router			/admin/stats/visits [get]
 func (h *StatsHandler) GetVisitLogs(c *gin.Context) {
@@ -277,39 +284,4 @@ func (h *StatsHandler) DeleteVisitLog(c *gin.Context) {
 	}
 
 	response.Success(c, nil)
-}
-
-// DeleteVisitLogsByCondition 根据条件批量删除访问日志
-//
-//	@Summary		批量删除访问日志
-//	@Description	根据搜索条件批量删除访问日志
-//	@Tags			统计管理
-//	@Accept			json
-//	@Produce		json
-//	@Security		BearerAuth
-//	@Param			keyword		query		string	false	"关键词"
-//	@Param			start_date	query		string	false	"开始时间"
-//	@Param			end_date	query		string	false	"结束时间"
-//	@Success		200			{object}	response.Response{data=map[string]int64}
-//	@Router			/admin/stats/visits/batch [delete]
-func (h *StatsHandler) DeleteVisitLogsByCondition(c *gin.Context) {
-	var req dto.GetVisitLogsRequest
-	if err := c.ShouldBindQuery(&req); err != nil {
-		response.ValidateFailed(c, err.Error())
-		return
-	}
-
-	// 验证至少有一个搜索条件
-	if req.Keyword == "" && req.StartDate == "" && req.EndDate == "" {
-		response.ValidateFailed(c, "请至少提供一个搜索条件")
-		return
-	}
-
-	count, err := h.statsService.DeleteVisitLogsByCondition(&req)
-	if err != nil {
-		response.Failed(c, err.Error())
-		return
-	}
-
-	response.Success(c, map[string]int64{"deleted_count": count}, "成功删除 "+strconv.FormatInt(count, 10)+" 条记录")
 }

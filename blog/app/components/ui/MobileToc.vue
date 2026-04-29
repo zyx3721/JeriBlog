@@ -9,381 +9,305 @@
 功能描述：移动端目录组件
 -->
 
+<script setup lang="ts">
+import type { TocItem } from '@/utils/markdown';
+
+interface Props {
+  visible: boolean;
+}
+
+const props = defineProps<Props>();
+const emit = defineEmits<{
+  close: [];
+}>();
+
+const { currentArticle } = useCurrentArticle();
+const activeId = ref<string>('');
+const tocListRef = ref<HTMLElement | null>(null);
+const tocPopoverRef = ref<HTMLElement | null>(null);
+
+const toc = computed<TocItem[]>(() => {
+  if (!currentArticle.value?.content) return [];
+  return extractToc(currentArticle.value.content);
+});
+
+const hasToc = computed(() => toc.value.length > 0);
+
+onClickOutside(tocPopoverRef, () => {
+  if (props.visible) {
+    emit('close');
+  }
+});
+
+const scrollTocToActive = (id: string) => {
+  if (!tocListRef.value) return;
+
+  nextTick(() => {
+    const activeButton = tocListRef.value?.querySelector(`[data-toc-id="${id}"]`) as HTMLElement;
+    if (!activeButton) return;
+
+    const container = tocListRef.value!;
+    const containerHeight = container.clientHeight;
+    const buttonTop = activeButton.offsetTop;
+    const buttonHeight = activeButton.clientHeight;
+
+    const targetScroll = buttonTop - containerHeight / 2 + buttonHeight / 2;
+
+    container.scrollTo({
+      top: targetScroll,
+      behavior: 'smooth',
+    });
+  });
+};
+
+const scrollToHeading = (id: string) => {
+  scrollToElement(`#${id}`, { block: 'start' });
+  emit('close');
+};
+
+const handleScroll = () => {
+  const referencePoint = 64;
+  const headings = toc.value;
+
+  if (headings.length === 0) return;
+
+  let closestHeading: TocItem | undefined = undefined;
+  let closestDistance = Infinity;
+
+  for (const heading of headings) {
+    const element = document.getElementById(heading.id);
+    if (!element) continue;
+
+    const rect = element.getBoundingClientRect();
+    const distanceToReference = Math.abs(rect.top - referencePoint);
+
+    if (rect.top <= referencePoint + 50 && distanceToReference < closestDistance) {
+      closestDistance = distanceToReference;
+      closestHeading = heading;
+    }
+  }
+
+  const targetHeading = closestHeading || headings[0];
+  if (targetHeading && targetHeading.id !== activeId.value) {
+    activeId.value = targetHeading.id;
+    scrollTocToActive(targetHeading.id);
+  }
+};
+
+watch(
+  () => props.visible,
+  newVal => {
+    if (newVal) {
+      handleScroll();
+    }
+  }
+);
+
+onMounted(() => {
+  useEventListener(window, 'scroll', handleScroll, { passive: true });
+  handleScroll();
+});
+</script>
+
 <template>
   <Teleport to="body">
-    <Transition name="drawer">
-      <div v-if="visible" class="mobile-toc-overlay" @click="handleClose">
-        <div class="mobile-toc-drawer" @click.stop>
-          <div class="mobile-toc-header">
-            <h3>目录</h3>
-            <button class="close-btn" @click="handleClose">
-              <i class="ri-close-line"></i>
-            </button>
+    <Transition name="toc-popover">
+      <div v-if="visible && hasToc" ref="tocPopoverRef" class="mobile-toc-popover">
+        <div class="toc-header">
+          <div class="header-left">
+            <i class="ri-menu-line" />
+            <span>目录</span>
           </div>
-          <div class="mobile-toc-content">
-            <div v-if="tocItems.length === 0" class="empty-toc">
-              <i class="ri-file-list-line"></i>
-              <p>暂无目录</p>
-            </div>
-            <ul v-else class="toc-list">
-              <li
-                v-for="item in tocItems"
-                :key="item.id"
-                :class="['toc-item', `level-${item.level}`, { active: item.id === activeId }]"
-                @click="scrollToHeading(item.id)"
-              >
-                <span class="toc-text">{{ item.text }}</span>
-              </li>
-            </ul>
-          </div>
+          <span class="toc-count">{{ toc.length }}</span>
         </div>
+
+        <nav ref="tocListRef" class="toc-list" aria-label="文章目录">
+          <button
+            v-for="item in toc"
+            :key="item.id"
+            :data-toc-id="item.id"
+            :class="['toc-item', `toc-level-${item.level}`, { active: activeId === item.id }]"
+            :aria-label="`跳转到 ${item.text}`"
+            :aria-current="activeId === item.id ? 'location' : undefined"
+            @click="scrollToHeading(item.id)"
+          >
+            <span class="toc-text">{{ item.text }}</span>
+          </button>
+        </nav>
       </div>
     </Transition>
   </Teleport>
 </template>
 
-<script setup lang="ts">
-interface TocItem {
-  id: string
-  text: string
-  level: number
-}
-
-interface Props {
-  visible: boolean
-}
-
-const props = defineProps<Props>()
-const emit = defineEmits<{
-  close: []
-}>()
-
-const tocItems = ref<TocItem[]>([])
-const activeId = ref<string>('')
-
-const handleClose = () => {
-  emit('close')
-}
-
-const scrollToHeading = (id: string) => {
-  const element = document.getElementById(id)
-  if (element) {
-    const offset = 80 // 顶部偏移量
-    const elementPosition = element.getBoundingClientRect().top
-    const offsetPosition = elementPosition + window.pageYOffset - offset
-
-    window.scrollTo({
-      top: offsetPosition,
-      behavior: 'smooth'
-    })
-
-    // 关闭抽屉
-    handleClose()
-  }
-}
-
-const extractTocItems = () => {
-  const article = document.querySelector('.markdown-content')
-  if (!article) return
-
-  const headings = article.querySelectorAll('h1, h2, h3, h4, h5, h6')
-  const items: TocItem[] = []
-
-  headings.forEach((heading) => {
-    const id = heading.id
-    const text = heading.textContent || ''
-    const level = parseInt(heading.tagName.substring(1))
-
-    if (id && text) {
-      items.push({ id, text, level })
-    }
-  })
-
-  tocItems.value = items
-}
-
-const updateActiveId = () => {
-  const article = document.querySelector('.markdown-content')
-  if (!article) return
-
-  const headings = article.querySelectorAll('h1, h2, h3, h4, h5, h6')
-  const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-  const offset = 100
-
-  let currentId = ''
-
-  headings.forEach((heading) => {
-    const rect = heading.getBoundingClientRect()
-    const top = rect.top + scrollTop
-
-    if (top <= scrollTop + offset) {
-      currentId = heading.id
-    }
-  })
-
-  activeId.value = currentId
-}
-
-const handleScroll = () => {
-  updateActiveId()
-}
-
-onMounted(() => {
-  extractTocItems()
-  updateActiveId()
-  window.addEventListener('scroll', handleScroll)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
-})
-
-// 监听 visible 变化，重新提取目录
-watch(() => props.visible, (newVal) => {
-  if (newVal) {
-    extractTocItems()
-    updateActiveId()
-  }
-})
-</script>
-
-<style scoped lang="scss">
-.mobile-toc-overlay {
+<style lang="scss" scoped>
+.mobile-toc-popover {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 2000;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.mobile-toc-drawer {
-  width: 75%;
-  max-width: 280px;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: -2px 0 16px rgba(0, 0, 0, 0.2);
+  right: 12px;
+  bottom: 90px;
+  width: 280px;
+  max-width: calc(100vw - 24px);
+  max-height: 60vh;
+  background: var(--theme-bg-color, #fff);
+  border-radius: 12px;
+  box-shadow:
+    0 6px 30px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  z-index: 2000;
 }
 
-[data-theme='dark'] .mobile-toc-drawer {
-  background: rgba(30, 30, 30, 0.98);
-  box-shadow: -2px 0 16px rgba(0, 0, 0, 0.5);
-}
-
-.mobile-toc-header {
+.toc-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px;
-  border-bottom: 1px solid var(--jeri-border);
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--theme-border-color, rgba(0, 0, 0, 0.06));
   flex-shrink: 0;
 
-  h3 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--jeri-text);
-  }
-
-  .close-btn {
-    width: 32px;
-    height: 32px;
-    border: none;
-    background: transparent;
-    color: var(--jeri-text);
-    font-size: 20px;
-    cursor: pointer;
+  .header-left {
     display: flex;
     align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-    transition: background 0.2s;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--theme-text-color, #333);
 
-    &:hover {
-      background: var(--jeri-hover);
-    }
-
-    &:active {
-      background: var(--jeri-active);
+    i {
+      font-size: 16px;
+      color: var(--jeri-btn-hover, #49b1f5);
     }
   }
-}
 
-.mobile-toc-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 8px 0;
-  overscroll-behavior: contain;
-}
-
-.empty-toc {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  color: var(--jeri-text-secondary);
-
-  i {
-    font-size: 48px;
-    margin-bottom: 12px;
-    opacity: 0.5;
-  }
-
-  p {
-    margin: 0;
-    font-size: 14px;
+  .toc-count {
+    font-size: 13px;
+    font-weight: 500;
+    color: #999;
+    min-width: 20px;
+    text-align: right;
   }
 }
 
 .toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 0;
+  scroll-behavior: smooth;
 
-.toc-item {
-  padding: 10px 16px;
-  cursor: pointer;
-  transition: all 0.2s;
-  color: var(--jeri-text-secondary);
-  font-size: 14px;
-  line-height: 1.6;
-  border-left: 3px solid transparent;
-
-  &.level-1 {
-    padding-left: 16px;
-    font-weight: 600;
-  }
-
-  &.level-2 {
-    padding-left: 28px;
-  }
-
-  &.level-3 {
-    padding-left: 40px;
-  }
-
-  &.level-4 {
-    padding-left: 52px;
-  }
-
-  &.level-5 {
-    padding-left: 64px;
-  }
-
-  &.level-6 {
-    padding-left: 76px;
-  }
-
-  &:hover {
-    background: var(--jeri-hover);
-    color: var(--jeri-text);
-  }
-
-  &:active {
-    background: var(--jeri-active);
-  }
-
-  &.active {
-    color: var(--jeri-primary);
-    border-left-color: var(--jeri-primary);
-    background: var(--jeri-primary-bg);
-
-    .toc-text {
-      font-weight: 500;
-    }
-  }
-
-  .toc-text {
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
-
-// 抽屉动画
-.drawer-enter-active,
-.drawer-leave-active {
-  transition: opacity 0.3s ease;
-
-  .mobile-toc-drawer {
-    transition: transform 0.3s ease;
-  }
-}
-
-.drawer-enter-from,
-.drawer-leave-to {
-  opacity: 0;
-
-  .mobile-toc-drawer {
-    transform: translateX(100%);
-  }
-}
-
-// 滚动条样式
-.mobile-toc-content {
   &::-webkit-scrollbar {
-    width: 4px;
+    width: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 3px;
   }
 
   &::-webkit-scrollbar-track {
     background: transparent;
   }
+}
 
-  &::-webkit-scrollbar-thumb {
-    background: var(--jeri-border);
-    border-radius: 2px;
+.toc-item {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 9px 18px;
+  margin: 1px 0;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  line-height: 1.5;
+  color: var(--theme-text-color, #555);
+  font-family: inherit;
+  font-size: inherit;
+  position: relative;
 
-    &:hover {
-      background: var(--jeri-text-secondary);
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 0;
+    background: var(--jeri-btn-hover, #49b1f5);
+    border-radius: 0 2px 2px 0;
+    transition: height 0.25s ease;
+  }
+
+  &:hover {
+    background-color: rgba(73, 177, 245, 0.06);
+    color: var(--theme-text-color, #333);
+
+    &::before {
+      height: 16px;
     }
+  }
+
+  &.active {
+    background-color: var(--jeri-btn-hover, #49b1f5);
+    color: #fff;
+    font-weight: 500;
+
+    &::before {
+      display: none;
+    }
+  }
+
+  .toc-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    font-size: 0.88rem;
   }
 }
 
-// 小屏幕优化
-@media screen and (max-width: 360px) {
-  .mobile-toc-drawer {
-    width: 80%;
-    max-width: 260px;
-  }
+.toc-level-1 {
+  padding-left: 18px;
+  font-weight: 500;
+}
 
-  .toc-item {
-    font-size: 13px;
-    padding: 8px 12px;
+.toc-level-2 {
+  padding-left: 28px;
+  font-size: 0.95em;
+}
 
-    &.level-1 {
-      padding-left: 12px;
-    }
+.toc-level-3 {
+  padding-left: 38px;
+  font-size: 0.9em;
+  opacity: 0.92;
+}
 
-    &.level-2 {
-      padding-left: 24px;
-    }
+.toc-level-4 {
+  padding-left: 48px;
+  font-size: 0.85em;
+  opacity: 0.85;
+}
 
-    &.level-3 {
-      padding-left: 36px;
-    }
+.toc-level-5 {
+  padding-left: 58px;
+  font-size: 0.8em;
+  opacity: 0.8;
+}
 
-    &.level-4 {
-      padding-left: 48px;
-    }
+.toc-level-6 {
+  padding-left: 68px;
+  font-size: 0.75em;
+  opacity: 0.75;
+}
 
-    &.level-5 {
-      padding-left: 60px;
-    }
+.toc-popover-enter-active,
+.toc-popover-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: bottom right;
+}
 
-    &.level-6 {
-      padding-left: 72px;
-    }
-  }
+.toc-popover-enter-from,
+.toc-popover-leave-to {
+  opacity: 0;
+  transform: scale(0.92) translate(10px, 10px);
 }
 </style>

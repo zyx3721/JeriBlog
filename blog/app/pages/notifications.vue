@@ -10,7 +10,7 @@
 -->
 
 <script setup lang="ts">
-import type { Notification } from '@@/types/notification'
+import type { Notification } from '@@/types/notification';
 
 const {
   notifications,
@@ -22,50 +22,50 @@ const {
   fetchNotifications,
   markNotificationAsRead,
   markAllNotificationsAsRead,
-  resetPage
-} = useNotifications()
-const router = useRouter()
+  resetPage,
+} = useNotifications();
+const router = useRouter();
 
-definePageMeta({})
+definePageMeta({});
 
 useSeoMeta({
   title: '通知中心',
-  description: '查看您的所有通知，及时了解最新动态'
-})
+  description: '查看您的所有通知，及时了解最新动态',
+});
 
 const loadNotifications = async () => {
   await fetchNotifications({
     page: currentPage.value,
-    page_size: pageSize.value
-  })
-}
+    page_size: pageSize.value,
+  });
+};
 
 const handleMarkAllAsRead = async () => {
-  await markAllNotificationsAsRead()
-  await loadNotifications()
-}
+  await markAllNotificationsAsRead();
+  await loadNotifications();
+};
 
 const handlePageChange = (page: number) => {
-  currentPage.value = page
-  loadNotifications()
-}
+  currentPage.value = page;
+  loadNotifications();
+};
 
 const handleNotificationClick = (notification: Notification) => {
   if (!notification.is_read) {
-    markNotificationAsRead(notification.id).catch(console.error)
+    markNotificationAsRead(notification.id).catch(console.error);
   }
   if (notification.link) {
-    router.push(notification.link)
+    router.push(notification.link);
   }
-}
+};
 
 onMounted(() => {
   // 只在客户端获取需要认证的数据
-  if (process.client) {
-    resetPage()
-    loadNotifications()
+  if (import.meta.client) {
+    resetPage();
+    loadNotifications();
   }
-})
+});
 </script>
 
 <template>
@@ -86,8 +86,13 @@ onMounted(() => {
       <div v-if="loading" class="loading">加载中...</div>
 
       <div v-else-if="notifications.length > 0" class="list-content">
-        <div v-for="notification in notifications" :key="notification.id" class="notification-item"
-          :class="{ 'unread': !notification.is_read }" @click="handleNotificationClick(notification)">
+        <div
+          v-for="notification in notifications"
+          :key="notification.id"
+          class="notification-item"
+          :class="{ unread: !notification.is_read }"
+          @click="handleNotificationClick(notification)"
+        >
           <div class="content">
             <div class="header">
               <h4 class="title">{{ notification.title }}</h4>
@@ -97,14 +102,19 @@ onMounted(() => {
               {{ notification.content }}
             </p>
           </div>
-          <div v-if="!notification.is_read" class="unread-indicator"></div>
+          <div v-if="!notification.is_read" class="unread-indicator" />
         </div>
       </div>
 
       <div v-else class="empty-state">暂无通知</div>
 
-      <UiPagination v-if="total > pageSize" :current-page="currentPage" :total="total" :page-size="pageSize"
-        @page-change="handlePageChange" />
+      <UiPagination
+        v-if="total > pageSize"
+        :current-page="currentPage"
+        :total="total"
+        :page-size="pageSize"
+        @page-change="handlePageChange"
+      />
     </div>
   </div>
 </template>

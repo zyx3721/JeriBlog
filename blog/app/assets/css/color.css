@@ -1,7 +1,7 @@
 :root,
 [data-theme='light'] {
   /* 主题色 */
-  --theme-color: #49B1F5;
+  --theme-color: #49b1f5;
   --theme-meta-color: #666666;
 
   /* 基础颜色 */
@@ -11,7 +11,7 @@
   /* 卡片和背景 */
   --jeri-card-bg: #ffffffd0;
   --jeri-page-bg: #ffffff66;
-  --jeri-btn: #49B1F5;
+  --jeri-btn: #49b1f5;
   --jeri-btn-hover: #78c2f4ff;
   --jeri-heavy-bg: #f5f5f5;
   --jeri-border: #e0e0e0;
@@ -21,10 +21,10 @@
   --jeri-nav-font-hover: #ffffff;
   --jeri-nav-fixed-font: #4c4948;
   --jeri-nav-fixed-font-hover: #33302f;
-  --jeri-nav-focus: #49B1F5;
+  --jeri-nav-focus: #49b1f5;
   --jeri-nav-bg: #fffffff2;
   --jeri-nav-menu-bg: #f6f8fa;
-  --jeri-nav-menu-bg-hover: #49B1F5;
+  --jeri-nav-menu-bg-hover: #49b1f5;
 
   /* 页脚 */
   --jeri-footer-icon: #121212;

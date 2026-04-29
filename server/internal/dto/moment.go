@@ -95,8 +95,8 @@ type MomentForWebResponse struct {
 
 // ============ 后台动态管理请求 ============
 
-// ListMomentRequest 后台动态列表请求（支持筛选）
-type ListMomentRequest struct {
+// ListMomentsRequest 后台动态列表请求（支持筛选）
+type ListMomentsRequest struct {
 	Page      int      `form:"page" binding:"omitempty,min=1"`
 	PageSize  int      `form:"page_size" binding:"omitempty,min=1,max=1000"`
 	Keyword   string   `form:"keyword"`    // 搜索关键词（文本内容）

@@ -12,12 +12,12 @@
 package v1
 
 import (
-	"encoding/json"
-	"fmt"
-	"io"
 	"jeri_blog/pkg/linkparser"
 	"jeri_blog/pkg/response"
 	"jeri_blog/pkg/videoparser"
+	"encoding/json"
+	"fmt"
+	"io"
 	"net/http"
 	"strings"
 
@@ -33,17 +33,17 @@ func NewToolsController() *ToolsController {
 }
 
 // ParseVideo 解析视频URL
-// @Summary 解析视频URL
-// @Description 解析视频URL，支持多个视频平台（抖音、快手、B站等）
-// @Tags 管理工具
-// @Accept json
-// @Produce json
-// @Security BearerAuth
-// @Param body body object{url=string} true "视频URL"
-// @Success 200 {object} response.Response
-// @Failure 400 {object} response.Response
-// @Failure 401 {object} response.Response
-// @Router /admin/tools/parse-video [post]
+//
+//	@Summary		解析视频URL
+//	@Description	解析短视频平台链接，提取视频信息（支持哔哩哔哩、Youtube等）
+//	@Tags			工具
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			body	body		object{url=string}	true	"视频URL"
+//	@Success		200		{object}	response.Response{data=videoparser.VideoInfo}
+//	@Failure		400		{object}	response.Response
+//	@Router			/api/v1/admin/tools/parse-video [post]
 func (c *ToolsController) ParseVideo(ctx *gin.Context) {
 	var req struct {
 		URL string `json:"url" binding:"required"`
@@ -68,17 +68,17 @@ func (c *ToolsController) ParseVideo(ctx *gin.Context) {
 }
 
 // FetchLinkMetadata 获取链接元数据
-// @Summary 获取链接元数据
-// @Description 获取链接的标题、描述、图标等元数据信息
-// @Tags 管理工具
-// @Accept json
-// @Produce json
-// @Security BearerAuth
-// @Param body body object{url=string} true "链接URL"
-// @Success 200 {object} response.Response
-// @Failure 400 {object} response.Response
-// @Failure 401 {object} response.Response
-// @Router /admin/tools/fetch-link-meta [post]
+//
+//	@Summary		获取链接元数据
+//	@Description	解析URL并提取网页元数据（标题、描述、图片等）
+//	@Tags			工具
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			body	body		object{url=string}	true	"网页URL"
+//	@Success		200		{object}	response.Response{data=linkparser.Metadata}
+//	@Failure		400		{object}	response.Response
+//	@Router			/api/v1/admin/tools/fetch-linkmeta [post]
 func (c *ToolsController) FetchLinkMetadata(ctx *gin.Context) {
 	var req struct {
 		URL string `json:"url" binding:"required"`
@@ -98,17 +98,17 @@ func (c *ToolsController) FetchLinkMetadata(ctx *gin.Context) {
 }
 
 // DownloadImage 下载图片
-// @Summary 下载图片到服务器
-// @Description 从指定URL下载图片并保存到服务器
-// @Tags 管理工具
-// @Accept json
-// @Produce json
-// @Security BearerAuth
-// @Param body body object{url=string} true "图片URL"
-// @Success 200 {object} response.Response
-// @Failure 400 {object} response.Response
-// @Failure 401 {object} response.Response
-// @Router /admin/tools/download-image [post]
+//
+//	@Summary		下载图片
+//	@Description	从远程URL下载图片并返回图片数据
+//	@Tags			工具
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			body	body		object{url=string}	true	"图片URL"
+//	@Success		200		{object}	response.Response{data=object{content_type=string,content_length=int,data=[]byte}}
+//	@Failure		400		{object}	response.Response
+//	@Router			/api/v1/admin/tools/download-image [post]
 func (c *ToolsController) DownloadImage(ctx *gin.Context) {
 	var req struct {
 		URL string `json:"url" binding:"required"`
@@ -130,7 +130,9 @@ func (c *ToolsController) DownloadImage(ctx *gin.Context) {
 		response.Failed(ctx, fmt.Sprintf("下载图片失败: %v", err))
 		return
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		response.Failed(ctx, fmt.Sprintf("HTTP状态码: %d", resp.StatusCode))
@@ -156,19 +158,19 @@ func (c *ToolsController) DownloadImage(ctx *gin.Context) {
 }
 
 // ParseMusic 解析音乐信息（代理Meting API）
-// @Summary 解析音乐信息
-// @Description 通过 Meting API 解析音乐平台的歌曲信息（网易云、QQ音乐等）
-// @Tags 管理工具
-// @Accept json
-// @Produce json
-// @Security BearerAuth
-// @Param server query string true "音乐平台（netease/tencent/kugou等）"
-// @Param type query string true "类型（song/playlist/album等）"
-// @Param id query string true "音乐ID"
-// @Success 200 {object} response.Response
-// @Failure 400 {object} response.Response
-// @Failure 401 {object} response.Response
-// @Router /admin/tools/parse-music [get]
+//
+//	@Summary		解析音乐信息
+//	@Description	通过 Meting API 解析音乐平台的歌曲信息（网易云、QQ音乐等）
+//	@Tags			工具
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+// @Param 			server query string true "音乐平台（netease/tencent/kugou等）"
+// @Param 			type query string true "类型（song/playlist/album等）"
+// @Param 			id query string true "音乐ID"
+//	@Success		200		{object}	response.Response
+//	@Failure		400		{object}	response.Response
+//	@Router			/api/v1/tools/parse-music [get]
 func (c *ToolsController) ParseMusic(ctx *gin.Context) {
 	server := ctx.Query("server")
 	musicType := ctx.Query("type")

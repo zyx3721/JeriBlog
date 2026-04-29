@@ -101,33 +101,30 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router';
 
-const route = useRoute()
-const router = useRouter()
+const route = useRoute();
+const router = useRouter();
 
-defineProps<{
-  isCollapse: boolean
-}>()
-
-const emit = defineEmits(['menu-click'])
+defineProps<{ isCollapse: boolean }>();
+const emit = defineEmits(['menu-click']);
 
 // 菜单选择事件处理
 const handleMenuSelect = () => {
-  emit('menu-click')
-}
+  emit('menu-click');
+};
 
 // 菜单项点击事件处理（支持重复点击刷新）
 const handleItemClick = (path: string) => {
   // 如果点击的是当前路由，则刷新页面
   if (route.path === path) {
     // 先跳转到一个空路由，再跳回来，触发组件重新挂载
-    const currentPath = route.path
+    const currentPath = route.path;
     router.replace('/redirect').then(() => {
-      router.replace(currentPath)
-    })
+      router.replace(currentPath);
+    });
   }
-}
+};
 </script>
 
 <style scoped lang="scss">

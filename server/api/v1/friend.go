@@ -54,7 +54,7 @@ func (c *FriendController) ListForWeb(ctx *gin.Context) {
 // ApplyFriend 申请友链
 //
 //	@Summary		申请友链
-//	@Description	用户提交友链申请，系统将通知管理员审核（需要登录）
+//	@Description	用户提交友链申请，需登录
 //	@Tags			友链
 //	@Accept			json
 //	@Produce		json

@@ -9,29 +9,29 @@
 功能描述：TypeScript 模块
 */
 
-import type { Comment, CommentTargetType, CreateCommentParams } from '@@/types/comment'
-import type { PaginationData, PaginationQuery } from '@@/types/request'
-import { createApi } from './createApi'
+import type { Comment, CommentTargetType, CreateCommentParams } from '@@/types/comment';
+import type { PaginationQuery } from '@@/types/request';
+import { createApi } from './createApi';
 
 interface GetCommentsParams extends PaginationQuery {
-  target_type: CommentTargetType
-  target_id?: number              // 目标ID（文章ID，优先使用）
-  target_key?: string | number    // 目标键值（文章slug或页面key）
+  target_type: CommentTargetType;
+  target_id?: number; // 目标ID（文章ID，优先使用）
+  target_key?: string | number; // 目标键值（文章slug或页面key）
 }
 
-const commentApi = createApi<Comment>('/comments', { stringifyTargetKey: true })
+const commentApi = createApi<Comment>('/comments', { stringifyTargetKey: true });
 
 /** 获取评论列表 */
 export const getComments = async (params: GetCommentsParams) => {
-  return commentApi.getList(params)
-}
+  return commentApi.getList(params);
+};
 
 /** 创建评论 */
 export const createComment = async (params: CreateCommentParams) => {
-  return commentApi.create(params)
-}
+  return commentApi.create(params);
+};
 
 /** 删除评论（仅可删除自己的评论） */
 export const deleteComment = async (id: number) => {
-  return commentApi.delete(id)
-}
+  return commentApi.delete(id);
+};

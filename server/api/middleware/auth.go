@@ -12,8 +12,10 @@
 package middleware
 
 import (
+	"crypto/subtle"
 	"strings"
 
+	"jeri_blog/config"
 	"jeri_blog/internal/service"
 	"jeri_blog/pkg/errcode"
 	"jeri_blog/pkg/response"
@@ -79,7 +81,7 @@ func OptionalAuth(userService *service.UserService) gin.HandlerFunc {
 
 		// 检查 Bearer token 格式
 		parts := strings.SplitN(authHeader, " ", 2)
-		if !(len(parts) == 2 && parts[0] == "Bearer") {
+		if len(parts) != 2 || parts[0] != "Bearer" {
 			// token 格式无效，继续执行（作为游客）
 			c.Next()
 			return
@@ -97,5 +99,20 @@ func OptionalAuth(userService *service.UserService) gin.HandlerFunc {
 		c.Set("user", user)
 		c.Set("user_id", user.ID)
 		c.Next()
+	}
+}
+
+// MCPAuth MCP 专用 Bearer 鉴权中间件
+func MCPAuth(conf *config.Config) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token, ok := strings.CutPrefix(c.GetHeader("Authorization"), "Bearer ")
+		if ok && token != "" && conf != nil && conf.AI.MCPSecret != "" &&
+			subtle.ConstantTimeCompare([]byte(token), []byte(conf.AI.MCPSecret)) == 1 {
+			c.Next()
+			return
+		}
+
+		response.Error(c, errcode.Unauthorized.WithDetails("MCP 认证失败"))
+		c.Abort()
 	}
 }

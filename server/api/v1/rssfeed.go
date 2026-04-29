@@ -38,8 +38,13 @@ func NewRssFeedController(rssFeedService *service.RssFeedService) *RssFeedContro
 //	@Tags			RSS订阅管理
 //	@Produce		json
 //	@Security		BearerAuth
-//	@Param			page		query		int	false	"页码"
-//	@Param			page_size	query		int	false	"每页数量"
+//	@Param			page		query		int		false	"页码"
+//	@Param			page_size	query		int		false	"每页数量"
+//	@Param			keyword		query		string	false	"搜索关键词"
+//	@Param			friend_id	query		int		false	"友链ID筛选"
+//	@Param			is_read		query		bool	false	"已读状态筛选"
+//	@Param			start_time	query		string	false	"发布开始时间（格式：2006-01-02）"
+//	@Param			end_time	query		string	false	"发布结束时间（格式：2006-01-02）"
 //	@Success		200			{object}	response.Response
 //	@Failure		401			{object}	response.Response
 //	@Failure		403			{object}	response.Response
@@ -63,7 +68,7 @@ func (c *RssFeedController) List(ctx *gin.Context) {
 // MarkRead 标记文章已读
 //
 //	@Summary		标记文章已读
-//	@Description	将指定文章标记为已读（仅超级管理员可操作）
+//	@Description	将指定文章标记为已读，限超级管理员
 //	@Tags			RSS订阅管理
 //	@Produce		json
 //	@Security		BearerAuth
@@ -92,7 +97,7 @@ func (c *RssFeedController) MarkRead(ctx *gin.Context) {
 // MarkAllRead 全部标记已读
 //
 //	@Summary		全部标记已读
-//	@Description	将所有未读文章标记为已读（仅超级管理员可操作）
+//	@Description	将所有未读文章标记为已读，限超级管理员
 //	@Tags			RSS订阅管理
 //	@Produce		json
 //	@Security		BearerAuth
@@ -113,7 +118,7 @@ func (c *RssFeedController) MarkAllRead(ctx *gin.Context) {
 // RefreshAll 立即刷新所有RSS订阅源
 //
 //	@Summary		立即刷新RSS
-//	@Description	手动触发刷新所有RSS订阅源（仅超级管理员可操作）
+//	@Description	手动触发刷新所有RSS订阅源，限超级管理员
 //	@Tags			RSS订阅管理
 //	@Produce		json
 //	@Security		BearerAuth

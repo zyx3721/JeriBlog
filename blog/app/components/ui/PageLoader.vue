@@ -45,18 +45,18 @@
 
 <script setup lang="ts">
 interface Props {
-  isLoading?: boolean
-  title?: string
-  progress?: number
-  loadingText?: string
+  isLoading?: boolean;
+  title?: string;
+  progress?: number;
+  loadingText?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   isLoading: true,
   title: '加载中',
   progress: 0,
-  loadingText: '正在加载资源...'
-})
+  loadingText: '正在加载资源...',
+});
 </script>
 
 <style scoped>
@@ -98,11 +98,11 @@ const props = withDefaults(defineProps<Props>(), {
 /* 第一层星星 - 小而快 */
 .stars {
   background-image:
-    radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 60px 70px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 50px 50px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 130px 80px, #fff, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 90px 10px, #fff, rgba(0,0,0,0));
+    radial-gradient(2px 2px at 20px 30px, #eee, rgba(0, 0, 0, 0)),
+    radial-gradient(2px 2px at 60px 70px, #fff, rgba(0, 0, 0, 0)),
+    radial-gradient(1px 1px at 50px 50px, #fff, rgba(0, 0, 0, 0)),
+    radial-gradient(1px 1px at 130px 80px, #fff, rgba(0, 0, 0, 0)),
+    radial-gradient(2px 2px at 90px 10px, #fff, rgba(0, 0, 0, 0));
   background-repeat: repeat;
   background-size: 200px 200px;
   animation: stars-move 50s linear infinite;
@@ -112,10 +112,10 @@ const props = withDefaults(defineProps<Props>(), {
 /* 第二层星星 - 中等大小和速度 */
 .stars2 {
   background-image:
-    radial-gradient(1px 1px at 100px 120px, #fff, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 150px 60px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 90px 140px, #fff, rgba(0,0,0,0));
+    radial-gradient(1px 1px at 100px 120px, #fff, rgba(0, 0, 0, 0)),
+    radial-gradient(2px 2px at 40px 70px, #fff, rgba(0, 0, 0, 0)),
+    radial-gradient(1px 1px at 150px 60px, #fff, rgba(0, 0, 0, 0)),
+    radial-gradient(1px 1px at 90px 140px, #fff, rgba(0, 0, 0, 0));
   background-repeat: repeat;
   background-size: 250px 250px;
   animation: stars-move 100s linear infinite;
@@ -125,15 +125,17 @@ const props = withDefaults(defineProps<Props>(), {
 /* 第三层星星 - 大而慢，带炫酷闪烁 */
 .stars3 {
   background-image:
-    radial-gradient(3px 3px at 75px 125px, #fffacd, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 180px 80px, #f0e68c, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 120px 160px, #fafad2, rgba(0,0,0,0)),
-    radial-gradient(3px 3px at 200px 40px, #87ceeb, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 30px 90px, #add8e6, rgba(0,0,0,0)),
-    radial-gradient(3px 3px at 160px 180px, #ffd700, rgba(0,0,0,0));
+    radial-gradient(3px 3px at 75px 125px, #fffacd, rgba(0, 0, 0, 0)),
+    radial-gradient(2px 2px at 180px 80px, #f0e68c, rgba(0, 0, 0, 0)),
+    radial-gradient(2px 2px at 120px 160px, #fafad2, rgba(0, 0, 0, 0)),
+    radial-gradient(3px 3px at 200px 40px, #87ceeb, rgba(0, 0, 0, 0)),
+    radial-gradient(2px 2px at 30px 90px, #add8e6, rgba(0, 0, 0, 0)),
+    radial-gradient(3px 3px at 160px 180px, #ffd700, rgba(0, 0, 0, 0));
   background-repeat: repeat;
   background-size: 300px 300px;
-  animation: stars-move 150s linear infinite, twinkle-advanced 4s ease-in-out infinite;
+  animation:
+    stars-move 150s linear infinite,
+    twinkle-advanced 4s ease-in-out infinite;
   opacity: 0.6;
 }
 
@@ -151,20 +153,24 @@ const props = withDefaults(defineProps<Props>(), {
 
 .stars3::before {
   background-image:
-    radial-gradient(4px 4px at 50px 50px, rgba(255, 255, 255, 0.9), rgba(0,0,0,0)),
-    radial-gradient(3px 3px at 150px 100px, rgba(135, 206, 250, 0.8), rgba(0,0,0,0)),
-    radial-gradient(3px 3px at 100px 150px, rgba(255, 215, 0, 0.8), rgba(0,0,0,0));
+    radial-gradient(4px 4px at 50px 50px, rgba(255, 255, 255, 0.9), rgba(0, 0, 0, 0)),
+    radial-gradient(3px 3px at 150px 100px, rgba(135, 206, 250, 0.8), rgba(0, 0, 0, 0)),
+    radial-gradient(3px 3px at 100px 150px, rgba(255, 215, 0, 0.8), rgba(0, 0, 0, 0));
   background-size: 350px 350px;
-  animation: stars-move 120s linear infinite, twinkle-fast 2s ease-in-out infinite;
+  animation:
+    stars-move 120s linear infinite,
+    twinkle-fast 2s ease-in-out infinite;
 }
 
 .stars3::after {
   background-image:
-    radial-gradient(5px 5px at 80px 80px, rgba(255, 255, 255, 1), rgba(0,0,0,0)),
-    radial-gradient(4px 4px at 200px 150px, rgba(173, 216, 230, 0.9), rgba(0,0,0,0)),
-    radial-gradient(4px 4px at 120px 40px, rgba(255, 250, 205, 0.9), rgba(0,0,0,0));
+    radial-gradient(5px 5px at 80px 80px, rgba(255, 255, 255, 1), rgba(0, 0, 0, 0)),
+    radial-gradient(4px 4px at 200px 150px, rgba(173, 216, 230, 0.9), rgba(0, 0, 0, 0)),
+    radial-gradient(4px 4px at 120px 40px, rgba(255, 250, 205, 0.9), rgba(0, 0, 0, 0));
   background-size: 400px 400px;
-  animation: stars-move 180s linear infinite, twinkle-slow 5s ease-in-out infinite;
+  animation:
+    stars-move 180s linear infinite,
+    twinkle-slow 5s ease-in-out infinite;
 }
 
 @keyframes stars-move {
@@ -206,7 +212,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 /* 快速闪烁 */
 @keyframes twinkle-fast {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.3;
     transform: scale(1);
   }
@@ -218,7 +225,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 /* 慢速闪烁 */
 @keyframes twinkle-slow {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.4;
     filter: brightness(1) blur(0);
   }
@@ -264,7 +272,8 @@ const props = withDefaults(defineProps<Props>(), {
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -290,7 +299,8 @@ const props = withDefaults(defineProps<Props>(), {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow:
       0 0 0 0 rgba(255, 255, 255, 0.4),
       0 0 30px rgba(255, 255, 255, 0.2);
@@ -332,7 +342,8 @@ const props = withDefaults(defineProps<Props>(), {
 }
 
 @keyframes glow {
-  0%, 100% {
+  0%,
+  100% {
     text-shadow:
       0 0 10px rgba(255, 255, 255, 0.5),
       0 0 20px rgba(255, 255, 255, 0.3),
@@ -381,12 +392,7 @@ const props = withDefaults(defineProps<Props>(), {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.4),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
   animation: shimmer 2s infinite;
 }
 
@@ -409,7 +415,8 @@ const props = withDefaults(defineProps<Props>(), {
 }
 
 @keyframes glow-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.6;
     transform: translate(50%, -50%) scale(1);
   }

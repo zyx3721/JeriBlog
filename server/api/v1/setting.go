@@ -43,12 +43,12 @@ func NewSettingController(settingService *service.SettingService, db *gorm.DB, u
 // GetGroup 获取某个分组的所有配置
 //
 //	@Summary		获取配置分组
-//	@Description	获取指定分组的所有配置项（需要管理员权限）
+//	@Description	获取指定分组的所有配置项
 //	@Tags			配置管理
 //	@Accept			json
 //	@Produce		json
 //	@Security		BearerAuth
-//	@Param			group	path		string	true	"配置分组"	Enums(basic, blog, notification, upload, ai, oauth, wechat)
+//	@Param			group	path		string	true	"配置分组"	Enums(basic, blog, notification, upload, ai, oauth)
 //	@Success		200		{object}	response.Response{data=dto.SettingGroupResponse}
 //	@Failure		400		{object}	response.Response
 //	@Failure		401		{object}	response.Response
@@ -73,12 +73,12 @@ func (c *SettingController) GetGroup(ctx *gin.Context) {
 // UpdateGroup 更新某个分组的配置
 //
 //	@Summary		更新配置分组
-//	@Description	批量更新指定分组的配置项（patch 方式，只更新传入的配置）
+//	@Description	批量更新指定分组的配置项，限超级管理员
 //	@Tags			配置管理
 //	@Accept			json
 //	@Produce		json
 //	@Security		BearerAuth
-//	@Param			group	path		string							true	"配置分组"	Enums(basic, blog, notification, upload, ai, oauth, wechat)
+//	@Param			group	path		string							true	"配置分组"	Enums(basic, blog, notification, upload, ai, oauth)
 //	@Param			request	body		dto.UpdateSettingGroupRequest	true	"配置更新内容"
 //	@Success		200		{object}	response.Response
 //	@Failure		400		{object}	response.Response
@@ -116,6 +116,28 @@ func (c *SettingController) UpdateGroup(ctx *gin.Context) {
 	response.Success(ctx, nil, "配置更新成功")
 }
 
+// ResetMCPSecret 重置 MCP Secret
+//
+//	@Summary		重置 MCP Secret
+//	@Description	重新生成并返回 MCP Secret，限超级管理员
+//	@Tags			配置管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Success		200	{object}	response.Response{data=map[string]string}
+//	@Failure		401	{object}	response.Response
+//	@Failure		500	{object}	response.Response
+//	@Router			/admin/settings/ai/mcp-secret/reset [put]
+func (c *SettingController) ResetMCPSecret(ctx *gin.Context) {
+	secret, err := c.settingService.ResetMCPSecret()
+	if err != nil {
+		response.Failed(ctx, "重置 MCP Secret 失败: "+err.Error())
+		return
+	}
+
+	response.Success(ctx, gin.H{"secret": secret}, "MCP Secret 重置成功")
+}
+
 // ============ 前台公开接口 ============
 
 // GetPublicSettingGroup 获取公开的配置分组
@@ -125,7 +147,7 @@ func (c *SettingController) UpdateGroup(ctx *gin.Context) {
 //	@Tags			配置
 //	@Accept			json
 //	@Produce		json
-//	@Param			group	path		string	true	"配置分组"	Enums(basic, blog, notification, upload, ai, oauth, wechat)
+//	@Param			group	path		string	true	"配置分组"	Enums(basic, blog, notification, upload, ai, oauth)
 //	@Success		200	{object}	response.Response{data=map[string]string}
 //	@Failure		400	{object}	response.Response
 //	@Failure		500	{object}	response.Response

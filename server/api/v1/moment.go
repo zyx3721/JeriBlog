@@ -47,7 +47,7 @@ func NewMomentController(momentService *service.MomentService) *MomentController
 //	@Success		200			{object}	response.Response{data=response.PageResult}
 //	@Router			/moments [get]
 func (c *MomentController) ListForWeb(ctx *gin.Context) {
-	var req dto.ListMomentRequest
+	var req dto.ListMomentsForWebRequest
 	if err := ctx.ShouldBindQuery(&req); err != nil {
 		response.ValidateFailed(ctx, err.Error())
 		return
@@ -64,38 +64,38 @@ func (c *MomentController) ListForWeb(ctx *gin.Context) {
 
 // ============ 后台管理接口 ============
 
-// List 获取动态列表（管理）
+// List 获取动态列表
 //
-//	@Summary		动态列表（管理）
-//	@Description	获取所有动态用于管理
+//	@Summary		动态列表
+//	@Description	获取所有动态，支持筛选
 //	@Tags			动态管理
 //	@Accept			json
 //	@Produce		json
 //	@Security		BearerAuth
-//	@Param			page		query		int		false	"页码"
-//	@Param			page_size	query		int		false	"每页数量（不传则返回全部）"
-//	@Param			keyword		query		string	false	"搜索关键词（按内容模糊搜索）"
-//	@Param			tags		query		string	false	"标签筛选"
-//	@Param			location	query		string	false	"发布地点筛选"
-//	@Param			is_publish	query		bool	false	"状态筛选（true=已发布, false=草稿）"
-//	@Param			has_images	query		bool	false	"是否包含图片"
-//	@Param			has_video	query		bool	false	"是否包含视频"
-//	@Param			has_music	query		bool	false	"是否包含音乐"
-//	@Param			has_link	query		bool	false	"是否包含链接"
-//	@Param			start_time	query		string	false	"开始时间（YYYY-MM-DD）"
-//	@Param			end_time	query		string	false	"结束时间（YYYY-MM-DD）"
-//	@Success		200			{object}	response.Response{data=response.PageResult}
-//	@Failure		401			{object}	response.Response
-//	@Failure		403			{object}	response.Response
+//	@Param			page			query		int		false	"页码"
+//	@Param			page_size		query		int		false	"每页数量（不传则返回全部）"
+//	@Param			keyword			query		string	false	"搜索关键词（文本内容）"
+//	@Param			tags			query		string	false	"标签"
+//	@Param			location		query		string	false	"发布地点"
+//	@Param			is_publish		query		bool	false	"是否发布"
+//	@Param			has_images		query		bool	false	"是否有图片"
+//	@Param			has_video		query		bool	false	"是否有视频"
+//	@Param			has_music		query		bool	false	"是否有音乐"
+//	@Param			has_link		query		bool	false	"是否有链接"
+//	@Param			start_time		query		string	false	"发布开始时间"
+//	@Param			end_time		query		string	false	"发布结束时间"
+//	@Success		200				{object}	response.Response{data=response.PageResult}
+//	@Failure		401				{object}	response.Response
+//	@Failure		403				{object}	response.Response
 //	@Router			/admin/moments [get]
 func (c *MomentController) List(ctx *gin.Context) {
-	var req dto.ListMomentRequest
+	var req dto.ListMomentsRequest
 	if err := ctx.ShouldBindQuery(&req); err != nil {
 		response.ValidateFailed(ctx, err.Error())
 		return
 	}
 
-	moments, total, err := c.momentService.List(ctx.Request.Context(), req.Page, req.PageSize, &req)
+	moments, total, err := c.momentService.List(ctx.Request.Context(), req)
 	if err != nil {
 		response.Failed(ctx, err.Error())
 		return
@@ -104,10 +104,10 @@ func (c *MomentController) List(ctx *gin.Context) {
 	response.PageSuccess(ctx, moments, total, req.Page, req.PageSize)
 }
 
-// Get 获取动态详情（管理）
+// Get 获取动态详情
 //
-//	@Summary		动态详情（管理）
-//	@Description	通过 ID 获取动态详情
+//	@Summary		动态详情
+//	@Description	获取动态详细信息
 //	@Tags			动态管理
 //	@Accept			json
 //	@Produce		json
@@ -175,7 +175,7 @@ func (c *MomentController) Create(ctx *gin.Context) {
 //	@Security		BearerAuth
 //	@Param			id		path		int						true	"动态 ID"
 //	@Param			request	body		dto.UpdateMomentRequest	true	"动态信息"
-//	@Success		200		{object}	response.Response
+//	@Success		200		{object}	response.Response{data=dto.MomentListResponse}
 //	@Failure		400		{object}	response.Response
 //	@Failure		401		{object}	response.Response
 //	@Failure		403		{object}	response.Response
@@ -194,18 +194,19 @@ func (c *MomentController) Update(ctx *gin.Context) {
 		return
 	}
 
-	if err := c.momentService.Update(ctx.Request.Context(), uint(id), &req); err != nil {
+	moment, err := c.momentService.Update(ctx.Request.Context(), uint(id), &req)
+	if err != nil {
 		response.Failed(ctx, err.Error())
 		return
 	}
 
-	response.Success(ctx, nil)
+	response.Success(ctx, moment)
 }
 
 // Delete 删除动态
 //
 //	@Summary		删除动态
-//	@Description	删除动态
+//	@Description	硬删除动态，不可恢复
 //	@Tags			动态管理
 //	@Accept			json
 //	@Produce		json

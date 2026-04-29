@@ -9,8 +9,7 @@
 功能描述：Vue 组件
 -->
 
-<script lang="ts" setup>
-</script>
+<script lang="ts" setup></script>
 
 <template>
   <footer id="footer">

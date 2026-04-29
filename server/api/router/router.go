@@ -10,10 +10,10 @@ import (
 	"jeri_blog/pkg/database"
 	"jeri_blog/pkg/email"
 	"jeri_blog/pkg/feishu"
+	mcpserver "flec_blog/pkg/mcp"
 	"jeri_blog/pkg/notification"
 	"jeri_blog/pkg/scheduler"
 	"jeri_blog/pkg/upload"
-
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -46,13 +46,16 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 	settingRepo := repository.NewSettingRepository(db.DB)
 
 	// 初始化上传系统
-	uploadManager := upload.InitializeUploadSystem(conf, r)
+	uploadManager := upload.InitializeUploadSystem(conf)
 
 	// 使用中间件
 	r.Use(middleware.CORS(conf))              // CORS跨域
 	r.Use(middleware.Logger())                // 日志记录
 	r.Use(middleware.RateLimit(500, 1, "ip")) // 全局IP限流: 500次/分钟
 	r.Use(middleware.Recovery())              // 错误恢复
+
+	// 注册本地静态文件服务
+	r.Static("/uploads", "/app/data/uploads")
 
 	// 根路径欢迎页面
 	r.GET("/", func(c *gin.Context) { c.String(200, "Jeri-Server 运行成功") })
@@ -80,16 +83,16 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 	notificationSvc := notification.NewService(emailClient, feishuClient, conf)
 	userService := service.NewUserService(userRepo, fileService, conf)
 	verificationService := service.NewVerificationService(verificationRepo, userRepo, emailClient, conf)
-	articleService := service.NewArticleService(articleRepo, tagRepo, categoryRepo, commentRepo, fileService, db.DB, conf)
+	articleService := service.NewArticleService(articleRepo, tagRepo, categoryRepo, commentRepo, fileService, db.DB)
 	tagService := service.NewTagService(tagRepo, articleRepo)
 	categoryService := service.NewCategoryService(categoryRepo, articleRepo)
 	notificationService := service.NewNotificationService(notificationRepo, notificationSvc)
 	commentService := service.NewCommentService(commentRepo, articleRepo, userRepo, notificationService, fileService)
 	statsService := service.NewStatsService(statsRepo, conf)
-	friendService := service.NewFriendService(friendRepo, rssFeedRepo, fileService, notificationService)
+	friendService := service.NewFriendService(friendRepo, fileService, notificationService)
 	momentService := service.NewMomentService(momentRepo, fileService)
 	menuService := service.NewMenuService(menuRepo, fileService)
-	feedbackService := service.NewFeedbackService(feedbackRepo, notificationService, fileService, emailClient)
+	feedbackService := service.NewFeedbackService(feedbackRepo, notificationService, fileService)
 	subscriberService := service.NewSubscriberService(subscriberRepo, emailClient, conf)
 	rssFeedService := service.NewRssFeedService(rssFeedRepo, notificationService)
 	systemService := service.NewSystemService(db.DB, uploadManager, emailClient, feishuClient, notificationService)
@@ -108,7 +111,7 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 	categoryController := v1.NewCategoryController(categoryService)
 	tagController := v1.NewTagController(tagService)
 	commentController := v1.NewCommentController(commentService)
-	fileController := v1.NewFileController(fileService, conf)
+	fileController := v1.NewFileController(fileService)
 	statsHandler := v1.NewStatsHandler(statsService)
 	friendController := v1.NewFriendController(friendService)
 	momentController := v1.NewMomentController(momentService)
@@ -123,6 +126,13 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 	toolsHandler := v1.NewToolsController()
 	aiController := v1.NewAIController(settingService)
 	rssFeedController := v1.NewRssFeedController(rssFeedService)
+
+	// MCP 接口
+	mcpHandler := gin.WrapH(mcpserver.NewPublicHandler(
+		articleService, categoryService, tagService, commentService, friendService, rssFeedService, momentService,
+		userService, statsService,
+	))
+	r.Any("/mcp", middleware.MCPAuth(conf), mcpHandler)
 
 	// Atom 订阅
 	r.GET("/atom.xml", atomController.GetAtomFeed)
@@ -313,8 +323,8 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 			// 数据导入
 			articleManagement.POST("/import", articleController.ImportArticles) // 导入文章数据（Hexo等）
 
-			// 微信公众号导出
-			articleManagement.POST("/:id/wechat/export", articleController.ExportToWeChat) // 导出到微信公众号
+			// 微信公众号格式生成
+			articleManagement.POST("/:id/wechat/export", articleController.ExportToWeChat) // 生成微信公众号 HTML
 
 			// 文章下载
 			articleManagement.GET("/:id/download/zip", articleController.DownloadZip) // 下载为 Markdown
@@ -375,7 +385,7 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 			commentManagement.GET("", commentController.List)                           // 获取评论列表
 			commentManagement.GET("/:id", commentController.Get)                        // 获取评论详情
 			commentManagement.PUT("/:id/toggle-status", commentController.ToggleStatus) // 切换评论状态
-			commentManagement.DELETE("/:id", commentController.Delete)                  // 删除评论（管理员）
+			commentManagement.DELETE("/:id", commentController.Delete)                  // 删除评论（管理员硬删除）
 
 			// 数据导入
 			commentManagement.POST("/import", commentController.ImportComments) // 导入评论数据（Artalk等）
@@ -400,7 +410,6 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 			statsManagement.GET("/tag", statsHandler.GetTagStats)                            // 获取标签统计
 			statsManagement.GET("/contribution", statsHandler.GetArticleContribution)        // 获取文章贡献数据
 			statsManagement.GET("/visits", statsHandler.GetVisitLogs)                        // 获取访问日志
-			statsManagement.DELETE("/visits/batch", statsHandler.DeleteVisitLogsByCondition) // 批量删除访问日志
 			statsManagement.DELETE("/visits/:id", statsHandler.DeleteVisitLog)               // 删除访问日志
 		}
 
@@ -437,13 +446,16 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 		settingManagement := adminAPI.Group("/settings")
 		{
 			settingManagement.GET("/:group", settingController.GetGroup)      // 获取指定分组的配置
-			settingManagement.PATCH("/:group", settingController.UpdateGroup) // 更新指定分组的配置
+			settingManagement.PATCH("/:group", middleware.IsSuperAdmin(), settingController.UpdateGroup)               // 更新指定分组的配置（仅超级管理员）
+			settingManagement.PUT("/ai/mcp-secret/reset", middleware.IsSuperAdmin(), settingController.ResetMCPSecret) // 重置 MCP Secret（仅超级管理员）
 		}
 
 		// ==================== 系统信息 ====================
 		systemManagement := adminAPI.Group("/system")
-		systemManagement.GET("/static", systemController.GetSystemStatic)   // 获取系统静态信息
-		systemManagement.GET("/dynamic", systemController.GetSystemDynamic) // 获取系统动态信息
+		{
+			systemManagement.GET("/static", systemController.GetSystemStatic)   // 获取系统静态信息
+			systemManagement.GET("/dynamic", systemController.GetSystemDynamic) // 获取系统动态信息
+		}
 
 		// ==================== 管理工具相关 ====================
 		toolsManagement := adminAPI.Group("/tools")

@@ -15,7 +15,6 @@ import (
 	"time"
 
 	"jeri_blog/pkg/logger"
-	"jeri_blog/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -39,7 +38,7 @@ func Logger() gin.HandlerFunc {
 		path := c.Request.URL.Path
 		query := c.Request.URL.RawQuery
 		method := c.Request.Method
-		clientIP := utils.GetRealIP(c)
+		clientIP := c.ClientIP()
 		userAgent := c.Request.UserAgent()
 		referer := c.Request.Referer()
 

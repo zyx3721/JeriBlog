@@ -18,7 +18,6 @@ import (
 	"jeri_blog/internal/dto"
 	"jeri_blog/internal/service"
 	"jeri_blog/pkg/response"
-	"jeri_blog/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -96,7 +95,7 @@ func (c *CommentController) Create(ctx *gin.Context) {
 	}
 
 	// 获取客户端信息
-	req.IP = utils.GetRealIP(ctx)
+	req.IP = ctx.ClientIP()
 	req.UserAgent = ctx.GetHeader("User-Agent")
 
 	// 获取用户ID（登录用户有值，游客为0）
@@ -195,15 +194,20 @@ func (c *CommentController) DeleteForWeb(ctx *gin.Context) {
 
 // List 获取评论列表
 //
-//	@Summary		评论列表（管理）
-//	@Description	获取所有评论，支持按状态筛选
+//	@Summary		评论列表
+//	@Description	获取所有评论，支持多种筛选条件
 //	@Tags			评论管理
 //	@Accept			json
 //	@Produce		json
 //	@Security		BearerAuth
-//	@Param			page		query		int	false	"页码"
-//	@Param			page_size	query		int	false	"每页数量（不传则返回全部）"
-//	@Param			status		query		int	false	"状态筛选 0:隐藏 1:显示"
+//	@Param			page		query		int		false	"页码"
+//	@Param			page_size	query		int		false	"每页数量（不传则返回全部）"
+//	@Param			keyword		query		string	false	"搜索关键词（评论内容）"
+//	@Param			status		query		int		false	"状态筛选 0:隐藏 1:显示"
+//	@Param			is_deleted	query		bool	false	"是否已删除"
+//	@Param			is_sub		query		bool	false	"是否子评论（true:子评论, false:父评论）"
+//	@Param			start_time	query		string	false	"评论开始时间（格式：2006-01-02）"
+//	@Param			end_time	query		string	false	"评论结束时间（格式：2006-01-02）"
 //	@Success		200			{object}	response.Response{data=response.PageResult}
 //	@Failure		400			{object}	response.Response
 //	@Failure		401			{object}	response.Response
@@ -227,7 +231,7 @@ func (c *CommentController) List(ctx *gin.Context) {
 
 // Get 获取评论详情
 //
-//	@Summary		评论详情（管理）
+//	@Summary		评论详情
 //	@Description	查看评论详细信息
 //	@Tags			评论管理
 //	@Accept			json
@@ -258,8 +262,8 @@ func (c *CommentController) Get(ctx *gin.Context) {
 
 // ToggleStatus 切换评论状态
 //
-//	@Summary		显示/隐藏
-//	@Description	切换评论的显示状态，隐藏后前台不可见
+//	@Summary		切换评论状态
+//	@Description	切换评论的显示状态，隐藏后博客端不可见或被替换
 //	@Tags			评论管理
 //	@Accept			json
 //	@Produce		json
@@ -286,10 +290,10 @@ func (c *CommentController) ToggleStatus(ctx *gin.Context) {
 	response.Success(ctx, nil)
 }
 
-// Delete 删除评论（后台管理员）
+// Delete 删除评论
 //
-//	@Summary		删除评论（管理）
-//	@Description	硬删除评论，永久删除无法恢复，子评论会保留
+//	@Summary		删除评论
+//	@Description	硬删除评论，将从数据库中彻底删除，不可恢复
 //	@Tags			评论管理
 //	@Accept			json
 //	@Produce		json
@@ -316,10 +320,10 @@ func (c *CommentController) Delete(ctx *gin.Context) {
 	response.Success(ctx, nil)
 }
 
-// CreateForAdmin 创建评论（管理员回复）
+// CreateForAdmin 创建评论
 //
 //	@Summary		创建评论
-//	@Description	管理员创建评论，用于回复用户
+//	@Description	管理员创建评论，用于回复用户，但无法设置评论IP等数据
 //	@Tags			评论管理
 //	@Accept			json
 //	@Produce		json
@@ -354,7 +358,7 @@ func (c *CommentController) CreateForAdmin(ctx *gin.Context) {
 // ImportComments 导入评论数据
 //
 //	@Summary		导入评论数据
-//	@Description	从Artalk等第三方评论系统导入评论数据
+//	@Description	从Artalk评论系统导入评论数据，暂不支持更多评论系统
 //	@Tags			评论管理
 //	@Accept			multipart/form-data
 //	@Produce		json
@@ -380,7 +384,9 @@ func (c *CommentController) ImportComments(ctx *gin.Context) {
 		response.ValidateFailed(ctx, "请选择要导入的文件")
 		return
 	}
-	defer file.Close()
+	defer func() {
+		_ = file.Close()
+	}()
 
 	// 检查文件大小（10MB限制）
 	const maxFileSize = 10 << 20
@@ -389,8 +395,9 @@ func (c *CommentController) ImportComments(ctx *gin.Context) {
 		return
 	}
 
-	// 检查文件类型
-	if !isJSONFile(header.Filename) {
+	// 检查文件类型（支持 .json 和 .artrans 格式）
+	filename := header.Filename
+	if len(filename) <= 5 || (filename[len(filename)-5:] != ".json" && filename[len(filename)-8:] != ".artrans") {
 		response.ValidateFailed(ctx, "只支持JSON格式的文件")
 		return
 	}
@@ -418,9 +425,4 @@ func (c *CommentController) ImportComments(ctx *gin.Context) {
 	}
 
 	response.Success(ctx, result)
-}
-
-// isJSONFile 检查文件是否为JSON格式
-func isJSONFile(filename string) bool {
-	return len(filename) > 5 && (filename[len(filename)-5:] == ".json" || filename[len(filename)-8:] == ".artrans")
 }

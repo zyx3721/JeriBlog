@@ -18,7 +18,6 @@ type Config struct {
 	Upload       UploadConfig       // 从数据库加载
 	AI           AIConfig           // 从数据库加载
 	OAuth        OAuthConfig        // 从数据库加载
-	WeChat       WeChatConfig       // 从数据库加载
 }
 
 // ServerConfig 服务器配置
@@ -74,6 +73,9 @@ type BlogConfig struct {
 	Font            string // 字体配置（URL|字体名称）
 	WechatQrCode    string // 微信收款码
 	AlipayQrCode    string // 支付宝收款码
+	MomentsSize     int    // 动态列表每页数量
+	MessageContent  string // 留言信内容
+	HomeLayout      string // 首页布局（waterfall/single_column）
 }
 
 // NotificationConfig 通知配置（从数据库动态加载）
@@ -169,6 +171,7 @@ type AIConfig struct {
 	SummaryPrompt   string // 文章摘要提示词
 	AISummaryPrompt string // AI 总结提示词
 	TitlePrompt     string // 标题生成提示词
+	MCPSecret       string // MCP 专用鉴权密钥（系统自动生成）
 }
 
 // OAuthConfig OAuth配置（从数据库动态加载）
@@ -186,13 +189,6 @@ type OAuthProviderConfig struct {
 	ClientID     string // Client ID
 	ClientSecret string // Client Secret
 	RedirectURL  string // 回调地址
-}
-
-// WeChatConfig 微信公众号配置（从数据库动态加载）
-type WeChatConfig struct {
-	AppID     string // 公众号 AppID
-	AppSecret string // 公众号 AppSecret
-	TokenURL  string // 自定义接口域名（可选）
 }
 
 // LoadConfig 从环境变量加载配置

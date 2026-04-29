@@ -10,16 +10,37 @@
 -->
 
 <script lang="ts" setup>
-const { basicConfig } = useSysConfig()
-const startYear = 2024
-const copyrightYear = ref(`${startYear}`)
+import { parseJSON } from '@/utils/json';
+
+const { basicConfig, blogConfig } = useSysConfig();
+const startYear = 2024;
+const copyrightYear = ref(`${startYear}`);
 
 onMounted(() => {
-  const currentYear = new Date().getFullYear()
-  copyrightYear.value = startYear === currentYear
-    ? `${currentYear}`
-    : `${startYear} - ${currentYear}`
-})
+  const currentYear = new Date().getFullYear();
+  copyrightYear.value =
+    startYear === currentYear ? `${currentYear}` : `${startYear} - ${currentYear}`;
+});
+
+/**
+ * 页脚右侧链接列表
+ * 从系统配置中读取 footer_links 字段
+ */
+const footerLinks = computed(() => {
+  return parseJSON<Array<{ name: string; url: string }>>(blogConfig.value.footer_links, []).filter(
+    item => item.name && item.url
+  );
+});
+
+/**
+ * 判断链接是否为外部链接
+ * 以 / 开头的为内部链接，其他为外部链接
+ * @param url - 链接地址
+ * @returns 是否为外部链接
+ */
+const isExternalLink = (url: string) => {
+  return !url.startsWith('/');
+};
 </script>
 
 <template>
@@ -27,23 +48,46 @@ onMounted(() => {
     <div class="column-left">
       <div class="copyright">
         <span>©{{ copyrightYear }} By</span>
-        <a :href="basicConfig.home_url || '#'" target="_blank" :aria-label="`作者 ${basicConfig.author}`"
-          rel="noopener noreferrer">{{
-            basicConfig.author }}</a>
+        <a
+          :href="basicConfig.home_url || '#'"
+          target="_blank"
+          :aria-label="`作者 ${basicConfig.author}`"
+          rel="noopener noreferrer"
+          >{{ basicConfig.author }}</a
+        >
       </div>
-      <div class="beian">
-        <a v-if="basicConfig.icp" href="https://beian.miit.gov.cn/" target="_blank"
-          :aria-label="`${basicConfig.icp} 备案信息`" rel="noopener noreferrer">{{
-            basicConfig.icp }}</a>
-        <a v-if="basicConfig.police_record" href="https://beian.mps.gov.cn/" target="_blank"
-          :aria-label="`${basicConfig.police_record} 公安备案信息`" rel="noopener noreferrer">{{
-            basicConfig.police_record }}</a>
+      <div v-if="basicConfig.icp || basicConfig.police_record" class="beian">
+        <a
+          v-if="basicConfig.icp"
+          href="https://beian.miit.gov.cn/"
+          target="_blank"
+          :aria-label="`${basicConfig.icp} 备案信息`"
+          rel="noopener noreferrer"
+          >{{ basicConfig.icp }}</a
+        >
+        <a
+          v-if="basicConfig.police_record"
+          href="https://beian.mps.gov.cn/"
+          target="_blank"
+          :aria-label="`${basicConfig.police_record} 公安备案信息`"
+          rel="noopener noreferrer"
+          >{{ basicConfig.police_record }}</a
+        >
       </div>
     </div>
     <div class="column-right">
-      <a class="links" href="/subscribe" target="_self" aria-label="订阅本站">订阅</a>
-      <a class="links" href="https://github.com/zyx3721/JeriBlog" target="_blank" aria-label="JeriBLOG源码"
-        rel="noopener noreferrer">源码</a>
+      <!-- 可配置的页脚链接 -->
+      <a
+        v-for="link in footerLinks"
+        :key="link.name"
+        class="links"
+        :href="link.url"
+        :target="isExternalLink(link.url) ? '_blank' : '_self'"
+        :rel="isExternalLink(link.url) ? 'noopener noreferrer' : undefined"
+        :aria-label="link.name"
+      >
+        {{ link.name }}
+      </a>
     </div>
   </div>
 </template>
@@ -130,7 +174,7 @@ onMounted(() => {
 
       &:hover {
         color: var(--jeri-footer-font-hover);
-        background: var(--jeri-footer-font-bg-hover)
+        background: var(--jeri-footer-font-bg-hover);
       }
     }
   }

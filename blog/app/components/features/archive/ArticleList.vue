@@ -10,7 +10,7 @@
 -->
 
 <script lang="ts" setup>
-import type { Article } from "@@/types/article";
+import type { Article } from '@@/types/article';
 
 interface Props {
   articles: Article[];
@@ -21,6 +21,8 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   groupByYear: false,
+  title: undefined,
+  total: undefined,
 });
 
 // 显示的文章数量：优先使用 total，否则使用 articles.length
@@ -30,13 +32,13 @@ const displayTotal = computed(() => {
 
 // 按年份对文章进行分组
 const groupedArticles = computed(() => {
-  if (!props.groupByYear) {
+  if (!props.groupByYear || !props.articles) {
     return null;
   }
 
   const groups = new Map<string, Article[]>();
 
-  props.articles.forEach((article) => {
+  props.articles.forEach(article => {
     if (article.publish_time) {
       const year = new Date(article.publish_time).getFullYear().toString();
       if (!groups.has(year)) {
@@ -66,7 +68,7 @@ const groupedArticles = computed(() => {
     <div v-if="title" class="article-sort-header">
       <h1 class="article-sort-title">{{ title }}</h1>
       <div class="article-sort-meta">
-        <i class="ri-file-list-line"></i>
+        <i class="ri-file-list-line" />
         <span>共 {{ displayTotal }} 篇文章</span>
       </div>
     </div>
@@ -75,24 +77,18 @@ const groupedArticles = computed(() => {
     <template v-if="groupByYear && groupedArticles">
       <template v-for="group in groupedArticles" :key="group.year">
         <div class="article-sort-item year">{{ group.year }}</div>
-        <div
-          v-for="article in group.articles"
-          :key="article.id"
-          class="article-sort-item"
-        >
-          <NuxtLink
-            v-if="article.cover"
-            :to="article.url"
-            class="article-sort-item-img"
-          >
-            <NuxtImg :src="article.cover" :alt="article.title" loading="lazy"  />
+        <div v-for="article in group.articles" :key="article.id" class="article-sort-item">
+          <NuxtLink v-if="article.cover" :to="article.url" class="article-sort-item-img">
+            <NuxtImg :src="article.cover" :alt="article.title" loading="lazy" />
           </NuxtLink>
           <div class="article-sort-item-info">
             <div class="article-sort-item-time">
-              <i class="ri-calendar-2-fill"></i>
+              <i class="ri-calendar-2-fill" />
               <span>{{ formatDate(article.publish_time) }}</span>
             </div>
-            <NuxtLink :to="article.url" class="article-sort-item-title">{{ article.title }}</NuxtLink>
+            <NuxtLink :to="article.url" class="article-sort-item-title">{{
+              article.title
+            }}</NuxtLink>
           </div>
         </div>
       </template>
@@ -100,21 +96,13 @@ const groupedArticles = computed(() => {
 
     <!-- 直接列表显示 -->
     <template v-else>
-      <div
-        v-for="article in articles"
-        :key="article.id"
-        class="article-sort-item"
-      >
-        <NuxtLink
-          v-if="article.cover"
-          :to="article.url"
-          class="article-sort-item-img"
-        >
-          <NuxtImg :src="article.cover" :alt="article.title" loading="lazy"  />
+      <div v-for="article in articles" :key="article.id" class="article-sort-item">
+        <NuxtLink v-if="article.cover" :to="article.url" class="article-sort-item-img">
+          <NuxtImg :src="article.cover" :alt="article.title" loading="lazy" />
         </NuxtLink>
         <div class="article-sort-item-info">
           <div class="article-sort-item-time">
-            <i class="ri-calendar-2-fill"></i>
+            <i class="ri-calendar-2-fill" />
             <span>{{ formatDate(article.publish_time) }}</span>
           </div>
           <NuxtLink :to="article.url" class="article-sort-item-title">{{ article.title }}</NuxtLink>
@@ -238,5 +226,3 @@ const groupedArticles = computed(() => {
   }
 }
 </style>
-
-

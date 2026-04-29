@@ -12,12 +12,10 @@
 package middleware
 
 import (
-	"fmt"
-	"time"
-
 	"jeri_blog/pkg/errcode"
 	"jeri_blog/pkg/response"
-	"jeri_blog/pkg/utils"
+	"fmt"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/ulule/limiter/v3"
@@ -53,18 +51,18 @@ func RateLimit(limit int64, minutes int, keyType string, message ...string) gin.
 		// 根据keyType生成限流key
 		switch keyType {
 		case "ip":
-			key = utils.GetRealIP(c)
+			key = c.ClientIP()
 		case "user":
 			userID, exists := c.Get("user_id")
 			if !exists {
-				key = utils.GetRealIP(c)
+				key = c.ClientIP()
 			} else {
 				key = fmt.Sprintf("user:%v", userID)
 			}
 		case "global":
 			key = "global"
 		default:
-			key = utils.GetRealIP(c)
+			key = c.ClientIP()
 		}
 
 		context, err := lim.Get(c, key)

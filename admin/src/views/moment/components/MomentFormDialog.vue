@@ -875,7 +875,7 @@ const handleSearchMusic = async () => {
   hasSearched.value = true;
 
   try {
-    const apiUrl = `https://meting.flec.top/api?server=netease&type=search&id=${encodeURIComponent(keyword)}`;
+    const apiUrl = `https://api.injahow.cn/meting/?server=netease&type=search&id=${encodeURIComponent(keyword)}`;
     const response = await fetch(apiUrl);
     const data = await response.json();
     musicSearchResults.value = Array.isArray(data) ? data : [];

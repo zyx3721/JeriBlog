@@ -37,10 +37,10 @@ func NewArticleController(articleService *service.ArticleService) *ArticleContro
 
 // ============ 前台接口 ============
 
-// ListForWeb 获取前台文章列表
+// ListForWeb 文章列表
 //
-//	@Summary		文章列表
-//	@Description	获取已发布文章，置顶文章在前。支持按年/月/分类/标签筛选，参数可组合。不传分页参数则返回全部
+//	@Summary		获取文章列表
+//	@Description	获取已发布文章，置顶文章在前，支持按年/月/分类/标签筛选
 //	@Tags			文章
 //	@Accept			json
 //	@Produce		json
@@ -54,7 +54,7 @@ func NewArticleController(articleService *service.ArticleService) *ArticleContro
 //	@Failure		400			{object}	response.Response
 //	@Router			/articles [get]
 func (c *ArticleController) ListForWeb(ctx *gin.Context) {
-	var req dto.ListArticlesRequest
+	var req dto.ListArticlesForWebRequest
 	if err := ctx.ShouldBindQuery(&req); err != nil {
 		response.ValidateFailed(ctx, err.Error())
 		return
@@ -71,8 +71,8 @@ func (c *ArticleController) ListForWeb(ctx *gin.Context) {
 
 // Search 搜索文章
 //
-//	@Summary		搜索
-//	@Description	全文搜索标题和正文，返回匹配的文章及高亮摘要
+//	@Summary		搜索文章
+//	@Description	全文搜索标题和正文
 //	@Tags			文章
 //	@Accept			json
 //	@Produce		json
@@ -98,10 +98,10 @@ func (c *ArticleController) Search(ctx *gin.Context) {
 	response.PageSuccess(ctx, articles, total, req.Page, req.PageSize)
 }
 
-// GetBySlug 通过slug获取文章
+// GetBySlug 文章详情
 //
 //	@Summary		文章详情
-//	@Description	通过 slug 读取文章完整内容，自动增加阅读数
+//	@Description	通过 slug 读取文章完整内容
 //	@Tags			文章
 //	@Accept			json
 //	@Produce		json
@@ -129,17 +129,26 @@ func (c *ArticleController) GetBySlug(ctx *gin.Context) {
 
 // List 获取文章列表
 //
-//	@Summary		文章列表（管理）
-//	@Description	获取所有文章含草稿，用于后台管理
+//	@Summary		文章列表
+//	@Description	获取包含草稿的所有文章，支持多种筛选条件
 //	@Tags			文章管理
 //	@Accept			json
 //	@Produce		json
 //	@Security		BearerAuth
-//	@Param			page		query		int	false	"页码"
-//	@Param			page_size	query		int	false	"每页数量（不传则返回全部）"
-//	@Success		200			{object}	response.Response{data=response.PageResult}
-//	@Failure		401			{object}	response.Response
-//	@Failure		403			{object}	response.Response
+//	@Param			page			query		int		false	"页码"
+//	@Param			page_size		query		int		false	"每页数量（不传则返回全部）"
+//	@Param			keyword			query		string	false	"搜索关键词（标题/内容）"
+//	@Param			category_id		query		uint	false	"分类ID"
+//	@Param			tag_ids			query		[]uint	false	"标签ID列表"
+//	@Param			is_publish		query		bool	false	"是否发布"
+//	@Param			is_top			query		bool	false	"是否置顶"
+//	@Param			is_essence		query		bool	false	"是否精选"
+//	@Param			is_outdated		query		bool	false	"是否过时"
+//	@Param			start_time		query		string	false	"发布开始时间（格式：2006-01-02）"
+//	@Param			end_time		query		string	false	"发布结束时间（格式：2006-01-02）"
+//	@Success		200				{object}	response.Response{data=response.PageResult}
+//	@Failure		401				{object}	response.Response
+//	@Failure		403				{object}	response.Response
 //	@Router			/admin/articles [get]
 func (c *ArticleController) List(ctx *gin.Context) {
 	var req dto.ListArticlesRequest
@@ -159,8 +168,8 @@ func (c *ArticleController) List(ctx *gin.Context) {
 
 // Get 获取文章详情
 //
-//	@Summary		文章详情（管理）
-//	@Description	通过 ID 获取，用于编辑器回显
+//	@Summary		文章详情
+//	@Description	文章详细信息，用于编辑器回显
 //	@Tags			文章管理
 //	@Accept			json
 //	@Produce		json
@@ -191,7 +200,7 @@ func (c *ArticleController) Get(ctx *gin.Context) {
 // Create 创建文章
 //
 //	@Summary		新建文章
-//	@Description	创建草稿或发布文章，自动生成 slug。支持设置置顶状态和发布状态，发布时自动设置发布时间
+//	@Description	创建草稿或发布文章，支持设置文章各种信息，发布时自动设置发布时间
 //	@Tags			文章管理
 //	@Accept			json
 //	@Produce		json
@@ -221,7 +230,7 @@ func (c *ArticleController) Create(ctx *gin.Context) {
 // Update 更新文章
 //
 //	@Summary		更新文章
-//	@Description	修改文章内容、分类、标签、置顶状态、发布状态等。支持调整发布时间，改为发布时自动设置发布时间，会自动更新相关统计
+//	@Description	修改文章各种信息，支持调整发布时间
 //	@Tags			文章管理
 //	@Accept			json
 //	@Produce		json
@@ -259,7 +268,7 @@ func (c *ArticleController) Update(ctx *gin.Context) {
 // Delete 删除文章
 //
 //	@Summary		删除文章
-//	@Description	硬删除文章，会自动更新分类和标签的文章计数
+//	@Description	硬删除文章，不可恢复
 //	@Tags			文章管理
 //	@Accept			json
 //	@Produce		json
@@ -353,6 +362,7 @@ func (c *ArticleController) ImportArticles(ctx *gin.Context) {
 		fileContents[fileHeader.Filename] = string(fileBytes)
 	}
 
+	var result *dto.ImportArticlesResult
 	result, err := c.articleService.ImportArticles(ctx.Request.Context(), fileContents, sourceType, uploadImages, host, imageProxy)
 	if err != nil {
 		response.Failed(ctx, err.Error())
@@ -372,7 +382,9 @@ func readUploadFile(fileHeader *multipart.FileHeader, maxSize int64) ([]byte, er
 	if err != nil {
 		return nil, fmt.Errorf("打开文件失败: %w", err)
 	}
-	defer file.Close()
+	defer func() {
+		_ = file.Close()
+	}()
 
 	return io.ReadAll(file)
 }
@@ -384,10 +396,10 @@ func isMarkdownFile(filename string) bool {
 
 // ============ 微信公众号导出接口 ============
 
-// ExportToWeChat 导出文章到微信公众号
+// ExportToWeChat 将文章渲染为微信公众号格式
 //
-//	@Summary		导出到微信公众号
-//	@Description	尝试推送到公众号草稿箱，失败则返回 HTML 供复制
+//	@Summary		生成微信公众号 HTML
+//	@Description	将文章 Markdown 转换为微信公众号 HTML 格式，供复制粘贴到微信公众平台
 //	@Tags			文章管理
 //	@Accept			json
 //	@Produce		json

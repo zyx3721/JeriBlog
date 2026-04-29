@@ -14,30 +14,46 @@
   <Transition name="fade">
     <div v-show="visible" class="float-button-group">
       <!-- 主题切换按钮 -->
-      <div class="float-button" @click="toggleTheme" title="切换主题">
-        <i :class="isDark ? 'ri-sun-line' : 'ri-moon-line'"></i>
+      <div class="float-button theme-toggle" title="切换主题" @click="toggleTheme">
+        <i class="ri-moon-line theme-icon-moon" />
+        <i class="ri-sun-line theme-icon-sun" />
       </div>
 
       <!-- 阅读模式按钮（仅文章页显示） -->
-      <div v-if="isArticlePage" class="float-button" @click="toggleReadingMode" title="阅读模式">
-        <i class="ri-book-open-line"></i>
+      <div v-if="isArticlePage" class="float-button" title="阅读模式" @click="toggleReadingMode">
+        <i class="ri-book-open-line" />
       </div>
 
       <!-- 目录按钮（仅移动端文章页显示） -->
-      <div v-if="isArticlePage && isMobile" class="float-button" @click="showMobileToc = true" title="目录">
-        <i class="ri-list-unordered"></i>
+      <div
+        v-if="isArticlePage && isMobile"
+        class="float-button"
+        title="目录"
+        @click="showMobileToc = true"
+      >
+        <i class="ri-list-unordered" />
       </div>
 
       <!-- 跳转到评论区按钮（仅文章页显示） -->
-      <div v-if="isArticlePage" class="float-button" @click="scrollToElement('.comment-input')" title="跳转评论区">
-        <i class="ri-message-3-line"></i>
+      <div
+        v-if="isArticlePage"
+        class="float-button"
+        title="跳转评论区"
+        @click="scrollToElement('.comment-input')"
+      >
+        <i class="ri-message-3-line" />
       </div>
 
       <!-- 回到顶部按钮 -->
-      <div class="float-button scroll-to-top" @click="scrollToTop" @mouseenter="isHovering = true"
-        @mouseleave="isHovering = false" title="回到顶部">
+      <div
+        class="float-button scroll-to-top"
+        title="回到顶部"
+        @click="scrollToTop"
+        @mouseenter="isHovering = true"
+        @mouseleave="isHovering = false"
+      >
         <Transition name="content-fade" mode="out-in">
-          <i v-if="isHovering" key="arrow" class="ri-arrow-up-line"></i>
+          <i v-if="isHovering" key="arrow" class="ri-arrow-up-line" />
           <span v-else key="progress" class="progress-text">{{ readingProgress }}</span>
         </Transition>
       </div>
@@ -49,81 +65,73 @@
 
   <!-- 阅读模式退出按钮 -->
   <Transition name="fade">
-    <div v-if="isReadingMode" class="reading-exit" @click="toggleReadingMode" title="退出阅读模式">
-      <i class="ri-logout-box-r-line"></i>
+    <div v-if="isReadingMode" class="reading-exit" title="退出阅读模式" @click="toggleReadingMode">
+      <i class="ri-logout-box-r-line" />
     </div>
   </Transition>
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
-const visible = ref(false)
-const isHovering = ref(false)
-const readingProgress = ref(0)
-const isReadingMode = ref(false)
-const showMobileToc = ref(false)
+const route = useRoute();
+const visible = ref(false);
+const isHovering = ref(false);
+const readingProgress = ref(0);
+const isReadingMode = ref(false);
+const showMobileToc = ref(false);
 
-// 判断是否在文章页
-const isArticlePage = computed(() => route.name === 'posts-slug')
+const isArticlePage = computed(() => route.name === 'posts-slug');
 
-const isMobile = ref(false)
+const isMobile = ref(false);
 
 const checkMobile = () => {
-  isMobile.value = window.innerWidth <= 900
-}
+  isMobile.value = window.innerWidth <= 900;
+};
 
 const scrollToTop = () => {
   window.scrollTo({
     top: 0,
-    behavior: 'smooth'
-  })
-}
+    behavior: 'smooth',
+  });
+};
 
 const toggleReadingMode = () => {
-  isReadingMode.value = !isReadingMode.value
-  document.documentElement.setAttribute('data-reading-mode', isReadingMode.value ? 'true' : 'false')
-}
-
-// 提供给子组件使用
-provide('showMobileToc', showMobileToc)
+  isReadingMode.value = !isReadingMode.value;
+  document.documentElement.setAttribute(
+    'data-reading-mode',
+    isReadingMode.value ? 'true' : 'false'
+  );
+};
 
 const handleScroll = () => {
-  const currentScrollY = window.scrollY
+  const currentScrollY = window.scrollY;
 
   // 显示/隐藏按钮
-  visible.value = currentScrollY > 100
+  visible.value = currentScrollY > 100;
 
   // 计算阅读进度
-  const windowHeight = window.innerHeight
-  const documentHeight = document.documentElement.scrollHeight
-  const scrollableHeight = documentHeight - windowHeight
+  const windowHeight = window.innerHeight;
+  const documentHeight = document.documentElement.scrollHeight;
+  const scrollableHeight = documentHeight - windowHeight;
 
   if (scrollableHeight > 0) {
-    const progress = Math.round((currentScrollY / scrollableHeight) * 100)
-    readingProgress.value = Math.min(100, Math.max(0, progress))
+    const progress = Math.round((currentScrollY / scrollableHeight) * 100);
+    readingProgress.value = Math.min(100, Math.max(0, progress));
   } else {
-    readingProgress.value = 0
+    readingProgress.value = 0;
   }
-}
-
-const scrollToElement = (selector: string) => {
-  const element = document.querySelector(selector)
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
-}
+};
 
 onMounted(() => {
-  checkMobile()
-  window.addEventListener('scroll', handleScroll)
-  window.addEventListener('resize', checkMobile)
-  handleScroll() // 初始化
-})
+  window.addEventListener('scroll', handleScroll);
+  handleScroll();
+  checkMobile();
+  window.addEventListener('resize', checkMobile);
+});
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
-  window.removeEventListener('resize', checkMobile)
-})
+  window.removeEventListener('scroll', handleScroll);
+  window.removeEventListener('resize', checkMobile);
+});
 </script>
 
 <style scoped lang="scss">
@@ -163,11 +171,24 @@ onUnmounted(() => {
     line-height: 1;
     user-select: none;
   }
+
+  // 主题切换按钮图标
+  &.theme-toggle {
+    position: relative;
+
+    .theme-icon-moon,
+    .theme-icon-sun {
+      position: absolute;
+      transition: opacity 0.2s ease;
+    }
+  }
 }
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .fade-enter-from,
@@ -215,8 +236,7 @@ onUnmounted(() => {
 
 <style lang="scss">
 // 阅读模式
-html[data-reading-mode="true"] {
-
+html[data-reading-mode='true'] {
   // 隐藏非必要元素
   nav,
   footer,
@@ -229,7 +249,7 @@ html[data-reading-mode="true"] {
   }
 
   // 阅读模式配色变量（浅色主题）
-  &[data-theme="light"] {
+  &[data-theme='light'] {
     --reading-bg: #faf9f6;
     --reading-text: #2c2c2c;
     --reading-title: #2c2c2c;
@@ -237,7 +257,7 @@ html[data-reading-mode="true"] {
   }
 
   // 阅读模式配色变量（深色主题）
-  &[data-theme="dark"] {
+  &[data-theme='dark'] {
     --reading-bg: #1a1a1a;
     --reading-text: #e8e8e8;
     --reading-title: #f0f0f0;

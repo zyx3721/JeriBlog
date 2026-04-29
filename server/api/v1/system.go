@@ -20,42 +20,40 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// SystemController 系统信息控制器。
+// SystemController 系统信息控制器
 type SystemController struct {
 	systemService *service.SystemService
 }
 
-// NewSystemController 创建系统信息控制器。
+// NewSystemController 创建系统信息控制器
 func NewSystemController(systemService *service.SystemService) *SystemController {
 	return &SystemController{systemService: systemService}
 }
 
-// GetSystemStatic 获取系统静态信息。
-// @Summary 获取系统静态信息
-// @Description 获取系统静态信息（操作系统、Go版本、架构等）
-// @Tags 系统信息
-// @Accept json
-// @Produce json
-// @Security BearerAuth
-// @Success 200 {object} response.Response
-// @Failure 401 {object} response.Response
-// @Failure 500 {object} response.Response
-// @Router /admin/system/static [get]
+// GetSystemStatic 获取系统静态信息
+//
+//	@Summary		系统静态信息
+//	@Description	获取系统静态配置信息，页面加载时更新一次
+//	@Tags			系统管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Success		200	{object}	response.Response{data=dto.SystemStaticInfo}
+//	@Router			/admin/system/static [get]
 func (h *SystemController) GetSystemStatic(c *gin.Context) {
 	response.Success(c, h.systemService.GetStaticInfo())
 }
 
-// GetSystemDynamic 获取系统动态信息。
-// @Summary 获取系统动态信息
-// @Description 获取系统动态信息（CPU使用率、内存使用率、磁盘使用率等）
-// @Tags 系统信息
-// @Accept json
-// @Produce json
-// @Security BearerAuth
-// @Success 200 {object} response.Response
-// @Failure 401 {object} response.Response
-// @Failure 500 {object} response.Response
-// @Router /admin/system/dynamic [get]
+// GetSystemDynamic 获取系统动态信息
+//
+//	@Summary		系统动态信息
+//	@Description	获取系统运行时动态信息，每10秒更新一次
+//	@Tags			系统管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Success		200	{object}	response.Response{data=dto.SystemDynamicInfo}
+//	@Router			/admin/system/dynamic [get]
 func (h *SystemController) GetSystemDynamic(c *gin.Context) {
 	response.Success(c, h.systemService.GetDynamicInfo())
 }
