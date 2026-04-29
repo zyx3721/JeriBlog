@@ -98,22 +98,20 @@ func (s *CommentService) GetByTarget(ctx context.Context, targetType, targetKey 
 		return nil, 0, err
 	}
 
-	// 构建回复映射表（过滤已删除或隐藏的）
+	// 构建回复映射表
 	repliesMap := make(map[uint][]dto.CommentResponse)
 	for _, reply := range replies {
 		if reply.RootID != nil {
-			// 跳过已删除或隐藏的回复
-			if reply.DeletedAt.Valid || reply.Status == 0 {
-				continue
-			}
 			replyDTO := s.toCommentResponse(&reply)
 			replyDTO.Replies = []dto.CommentResponse{}
 			repliesMap[*reply.RootID] = append(repliesMap[*reply.RootID], *replyDTO)
 		}
 	}
 
-	// 构建扁平化结构
-	result := make([]dto.CommentResponse, 0, len(topComments))
+	// 构建扁平化结构，将正常评论和已删除/隐藏评论分开
+	var normalComments []dto.CommentResponse
+	var hiddenComments []dto.CommentResponse
+
 	for _, comment := range topComments {
 		commentResp := s.toCommentResponse(&comment)
 
@@ -124,15 +122,17 @@ func (s *CommentService) GetByTarget(ctx context.Context, targetType, targetKey 
 			commentResp.Replies = []dto.CommentResponse{}
 		}
 
-		// 如果顶级评论已删除或隐藏，只在有可见子评论时保留
+		// 区分正常评论和已删除/隐藏评论
 		if comment.DeletedAt.Valid || comment.Status == 0 {
-			if len(commentResp.Replies) > 0 {
-				result = append(result, *commentResp)
-			}
+			hiddenComments = append(hiddenComments, *commentResp)
 		} else {
-			result = append(result, *commentResp)
+			normalComments = append(normalComments, *commentResp)
 		}
 	}
+
+	// 正常评论在前，已删除/隐藏评论在后（排序到末尾）
+	//nolint:gocritic // 有意创建新切片，不修改原切片
+	result := append(normalComments, hiddenComments...)
 
 	return result, total, nil
 }
@@ -161,22 +161,20 @@ func (s *CommentService) GetByTargetID(ctx context.Context, targetType string, t
 		return nil, 0, err
 	}
 
-	// 构建回复映射表（过滤已删除或隐藏的）
+	// 构建回复映射表
 	repliesMap := make(map[uint][]dto.CommentResponse)
 	for _, reply := range replies {
 		if reply.RootID != nil {
-			// 跳过已删除或隐藏的回复
-			if reply.DeletedAt.Valid || reply.Status == 0 {
-				continue
-			}
 			replyDTO := s.toCommentResponse(&reply)
 			replyDTO.Replies = []dto.CommentResponse{}
 			repliesMap[*reply.RootID] = append(repliesMap[*reply.RootID], *replyDTO)
 		}
 	}
 
-	// 构建扁平化结构
-	result := make([]dto.CommentResponse, 0, len(topComments))
+	// 构建扁平化结构，将正常评论和已删除/隐藏评论分开
+	var normalComments []dto.CommentResponse
+	var hiddenComments []dto.CommentResponse
+
 	for _, comment := range topComments {
 		commentResp := s.toCommentResponse(&comment)
 
@@ -187,15 +185,17 @@ func (s *CommentService) GetByTargetID(ctx context.Context, targetType string, t
 			commentResp.Replies = []dto.CommentResponse{}
 		}
 
-		// 如果顶级评论已删除或隐藏，只在有可见子评论时保留
+		// 区分正常评论和已删除/隐藏评论
 		if comment.DeletedAt.Valid || comment.Status == 0 {
-			if len(commentResp.Replies) > 0 {
-				result = append(result, *commentResp)
-			}
+			hiddenComments = append(hiddenComments, *commentResp)
 		} else {
-			result = append(result, *commentResp)
+			normalComments = append(normalComments, *commentResp)
 		}
 	}
+
+	// 正常评论在前，已删除/隐藏评论在后（排序到末尾）
+	//nolint:gocritic // 有意创建新切片，不修改原切片
+	result := append(normalComments, hiddenComments...)
 
 	return result, total, nil
 }
@@ -266,10 +266,13 @@ func (s *CommentService) Update(ctx context.Context, id uint, req *dto.UpdateCom
 		return nil, errors.New("无权修改此评论")
 	}
 
+	oldContent := comment.Content
 	comment.Content = req.Content
 	if err := s.repo.Update(ctx, comment); err != nil {
 		return nil, err
 	}
+
+	s.updateImageStatus(oldContent, req.Content)
 
 	return s.toCommentResponse(comment), nil
 }
@@ -289,11 +292,12 @@ func (s *CommentService) DeleteForWeb(ctx context.Context, id uint, userID uint)
 		return errors.New("无权删除此评论")
 	}
 
-	// 标记评论中的图片为未使用
-	s.markImagesAsUnused(comment.Content)
-
 	// 只删除评论本身，子评论保留
-	return s.repo.Delete(ctx, id)
+	if err := s.repo.DeleteForWeb(ctx, id); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // ============ 后台管理服务 ============
@@ -301,7 +305,13 @@ func (s *CommentService) DeleteForWeb(ctx context.Context, id uint, userID uint)
 // List 获取评论列表
 func (s *CommentService) List(ctx context.Context, req *dto.CommentQueryRequest) ([]dto.CommentListResponse, int64, error) {
 	offset := (req.Page - 1) * req.PageSize
-	comments, total, err := s.repo.List(ctx, offset, req.PageSize, req.Keyword, req.Status)
+	comments, total, err := s.repo.List(
+		ctx,
+		offset, req.PageSize,
+		req.Keyword,
+		req.Status, req.IsDeleted, req.IsSub,
+		req.StartTime, req.EndTime,
+	)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -358,8 +368,11 @@ func (s *CommentService) Delete(ctx context.Context, id uint) error {
 	// 标记评论中的图片为未使用
 	s.markImagesAsUnused(comment.Content)
 
-	// 硬删除评论本身，子评论保留
-	return s.repo.HardDelete(ctx, id)
+	if err := s.repo.Delete(ctx, id); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // ============ 辅助方法 ============
@@ -456,7 +469,8 @@ func (s *CommentService) createComment(ctx context.Context, req *dto.CreateComme
 	s.markImagesAsUsed(comment.Content)
 
 	// 异步发送通知
-	go s.sendNotifications(context.Background(), comment, userID)
+	//nolint:gosec // 异步通知使用独立 context，避免请求取消影响通知发送
+	go s.sendNotifications(comment, userID)
 
 	return s.GetForWeb(ctx, comment.ID)
 }
@@ -660,21 +674,24 @@ func (s *CommentService) getTargetTitle(targetType, targetKey string, targetID *
 }
 
 // sendNotifications 发送评论通知
-func (s *CommentService) sendNotifications(ctx context.Context, comment *model.Comment, senderID uint) {
+func (s *CommentService) sendNotifications(comment *model.Comment, senderID uint) {
 	if s.notificationService == nil {
 		return
 	}
+
+	// 使用独立的 background context，避免原请求上下文取消影响通知发送
+	notifyCtx := context.Background()
 
 	// 获取目标标题
 	targetTitle := s.getTargetTitle(comment.TargetType, comment.TargetKey, comment.TargetID)
 
 	// 1. 如果是回复评论，通知被回复者
 	if comment.ReplyTo != nil {
-		_ = s.notificationService.NotifyCommentReply(ctx, senderID, *comment.ReplyTo, comment, targetTitle)
+		_ = s.notificationService.NotifyCommentReply(notifyCtx, senderID, *comment.ReplyTo, comment, targetTitle)
 	}
 
 	// 2. 通知所有管理员（有新评论），排除发送者自己避免自通知
-	_ = s.notificationService.NotifyCommentToAdmins(ctx, senderID, comment, targetTitle, &senderID)
+	_ = s.notificationService.NotifyCommentToAdmins(notifyCtx, senderID, comment, targetTitle, &senderID)
 }
 
 // markImagesAsUsed 标记评论内容中的图片为已使用
@@ -683,19 +700,64 @@ func (s *CommentService) markImagesAsUsed(content string) {
 		return
 	}
 
+	for _, imageURL := range extractCommentImageURLs(content) {
+		_ = s.fileService.MarkAsUsed(imageURL, "评论贴图")
+	}
+}
+
+// updateImageStatus 对比评论内容变化，更新图片状态
+func (s *CommentService) updateImageStatus(oldContent, newContent string) {
+	if s.fileService == nil || oldContent == newContent {
+		return
+	}
+
+	oldImages := extractCommentImageURLs(oldContent)
+	newImages := extractCommentImageURLs(newContent)
+
+	oldMap := make(map[string]bool, len(oldImages))
+	for _, url := range oldImages {
+		oldMap[url] = true
+	}
+
+	newMap := make(map[string]bool, len(newImages))
+	for _, url := range newImages {
+		newMap[url] = true
+		if !oldMap[url] {
+			_ = s.fileService.MarkAsUsed(url, "评论贴图")
+		}
+	}
+
+	for _, url := range oldImages {
+		if !newMap[url] {
+			_ = s.fileService.MarkAsUnused(url, "评论贴图")
+		}
+	}
+}
+
+func extractCommentImageURLs(content string) []string {
+	if content == "" {
+		return nil
+	}
+
 	// 提取 Markdown 图片语法中的 URL: ![alt](url)
 	re := regexp.MustCompile(`!\[.*?\]\((.*?)\)`)
 	matches := re.FindAllStringSubmatch(content, -1)
+	urls := make([]string, 0, len(matches))
+	seen := make(map[string]bool, len(matches))
 
 	for _, match := range matches {
-		if len(match) > 1 {
-			imageURL := match[1]
-			// 异步标记，避免阻塞评论创建
-			go func(url string) {
-				_ = s.fileService.MarkAsUsed(url, "评论贴图")
-			}(imageURL)
+		if len(match) <= 1 {
+			continue
 		}
+		url := strings.TrimSpace(match[1])
+		if url == "" || seen[url] {
+			continue
+		}
+		seen[url] = true
+		urls = append(urls, url)
 	}
+
+	return urls
 }
 
 // ============ 数据导入导出方法 ============
@@ -1140,23 +1202,16 @@ func (s *CommentService) ReplyCommentFromFeishu(ctx context.Context, commentID u
 	return err
 }
 
-// markImagesAsUnused 标记评论中的图片为未使用
+// markImagesAsUnused 标记评论内容中的图片为未使用
 func (s *CommentService) markImagesAsUnused(content string) {
 	if s.fileService == nil || content == "" {
 		return
 	}
 
-	// 提取 Markdown 图片链接
-	re := regexp.MustCompile(`!\[.*?\]\((.*?)\)`)
-	matches := re.FindAllStringSubmatch(content, -1)
-
-	for _, match := range matches {
-		if len(match) > 1 {
-			imageURL := match[1]
-			// 异步标记为未使用，避免阻塞删除操作
-			go func(url string) {
-				_ = s.fileService.MarkAsUnused(url, "评论贴图")
-			}(imageURL)
-		}
+	for _, imageURL := range extractCommentImageURLs(content) {
+		_ = s.fileService.MarkAsUsed(imageURL, "评论贴图")
+	}
+	if s.fileService == nil || content == "" {
+		return
 	}
 }

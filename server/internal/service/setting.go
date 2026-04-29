@@ -12,6 +12,7 @@
 package service
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 	"sync"
@@ -20,6 +21,7 @@ import (
 	"jeri_blog/internal/model"
 	"jeri_blog/internal/repository"
 	"jeri_blog/pkg/auth"
+	"jeri_blog/pkg/email"
 	"jeri_blog/pkg/feishu"
 	"jeri_blog/pkg/random"
 
@@ -57,6 +59,7 @@ const (
 	KeyBlogTypingTexts       = "blog.typing_texts"        // 打字机效果文本（JSON数组）
 	KeyBlogSidebarSocial     = "blog.sidebar_social"      // 侧边栏社交媒体（JSON数组）
 	KeyBlogFooterSocial      = "blog.footer_social"       // 页脚社交媒体（JSON数组）
+	KeyBlogFooterLinks       = "blog.footer_links"        // 页脚右侧链接（JSON数组）
 	KeyBlogAboutDescribe     = "blog.about_describe"      // 个人描述
 	KeyBlogAboutDescribeTips = "blog.about_describe_tips" // 描述提示
 	KeyBlogAboutExhibition   = "blog.about_exhibition"    // 展览图片URL
@@ -75,6 +78,9 @@ const (
 	KeyBlogFont              = "blog.font"                // 字体配置（URL|字体名称）
 	KeyBlogWechatQrCode      = "blog.wechat_qrcode"       // 微信收款码
 	KeyBlogAlipayQrCode      = "blog.alipay_qrcode"       // 支付宝收款码
+	KeyBlogMomentsSize       = "blog.moments_size"        // 动态列表每页数量
+	KeyBlogMessageContent    = "blog.message_content"     // 留言信内容
+	KeyBlogHomeLayout        = "blog.home_layout"         // 首页布局（waterfall/single_column）
 )
 
 // 配置键常量 - Notification 相关
@@ -145,34 +151,28 @@ const (
 	KeyAISummaryPrompt   = "ai.summary_prompt"
 	KeyAIAISummaryPrompt = "ai.ai_summary_prompt"
 	KeyAITitlePrompt     = "ai.title_prompt"
+	KeyAIMCPSecret       = "ai.mcp_secret"
 )
 
 // 配置键常量 - OAuth 相关
 const (
 	KeyOAuthGithubEnabled         = "oauth.github.enabled"
 	KeyOAuthGithubClientID        = "oauth.github.client_id"
-	KeyOAuthGithubClientSecret    = "oauth.github.client_secret"
+	KeyOAuthGithubClientSecret    = "oauth.github.client_secret" // #nosec G101 - 配置键名
 	KeyOAuthGithubRedirectURL     = "oauth.github.redirect_url"
 	KeyOAuthGoogleEnabled         = "oauth.google.enabled"
 	KeyOAuthGoogleClientID        = "oauth.google.client_id"
-	KeyOAuthGoogleClientSecret    = "oauth.google.client_secret"
+	KeyOAuthGoogleClientSecret    = "oauth.google.client_secret" // #nosec G101 - 配置键名
 	KeyOAuthGoogleRedirectURL     = "oauth.google.redirect_url"
 	KeyOAuthQQEnabled             = "oauth.qq.enabled"
 	KeyOAuthQQClientID            = "oauth.qq.client_id"     // QQ AppID
-	KeyOAuthQQClientSecret        = "oauth.qq.client_secret" // QQ AppKey
+	KeyOAuthQQClientSecret        = "oauth.qq.client_secret" // QQ AppKey #nosec G101 - 配置键名
 	KeyOAuthQQRedirectURL         = "oauth.qq.redirect_url"
 	KeyOAuthMicrosoftEnabled      = "oauth.microsoft.enabled"
 	KeyOAuthMicrosoftClientID     = "oauth.microsoft.client_id"
 	KeyOAuthMicrosoftClientSecret = "oauth.microsoft.client_secret"
 	KeyOAuthMicrosoftRedirectURL  = "oauth.microsoft.redirect_url"
 	KeyOAuthSessionSecret         = "oauth.session_secret" // Session 加密密钥
-)
-
-// 配置键常量 - WeChat 相关
-const (
-	KeyWeChatAppID     = "wechat.app_id"
-	KeyWeChatAppSecret = "wechat.app_secret"
-	KeyWeChatTokenURL  = "wechat.token_url"
 )
 
 // SettingService 配置服务
@@ -230,135 +230,81 @@ func (s *SettingService) GetAIConfig() (*config.AIConfig, error) {
 	if v, ok := aiSettings[KeyAITitlePrompt]; ok {
 		cfg.TitlePrompt = v
 	}
+	if v, ok := aiSettings[KeyAIMCPSecret]; ok && v != "" {
+		cfg.MCPSecret = v
+	}
 
 	return cfg, nil
 }
 
+// ResetMCPSecret 重新生成 MCP Secret 并持久化
+func (s *SettingService) ResetMCPSecret() (string, error) {
+	secret := random.String(32)
+	if err := s.repo.UpdateGroup(model.SettingGroupAI, map[string]string{
+		KeyAIMCPSecret: secret,
+	}); err != nil {
+		return "", err
+	}
+
+	if s.config != nil {
+		s.mu.Lock()
+		defer s.mu.Unlock()
+		if err := s.ApplyDatabaseConfig(s.config); err != nil {
+			return "", err
+		}
+	}
+
+	return secret, nil
+}
+
 // UpdateGroup 更新某个分组的配置（patch 方式），更新后自动重载
 func (s *SettingService) UpdateGroup(group string, updates map[string]string) error {
-	// 先获取旧配置值（在数据库更新之前）
+	if err := validateSettingGroupUpdates(group, updates); err != nil {
+		return err
+	}
+
 	var oldSettings map[string]string
-	if (group == model.SettingGroupBasic || group == model.SettingGroupBlog) && s.fileService != nil {
-		var err error
-		oldSettings, err = s.repo.GetByGroup(group)
-		if err != nil {
-			oldSettings = make(map[string]string)
+	if s.fileService != nil && (group == model.SettingGroupBasic || group == model.SettingGroupBlog) {
+		settings, err := s.repo.GetByGroup(group)
+		if err == nil {
+			oldSettings = settings
 		}
 	}
 
 	// 更新数据库
-	if err := s.repo.UpdateGroup(updates); err != nil {
+	if err := s.repo.UpdateGroup(group, updates); err != nil {
 		return err
 	}
 
-	// 数据库更新成功后，处理文件引用计数
-	if len(oldSettings) > 0 {
-		if group == model.SettingGroupBasic {
-			// 处理站长头像
-			if newAvatar, ok := updates[KeyBasicAuthorAvatar]; ok {
-				oldAvatar := oldSettings[KeyBasicAuthorAvatar]
-				if oldAvatar != newAvatar {
-					if oldAvatar != "" {
-						_ = s.fileService.MarkAsUnused(oldAvatar, "站长头像")
-					}
-					if newAvatar != "" {
-						_ = s.fileService.MarkAsUsed(newAvatar, "站长头像")
-					}
-				}
+	if s.fileService != nil && oldSettings != nil {
+		handleImageChange := func(key string, value string) {
+			newValue, ok := updates[key]
+			if !ok {
+				return
 			}
-
-			// 处理站长形象
-			if newPhoto, ok := updates[KeyBasicAuthorPhoto]; ok {
-				oldPhoto := oldSettings[KeyBasicAuthorPhoto]
-				if oldPhoto != newPhoto {
-					if oldPhoto != "" {
-						_ = s.fileService.MarkAsUnused(oldPhoto, "站长形象")
-					}
-					if newPhoto != "" {
-						_ = s.fileService.MarkAsUsed(newPhoto, "站长形象")
-					}
-				}
+			oldValue := oldSettings[key]
+			if oldValue == newValue {
+				return
+			}
+			if oldValue != "" {
+				_ = s.fileService.MarkAsUnused(oldValue, value)
+			}
+			if newValue != "" {
+				_ = s.fileService.MarkAsUsed(newValue, value)
 			}
 		}
 
+		if group == model.SettingGroupBasic {
+			handleImageChange(KeyBasicAuthorAvatar, "站长头像")
+			handleImageChange(KeyBasicAuthorPhoto, "站长形象")
+		}
 		if group == model.SettingGroupBlog {
-			// 处理网站图标
-			if newFavicon, ok := updates[KeyBlogFavicon]; ok {
-				oldFavicon := oldSettings[KeyBlogFavicon]
-				if oldFavicon != newFavicon {
-					if oldFavicon != "" {
-						_ = s.fileService.MarkAsUnused(oldFavicon, "博客图标")
-					}
-					if newFavicon != "" {
-						_ = s.fileService.MarkAsUsed(newFavicon, "博客图标")
-					}
-				}
-			}
-
-			// 处理背景图片
-			if newBg, ok := updates[KeyBlogBackgroundImage]; ok {
-				oldBg := oldSettings[KeyBlogBackgroundImage]
-				if oldBg != newBg {
-					if oldBg != "" {
-						_ = s.fileService.MarkAsUnused(oldBg, "博客背景")
-					}
-					if newBg != "" {
-						_ = s.fileService.MarkAsUsed(newBg, "博客背景")
-					}
-				}
-			}
-
-			// 处理展览图片
-			if newExhibition, ok := updates[KeyBlogAboutExhibition]; ok {
-				oldExhibition := oldSettings[KeyBlogAboutExhibition]
-				if oldExhibition != newExhibition {
-					if oldExhibition != "" {
-						_ = s.fileService.MarkAsUnused(oldExhibition, "展览图片")
-					}
-					if newExhibition != "" {
-						_ = s.fileService.MarkAsUsed(newExhibition, "展览图片")
-					}
-				}
-			}
-
-			// 处理站点截图
-			if newScreenshot, ok := updates[KeyBlogScreenshot]; ok {
-				oldScreenshot := oldSettings[KeyBlogScreenshot]
-				if oldScreenshot != newScreenshot {
-					if oldScreenshot != "" {
-						_ = s.fileService.MarkAsUnused(oldScreenshot, "博客截图")
-					}
-					if newScreenshot != "" {
-						_ = s.fileService.MarkAsUsed(newScreenshot, "博客截图")
-					}
-				}
-			}
-
-			// 处理微信收款码
-			if newWechatQr, ok := updates[KeyBlogWechatQrCode]; ok {
-				oldWechatQr := oldSettings[KeyBlogWechatQrCode]
-				if oldWechatQr != newWechatQr {
-					if oldWechatQr != "" {
-						_ = s.fileService.MarkAsUnused(oldWechatQr, "微信收款码")
-					}
-					if newWechatQr != "" {
-						_ = s.fileService.MarkAsUsed(newWechatQr, "微信收款码")
-					}
-				}
-			}
-
-			// 处理支付宝收款码
-			if newAlipayQr, ok := updates[KeyBlogAlipayQrCode]; ok {
-				oldAlipayQr := oldSettings[KeyBlogAlipayQrCode]
-				if oldAlipayQr != newAlipayQr {
-					if oldAlipayQr != "" {
-						_ = s.fileService.MarkAsUnused(oldAlipayQr, "支付宝收款码")
-					}
-					if newAlipayQr != "" {
-						_ = s.fileService.MarkAsUsed(newAlipayQr, "支付宝收款码")
-					}
-				}
-			}
+			handleImageChange(KeyBlogFavicon, "博客图标")
+			handleImageChange(KeyBlogBackgroundImage, "博客背景")
+			handleImageChange(KeyBlogAboutExhibition, "展览图片")
+			handleImageChange(KeyBlogScreenshot, "博客截图")
+			handleImageChange(KeyBlogWechatQrCode, "微信收款码")
+			handleImageChange(KeyBlogAlipayQrCode, "支付宝收款码")
 		}
 	}
 
@@ -369,6 +315,16 @@ func (s *SettingService) UpdateGroup(group string, updates map[string]string) er
 		return s.ApplyDatabaseConfig(s.config)
 	}
 
+	return nil
+}
+
+// validateSettingGroupUpdates 校验配置项是否都属于指定分组
+func validateSettingGroupUpdates(group string, updates map[string]string) error {
+	for key := range updates {
+		if !strings.HasPrefix(key, group+".") {
+			return fmt.Errorf("配置项 %s 不属于分组 %s", key, group)
+		}
+	}
 	return nil
 }
 
@@ -469,6 +425,19 @@ func (s *SettingService) ApplyDatabaseConfig(cfg *config.Config) error {
 		}
 		if v, ok := blogSettings[KeyBlogAlipayQrCode]; ok && v != "" {
 			cfg.Blog.AlipayQrCode = v
+		}
+		cfg.Blog.MomentsSize = 30
+		if v, ok := blogSettings[KeyBlogMomentsSize]; ok && v != "" {
+			if size, err := strconv.Atoi(v); err == nil && size > 0 {
+				cfg.Blog.MomentsSize = size
+			}
+		}
+		if v, ok := blogSettings[KeyBlogMessageContent]; ok && v != "" {
+			cfg.Blog.MessageContent = v
+		}
+		cfg.Blog.HomeLayout = "waterfall"
+		if v, ok := blogSettings[KeyBlogHomeLayout]; ok && v != "" {
+			cfg.Blog.HomeLayout = v
 		}
 	}
 
@@ -677,6 +646,14 @@ func (s *SettingService) ApplyDatabaseConfig(cfg *config.Config) error {
 		if v, ok := aiSettings[KeyAITitlePrompt]; ok {
 			cfg.AI.TitlePrompt = v
 		}
+		if v, ok := aiSettings[KeyAIMCPSecret]; ok && v != "" {
+			cfg.AI.MCPSecret = v
+		} else {
+			cfg.AI.MCPSecret = random.String(32)
+			_ = s.repo.UpdateGroup(model.SettingGroupAI, map[string]string{
+				KeyAIMCPSecret: cfg.AI.MCPSecret,
+			})
+		}
 	}
 
 	// 加载 OAuth 配置
@@ -692,7 +669,7 @@ func (s *SettingService) ApplyDatabaseConfig(cfg *config.Config) error {
 	} else {
 		// 自动生成并保存
 		sessionSecret = random.String(32)
-		_ = s.repo.UpdateGroup(map[string]string{
+		_ = s.repo.UpdateGroup(model.SettingGroupOAuth, map[string]string{
 			KeyOAuthSessionSecret: sessionSecret,
 		})
 	}
@@ -764,25 +741,11 @@ func (s *SettingService) ApplyDatabaseConfig(cfg *config.Config) error {
 		}
 	}
 
-	// 加载 WeChat 配置
-	wechatSettings, err := s.repo.GetByGroup(model.SettingGroupWeChat)
-	if err != nil {
-		return err
-	}
-	if len(wechatSettings) > 0 {
-		if v, ok := wechatSettings[KeyWeChatAppID]; ok && v != "" {
-			cfg.WeChat.AppID = v
-		}
-		if v, ok := wechatSettings[KeyWeChatAppSecret]; ok && v != "" {
-			cfg.WeChat.AppSecret = v
-		}
-		if v, ok := wechatSettings[KeyWeChatTokenURL]; ok && v != "" {
-			cfg.WeChat.TokenURL = v
-		}
-	}
-
 	// 应用 OAuth 配置到 Goth (热重载)
 	auth.UpdateConfig(&cfg.OAuth)
+
+	// 应用邮件配置 (热重载)
+	email.Reload(cfg)
 
 	// 应用 Feishu 配置 (热重载)
 	feishu.Reload(cfg.Notification.FeishuAppID, cfg.Notification.FeishuSecret, cfg.Notification.FeishuChatID)

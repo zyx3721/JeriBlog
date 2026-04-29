@@ -24,6 +24,7 @@ import (
 	"sync"
 	"time"
 
+	"jeri_blog/internal/dto"
 	"jeri_blog/pkg/email"
 	feishupkg "jeri_blog/pkg/feishu"
 	"jeri_blog/pkg/upload"
@@ -39,59 +40,16 @@ import (
 
 const githubLatestReleaseAPI = "https://api.github.com/repos/zyx3721/JeriBlog/releases/latest"
 
-// AppVersion 由构建参数注入，默认 dev。
+// AppVersion 由构建参数注入，默认 dev
 var AppVersion = "dev"
 
-// SystemStaticInfo 系统静态信息。
-type SystemStaticInfo struct {
-	CPUCore  int    `json:"cpu_core"`
-	CPUModel string `json:"cpu_model"`
-	CPUArch  string `json:"cpu_arch"`
-	Hostname string `json:"hostname"`
-	OS       string `json:"os"`
-	ServerIP string `json:"server_ip"`
-	Timezone string `json:"timezone"`
-	DbType   string `json:"db_type"`
-
-	MemoryTotal uint64 `json:"memory_total"`
-	SwapTotal   uint64 `json:"swap_total"`
-	DiskTotal   uint64 `json:"disk_total"`
-	DbTables    int64  `json:"db_tables"`
-
-	StorageStatus string `json:"storage_status"`
-	EmailStatus   string `json:"email_status"`
-	FeishuStatus  string `json:"feishu_status"`
-
-	AppVersion string `json:"app_version"`
-}
-
-// SystemDynamicInfo 系统动态信息。
-type SystemDynamicInfo struct {
-	CPUUsage        float64 `json:"cpu_usage"`
-	Load1           float64 `json:"load_1"`
-	Load5           float64 `json:"load_5"`
-	Load15          float64 `json:"load_15"`
-	MemoryUsed      uint64  `json:"memory_used"`
-	MemoryAvailable uint64  `json:"memory_available"`
-	SwapUsed        uint64  `json:"swap_used"`
-	HostUptime      int64   `json:"host_uptime"`
-	DiskUsed        uint64  `json:"disk_used"`
-	DiskFree        uint64  `json:"disk_free"`
-	DbStatus        string  `json:"db_status"`
-	DbSize          int64   `json:"db_size"`
-	DbConnCount     int     `json:"db_conn_count"`
-
-	VersionLatestVersion  string `json:"version_latest_version"`
-	VersionLastCheckError string `json:"version_last_check_error"`
-}
-
-// VersionStatus 版本检测状态。
+// VersionStatus 版本检测状态
 type VersionStatus struct {
 	LatestVersion  string `json:"latest_version"`
 	LastCheckError string `json:"last_check_error"`
 }
 
-// SystemService 系统服务。
+// SystemService 系统服务
 type SystemService struct {
 	db                  *gorm.DB
 	uploadManager       *upload.Manager
@@ -118,7 +76,7 @@ type parsedVersion struct {
 	prerelease []string
 }
 
-// NewSystemService 创建系统服务。
+// NewSystemService 创建系统服务
 func NewSystemService(db *gorm.DB, uploadManager *upload.Manager, emailClient *email.Client, feishuClient *feishupkg.Client, notificationService *NotificationService) *SystemService {
 	return &SystemService{
 		db:                  db,
@@ -130,9 +88,9 @@ func NewSystemService(db *gorm.DB, uploadManager *upload.Manager, emailClient *e
 	}
 }
 
-// GetStaticInfo 获取系统静态信息。
-func (s *SystemService) GetStaticInfo() *SystemStaticInfo {
-	info := &SystemStaticInfo{
+// GetStaticInfo 获取系统静态信息
+func (s *SystemService) GetStaticInfo() *dto.SystemStaticInfo {
+	info := &dto.SystemStaticInfo{
 		CPUCore: runtime.NumCPU(),
 		CPUArch: runtime.GOARCH,
 		OS:      runtime.GOOS,
@@ -166,9 +124,9 @@ func (s *SystemService) GetStaticInfo() *SystemStaticInfo {
 	return info
 }
 
-// GetDynamicInfo 获取系统动态信息。
-func (s *SystemService) GetDynamicInfo() *SystemDynamicInfo {
-	info := &SystemDynamicInfo{}
+// GetDynamicInfo 获取系统动态信息
+func (s *SystemService) GetDynamicInfo() *dto.SystemDynamicInfo {
+	info := &dto.SystemDynamicInfo{}
 
 	s.setDynamicCPU(info)
 	s.setDynamicMemory(info)
@@ -183,7 +141,7 @@ func (s *SystemService) GetDynamicInfo() *SystemDynamicInfo {
 	return info
 }
 
-// GetSystemStatus 获取飞书系统状态。
+// GetSystemStatus 获取飞书系统状态
 func (s *SystemService) GetSystemStatus(_ context.Context) (*feishupkg.SystemStatus, error) {
 	status := &feishupkg.SystemStatus{
 		DBStatus:      s.checkDB(),
@@ -207,7 +165,7 @@ func (s *SystemService) GetSystemStatus(_ context.Context) (*feishupkg.SystemSta
 	return status, nil
 }
 
-// CheckForUpdates 检查是否有新版本。
+// CheckForUpdates 检查是否有新版本
 func (s *SystemService) CheckForUpdates() error {
 	manifest, err := s.fetchManifest(context.Background())
 	if err != nil {
@@ -262,21 +220,21 @@ func (s *SystemService) CheckForUpdates() error {
 	return nil
 }
 
-// GetVersionStatus 获取最近一次版本检测状态。
+// GetVersionStatus 获取最近一次版本检测状态
 func (s *SystemService) GetVersionStatus() VersionStatus {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	return s.versionStatus
 }
 
-// setVersionStatus 更新最近一次版本检测状态。
+// setVersionStatus 更新最近一次版本检测状态
 func (s *SystemService) setVersionStatus(status VersionStatus) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.versionStatus = status
 }
 
-// fetchManifest 获取最新版本信息。
+// fetchManifest 获取最新版本信息
 func (s *SystemService) fetchManifest(ctx context.Context) (*versionManifest, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, githubLatestReleaseAPI, nil)
 	if err != nil {
@@ -289,7 +247,9 @@ func (s *SystemService) fetchManifest(ctx context.Context) (*versionManifest, er
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
 		body, _ := io.ReadAll(io.LimitReader(resp.Body, 1024))
@@ -307,8 +267,8 @@ func (s *SystemService) fetchManifest(ctx context.Context) (*versionManifest, er
 	}, nil
 }
 
-// setDynamicCPU 填充 CPU 动态信息。
-func (s *SystemService) setDynamicCPU(info *SystemDynamicInfo) {
+// setDynamicCPU 填充 CPU 动态信息
+func (s *SystemService) setDynamicCPU(info *dto.SystemDynamicInfo) {
 	if p, err := cpu.Percent(time.Second, false); err == nil && len(p) > 0 {
 		info.CPUUsage = p[0]
 	}
@@ -319,8 +279,8 @@ func (s *SystemService) setDynamicCPU(info *SystemDynamicInfo) {
 	}
 }
 
-// setDynamicMemory 填充内存动态信息。
-func (s *SystemService) setDynamicMemory(info *SystemDynamicInfo) {
+// setDynamicMemory 填充内存动态信息
+func (s *SystemService) setDynamicMemory(info *dto.SystemDynamicInfo) {
 	if m, err := mem.VirtualMemory(); err == nil {
 		info.MemoryUsed = m.Used
 		info.MemoryAvailable = m.Available
@@ -330,34 +290,35 @@ func (s *SystemService) setDynamicMemory(info *SystemDynamicInfo) {
 	}
 }
 
-// setDynamicHost 填充主机动态信息。
-func (s *SystemService) setDynamicHost(info *SystemDynamicInfo) {
+// setDynamicHost 填充主机动态信息
+func (s *SystemService) setDynamicHost(info *dto.SystemDynamicInfo) {
 	if hi, err := host.Info(); err == nil {
+		// #nosec G115 - Uptime 是从系统获取的正常运行时间，值在合理范围内
 		info.HostUptime = int64(hi.Uptime)
 	}
 }
 
-// setDynamicDisk 填充磁盘动态信息。
-func (s *SystemService) setDynamicDisk(info *SystemDynamicInfo) {
+// setDynamicDisk 填充磁盘动态信息
+func (s *SystemService) setDynamicDisk(info *dto.SystemDynamicInfo) {
 	if usage, err := disk.Usage(systemDiskPath()); err == nil {
 		info.DiskUsed = usage.Used
 		info.DiskFree = usage.Free
 	}
 }
 
-// setDynamicDB 填充数据库动态信息。
-func (s *SystemService) setDynamicDB(info *SystemDynamicInfo) {
+// setDynamicDB 填充数据库动态信息
+func (s *SystemService) setDynamicDB(info *dto.SystemDynamicInfo) {
 	info.DbStatus = s.checkDB()
 	info.DbSize = s.getDBSize()
 	info.DbConnCount = s.getConnCount()
 }
 
-// CheckHealth 检查服务健康状态，返回数据库连接状态。
+// CheckHealth 检查服务健康状态，返回数据库连接状态
 func (s *SystemService) CheckHealth() string {
 	return s.checkDB()
 }
 
-// checkDB 检查数据库状态。
+// checkDB 检查数据库状态
 func (s *SystemService) checkDB() string {
 	db, err := s.db.DB()
 	if err != nil || db.Ping() != nil {
@@ -366,12 +327,12 @@ func (s *SystemService) checkDB() string {
 	return "正常"
 }
 
-// getDBType 获取数据库类型。
+// getDBType 获取数据库类型
 func (s *SystemService) getDBType() string {
-	return s.db.Dialector.Name()
+	return s.db.Name()
 }
 
-// checkStorage 检查存储状态。
+// checkStorage 检查存储状态
 func (s *SystemService) checkStorage() string {
 	if s.uploadManager == nil {
 		return "未配置"
@@ -382,7 +343,7 @@ func (s *SystemService) checkStorage() string {
 	return "正常"
 }
 
-// checkEmail 检查邮件状态。
+// checkEmail 检查邮件状态
 func (s *SystemService) checkEmail() string {
 	if s.emailClient == nil {
 		return "未配置"
@@ -393,7 +354,7 @@ func (s *SystemService) checkEmail() string {
 	return "正常"
 }
 
-// checkFeishu 检查飞书状态。
+// checkFeishu 检查飞书状态
 func (s *SystemService) checkFeishu() string {
 	if s.feishuClient == nil {
 		return "未配置"
@@ -404,7 +365,7 @@ func (s *SystemService) checkFeishu() string {
 	return "正常"
 }
 
-// getDBSize 获取数据库大小。
+// getDBSize 获取数据库大小
 func (s *SystemService) getDBSize() int64 {
 	var name string
 	if err := s.db.Raw("SELECT current_database()").Scan(&name).Error; err != nil || name == "" {
@@ -415,7 +376,7 @@ func (s *SystemService) getDBSize() int64 {
 	return size
 }
 
-// getTableCount 获取数据库表数量。
+// getTableCount 获取数据库表数量
 func (s *SystemService) getTableCount() int64 {
 	var name string
 	var count int64
@@ -426,7 +387,7 @@ func (s *SystemService) getTableCount() int64 {
 	return count
 }
 
-// getConnCount 获取数据库连接数。
+// getConnCount 获取数据库连接数
 func (s *SystemService) getConnCount() int {
 	var name string
 	var count int
@@ -437,12 +398,12 @@ func (s *SystemService) getConnCount() int {
 	return count
 }
 
-// currentVersion 获取当前运行版本。
+// currentVersion 获取当前运行版本
 func currentVersion() string {
 	return strings.TrimSpace(AppVersion)
 }
 
-// compareVersion 比较两个语义化版本。
+// compareVersion 比较两个语义化版本
 func compareVersion(a, b string) (int, error) {
 	av, err := parseVersion(a)
 	if err != nil {
@@ -473,7 +434,7 @@ func compareVersion(a, b string) (int, error) {
 	}
 }
 
-// parseVersion 解析语义化版本号。
+// parseVersion 解析语义化版本号
 func parseVersion(raw string) (parsedVersion, error) {
 	value := strings.TrimSpace(strings.TrimPrefix(raw, "v"))
 	if value == "" {
@@ -510,7 +471,7 @@ func parseVersion(raw string) (parsedVersion, error) {
 	return parsed, nil
 }
 
-// comparePrerelease 比较预发布版本标识。
+// comparePrerelease 比较预发布版本标识
 func comparePrerelease(a, b []string) int {
 	for i := 0; i < len(a) || i < len(b); i++ {
 		switch {
@@ -530,7 +491,7 @@ func comparePrerelease(a, b []string) int {
 	return 0
 }
 
-// comparePrereleaseIdentifier 比较单个预发布标识。
+// comparePrereleaseIdentifier 比较单个预发布标识
 func comparePrereleaseIdentifier(a, b string) int {
 	av, aErr := strconv.Atoi(a)
 	bv, bErr := strconv.Atoi(b)
@@ -556,7 +517,7 @@ func comparePrereleaseIdentifier(a, b string) int {
 	}
 }
 
-// systemDiskPath 获取系统磁盘路径。
+// systemDiskPath 获取系统磁盘路径
 func systemDiskPath() string {
 	if runtime.GOOS == "windows" {
 		return "C:"
@@ -564,7 +525,7 @@ func systemDiskPath() string {
 	return "/"
 }
 
-// getServerIP 获取服务器 IP。
+// getServerIP 获取服务器 IP
 func getServerIP() string {
 	if ifs, err := net.Interfaces(); err == nil {
 		for _, iface := range ifs {

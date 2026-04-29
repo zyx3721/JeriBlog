@@ -20,6 +20,7 @@ type ListRssArticleRequest struct {
 	Keyword   string `form:"keyword"`    // 搜索关键词
 	FriendID  uint   `form:"friend_id"`  // 友链ID筛选
 	IsRead    *bool  `form:"is_read"`    // 已读状态筛选
+	IsDeleted *bool  `form:"is_deleted"` // 删除状态筛选
 	StartTime string `form:"start_time"` // 发布开始时间（格式：2006-01-02）
 	EndTime   string `form:"end_time"`   // 发布结束时间（格式：2006-01-02）
 }

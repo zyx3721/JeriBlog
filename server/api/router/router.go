@@ -10,7 +10,7 @@ import (
 	"jeri_blog/pkg/database"
 	"jeri_blog/pkg/email"
 	"jeri_blog/pkg/feishu"
-	mcpserver "flec_blog/pkg/mcp"
+	mcpserver "jeri_blog/pkg/mcp"
 	"jeri_blog/pkg/notification"
 	"jeri_blog/pkg/scheduler"
 	"jeri_blog/pkg/upload"

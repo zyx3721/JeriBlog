@@ -14,6 +14,7 @@ package repository
 import (
 	"context"
 	"encoding/json"
+	"regexp"
 	"strings"
 
 	"jeri_blog/internal/model"
@@ -33,95 +34,94 @@ func NewMomentRepository(db *gorm.DB) *MomentRepository {
 
 // ============ 基础CRUD ============
 
-// ListParams 动态列表查询参数
-type ListParams struct {
-	IsPublish *bool
-	Keyword   string
-	Tags      []string
-	Location  string
-	HasImages *bool
-	HasVideo  *bool
-	HasMusic  *bool
-	HasLink   *bool
-	StartTime string
-	EndTime   string
-}
-
 // List 获取动态列表
-func (r *MomentRepository) List(ctx context.Context, page, pageSize int, params ListParams) ([]model.Moment, int64, error) {
+func (r *MomentRepository) List(
+	ctx context.Context,
+	page, pageSize int,
+	Tags []string,
+	keyword, location string,
+	isPublish, hasImages, hasVideo, hasMusic, hasLink *bool,
+	startTime, endTime string,
+) ([]model.Moment, int64, error) {
 	var moments []model.Moment
 	var total int64
 
 	query := r.db.WithContext(ctx).Model(&model.Moment{})
 
-	// 根据发布状态过滤
-	if params.IsPublish != nil {
-		query = query.Where("is_publish = ?", *params.IsPublish)
-	}
-
-	// 根据关键词搜索（按内容模糊搜索）
-	if params.Keyword != "" {
-		query = query.Where("content::text LIKE ?", "%"+params.Keyword+"%")
+	// 关键词搜索
+	if keyword != "" {
+		pattern := `"text"\s*:\s*"[^"]*` + regexp.QuoteMeta(keyword) + `[^"]*"`
+		query = query.Where("content::text ~* ?", pattern)
 	}
 
 	// 根据标签筛选（多选，任意匹配）
-	if len(params.Tags) > 0 {
-		tagConditions := make([]string, len(params.Tags))
-		tagValues := make([]interface{}, len(params.Tags))
-		for i, tag := range params.Tags {
+	if len(Tags) > 0 {
+		tagConditions := make([]string, len(Tags))
+		tagValues := make([]interface{}, len(Tags))
+		for i, tag := range Tags {
 			tagConditions[i] = "content::jsonb->>'tags' = ?"
 			tagValues[i] = tag
 		}
 		query = query.Where(strings.Join(tagConditions, " OR "), tagValues...)
 	}
 
-	// 根据发布地点筛选
-	if params.Location != "" {
-		query = query.Where("content::jsonb->>'location' LIKE ?", "%"+params.Location+"%")
+	// 按发布地点筛选
+	if location != "" {
+		pattern := `"location"\s*:\s*"[^"]*` + regexp.QuoteMeta(location) + `[^"]*"`
+		query = query.Where("content::text ~* ?", pattern)
 	}
 
-	// 根据是否包含图片筛选
-	if params.HasImages != nil {
-		if *params.HasImages {
-			query = query.Where("jsonb_array_length(content::jsonb->'images') > 0")
+	// 按发布状态筛选
+	if isPublish != nil {
+		query = query.Where("is_publish = ?", *isPublish)
+	}
+
+	// 按是否有图片筛选
+	if hasImages != nil {
+		if *hasImages {
+			query = query.Where("content::text ~* ?", `"images"\s*:\s*\[.+\]`)
 		} else {
-			query = query.Where("(content::jsonb->'images' IS NULL OR jsonb_array_length(content::jsonb->'images') = 0)")
+			query = query.Where(
+				"content::text IS NULL OR content::text !~* ? OR content::text ~* ?",
+				`"images"`,
+				`"images"\s*:\s*(null|\[\s*\])`,
+			)
 		}
 	}
 
-	// 根据是否包含视频筛选
-	if params.HasVideo != nil {
-		if *params.HasVideo {
-			query = query.Where("content::jsonb->'video' IS NOT NULL")
+	// 按是否有视频筛选
+	if hasVideo != nil {
+		if *hasVideo {
+			query = query.Where("content::text ILIKE '%\"video\":%'")
 		} else {
-			query = query.Where("content::jsonb->'video' IS NULL")
+			query = query.Where("content::text NOT ILIKE '%\"video\":%' OR content::text ILIKE '%\"video\":{}%'")
 		}
 	}
 
-	// 根据是否包含音乐筛选
-	if params.HasMusic != nil {
-		if *params.HasMusic {
-			query = query.Where("(content::jsonb->'music' IS NOT NULL) OR (content::jsonb->'audio' IS NOT NULL)")
+	// 按是否有音乐筛选（包含音乐和音频）
+	if hasMusic != nil {
+		if *hasMusic {
+			query = query.Where("(content::text ILIKE '%\"music\":%' AND content::text NOT ILIKE '%\"music\":{}%') OR (content::text ILIKE '%\"audio\":%' AND content::text NOT ILIKE '%\"audio\":{}%')")
 		} else {
-			query = query.Where("(content::jsonb->'music' IS NULL) AND (content::jsonb->'audio' IS NULL)")
+			query = query.Where("(content::text NOT ILIKE '%\"music\":%' OR content::text ILIKE '%\"music\":{}%') AND (content::text NOT ILIKE '%\"audio\":%' OR content::text ILIKE '%\"audio\":{}%')")
 		}
 	}
 
-	// 根据是否包含链接筛选
-	if params.HasLink != nil {
-		if *params.HasLink {
-			query = query.Where("content::jsonb->'link' IS NOT NULL")
+	// 按是否有链接筛选
+	if hasLink != nil {
+		if *hasLink {
+			query = query.Where("content::text ILIKE '%\"link\":%'")
 		} else {
-			query = query.Where("content::jsonb->'link' IS NULL")
+			query = query.Where("content::text NOT ILIKE '%\"link\":%' OR content::text ILIKE '%\"link\":{}%'")
 		}
 	}
 
-	// 根据发布时间范围筛选
-	if params.StartTime != "" {
-		query = query.Where("DATE(publish_time) >= ?", params.StartTime)
+	// 按发布时间范围筛选
+	if startTime != "" {
+		query = query.Where("publish_time >= ?", startTime)
 	}
-	if params.EndTime != "" {
-		query = query.Where("DATE(publish_time) <= ?", params.EndTime)
+	if endTime != "" {
+		query = query.Where("publish_time <= ?", endTime)
 	}
 
 	err := query.Count(&total).Error
@@ -169,7 +169,7 @@ func (r *MomentRepository) Update(ctx context.Context, moment *model.Moment) err
 // ExistsByContentURL 检查是否有动态内容引用该文件
 func (r *MomentRepository) ExistsByContentURL(url string) (bool, error) {
 	var count int64
-	err := r.db.Model(&model.Moment{}).Where("content::text LIKE ?", "%"+url+"%").Count(&count).Error
+	err := r.db.Model(&model.Moment{}).Where("content LIKE ?", "%"+url+"%").Count(&count).Error
 	return count > 0, err
 }
 

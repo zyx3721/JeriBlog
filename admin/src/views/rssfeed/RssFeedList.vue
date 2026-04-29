@@ -270,7 +270,6 @@ const toggleFilter = () => {
 /**
  * 从 queryParams 同步筛选条件到快速筛选
  */
-  } finally {
 const syncQuickFiltersFromQueryParams = () => {
   quickFilters.friend_id = queryParams.value.friend_id;
   quickFilters.is_read = queryParams.value.is_read;

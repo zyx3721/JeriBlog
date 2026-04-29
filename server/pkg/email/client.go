@@ -13,9 +13,9 @@ package email
 
 import (
 	"crypto/tls"
-	"fmt"
 	"jeri_blog/config"
 	"jeri_blog/pkg/logger"
+	"fmt"
 	"sync"
 	"time"
 
@@ -28,6 +28,18 @@ const (
 	emailSecureSSL      = "ssl"      // SSL/TLS (端口 465)
 	emailSecureSTARTTLS = "starttls" // STARTTLS (端口 587)
 )
+
+var (
+	globalClient *Client
+	globalMu     sync.RWMutex
+)
+
+// GetClient 获取全局邮件客户端实例
+func GetClient() *Client {
+	globalMu.RLock()
+	defer globalMu.RUnlock()
+	return globalClient
+}
 
 // Client 邮件客户端
 type Client struct {
@@ -85,6 +97,17 @@ type Config struct {
 
 // Initialize 从全局配置创建邮件客户端
 func Initialize(conf *config.Config) *Client {
+	c := newClient(conf)
+
+	globalMu.Lock()
+	globalClient = c
+	globalMu.Unlock()
+
+	return c
+}
+
+// newClient 创建邮件客户端实例
+func newClient(conf *config.Config) *Client {
 	if conf == nil || conf.Notification.EmailHost == "" || conf.Notification.EmailUsername == "" {
 		return nil
 	}
@@ -93,6 +116,14 @@ func Initialize(conf *config.Config) *Client {
 		config:      conf,
 		rateLimiter: NewRateLimiter(5, time.Hour), // 5次/小时
 	}
+}
+
+// Reload 重新加载邮件配置（热重载）
+func Reload(conf *config.Config) {
+	globalMu.Lock()
+	defer globalMu.Unlock()
+
+	globalClient = newClient(conf)
 }
 
 // SendEmail 发送邮件
@@ -182,6 +213,6 @@ func (c *Client) HealthCheck() error {
 	if err != nil {
 		return err
 	}
-	conn.Close()
+	_ = conn.Close()
 	return nil
 }

@@ -13,6 +13,7 @@ package repository
 
 import (
 	"jeri_blog/internal/model"
+	"jeri_blog/pkg/random"
 	"time"
 
 	"gorm.io/gorm"
@@ -50,9 +51,32 @@ func (r *UserRepository) Update(user *model.User) error {
 	return r.db.Save(user).Error
 }
 
-// Delete 物理删除用户
+// Delete 软删除用户
 func (r *UserRepository) Delete(id uint) error {
-	return r.db.Unscoped().Delete(&model.User{}, id).Error
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		// 获取用户信息
+		var user model.User
+		if err := tx.First(&user, id).Error; err != nil {
+			return err
+		}
+
+		// 生成短随机后缀
+		suffix := random.Code(4)
+
+		// 更新邮箱，避免唯一索引冲突
+		user.Email = user.Email + "_" + suffix
+		user.Avatar = ""
+		user.IsEnabled = false
+		user.Password = ""
+
+		// 保存更新
+		if err := tx.Save(&user).Error; err != nil {
+			return err
+		}
+
+		// 软删除
+		return tx.Delete(&model.User{}, id).Error
+	})
 }
 
 // ============ 查询方法 ============
@@ -84,18 +108,33 @@ func (r *UserRepository) GetGuestByEmail(email string) (*model.User, error) {
 	return &user, nil
 }
 
-// List 获取用户列表（后台管理）
-func (r *UserRepository) List(offset, limit int, keyword string, role model.UserRole) ([]model.User, int64, error) {
+// List 获取用户列表
+func (r *UserRepository) List(
+	offset, limit int,
+	keyword, role string,
+	isEnabled, isDeleted *bool,
+	loginMethod, lastLoginStart, lastLoginEnd string,
+	startTime, endTime string,
+) ([]model.User, int64, error) {
 	var users []model.User
 	var total int64
 
-	// 构建查询
-	query := r.db.Unscoped().Model(&model.User{})
+	// 是否已删除
+	var query *gorm.DB
+	if isDeleted != nil {
+		if *isDeleted {
+			query = r.db.Unscoped().Model(&model.User{}).Where("deleted_at IS NOT NULL")
+		} else {
+			query = r.db.Model(&model.User{}).Where("deleted_at IS NULL")
+		}
+	} else {
+		query = r.db.Unscoped().Model(&model.User{})
+	}
 
-	// 关键词搜索（昵称、邮箱、网站）
+	// 关键词搜索（邮箱、昵称）
 	if keyword != "" {
-		query = query.Where("nickname LIKE ? OR email LIKE ? OR website LIKE ?",
-			"%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%")
+		searchKeyword := "%" + keyword + "%"
+		query = query.Where("email ILIKE ? OR nickname ILIKE ? OR website ILIKE ?", searchKeyword, searchKeyword, searchKeyword)
 	}
 
 	// 角色筛选
@@ -103,13 +142,50 @@ func (r *UserRepository) List(offset, limit int, keyword string, role model.User
 		query = query.Where("role = ?", role)
 	}
 
-	// 统计总数
+	// 状态筛选
+	if isEnabled != nil {
+		query = query.Where("is_enabled = ?", *isEnabled)
+	}
+
+	// 登录方式筛选
+	if loginMethod != "" {
+		switch loginMethod {
+		case "password":
+			query = query.Where("has_password = ?", true)
+		case "github":
+			query = query.Where("github_id IS NOT NULL AND github_id != ''")
+		case "google":
+			query = query.Where("google_id IS NOT NULL AND google_id != ''")
+		case "qq":
+			query = query.Where("qq_id IS NOT NULL AND qq_id != ''")
+		case "microsoft":
+			query = query.Where("microsoft_id IS NOT NULL AND microsoft_id != ''")
+		}
+	}
+
+	// 最后登录时间范围筛选
+	if lastLoginStart != "" {
+		query = query.Where("last_login >= ?", lastLoginStart)
+	}
+	if lastLoginEnd != "" {
+		query = query.Where("last_login <= ?", lastLoginEnd+" 23:59:59")
+	}
+
+	// 注册时间范围筛选
+	if startTime != "" {
+		query = query.Where("created_at >= ?", startTime)
+	}
+	if endTime != "" {
+		query = query.Where("created_at <= ?", endTime+" 23:59:59")
+	}
+
+	// 获取总数
 	err := query.Count(&total).Error
 	if err != nil {
 		return nil, 0, err
 	}
 
-	// 查询列表
+	// 获取列表
 	err = query.
 		Select("id, email, nickname, avatar, badge, website, is_enabled, role, last_login, created_at, updated_at, deleted_at, has_password, github_id, google_id, qq_id, feishu_open_id").
 		Order("created_at DESC").
@@ -124,7 +200,6 @@ func (r *UserRepository) List(offset, limit int, keyword string, role model.User
 // ExistsByAvatar 检查是否有用户头像引用该文件
 func (r *UserRepository) ExistsByAvatar(url string) (bool, error) {
 	var count int64
-	// 只查询未删除的用户，已删除用户的头像文件可以删除
 	err := r.db.Model(&model.User{}).Where("avatar = ?", url).Count(&count).Error
 	return count > 0, err
 }
@@ -137,18 +212,31 @@ func (r *UserRepository) FindByAvatar(url string) ([]model.User, error) {
 	return users, err
 }
 
-// ============ 辅助方法 ============
+// CountSuperAdmins 统计超级管理员数量
+func (r *UserRepository) CountSuperAdmins() (int64, error) {
+	var count int64
+	err := r.db.Model(&model.User{}).Where("role = ?", model.RoleSuperAdmin).Count(&count).Error
+	return count, err
+}
 
 // UpdateAvatar 更新用户头像
 func (r *UserRepository) UpdateAvatar(userID uint, avatarURL string) error {
 	return r.db.Model(&model.User{}).Where("id = ?", userID).Update("avatar", avatarURL).Error
 }
 
-// UpdatePassword 更新用户密码
-func (r *UserRepository) UpdatePassword(id uint, hashedPassword string) error {
+// UpdatePasswordAndIncrementVersion 更新密码并递增TokenVersion（一次数据库操作）
+// hasPassword > 0 时同时设置 HasPassword=true（用于 OAuth 用户首次设置密码）
+func (r *UserRepository) UpdatePasswordAndIncrementVersion(id uint, hashedPassword string, hasPassword ...bool) error {
+	updates := map[string]interface{}{
+		"password":      hashedPassword,
+		"token_version": gorm.Expr("token_version + 1"),
+	}
+	if len(hasPassword) > 0 && hasPassword[0] {
+		updates["has_password"] = true
+	}
 	return r.db.Model(&model.User{}).
 		Where("id = ?", id).
-		Update("password", hashedPassword).Error
+		Updates(updates).Error
 }
 
 // ============ Token黑名单 ============
@@ -177,9 +265,10 @@ func (r *UserRepository) CleanupExpiredTokens() error {
 	return r.db.Where("expires_at < ?", time.Now()).Delete(&model.TokenBlacklist{}).Error
 }
 
-// RevokeAllUserTokens 撤销某用户的所有token
-func (r *UserRepository) RevokeAllUserTokens(userID uint) error {
-	return r.db.Where("user_id = ? AND expires_at > ?", userID, time.Now()).Delete(&model.TokenBlacklist{}).Error
+// IncrementTokenVersion 递增用户Token版本号（用于撤销所有token）
+func (r *UserRepository) IncrementTokenVersion(userID uint) error {
+	return r.db.Model(&model.User{}).Where("id = ?", userID).
+		Update("token_version", gorm.Expr("token_version + 1")).Error
 }
 
 // ============ OAuth 相关 ============

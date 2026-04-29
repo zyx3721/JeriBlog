@@ -22,7 +22,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
-
+	"sync"
 	"jeri_blog/config"
 	"jeri_blog/internal/dto"
 	"jeri_blog/internal/model"
@@ -98,51 +98,10 @@ func (s *ArticleService) SetSubscriberService(subscriberService *SubscriberServi
 	s.subscriberService = subscriberService
 }
 
-// ============ 通用服务 ============
-
-// Get 获取文章详情
-func (s *ArticleService) Get(_ context.Context, id uint) (*dto.ArticleAdminDetailResponse, error) {
-	article, err := s.articleRepo.Get(id)
-	if err != nil {
-		return nil, fmt.Errorf("获取文章失败: %w", err)
-	}
-
-	response := &dto.ArticleAdminDetailResponse{
-		ID:          article.ID,
-		Title:       article.Title,
-		Slug:        article.Slug,
-		Content:     article.Content,
-		Summary:     article.Summary,
-		AISummary:   article.AISummary,
-		Cover:       article.Cover,
-		Location:    article.Location,
-		IsPublish:   article.IsPublish,
-		IsTop:       article.IsTop,
-		IsEssence:   article.IsEssence,
-		IsOutdated:  article.IsOutdated,
-		PublishTime: utils.ToJSONTime(article.PublishTime),
-		UpdateTime:  utils.ToJSONTime(article.UpdateTime),
-	}
-
-	// 填充分类信息
-	response.Category.ID = article.Category.ID
-	response.Category.Name = article.Category.Name
-
-	// 填充标签信息
-	for _, tag := range article.Tags {
-		response.Tags = append(response.Tags, struct {
-			ID   uint   `json:"id"`
-			Name string `json:"name"`
-		}{tag.ID, tag.Name})
-	}
-
-	return response, nil
-}
-
 // ============ 前台服务 ============
 
 // ListForWeb 获取前台文章列表
-func (s *ArticleService) ListForWeb(ctx context.Context, req *dto.ListArticlesRequest) ([]dto.ArticleWebResponse, int64, error) {
+func (s *ArticleService) ListForWeb(ctx context.Context, req *dto.ListArticlesForWebRequest) ([]dto.ArticleWebResponse, int64, error) {
 	articles, total, err := s.articleRepo.ListForWeb(req.Page, req.PageSize, req.Year, req.Month, req.Category, req.Tag)
 	if err != nil {
 		return nil, 0, err
@@ -164,7 +123,7 @@ func (s *ArticleService) ListForWeb(ctx context.Context, req *dto.ListArticlesRe
 	}
 
 	// 转换为前台响应格式
-	response := make([]dto.ArticleWebResponse, 0)
+	var response []dto.ArticleWebResponse
 	for _, article := range articles {
 		item := dto.ArticleWebResponse{
 			ID:           article.ID,
@@ -230,7 +189,7 @@ func (s *ArticleService) Search(ctx context.Context, req *dto.SearchArticlesRequ
 		}
 	}
 
-	response := make([]dto.ArticleWebResponse, 0)
+	var response []dto.ArticleWebResponse
 	for _, article := range articles {
 		item := dto.ArticleWebResponse{
 			ID:           article.ID,
@@ -360,7 +319,14 @@ func (s *ArticleService) GetBySlug(ctx context.Context, slug string) (*dto.Artic
 
 // List 获取文章列表
 func (s *ArticleService) List(ctx context.Context, req *dto.ListArticlesRequest) ([]dto.ArticleListResponse, int64, error) {
-	articles, total, err := s.articleRepo.List(req)
+	offset := (req.Page - 1) * req.PageSize
+	articles, total, err := s.articleRepo.List(
+		offset, req.PageSize,
+		req.Keyword, req.Location,
+		req.CategoryID, req.TagIDs,
+		req.IsPublish, req.IsTop, req.IsEssence, req.IsOutdated,
+		req.StartTime, req.EndTime,
+	)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -386,6 +352,7 @@ func (s *ArticleService) List(ctx context.Context, req *dto.ListArticlesRequest)
 		item := dto.ArticleListResponse{
 			ID:           article.ID,
 			Title:        article.Title,
+			Slug:         article.Slug,
 			Cover:        article.Cover,
 			Location:     article.Location,
 			IsPublish:    article.IsPublish,
@@ -412,6 +379,45 @@ func (s *ArticleService) List(ctx context.Context, req *dto.ListArticlesRequest)
 	}
 
 	return response, total, nil
+}
+
+// Get 获取文章详情
+func (s *ArticleService) Get(_ context.Context, id uint) (*dto.ArticleAdminDetailResponse, error) {
+	article, err := s.articleRepo.Get(id)
+	if err != nil {
+		return nil, fmt.Errorf("获取文章失败: %w", err)
+	}
+
+	response := &dto.ArticleAdminDetailResponse{
+		ID:          article.ID,
+		Title:       article.Title,
+		Slug:        article.Slug,
+		Content:     article.Content,
+		Summary:     article.Summary,
+		AISummary:   article.AISummary,
+		Cover:       article.Cover,
+		Location:    article.Location,
+		IsPublish:   article.IsPublish,
+		IsTop:       article.IsTop,
+		IsEssence:   article.IsEssence,
+		IsOutdated:  article.IsOutdated,
+		PublishTime: utils.ToJSONTime(article.PublishTime),
+		UpdateTime:  utils.ToJSONTime(article.UpdateTime),
+	}
+
+	// 填充分类信息
+	response.Category.ID = article.Category.ID
+	response.Category.Name = article.Category.Name
+
+	// 填充标签信息
+	for _, tag := range article.Tags {
+		response.Tags = append(response.Tags, struct {
+			ID   uint   `json:"id"`
+			Name string `json:"name"`
+		}{tag.ID, tag.Name})
+	}
+
+	return response, nil
 }
 
 // Create 创建文章
@@ -459,19 +465,13 @@ func (s *ArticleService) Create(ctx context.Context, req *dto.CreateArticleReque
 		article.PublishTime = &now
 	}
 
-	// 处理 slug：如果用户提供了则使用，否则自动生成
+	// 优先使用自定义 slug，否则自动生成
 	if req.Slug != "" {
-		// 检查用户提供的 slug 是否已存在
-		exists, err := s.articleRepo.CheckSlugExists(req.Slug)
-		if err != nil {
-			return nil, fmt.Errorf("检查 slug 失败: %w", err)
-		}
-		if exists {
-			return nil, fmt.Errorf("slug 已存在: %s", req.Slug)
+		if exists, _ := s.articleRepo.CheckSlugExists(req.Slug); exists {
+			return nil, fmt.Errorf("slug '%s' 已存在，请使用其他值", req.Slug)
 		}
 		article.Slug = req.Slug
 	} else {
-		// 自动生成唯一 slug
 		generatedSlug, err := random.UniqueCode(8, s.articleRepo.CheckSlugExists)
 		if err != nil {
 			return nil, fmt.Errorf("生成 slug 失败: %w", err)
@@ -489,16 +489,18 @@ func (s *ArticleService) Create(ctx context.Context, req *dto.CreateArticleReque
 		_ = s.fileService.MarkAsUsed(req.Cover, "文章封面")
 	}
 
-	// 标记内容中的图片为使用中
+	// 标记内容中的图片、视频、音频为使用中
 	s.markContentImagesAsUsed(req.Content)
+	s.markContentVideosAsUsed(req.Content)
+	s.markContentAudiosAsUsed(req.Content)
 
 	// 如果是发布状态，异步发送订阅推送
 	if article.IsPublish && s.subscriberService != nil {
-		go func() {
-			if err := s.subscriberService.SendArticleNotification(context.Background(), article); err != nil {
-				logger.Warn("发送文章推送失败 (文章ID: %d): %v", article.ID, err)
+		go func(ctx context.Context, articleID uint) {
+			if err := s.subscriberService.SendArticleNotification(ctx, article); err != nil {
+				logger.Warn("发送文章推送失败 (文章ID: %d): %v", articleID, err)
 			}
-		}()
+		}(ctx, article.ID)
 	}
 
 	return s.Get(ctx, article.ID)
@@ -527,21 +529,16 @@ func (s *ArticleService) Update(ctx context.Context, id uint, req *dto.UpdateArt
 	if req.Title != "" {
 		article.Title = req.Title
 	}
-	if req.Content != "" {
-		article.Content = req.Content
-	}
-
 	// 处理 slug 更新
 	if req.Slug != "" && req.Slug != article.Slug {
-		// 检查新 slug 是否已被其他文章使用
-		exists, err := s.articleRepo.CheckSlugExists(req.Slug)
-		if err != nil {
-			return nil, fmt.Errorf("检查 slug 失败: %w", err)
-		}
-		if exists {
-			return nil, fmt.Errorf("slug 已存在: %s", req.Slug)
+		// 验证新 slug 是否已存在
+		if exists, _ := s.articleRepo.CheckSlugExists(req.Slug); exists {
+			return nil, fmt.Errorf("slug '%s' 已存在，请使用其他值", req.Slug)
 		}
 		article.Slug = req.Slug
+	}
+	if req.Content != "" {
+		article.Content = req.Content
 	}
 
 	article.Summary = req.Summary
@@ -603,11 +600,11 @@ func (s *ArticleService) Update(ctx context.Context, id uint, req *dto.UpdateArt
 
 	// 如果从草稿变为发布状态，异步发送订阅推送
 	if !oldIsPublish && article.IsPublish && s.subscriberService != nil {
-		go func() {
-			if err := s.subscriberService.SendArticleNotification(context.Background(), article); err != nil {
-				logger.Warn("发送文章推送失败 (文章ID: %d): %v", article.ID, err)
+		go func(ctx context.Context, articleID uint) {
+			if err := s.subscriberService.SendArticleNotification(ctx, article); err != nil {
+				logger.Warn("发送文章推送失败 (文章ID: %d): %v", articleID, err)
 			}
-		}()
+		}(ctx, article.ID)
 	}
 
 	return s.Get(ctx, id)
@@ -625,28 +622,24 @@ func (s *ArticleService) Delete(ctx context.Context, id uint) error {
 		_ = s.fileService.MarkAsUnused(article.Cover, "文章封面")
 	}
 
-	// 标记内容中的图片为未使用
+	// 标记内容中的图片、视频、音频为未使用
 	s.markContentImagesAsUnused(article.Content)
+	s.markContentVideosAsUnused(article.Content)
+	s.markContentAudiosAsUnused(article.Content)
 
 	return s.articleRepo.Delete(id)
 }
 
 // ============ 辅助方法 ============
 
-// extractContentImages 从 Markdown/HTML 内容中提取所有文件 URL
-// 支持标准 Markdown 图片、照片墙、视频等编辑器特殊格式
+// extractContentImages 从 Markdown/HTML 内容中提取所有图片 URL
 func extractContentImages(content string) []string {
-	// 使用工具函数提取所有文件 URL（支持照片墙、视频等特殊格式）
-	urls := utils.ExtractFileURLsFromMarkdown(content)
-
-	// 额外提取 HTML img 标签（兼容富文本编辑器）
+	var urls []string
 	seen := make(map[string]bool)
-	for _, url := range urls {
-		seen[url] = true
-	}
 
-	htmlImageRe := regexp.MustCompile(`<img[^>]+src=["']([^"']+)["'][^>]*>`)
-	matches := htmlImageRe.FindAllStringSubmatch(content, -1)
+	// 提取 Markdown 图片: ![alt](url)
+	mdImageRe := regexp.MustCompile(`!\[[^\]]*\]\(([^)]+)\)`)
+	matches := mdImageRe.FindAllStringSubmatch(content, -1)
 	for _, match := range matches {
 		if len(match) > 1 {
 			url := strings.TrimSpace(match[1])
@@ -657,108 +650,245 @@ func extractContentImages(content string) []string {
 		}
 	}
 
+	// 提取 HTML img 标签: <img src="url" />
+	htmlImageRe := regexp.MustCompile(`<img[^>]+src=["']([^"']+)["'][^>]*>`)
+	matches = htmlImageRe.FindAllStringSubmatch(content, -1)
+	for _, match := range matches {
+		if len(match) > 1 {
+			url := strings.TrimSpace(match[1])
+			if url != "" && !seen[url] {
+				seen[url] = true
+				urls = append(urls, url)
+			}
+		}
+	}
+
+	// 提取 :::photo :::endphoto 块中的图片 URL
+	photoBlockRe := regexp.MustCompile(`(?s):::photo\s*\n(.*?)\n:::endphoto`)
+	photoMatches := photoBlockRe.FindAllStringSubmatch(content, -1)
+	for _, match := range photoMatches {
+		if len(match) > 1 {
+			photoContent := match[1]
+			// 提取块中的每一行作为可能的图片 URL
+			lines := strings.Split(photoContent, "\n")
+			for _, line := range lines {
+				line = strings.TrimSpace(line)
+				// 跳过换行标记 :::n
+				if line == ":::n" || line == "" {
+					continue
+				}
+				// 移除可能的 Markdown 图片语法，提取 URL
+				imgUrl := line
+				if strings.HasPrefix(line, "![") {
+					mdMatch := mdImageRe.FindStringSubmatch(line)
+					if len(mdMatch) > 1 {
+						imgUrl = strings.TrimSpace(mdMatch[1])
+					}
+				}
+				if imgUrl != "" && !seen[imgUrl] {
+					seen[imgUrl] = true
+					urls = append(urls, imgUrl)
+				}
+			}
+		}
+	}
+
 	return urls
 }
 
-// markContentImagesAsUsed 标记内容中的文件为已使用（根据文件类型自动分类）
+// extractContentVideos 从 Markdown 内容中提取所有视频 URL
+func extractContentVideos(content string) []string {
+	var urls []string
+	seen := make(map[string]bool)
+
+	// 提取 :::video ... ::: 块中的视频 URL
+	videoBlockRe := regexp.MustCompile(`(?s):::video\s+(.*?)\s*:::`)
+	matches := videoBlockRe.FindAllStringSubmatch(content, -1)
+	for _, match := range matches {
+		if len(match) > 1 {
+			videoContent := strings.TrimSpace(match[1])
+			// 检查是否包含平台信息（bilibili/youtube 等）或直接是 URL
+			parts := strings.SplitN(videoContent, " ", 2)
+			if len(parts) == 2 {
+				// 第二部分是 URL 或视频 ID
+				potentialUrl := strings.TrimSpace(parts[1])
+				// 跳过平台名称（第一个单词是平台如 bilibili/youtube）
+				if strings.HasPrefix(potentialUrl, "http://") || strings.HasPrefix(potentialUrl, "https://") {
+					if potentialUrl != "" && !seen[potentialUrl] {
+						seen[potentialUrl] = true
+						urls = append(urls, potentialUrl)
+					}
+				}
+			} else if len(parts) == 1 {
+				// 整个内容可能是 URL
+				potentialUrl := strings.TrimSpace(parts[0])
+				if strings.HasPrefix(potentialUrl, "http://") || strings.HasPrefix(potentialUrl, "https://") {
+					if potentialUrl != "" && !seen[potentialUrl] {
+						seen[potentialUrl] = true
+						urls = append(urls, potentialUrl)
+					}
+				}
+			}
+		}
+	}
+
+	return urls
+}
+
+// extractContentAudios 从 Markdown 内容中提取所有音频 URL
+func extractContentAudios(content string) []string {
+	var urls []string
+	seen := make(map[string]bool)
+
+	// 提取 :::audio title url ::: 块中的音频 URL
+	audioBlockRe := regexp.MustCompile(`(?s):::audio\s+(.*?)\s*:::`)
+	matches := audioBlockRe.FindAllStringSubmatch(content, -1)
+	for _, match := range matches {
+		if len(match) > 1 {
+			audioContent := strings.TrimSpace(match[1])
+			// 格式是 "标题 URL"，找最后一个部分作为 URL
+			parts := strings.Split(audioContent, " ")
+			for i := len(parts) - 1; i >= 0; i-- {
+				potentialUrl := strings.TrimSpace(parts[i])
+				if strings.HasPrefix(potentialUrl, "http://") || strings.HasPrefix(potentialUrl, "https://") {
+					if potentialUrl != "" && !seen[potentialUrl] {
+						seen[potentialUrl] = true
+						urls = append(urls, potentialUrl)
+					}
+					break
+				}
+			}
+		}
+	}
+
+	return urls
+}
+
+// markContentImagesAsUsed 标记内容中的图片为已使用
 func (s *ArticleService) markContentImagesAsUsed(content string) {
 	if s.fileService == nil {
 		return
 	}
-
-	// 使用新函数提取文件引用及其类型
-	references := utils.ExtractFileReferencesFromMarkdown(content)
-	for _, ref := range references {
-		_ = s.fileService.MarkAsUsed(ref.URL, string(ref.Type))
-	}
-
-	// 额外处理 HTML img 标签（标记为文章配图）
-	htmlImageRe := regexp.MustCompile(`<img[^>]+src=["']([^"']+)["'][^>]*>`)
-	matches := htmlImageRe.FindAllStringSubmatch(content, -1)
-	for _, match := range matches {
-		if len(match) > 1 {
-			url := strings.TrimSpace(match[1])
-			if url != "" {
-				_ = s.fileService.MarkAsUsed(url, "文章配图")
-			}
-		}
+	for _, url := range extractContentImages(content) {
+		_ = s.fileService.MarkAsUsed(url, "文章配图")
 	}
 }
 
-// markContentImagesAsUnused 标记内容中的文件为未使用（根据文件类型自动分类）
+// markContentVideosAsUsed 标记内容中的视频为已使用
+func (s *ArticleService) markContentVideosAsUsed(content string) {
+	if s.fileService == nil {
+		return
+	}
+	for _, url := range extractContentVideos(content) {
+		_ = s.fileService.MarkAsUsed(url, "文章视频")
+	}
+}
+
+// markContentAudiosAsUsed 标记内容中的音频为已使用
+func (s *ArticleService) markContentAudiosAsUsed(content string) {
+	if s.fileService == nil {
+		return
+	}
+	for _, url := range extractContentAudios(content) {
+		_ = s.fileService.MarkAsUsed(url, "文章音频")
+	}
+}
+
+// markContentImagesAsUnused 标记内容中的图片为未使用
 func (s *ArticleService) markContentImagesAsUnused(content string) {
 	if s.fileService == nil {
 		return
 	}
-
-	// 使用新函数提取文件引用及其类型
-	references := utils.ExtractFileReferencesFromMarkdown(content)
-	for _, ref := range references {
-		_ = s.fileService.MarkAsUnused(ref.URL, string(ref.Type))
-	}
-
-	// 额外处理 HTML img 标签（标记为文章配图）
-	htmlImageRe := regexp.MustCompile(`<img[^>]+src=["']([^"']+)["'][^>]*>`)
-	matches := htmlImageRe.FindAllStringSubmatch(content, -1)
-	for _, match := range matches {
-		if len(match) > 1 {
-			url := strings.TrimSpace(match[1])
-			if url != "" {
-				_ = s.fileService.MarkAsUnused(url, "文章配图")
-			}
-		}
+	for _, url := range extractContentImages(content) {
+		_ = s.fileService.MarkAsUnused(url, "文章配图")
 	}
 }
 
-// updateContentFileStatus 对比新旧内容，更新文件状态（根据文件类型自动分类）
+// markContentVideosAsUnused 标记内容中的视频为未使用
+func (s *ArticleService) markContentVideosAsUnused(content string) {
+	if s.fileService == nil {
+		return
+	}
+	for _, url := range extractContentVideos(content) {
+		_ = s.fileService.MarkAsUnused(url, "文章视频")
+	}
+}
+
+// markContentAudiosAsUnused 标记内容中的音频为未使用
+func (s *ArticleService) markContentAudiosAsUnused(content string) {
+	if s.fileService == nil {
+		return
+	}
+	for _, url := range extractContentAudios(content) {
+		_ = s.fileService.MarkAsUnused(url, "文章音频")
+	}
+}
+
+// updateContentFileStatus 对比新旧内容，更新图片、视频、音频文件状态
 func (s *ArticleService) updateContentFileStatus(oldContent, newContent string) {
 	if s.fileService == nil {
 		return
 	}
 
-	// 提取旧内容中的文件引用
-	oldRefs := utils.ExtractFileReferencesFromMarkdown(oldContent)
-	oldRefMap := make(map[string]utils.FileType)
-	for _, ref := range oldRefs {
-		oldRefMap[ref.URL] = ref.Type
+	// 处理图片
+	oldImages := make(map[string]bool)
+	for _, url := range extractContentImages(oldContent) {
+		oldImages[url] = true
+	}
+	for _, url := range extractContentImages(newContent) {
+		if !oldImages[url] {
+			_ = s.fileService.MarkAsUsed(url, "文章配图")
+		}
+		delete(oldImages, url)
+	}
+	for url := range oldImages {
+		_ = s.fileService.MarkAsUnused(url, "文章配图")
 	}
 
-	// 提取新内容中的文件引用
-	newRefs := utils.ExtractFileReferencesFromMarkdown(newContent)
-	newRefMap := make(map[string]utils.FileType)
-	for _, ref := range newRefs {
-		newRefMap[ref.URL] = ref.Type
-		// 新增的文件标记为使用中
-		if _, exists := oldRefMap[ref.URL]; !exists {
-			_ = s.fileService.MarkAsUsed(ref.URL, string(ref.Type))
+	// 处理视频
+	oldVideos := make(map[string]bool)
+	for _, url := range extractContentVideos(oldContent) {
+		oldVideos[url] = true
+	}
+	for _, url := range extractContentVideos(newContent) {
+		if !oldVideos[url] {
+			_ = s.fileService.MarkAsUsed(url, "文章视频")
 		}
+		delete(oldVideos, url)
+	}
+	for url := range oldVideos {
+		_ = s.fileService.MarkAsUnused(url, "文章视频")
 	}
 
-	// 移除的文件标记为未使用
-	for url, refType := range oldRefMap {
-		if _, exists := newRefMap[url]; !exists {
-			_ = s.fileService.MarkAsUnused(url, string(refType))
+	// 处理音频
+	oldAudios := make(map[string]bool)
+	for _, url := range extractContentAudios(oldContent) {
+		oldAudios[url] = true
+	}
+	for _, url := range extractContentAudios(newContent) {
+		if !oldAudios[url] {
+			_ = s.fileService.MarkAsUsed(url, "文章音频")
 		}
+		delete(oldAudios, url)
+	}
+	for url := range oldAudios {
+		_ = s.fileService.MarkAsUnused(url, "文章音频")
 	}
 }
 
-// ============ 数据导入导出方法 ============
+// ============ 文章导入方法 ============
 
-// ImportArticles 导入文章（支持 Hexo 和 Markdown 格式）
+// ImportArticles 导入文章数据
 func (s *ArticleService) ImportArticles(ctx context.Context, files map[string]string, sourceType string, uploadImages bool, host string, imageProxy string) (*dto.ImportArticlesResult, error) {
 	if len(files) == 0 {
 		return nil, fmt.Errorf("没有找到有效的文章数据")
 	}
 
-	result := &dto.ImportArticlesResult{
-		Total: len(files),
-	}
+	result := &dto.ImportArticlesResult{Total: len(files)}
 
-	// 缓存已创建的分类和标签
 	categoryCache := make(map[string]*model.Category)
 	tagCache := make(map[string]*model.Tag)
 
-	// 处理每篇文章
 	for filename, content := range files {
 		if err := s.importSingleArticle(ctx, filename, content, sourceType, uploadImages, host, imageProxy, categoryCache, tagCache); err != nil {
 			result.AddError(filename, extractTitle(content), err.Error())

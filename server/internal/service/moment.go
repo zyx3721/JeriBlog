@@ -45,10 +45,8 @@ func NewMomentService(repo *repository.MomentRepository, fileService *FileServic
 func (s *MomentService) ListForWeb(ctx context.Context, page, pageSize int) ([]dto.MomentForWebResponse, int64, error) {
 	// 前台只显示已发布的动态
 	isPublish := true
-	params := repository.ListParams{
-		IsPublish: &isPublish,
-	}
-	moments, total, err := s.repo.List(ctx, page, pageSize, params)
+
+	moments, total, err := s.repo.List(ctx, page, pageSize, nil, "", "", &isPublish, nil, nil, nil, nil, "", "")
 	if err != nil {
 		return nil, 0, err
 	}
@@ -76,21 +74,26 @@ func (s *MomentService) ListForWeb(ctx context.Context, page, pageSize int) ([]d
 // ============ 后台管理服务 ============
 
 // List 获取动态列表（管理）
-func (s *MomentService) List(ctx context.Context, page, pageSize int, req *dto.ListMomentRequest) ([]dto.MomentListResponse, int64, error) {
-	params := repository.ListParams{
-		IsPublish: req.IsPublish,
-		Keyword:   req.Keyword,
-		Tags:      req.Tags,
-		Location:  req.Location,
-		HasImages: req.HasImages,
-		HasVideo:  req.HasVideo,
-		HasMusic:  req.HasMusic,
-		HasLink:   req.HasLink,
-		StartTime: req.StartTime,
-		EndTime:   req.EndTime,
-	}
+func (s *MomentService) List(
+	ctx context.Context,
+	req dto.ListMomentsRequest,
+) ([]dto.MomentListResponse, int64, error) {
+	moments, total, err := s.repo.List(
+		ctx,
+		req.Page,
+		req.PageSize,
+		req.Tags,
+		req.Keyword,
+		req.Location,
+		req.IsPublish,
+		req.HasImages,
+		req.HasVideo,
+		req.HasMusic,
+		req.HasLink,
+		req.StartTime,
+		req.EndTime,
+	)
 
-	moments, total, err := s.repo.List(ctx, page, pageSize, params)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -141,7 +144,7 @@ func (s *MomentService) Get(ctx context.Context, id uint) (*dto.MomentListRespon
 }
 
 // Create 创建动态
-func (s *MomentService) Create(ctx context.Context, req *dto.CreateMomentRequest) (*model.Moment, error) {
+func (s *MomentService) Create(ctx context.Context, req *dto.CreateMomentRequest) (*dto.MomentListResponse, error) {
 	// 如果有视频且未提供platform和video_id，自动识别
 	if req.Content.Video != nil && req.Content.Video.URL != "" {
 		// 只在前端没有提供解析结果时才进行解析（避免重复处理）
@@ -173,17 +176,17 @@ func (s *MomentService) Create(ctx context.Context, req *dto.CreateMomentRequest
 	// 标记文件为使用中
 	s.markFilesAsUsed(&req.Content)
 
-	return moment, nil
+	return s.Get(ctx, moment.ID)
 }
 
 // Update 更新动态
-func (s *MomentService) Update(ctx context.Context, id uint, req *dto.UpdateMomentRequest) error {
+func (s *MomentService) Update(ctx context.Context, id uint, req *dto.UpdateMomentRequest) (*dto.MomentListResponse, error) {
 	moment, err := s.repo.Get(ctx, id)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return errors.New("动态不存在")
+			return nil, errors.New("动态不存在")
 		}
-		return err
+		return nil, err
 	}
 
 	// 如果有视频且未提供platform和video_id，自动识别
@@ -201,7 +204,7 @@ func (s *MomentService) Update(ctx context.Context, id uint, req *dto.UpdateMome
 	// 将内容转换为JSON字符串
 	contentBytes, err := json.Marshal(req.Content)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// 获取旧内容，用于对比文件变化
@@ -215,13 +218,13 @@ func (s *MomentService) Update(ctx context.Context, id uint, req *dto.UpdateMome
 	moment.PublishTime = utils.FromJSONTime(req.PublishTime)
 
 	if err := s.repo.Update(ctx, moment); err != nil {
-		return err
+		return nil, err
 	}
 
 	// 更新文件使用状态
 	s.updateFileStatus(&oldContent, &req.Content)
 
-	return nil
+	return s.Get(ctx, id)
 }
 
 // Delete 删除动态

@@ -267,6 +267,11 @@ func (s *FileService) MarkAsUnused(fileUrl string, usageType string) error {
 
 // UploadForWeb 前台文件上传
 func (s *FileService) UploadForWeb(req *upload.Request, host string) (*dto.FileUploadForWebResponse, error) {
+	// 验证上传类型
+	if string(req.UploadType) == "" {
+		return nil, fmt.Errorf("上传类型不能为空")
+	}
+
 	// 文件大小限制（从配置获取，单位MB）
 	maxFileSizeMB := s.uploadManager.GetMaxFileSize()
 	if maxFileSizeMB <= 0 {
@@ -285,6 +290,7 @@ func (s *FileService) UploadForWeb(req *upload.Request, host string) (*dto.FileU
 		"image/png":          true,
 		"image/gif":          true,
 		"image/webp":         true,
+		"image/avif":         true,
 		"application/pdf":    true,
 		"application/msword": true,
 		"application/vnd.openxmlformats-officedocument.wordprocessingml.document": true,
@@ -311,6 +317,11 @@ func (s *FileService) UploadForWeb(req *upload.Request, host string) (*dto.FileU
 
 // Upload 文件上传
 func (s *FileService) Upload(req *upload.Request, host string) (*dto.FileResponse, error) {
+	// 验证上传类型
+	if string(req.UploadType) == "" {
+		return nil, fmt.Errorf("上传类型不能为空")
+	}
+
 	// 调用通用上传方法（传递 host）
 	file, err := s.handleUpload(req, host)
 	if err != nil {
@@ -336,8 +347,19 @@ func (s *FileService) Upload(req *upload.Request, host string) (*dto.FileRespons
 func (s *FileService) List(req *dto.ListFilesRequest) ([]dto.FileResponse, int64, error) {
 	offset := (req.Page - 1) * req.PageSize
 
+	filter := &repository.FileListFilter{
+		Keyword:    req.Keyword,
+		FileType:   req.FileType,
+		Status:     req.Status,
+		UploadType: req.UploadType,
+		MinSize:    req.MinSize,
+		MaxSize:    req.MaxSize,
+		StartTime:  req.StartTime,
+		EndTime:    req.EndTime,
+	}
+
 	// 调用仓储层查询（支持关键词、状态、文件类型、上传类型筛选）
-	files, total, err := s.fileRepo.List(offset, req.PageSize, req.Keyword, req.Status, req.Type, req.UploadType)
+	files, total, err := s.fileRepo.GetByFilter(filter, offset, req.PageSize)
 	if err != nil {
 		return nil, 0, fmt.Errorf("获取文件列表失败: %w", err)
 	}

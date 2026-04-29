@@ -51,7 +51,12 @@ func (s *RssFeedService) List(ctx context.Context, req *dto.ListRssArticleReques
 		req.PageSize = 20
 	}
 
-	articles, total, err := s.repo.List(ctx, req.Page, req.PageSize, req.Keyword, req.IsRead, req.IsDeleted, req.FriendID)
+	articles, total, err := s.repo.List(
+		ctx,
+		req.Page, req.PageSize,
+		req.Keyword, req.FriendID, req.IsRead,
+		req.IsDeleted, req.StartTime, req.EndTime,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -158,11 +163,12 @@ func (s *RssFeedService) refreshFriendFeed(ctx context.Context, friend *model.Fr
 
 		// 解析发布时间
 		var publishedAt *time.Time
-		if item.PublishedParsed != nil {
+		switch {
+		case item.PublishedParsed != nil:
 			publishedAt = item.PublishedParsed
-		} else if item.UpdatedParsed != nil {
+		case item.UpdatedParsed != nil:
 			publishedAt = item.UpdatedParsed
-		} else if item.Published != "" {
+		case item.Published != "":
 			// Fallback: try to parse non-standard pubDate formats
 			if t, err := parseRSSDate(item.Published); err == nil {
 				publishedAt = &t
@@ -257,7 +263,10 @@ func (s *RssFeedService) refreshFriendFeed(ctx context.Context, friend *model.Fr
 
 	// 更新最后更新时间为最新文章的发布时间
 	latestTime, err := s.repo.GetLatestPublishedTime(ctx, friend.ID)
-	if err != nil || latestTime == nil {
+	if err != nil {
+		return err
+	}
+	if latestTime == nil {
 		return nil
 	}
 	return s.repo.UpdateFriendRSSLatime(ctx, friend.ID, *latestTime)

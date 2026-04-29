@@ -56,6 +56,16 @@ func (s *UserService) Get(id uint) (*dto.UserResponse, error) {
 	return dto.NewUserResponse(user), nil
 }
 
+// GetByEmail 通过邮箱获取用户
+func (s *UserService) GetByEmail(email string) (*dto.UserResponse, error) {
+	user, err := s.repo.GetByEmail(email)
+	if err != nil {
+		return nil, err
+	}
+
+	return dto.NewUserResponse(user), nil
+}
+
 // ValidateToken 验证token并返回用户信息
 func (s *UserService) ValidateToken(token string) (*model.User, error) {
 	claims, err := utils.ParseToken(token, &s.config.JWT)
@@ -69,34 +79,47 @@ func (s *UserService) ValidateToken(token string) (*model.User, error) {
 		return nil, errors.New("token已失效，请重新登录")
 	}
 
-	return s.repo.Get(claims.UserID)
+	user, err := s.repo.Get(claims.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	// 检查用户是否被禁用或删除
+	if !user.IsEnabled {
+		return nil, errors.New("该账号已被禁用")
+	}
+
+	// 检查 token 版本号是否匹配
+	if claims.TokenVersion != user.TokenVersion {
+		return nil, errors.New("token已失效，请重新登录")
+	}
+
+	return user, nil
 }
 
 // buildLoginResponse 构建登录响应（含token和用户信息）
-func (s *UserService) buildLoginResponse(user *model.User) (*dto.LoginResponse, error) {
-	// 生成access token
-	accessToken, err := utils.GenerateAccessToken(user.ID, user.Role, &s.config.JWT)
+func (s *UserService) buildLoginResponse(user *model.User) (*dto.LoginResponse, string, error) {
+	accessToken, err := utils.GenerateAccessToken(user.ID, user.Role, user.TokenVersion, &s.config.JWT)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
-	// 生成refresh token
-	refreshToken, err := utils.GenerateRefreshToken(user.ID, user.Role, &s.config.JWT)
+	refreshToken, err := utils.GenerateRefreshToken(user.ID, user.Role, user.TokenVersion, &s.config.JWT)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	return &dto.LoginResponse{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-		User:         dto.NewUserResponse(user),
-	}, nil
+		AccessToken: accessToken,
+		User:        dto.NewUserResponse(user),
+	}, refreshToken, nil
 }
+
 
 // ============ 前台服务 ============
 
 // Register 用户注册
-func (s *UserService) Register(req *dto.RegisterRequest, host string) (*dto.LoginResponse, error) {
+func (s *UserService) Register(req *dto.RegisterRequest, host string) (*dto.LoginResponse, string, error) {
 	// 检查邮箱是否存在
 	existingUser, err := s.repo.GetByEmail(req.Email)
 	if err == nil {
@@ -106,18 +129,18 @@ func (s *UserService) Register(req *dto.RegisterRequest, host string) (*dto.Logi
 			return s.upgradeGuest(existingUser, req, host)
 		}
 		// 已是正式用户，不能重复注册
-		return nil, errors.New("邮箱已被注册")
+		return nil, "", errors.New("邮箱已被注册")
 	}
 
 	// 邮箱不存在（或查询出错），继续检查
 	if !errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, err
+		return nil, "", err
 	}
 
 	// 密码加密
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	// 创建用户
@@ -133,15 +156,14 @@ func (s *UserService) Register(req *dto.RegisterRequest, host string) (*dto.Logi
 	}
 
 	if err := s.repo.Create(user); err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	// 异步下载Cravatar头像
 	go func() {
 		avatarURL, err := s.downloadAndSaveCravatarAvatar(req.Email, user.ID, host)
 		if err == nil && avatarURL != "" {
-			_ = s.repo.UpdateAvatar(user.ID, avatarURL)
-			if s.fileService != nil {
+			if err := s.repo.UpdateAvatar(user.ID, avatarURL); err == nil && s.fileService != nil {
 				_ = s.fileService.MarkAsUsed(avatarURL, "用户头像")
 			}
 		}
@@ -151,11 +173,11 @@ func (s *UserService) Register(req *dto.RegisterRequest, host string) (*dto.Logi
 }
 
 // upgradeGuest 将游客账户升级为正式用户
-func (s *UserService) upgradeGuest(guestUser *model.User, req *dto.RegisterRequest, host string) (*dto.LoginResponse, error) {
+func (s *UserService) upgradeGuest(guestUser *model.User, req *dto.RegisterRequest, host string) (*dto.LoginResponse, string, error) {
 	// 密码加密
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	// 更新用户信息：从游客升级为正式用户
@@ -172,7 +194,7 @@ func (s *UserService) upgradeGuest(guestUser *model.User, req *dto.RegisterReque
 	guestUser.LastLogin = &now
 
 	if err := s.repo.Update(guestUser); err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	// 如果游客没有头像，异步下载Cravatar头像
@@ -180,8 +202,7 @@ func (s *UserService) upgradeGuest(guestUser *model.User, req *dto.RegisterReque
 		go func() {
 			avatarURL, err := s.downloadAndSaveCravatarAvatar(req.Email, guestUser.ID, host)
 			if err == nil && avatarURL != "" {
-				_ = s.repo.UpdateAvatar(guestUser.ID, avatarURL)
-				if s.fileService != nil {
+				if err := s.repo.UpdateAvatar(guestUser.ID, avatarURL); err == nil && s.fileService != nil {
 					_ = s.fileService.MarkAsUsed(avatarURL, "用户头像")
 				}
 			}
@@ -192,7 +213,7 @@ func (s *UserService) upgradeGuest(guestUser *model.User, req *dto.RegisterReque
 }
 
 // LoginBySocial 第三方登录逻辑
-func (s *UserService) LoginBySocial(provider, providerID, email, nickname, avatarURL, host string) (*dto.LoginResponse, error) {
+func (s *UserService) LoginBySocial(provider, providerID, email, nickname, avatarURL, host string) (*dto.LoginResponse, string, error) {
 	// 1. 先通过 OAuth ID 查找用户
 	user, err := s.repo.GetByOAuthID(provider, providerID)
 	if err == nil {
@@ -208,7 +229,7 @@ func (s *UserService) LoginBySocial(provider, providerID, email, nickname, avata
 
 	if err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, err
+			return nil, "", err
 		}
 
 		// 3. 邮箱也不存在 -> 自动注册新用户
@@ -235,7 +256,7 @@ func (s *UserService) LoginBySocial(provider, providerID, email, nickname, avata
 		}
 
 		if err := s.repo.Create(user); err != nil {
-			return nil, err
+			return nil, "", err
 		}
 
 		// 异步下载头像：优先使用第三方头像，否则使用 Cravatar
@@ -290,8 +311,9 @@ func (s *UserService) downloadSocialAvatar(userID uint, email, avatarURL, host s
 	}
 
 	if err == nil && savedURL != "" {
-		_ = s.repo.UpdateAvatar(userID, savedURL)
-		_ = s.fileService.MarkAsUsed(savedURL, "用户头像")
+		if err := s.repo.UpdateAvatar(userID, savedURL); err == nil {
+			_ = s.fileService.MarkAsUsed(savedURL, "用户头像")
+		}
 	}
 }
 
@@ -318,35 +340,35 @@ func (s *UserService) downloadAndSaveRemoteAvatar(avatarURL string, userID uint,
 }
 
 // Login 用户登录
-func (s *UserService) Login(req *dto.LoginRequest) (*dto.LoginResponse, error) {
+func (s *UserService) Login(req *dto.LoginRequest) (*dto.LoginResponse, string, error) {
 	user, err := s.repo.GetByEmail(req.Email)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("邮箱未注册")
+			return nil, "", errors.New("邮箱未注册")
 		}
-		return nil, err
+		return nil, "", err
 	}
 
 	// 禁止游客用户登录（游客没有密码）
 	if user.Role == model.RoleGuest {
-		return nil, errors.New("游客账户无法登录，请先注册成为正式用户")
+		return nil, "", errors.New("游客账户无法登录，请先注册成为正式用户")
 	}
 
 	// 检查用户状态
 	if !user.IsEnabled {
-		return nil, errors.New("该账号已被禁用，请联系管理员")
+		return nil, "", errors.New("该账号已被禁用，请联系管理员")
 	}
 
 	// 验证密码
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
-		return nil, errors.New("密码错误")
+		return nil, "", errors.New("密码错误")
 	}
 
 	// 更新最后登录时间
 	now := utils.Now().Time
 	user.LastLogin = &now
 	if err := s.repo.Update(user); err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	return s.buildLoginResponse(user)
@@ -359,68 +381,77 @@ func hashToken(token string) string {
 }
 
 // RefreshToken 刷新token
-func (s *UserService) RefreshToken(req *dto.RefreshTokenRequest) (*dto.LoginResponse, error) {
+func (s *UserService) RefreshToken(refreshToken string) (*dto.LoginResponse, string, error) {
 	// 解析并验证refresh token
-	claims, err := utils.ParseRefreshToken(req.RefreshToken, &s.config.JWT)
+	claims, err := utils.ParseRefreshToken(refreshToken, &s.config.JWT)
 	if err != nil {
-		return nil, errors.New("无效的refresh token")
+		return nil, "", errors.New("无效的refresh token")
 	}
 
 	// 检查token是否在黑名单中
-	tokenHash := hashToken(req.RefreshToken)
+	tokenHash := hashToken(refreshToken)
 	if s.repo.IsTokenBlacklisted(tokenHash) {
-		return nil, errors.New("token已失效，请重新登录")
+		return nil, "", errors.New("token已失效，请重新登录")
 	}
 
 	// 获取用户信息（验证用户是否存在且未被禁用）
 	user, err := s.repo.Get(claims.UserID)
 	if err != nil {
-		return nil, errors.New("用户不存在")
+		return nil, "", errors.New("用户不存在")
 	}
 
 	if !user.IsEnabled {
-		return nil, errors.New("该账号已被禁用")
+		return nil, "", errors.New("该账号已被禁用")
+	}
+
+	// 检查 token 版本号是否匹配
+	if claims.TokenVersion != user.TokenVersion {
+		return nil, "", errors.New("token已失效，请重新登录")
 	}
 
 	// 生成新的access token
-	accessToken, err := utils.GenerateAccessToken(user.ID, user.Role, &s.config.JWT)
+	accessToken, err := utils.GenerateAccessToken(user.ID, user.Role, user.TokenVersion, &s.config.JWT)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	// 生成新的refresh token
-	refreshToken, err := utils.GenerateRefreshToken(user.ID, user.Role, &s.config.JWT)
+	newRefreshToken, err := utils.GenerateRefreshToken(user.ID, user.Role, user.TokenVersion, &s.config.JWT)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	// 将旧的refresh token加入黑名单（Refresh Token轮换）
 	expiresAt := claims.ExpiresAt.Time
-	if err = s.repo.AddTokenToBlacklist(tokenHash, user.ID, expiresAt); err != nil {
-		// 记录错误但不中断流程（降级处理）
-		_ = err
-	}
+	_ = s.repo.AddTokenToBlacklist(tokenHash, user.ID, expiresAt)
 
 	return &dto.LoginResponse{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-	}, nil
+		AccessToken: accessToken,
+	}, newRefreshToken, nil
 }
 
 // Logout 用户登出
-func (s *UserService) Logout(token string) error {
+func (s *UserService) Logout(accessToken, refreshToken string) error {
 	// 解析并验证 access token
-	claims, err := utils.ParseToken(token, &s.config.JWT)
+	claims, err := utils.ParseToken(accessToken, &s.config.JWT)
 	if err != nil {
 		return errors.New("无效的token")
 	}
 
-	// 将 token 加入黑名单
-	tokenHash := hashToken(token)
+	// 将 access token 加入黑名单
+	tokenHash := hashToken(accessToken)
 	expiresAt := claims.ExpiresAt.Time
-	err = s.repo.AddTokenToBlacklist(tokenHash, claims.UserID, expiresAt)
-	if err != nil {
+	if err = s.repo.AddTokenToBlacklist(tokenHash, claims.UserID, expiresAt); err != nil {
 		return errors.New("登出失败")
+	}
+
+	// 将 refresh token 加入黑名单（忽略错误，降级处理）
+	if refreshToken != "" {
+		if refreshClaims, err := utils.ParseRefreshToken(refreshToken, &s.config.JWT); err == nil {
+			refreshTokenHash := hashToken(refreshToken)
+			refreshExpiresAt := refreshClaims.ExpiresAt.Time
+			_ = s.repo.AddTokenToBlacklist(refreshTokenHash, claims.UserID, refreshExpiresAt)
+		}
 	}
 
 	return nil
@@ -431,9 +462,9 @@ func (s *UserService) CleanupExpiredTokens() error {
 	return s.repo.CleanupExpiredTokens()
 }
 
-// RevokeAllUserTokens 撤销某用户的所有token（用于强制下线，如账号被盗、密码修改等场景）
+// RevokeAllUserTokens 撤销用户所有token（强制所有设备重新登录）
 func (s *UserService) RevokeAllUserTokens(userID uint) error {
-	return s.repo.RevokeAllUserTokens(userID)
+	return s.repo.IncrementTokenVersion(userID)
 }
 
 // UpdateForWeb 更新用户信息
@@ -459,8 +490,9 @@ func (s *UserService) UpdateForWeb(id uint, req *dto.UpdateUserRequest) error {
 	if req.Email != "" {
 		user.Email = req.Email
 	}
-	// 支持删除头像（空字符串）
-	user.Avatar = req.Avatar
+	if req.Avatar != "" {
+		user.Avatar = req.Avatar
+	}
 	if req.Badge != "" {
 		if err := s.validateBadge(req.Badge); err != nil {
 			return err
@@ -503,14 +535,7 @@ func (s *UserService) ChangePassword(userID uint, oldPassword, newPassword strin
 	}
 
 	user.Password = string(hashedNewPassword)
-	if err := s.repo.Update(user); err != nil {
-		return err
-	}
-
-	// 修改密码后撤销所有现有token，强制用户重新登录
-	_ = s.repo.RevokeAllUserTokens(userID)
-
-	return nil
+	return s.repo.UpdatePasswordAndIncrementVersion(userID, user.Password)
 }
 
 // SetPassword 设置密码（针对 OAuth 注册用户首次设置密码）
@@ -539,7 +564,7 @@ func (s *UserService) SetPassword(userID uint, password, confirmPassword string)
 	user.Password = string(hashedPassword)
 	user.HasPassword = true
 
-	return s.repo.Update(user)
+	return s.repo.UpdatePasswordAndIncrementVersion(userID, user.Password, true)
 }
 
 // DeactivateAccount 用户注销账号
@@ -568,7 +593,12 @@ func (s *UserService) DeactivateAccount(userID uint, password string) error {
 // List 获取用户列表
 func (s *UserService) List(req *dto.ListUsersRequest) ([]dto.UserListResponse, int64, error) {
 	offset := (req.Page - 1) * req.PageSize
-	users, total, err := s.repo.List(offset, req.PageSize, req.Keyword, req.Role)
+	users, total, err := s.repo.List(
+		offset, req.PageSize,
+		req.Keyword, req.Role, req.IsEnabled, req.IsDeleted,
+		req.LoginMethod, req.LastLoginStart, req.LastLoginEnd,
+		req.StartTime, req.EndTime,
+	)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -607,7 +637,10 @@ func (s *UserService) List(req *dto.ListUsersRequest) ([]dto.UserListResponse, i
 }
 
 // Create 管理员创建用户
-func (s *UserService) Create(req *dto.AdminCreateUserRequest, host string) error {
+func (s *UserService) Create(operator *model.User, req *dto.AdminCreateUserRequest, host string) error {
+	if err := s.ensureCanCreateUser(operator, req.Role); err != nil {
+		return err
+	}
 	// 检查邮箱是否存在
 	if s.repo.ExistsByEmail(req.Email) {
 		return errors.New("邮箱已存在")
@@ -657,9 +690,13 @@ func (s *UserService) Create(req *dto.AdminCreateUserRequest, host string) error
 }
 
 // Update 管理员更新用户
-func (s *UserService) Update(id uint, req *dto.AdminUpdateUserRequest) error {
+func (s *UserService) Update(operator *model.User, id uint, req *dto.AdminUpdateUserRequest) error {
 	user, err := s.repo.Get(id)
 	if err != nil {
+		return err
+	}
+
+	if err := s.ensureCanUpdateUser(operator, user, req); err != nil {
 		return err
 	}
 
@@ -678,8 +715,7 @@ func (s *UserService) Update(id uint, req *dto.AdminUpdateUserRequest) error {
 
 	oldAvatar := user.Avatar
 
-	// 明确处理头像字段（包括删除场景）
-	if req.Avatar != oldAvatar {
+	if req.Avatar != "" {
 		user.Avatar = req.Avatar
 	}
 
@@ -692,6 +728,16 @@ func (s *UserService) Update(id uint, req *dto.AdminUpdateUserRequest) error {
 	}
 
 	if req.Role != "" {
+		// 如果要将超级管理员改为其他角色，检查是否至少保留一个超级管理员
+		if user.Role == model.RoleSuperAdmin && req.Role != model.RoleSuperAdmin {
+			superAdminCount, err := s.repo.CountSuperAdmins()
+			if err != nil {
+				return err
+			}
+			if superAdminCount <= 1 {
+				return errors.New("系统中至少需要保留一个超级管理员")
+			}
+		}
 		user.Role = req.Role
 	}
 
@@ -706,6 +752,10 @@ func (s *UserService) Update(id uint, req *dto.AdminUpdateUserRequest) error {
 			return err
 		}
 		user.Password = string(hashedPassword)
+		if err := s.repo.Update(user); err != nil {
+			return err
+		}
+		return s.repo.IncrementTokenVersion(id)
 	}
 
 	// 处理头像变化
@@ -722,15 +772,25 @@ func (s *UserService) Update(id uint, req *dto.AdminUpdateUserRequest) error {
 }
 
 // Delete 软删除用户
-func (s *UserService) Delete(id uint) error {
+func (s *UserService) Delete(operator *model.User, id uint) error {
 	user, err := s.repo.Get(id)
 	if err != nil {
 		return err
 	}
 
-	// 禁止删除默认超级管理员（ID为1且角色为super_admin）
-	if user.ID == 1 && user.Role == "super_admin" {
-		return errors.New("禁止删除默认超级管理员")
+	if err := s.ensureCanDeleteUser(operator, user); err != nil {
+		return err
+	}
+
+	// 如果要删除的是超级管理员，检查是否至少保留一个
+	if user.Role == model.RoleSuperAdmin {
+		superAdminCount, err := s.repo.CountSuperAdmins()
+		if err != nil {
+			return err
+		}
+		if superAdminCount <= 1 {
+			return errors.New("系统中至少需要保留一个超级管理员")
+		}
 	}
 
 	// 标记头像为未使用
@@ -743,6 +803,71 @@ func (s *UserService) Delete(id uint) error {
 
 // ============ 辅助方法 ============
 
+// ensureCanCreateUser 校验当前操作人是否可以创建指定角色的用户
+func (s *UserService) ensureCanCreateUser(operator *model.User, role model.UserRole) error {
+	if operator == nil {
+		return errors.New("未找到当前用户信息")
+	}
+	if operator.Role == model.RoleSuperAdmin {
+		return nil
+	}
+	if operator.Role != model.RoleAdmin {
+		return errors.New("无权限执行该操作")
+	}
+	if isAdminManagedRole(role) {
+		return errors.New("管理员不能创建管理员或超级管理员")
+	}
+	return nil
+}
+
+// ensureCanUpdateUser 校验当前操作人是否可以更新目标用户
+func (s *UserService) ensureCanUpdateUser(operator, target *model.User, req *dto.AdminUpdateUserRequest) error {
+	if operator == nil {
+		return errors.New("未找到当前用户信息")
+	}
+	if target == nil {
+		return errors.New("用户不存在")
+	}
+	if operator.Role == model.RoleSuperAdmin {
+		return nil
+	}
+	if operator.Role != model.RoleAdmin {
+		return errors.New("无权限执行该操作")
+	}
+	if isAdminManagedRole(target.Role) {
+		return errors.New("管理员不能操作管理员或超级管理员账号")
+	}
+	if isAdminManagedRole(req.Role) {
+		return errors.New("管理员不能将用户提升为管理员或超级管理员")
+	}
+	return nil
+}
+
+// ensureCanDeleteUser 校验当前操作人是否可以删除目标用户
+func (s *UserService) ensureCanDeleteUser(operator, target *model.User) error {
+	if operator == nil {
+		return errors.New("未找到当前用户信息")
+	}
+	if target == nil {
+		return errors.New("用户不存在")
+	}
+	if operator.Role == model.RoleSuperAdmin {
+		return nil
+	}
+	if operator.Role != model.RoleAdmin {
+		return errors.New("无权限执行该操作")
+	}
+	if isAdminManagedRole(target.Role) {
+		return errors.New("管理员不能操作管理员或超级管理员账号")
+	}
+	return nil
+}
+
+// isAdminManagedRole 判断是否为管理员可管理受限角色
+func isAdminManagedRole(role model.UserRole) bool {
+	return role == model.RoleAdmin || role == model.RoleSuperAdmin
+}
+
 // downloadAndSaveCravatarAvatar 下载并保存Cravatar头像
 func (s *UserService) downloadAndSaveCravatarAvatar(email string, userID uint, host string) (string, error) {
 	if s.fileService == nil {
@@ -752,7 +877,7 @@ func (s *UserService) downloadAndSaveCravatarAvatar(email string, userID uint, h
 	// 下载头像
 	reader, err := utils.DownloadCravatarAvatar(email)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 
 	// 生成文件名
@@ -770,7 +895,7 @@ func (s *UserService) downloadAndSaveCravatarAvatar(email string, userID uint, h
 	)
 
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 
 	return fileURL, nil

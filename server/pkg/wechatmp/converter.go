@@ -344,6 +344,8 @@ var (
 	tabsPattern = regexp.MustCompile(`(?s):::tabs\r?\n(.*?):::endtabs`)
 	// :::tab title ... :::endtab 单个标签页
 	tabPattern = regexp.MustCompile(`(?s):::tab\s+([^\r\n]+)\r?\n(.*?):::endtab`)
+	// :::video platform id ::: 或 :::video url ::: 在线视频
+	videoPattern = regexp.MustCompile(`:::video\s+(\S+)(?:\s+(\S+))?\s*:::`)
 )
 
 // ConvertLinksToFootnotes 将 Markdown 链接转换为脚注格式
@@ -397,12 +399,44 @@ var noteTypeColors = map[string]string{
 }
 
 // ConvertCustomBlocks 转换自定义块语法为 Markdown 原生格式
-// 处理顺序：先内层后外层（link → note → fold → tabs）
+// 处理顺序：video → link → note → fold → tabs
 func ConvertCustomBlocks(markdown string) string {
 	// 统一换行符为 \n
 	markdown = strings.ReplaceAll(markdown, "\r\n", "\n")
 
-	// 1. 先处理链接卡片（最内层，可能嵌套在 note/fold/tabs 中）
+	// 处理视频（公众号不支持iframe/video标签，转为链接卡片）
+	markdown = videoPattern.ReplaceAllStringFunc(markdown, func(match string) string {
+		submatch := videoPattern.FindStringSubmatch(match)
+		if len(submatch) < 2 {
+			return match
+		}
+		platformOrURL := strings.TrimSpace(submatch[1])
+		videoID := ""
+		if len(submatch) >= 3 {
+			videoID = strings.TrimSpace(submatch[2])
+		}
+
+		// B站视频
+		if platformOrURL == "bilibili" && videoID != "" {
+			url := fmt.Sprintf("https://www.bilibili.com/video/%s", videoID)
+			return fmt.Sprintf(`<section style="margin:15px 0;padding:12px 15px;border:1px solid #DEC6FB;border-radius:8px;background:#FAF5FF;"><p style="margin:0 0 8px;font-size:14px;color:#9B7BB8;">📺 哔哩哔哩视频</p><a href="%s" style="color:#515151;font-size:14px;text-decoration:none;">点击观看：BV%s</a></section>`, url, videoID)
+		}
+
+		// YouTube视频
+		if platformOrURL == "youtube" && videoID != "" {
+			url := fmt.Sprintf("https://www.youtube.com/watch?v=%s", videoID)
+			return fmt.Sprintf(`<section style="margin:15px 0;padding:12px 15px;border:1px solid #DEC6FB;border-radius:8px;background:#FAF5FF;"><p style="margin:0 0 8px;font-size:14px;color:#9B7BB8;">📺 YouTube视频</p><a href="%s" style="color:#515151;font-size:14px;text-decoration:none;">点击观看：%s</a></section>`, url, videoID)
+		}
+
+		// 直接视频URL
+		if strings.HasPrefix(platformOrURL, "http://") || strings.HasPrefix(platformOrURL, "https://") || strings.HasPrefix(platformOrURL, "/") {
+			return fmt.Sprintf(`<section style="margin:15px 0;padding:12px 15px;border:1px solid #DEC6FB;border-radius:8px;background:#FAF5FF;"><p style="margin:0 0 8px;font-size:14px;color:#9B7BB8;">🎬 在线视频</p><a href="%s" style="color:#515151;font-size:14px;text-decoration:none;">点击观看</a></section>`, platformOrURL)
+		}
+
+		return match
+	})
+
+	// 处理链接卡片（最内层，可能嵌套在 note/fold/tabs 中）
 	markdown = linkCardPattern.ReplaceAllStringFunc(markdown, func(match string) string {
 		submatch := linkCardPattern.FindStringSubmatch(match)
 		if len(submatch) < 3 {
@@ -421,7 +455,7 @@ func ConvertCustomBlocks(markdown string) string {
 		return fmt.Sprintf("[%s](%s)", title, url)
 	})
 
-	// 2. 处理提示框（可能嵌套在 fold/tabs 中）
+	// 处理提示框（可能嵌套在 fold/tabs 中）
 	markdown = notePattern.ReplaceAllStringFunc(markdown, func(match string) string {
 		submatch := notePattern.FindStringSubmatch(match)
 		if len(submatch) < 4 {
@@ -445,7 +479,7 @@ func ConvertCustomBlocks(markdown string) string {
 		return fmt.Sprintf("> **<span style=\"color:%s;\">▎%s</span>**\n>\n%s", borderColor, title, strings.Join(quotedLines, "\n"))
 	})
 
-	// 3. 处理折叠面板（可能嵌套在 tabs 中）
+	// 处理折叠面板（可能嵌套在 tabs 中）
 	markdown = foldPattern.ReplaceAllStringFunc(markdown, func(match string) string {
 		submatch := foldPattern.FindStringSubmatch(match)
 		if len(submatch) < 3 {
@@ -463,7 +497,7 @@ func ConvertCustomBlocks(markdown string) string {
 		return fmt.Sprintf("> **%s**\n>\n%s", title, strings.Join(quotedLines, "\n"))
 	})
 
-	// 4. 最后处理标签页（最外层）
+	// 最后处理标签页（最外层）
 	markdown = tabsPattern.ReplaceAllStringFunc(markdown, func(match string) string {
 		submatch := tabsPattern.FindStringSubmatch(match)
 		if len(submatch) < 2 {
@@ -488,7 +522,7 @@ func ConvertCustomBlocks(markdown string) string {
 				result.WriteString("\n\n")
 			}
 			// 用 section 标签实现类似 h4 的样式（不带渐变背景）
-			result.WriteString(fmt.Sprintf("<section style=\"font-size:16px;font-weight:bold;line-height:1.5;margin:16px 0 10px;\">%s</section>\n\n%s", tabTitle, tabContent))
+			fmt.Fprintf(&result, "<section style=\"font-size:16px;font-weight:bold;line-height:1.5;margin:16px 0 10px;\">%s</section>\n\n%s", tabTitle, tabContent)
 		}
 
 		return result.String()
