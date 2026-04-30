@@ -329,6 +329,15 @@ const handleReset = () => {
 };
 </script>
 
+onMounted(() => {
+  // 组件挂载时初始化日期范围
+  if (filterForm.value.start_time && filterForm.value.end_time) {
+    dateRange.value = [filterForm.value.start_time, filterForm.value.end_time];
+    startDate.value = filterForm.value.start_time;
+    endDate.value = filterForm.value.end_time;
+  }
+});
+
 <style scoped>
 /* 时间选择器左对齐 */
 :deep(.date-picker-left) {

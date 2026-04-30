@@ -281,7 +281,7 @@ const handleDateChange = (val: [string, string] | null) => {
     startDate.value = '';
     endDate.value = '';
   }
-}
+};
 
 /**
  * 处理移动端日期变化

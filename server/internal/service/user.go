@@ -719,12 +719,12 @@ func (s *UserService) Update(operator *model.User, id uint, req *dto.AdminUpdate
 		user.Avatar = req.Avatar
 	}
 
-	if req.Badge != "" {
-		user.Badge = req.Badge
+	if req.Badge != nil {
+		user.Badge = *req.Badge
 	}
 
-	if req.Website != "" {
-		user.Website = req.Website
+	if req.Website != nil {
+		user.Website = *req.Website
 	}
 
 	if req.Role != "" {

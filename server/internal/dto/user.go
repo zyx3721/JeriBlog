@@ -155,8 +155,8 @@ type AdminUpdateUserRequest struct {
 	Email     string         `json:"email,omitempty" binding:"omitempty,email"`
 	Nickname  string         `json:"nickname,omitempty" binding:"omitempty,min=2,max=32"`
 	Avatar    string         `json:"avatar,omitempty" binding:"omitempty,max=255"`
-	Badge     string         `json:"badge,omitempty" binding:"omitempty,max=50"`
-	Website   string         `json:"website,omitempty" binding:"omitempty,url,max=255"`
+	Badge     *string        `json:"badge,omitempty" binding:"omitempty,max=50"`          // 使用指针以区分未设置和已设置
+	Website   *string        `json:"website,omitempty" binding:"omitempty,url,max=255"`   // 使用指针以区分未设置和已设置
 	Role      model.UserRole `json:"role,omitempty" binding:"omitempty,oneof=super_admin admin user guest"`
 	IsEnabled *bool          `json:"is_enabled,omitempty"`                                // 使用指针以区分未设置和false
 	Password  string         `json:"password,omitempty" binding:"omitempty,min=6,max=32"` // 可选的密码字段，用于更新密码

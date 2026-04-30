@@ -12,7 +12,6 @@
 package repository
 
 import (
-	"jeri_blog/internal/dto"
 	"jeri_blog/internal/model"
 	"jeri_blog/pkg/utils"
 	"strings"
