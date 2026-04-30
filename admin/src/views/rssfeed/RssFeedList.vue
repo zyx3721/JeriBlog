@@ -68,14 +68,19 @@
         <el-button class="icon-btn" @click="openSubscriberDialog">
           <el-icon><Bell /></el-icon><span class="btn-text">本站订阅</span>
         </el-button>
-        
-        <el-button type="warning" :loading="refreshing" @click="handleRefreshRss" v-if="isSuperAdmin">
+
+        <el-button
+          type="warning"
+          :loading="refreshing"
+          @click="handleRefreshRss"
+          v-if="isSuperAdmin"
+        >
           <el-icon v-if="!refreshing">
             <Download />
           </el-icon>
           {{ refreshing ? '抓取中...' : '立即抓取RSS' }}
         </el-button>
-  
+
         <el-badge :value="unreadCount" :hidden="unreadCount === 0" :max="99" class="unread-badge">
           <el-button
             class="icon-btn"
@@ -92,9 +97,7 @@
       <!-- 表格列 -->
       <el-table-column label="状态" width="80" align="center">
         <template #default="{ row }">
-          <el-tag v-if="row.is_deleted" type="danger" size="small">
-            已删除
-          </el-tag>
+          <el-tag v-if="row.is_deleted" type="danger" size="small"> 已删除 </el-tag>
           <el-tag v-else :type="row.is_read ? 'info' : 'warning'" size="small">
             {{ row.is_read ? '已读' : '未读' }}
           </el-tag>
@@ -103,17 +106,29 @@
 
       <el-table-column label="文章标题" min-width="300" align="center">
         <template #default="{ row }">
-          <div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
+          <div style="display: flex; align-items: center; gap: 8px; justify-content: center">
             <a :href="row.link" target="_blank" class="article-link" :class="{ read: row.is_read }">
               {{ row.title }}
             </a>
-            <el-tag v-if="row.update_type && row.update_type.includes('title')" type="success" size="small">
+            <el-tag
+              v-if="row.update_type && row.update_type.includes('title')"
+              type="success"
+              size="small"
+            >
               标题已更新
             </el-tag>
-            <el-tag v-if="row.update_type && row.update_type.includes('link')" type="warning" size="small">
+            <el-tag
+              v-if="row.update_type && row.update_type.includes('link')"
+              type="warning"
+              size="small"
+            >
               链接已更新
             </el-tag>
-            <el-tag v-if="row.update_type && row.update_type.includes('published_at')" type="info" size="small">
+            <el-tag
+              v-if="row.update_type && row.update_type.includes('published_at')"
+              type="info"
+              size="small"
+            >
               发布时间已更新
             </el-tag>
           </div>
@@ -221,7 +236,12 @@ import RssFeedFilter from './components/RssFeedFilter.vue';
 import type { RssArticle, RssArticleQuery } from '@/types/rssfeed';
 import type { Subscriber } from '@/types/subscriber';
 import type { Friend } from '@/types/friend';
-import { getRssArticles, markRssArticleRead, markAllRssArticlesRead, refreshAllRssFeeds } from '@/api/rssfeed';
+import {
+  getRssArticles,
+  markRssArticleRead,
+  markAllRssArticlesRead,
+  refreshAllRssFeeds,
+} from '@/api/rssfeed';
 import { getSubscribers, deleteSubscriber } from '@/api/subscriber';
 import { getFriends } from '@/api/friend';
 import { formatDateTime } from '@/utils/date';
@@ -323,7 +343,7 @@ const handleMarkRead = async (article: RssArticle) => {
   try {
     await markRssArticleRead(article.id);
     // 在列表中找到对应文章并更新
-    const index = articleList.value.findIndex(a => a.id === article.id)
+    const index = articleList.value.findIndex(a => a.id === article.id);
     if (index !== -1 && articleList.value[index]) {
       articleList.value[index].is_read = true;
       articleList.value[index].update_type = '';
@@ -368,7 +388,7 @@ const handleRefreshRss = async () => {
     ElMessage.success('RSS订阅源刷新成功，正在重新加载列表...');
     // 延迟1秒后刷新列表，确保数据已入库
     setTimeout(() => {
-      fetchArticles(),
+      fetchArticles();
     }, 1000);
   } catch (error) {
     if (error !== 'cancel' && error instanceof Error) {

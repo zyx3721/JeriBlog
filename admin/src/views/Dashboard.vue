@@ -253,7 +253,10 @@
               <Right />
             </el-icon>
           </div>
-          <div class="link-item" @click="openLink('https://ccnlf8xcz6k3.feishu.cn/wiki/space/7618178485001046989')">
+          <div
+            class="link-item"
+            @click="openLink('https://ccnlf8xcz6k3.feishu.cn/wiki/space/7618178485001046989')"
+          >
             <span class="link-text">文档</span>
             <el-icon class="link-icon">
               <Right />
@@ -261,7 +264,7 @@
           </div>
         </div>
         <div class="quick-illustration">
-          <img src="@/assets/img/dashboard.png" alt="dashboard">
+          <img src="@/assets/img/dashboard.png" alt="dashboard" />
         </div>
       </div>
     </el-card>
@@ -801,7 +804,6 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 .dashboard {
-
   // 顶部区域
   .top-card {
     margin-bottom: 14px;
@@ -1083,7 +1085,6 @@ onUnmounted(() => {
 
   // 移动端优化（<992px）
   @media (max-width: 991px) {
-
     // 禁用移动端的 hover 效果
     :deep(.el-card.is-hover-shadow:hover) {
       box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);

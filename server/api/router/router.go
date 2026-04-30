@@ -46,7 +46,7 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 	settingRepo := repository.NewSettingRepository(db.DB)
 
 	// 初始化上传系统
-	uploadManager := upload.InitializeUploadSystem(conf)
+	uploadManager := upload.InitializeUploadSystem(conf, r)
 
 	// 使用中间件
 	r.Use(middleware.CORS(conf))              // CORS跨域
@@ -83,16 +83,16 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 	notificationSvc := notification.NewService(emailClient, feishuClient, conf)
 	userService := service.NewUserService(userRepo, fileService, conf)
 	verificationService := service.NewVerificationService(verificationRepo, userRepo, emailClient, conf)
-	articleService := service.NewArticleService(articleRepo, tagRepo, categoryRepo, commentRepo, fileService, db.DB)
+	articleService := service.NewArticleService(articleRepo, tagRepo, categoryRepo, commentRepo, fileService, db.DB, conf)
 	tagService := service.NewTagService(tagRepo, articleRepo)
 	categoryService := service.NewCategoryService(categoryRepo, articleRepo)
 	notificationService := service.NewNotificationService(notificationRepo, notificationSvc)
 	commentService := service.NewCommentService(commentRepo, articleRepo, userRepo, notificationService, fileService)
 	statsService := service.NewStatsService(statsRepo, conf)
-	friendService := service.NewFriendService(friendRepo, fileService, notificationService)
+	friendService := service.NewFriendService(friendRepo, rssFeedRepo, fileService, notificationService)
 	momentService := service.NewMomentService(momentRepo, fileService)
 	menuService := service.NewMenuService(menuRepo, fileService)
-	feedbackService := service.NewFeedbackService(feedbackRepo, notificationService, fileService)
+	feedbackService := service.NewFeedbackService(feedbackRepo, notificationService, fileService, emailClient)
 	subscriberService := service.NewSubscriberService(subscriberRepo, emailClient, conf)
 	rssFeedService := service.NewRssFeedService(rssFeedRepo, notificationService)
 	systemService := service.NewSystemService(db.DB, uploadManager, emailClient, feishuClient, notificationService)
@@ -111,7 +111,7 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 	categoryController := v1.NewCategoryController(categoryService)
 	tagController := v1.NewTagController(tagService)
 	commentController := v1.NewCommentController(commentService)
-	fileController := v1.NewFileController(fileService)
+	fileController := v1.NewFileController(fileService, conf)
 	statsHandler := v1.NewStatsHandler(statsService)
 	friendController := v1.NewFriendController(friendService)
 	momentController := v1.NewMomentController(momentService)

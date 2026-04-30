@@ -14,19 +14,19 @@
     <div v-for="(item, index) in internalValue" :key="index" class="editor-item">
       <!-- 排序按钮 -->
       <template v-if="!hideControls">
-        <el-button 
-          :icon="ArrowUp" 
-          circle 
-          size="small" 
+        <el-button
+          :icon="ArrowUp"
+          circle
+          size="small"
           @click="moveUp(index)"
-          :disabled="disabled || index === 0" 
+          :disabled="disabled || index === 0"
         />
-        <el-button 
-          :icon="ArrowDown" 
-          circle 
-          size="small" 
+        <el-button
+          :icon="ArrowDown"
+          circle
+          size="small"
           @click="moveDown(index)"
-          :disabled="disabled || index === internalValue.length - 1" 
+          :disabled="disabled || index === internalValue.length - 1"
           style="margin-left: 0"
         />
       </template>
@@ -78,26 +78,26 @@
       </template>
 
       <!-- 删除按钮 -->
-      <el-button 
+      <el-button
         v-if="!hideControls"
-        type="danger" 
-        :icon="Delete" 
-        circle 
-        size="small" 
+        type="danger"
+        :icon="Delete"
+        circle
+        size="small"
         @click="removeItem(index)"
-        :disabled="disabled" 
+        :disabled="disabled"
       />
     </div>
 
     <!-- 添加按钮行 -->
     <div v-if="!hideControls" class="editor-item add-row">
-      <el-button 
-        type="primary" 
-        :icon="Plus" 
-        circle 
-        size="small" 
+      <el-button
+        type="primary"
+        :icon="Plus"
+        circle
+        size="small"
         @click="addItem"
-        :disabled="disabled" 
+        :disabled="disabled"
       />
     </div>
   </div>

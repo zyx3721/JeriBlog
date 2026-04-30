@@ -34,7 +34,7 @@ export async function uploadFile(file: File, type = ''): Promise<UploadResponse>
   try {
     return await request.post('/admin/files', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
-      timeout: 300000 // 5分钟超时，支持大文件上传
+      timeout: 300000, // 5分钟超时，支持大文件上传
     });
   } catch (error: unknown) {
     const err = error as { response?: { data?: { message?: string } }; message?: string };
@@ -66,11 +66,11 @@ export function deleteFile(id: number): Promise<void> {
  * 文件引用信息
  */
 export interface FileReference {
-  type: string // 引用类型：article/user/friend/setting
-  id: number // 引用对象ID
-  title: string // 引用对象标题
-  field: string // 引用字段
-  url?: string // 引用对象链接
+  type: string; // 引用类型：article/user/friend/setting
+  id: number; // 引用对象ID
+  title: string; // 引用对象标题
+  field: string; // 引用字段
+  url?: string; // 引用对象链接
 }
 
 /**

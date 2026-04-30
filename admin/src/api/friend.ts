@@ -116,4 +116,3 @@ export function updateFriend(id: number, data: UpdateFriendRequest): Promise<Fri
 export function deleteFriend(id: number): Promise<void> {
   return request.delete(`/admin/friends/${id}`);
 }
-

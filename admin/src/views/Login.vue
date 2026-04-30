@@ -247,7 +247,6 @@ const handleLogin = async () => {
 
 @media (max-width: 768px) {
   .admin-login {
-
     &::before,
     &::after {
       display: none;

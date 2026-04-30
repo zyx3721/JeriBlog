@@ -290,12 +290,14 @@
         v-model="imageUrlInput"
         placeholder="输入图片链接、上传或选择本地文件"
         @keyup.enter="addImageUrl"
-        style="margin-bottom: 12px;"
+        style="margin-bottom: 12px"
       />
 
       <!-- 三个按钮左右对齐布局 -->
       <div class="button-row">
-        <el-button type="primary" @click="addImageUrl" :disabled="!imageUrlInput.trim()">添加</el-button>
+        <el-button type="primary" @click="addImageUrl" :disabled="!imageUrlInput.trim()"
+          >添加</el-button
+        >
         <div class="button-group">
           <el-button type="primary" @click="handleImageUpload">上传文件</el-button>
           <el-button type="primary" @click="handleImagePicker">选择文件</el-button>
@@ -431,13 +433,18 @@
         v-model="videoUrlInput"
         placeholder="输入视频链接、上传或选择本地文件"
         @keyup.enter="addVideoUrl"
-        style="margin-bottom: 12px;"
+        style="margin-bottom: 12px"
         :disabled="!!videoItem"
       />
 
       <!-- 三个按钮左右对齐布局 -->
       <div class="button-row" v-if="!videoItem">
-        <el-button type="primary" @click="addVideoUrl" :disabled="!videoUrlInput.trim()" :loading="fetchingVideo">
+        <el-button
+          type="primary"
+          @click="addVideoUrl"
+          :disabled="!videoUrlInput.trim()"
+          :loading="fetchingVideo"
+        >
           {{ fetchingVideo ? '解析中...' : '解析' }}
         </el-button>
         <div class="button-group">
@@ -449,8 +456,14 @@
       <!-- 已添加视频时显示 -->
       <div v-if="videoItem" class="video-url-item">
         <el-input
-          :value="videoItem.platform && videoItem.video_id ? getVideoIframeSrc(videoItem.platform, videoItem.video_id) : videoItem.url"
-          readonly style="flex: 1" />
+          :value="
+            videoItem.platform && videoItem.video_id
+              ? getVideoIframeSrc(videoItem.platform, videoItem.video_id)
+              : videoItem.url
+          "
+          readonly
+          style="flex: 1"
+        />
         <el-button type="danger" size="small" @click="removeVideo">删除</el-button>
       </div>
     </div>
@@ -667,9 +680,12 @@ const formData = reactive<CreateMomentRequest>({
 const publishTime = ref('');
 
 // 计算属性
-const hasContent = computed(() =>
-  formData.content.link?.url || imageItems.value.length ||
-  formData.content.music?.id || videoItem.value
+const hasContent = computed(
+  () =>
+    formData.content.link?.url ||
+    imageItems.value.length ||
+    formData.content.music?.id ||
+    videoItem.value
 );
 
 const otherContentPreviews = computed(() => {
@@ -827,7 +843,7 @@ const handleParseMusic = async () => {
   fetchingMusic.value = true;
   try {
     const { server, type, id } = formData.content.music;
-    const data = await parseMusic({ server, type, id })
+    const data = await parseMusic({ server, type, id });
 
     if (data && data.length > 0) {
       const info = data[0];
@@ -965,7 +981,7 @@ const handleFileSelect = (files: any[]) => {
         id: `${Date.now()}-${Math.random()}`,
         type: 'url',
         url: file.file_url,
-      })
+      });
     });
   } else if (filePickerPurpose.value === 'video') {
     if (files.length > 0) {
@@ -977,7 +993,7 @@ const handleFileSelect = (files: any[]) => {
     }
   }
   filePickerVisible.value = false;
-}
+};
 
 // 文件选择器回调（单选）
 const handleFileSingleSelect = (file: any) => {
@@ -989,7 +1005,7 @@ const handleFileSingleSelect = (file: any) => {
     };
   }
   filePickerVisible.value = false;
-}
+};
 
 // 添加网络图片
 const addImageUrl = () => {

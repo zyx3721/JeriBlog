@@ -205,7 +205,11 @@
   </div>
 
   <!-- 弹窗组件：懒挂载，首次打开时才渲染 -->
-  <category-manager v-if="categoryMounted" v-model="categoryDialogVisible" @success="handleCategoryUpdate" />
+  <category-manager
+    v-if="categoryMounted"
+    v-model="categoryDialogVisible"
+    @success="handleCategoryUpdate"
+  />
   <tag-manager v-if="tagMounted" v-model="tagDialogVisible" @success="handleTagUpdate" />
 
   <!-- 导出弹窗 -->
@@ -357,7 +361,6 @@
     }
   }
 }
-
 </style>
 
 <script setup lang="ts">
@@ -483,12 +486,12 @@ const openTagManager = () => {
  * 处理分类更新（新增/删除分类后）
  */
 const handleCategoryUpdate = () => {
-  loadCategoriesForQuickFilter()
+  loadCategoriesForQuickFilter();
   // 如果筛选面板打开，也更新筛选面板的分类列表
   if (showFilter.value && articleFilterRef.value) {
-    articleFilterRef.value.loadCategories()
+    articleFilterRef.value.loadCategories();
   }
-}
+};
 
 /**
  * 处理标签更新（新增/删除标签后）
@@ -496,9 +499,9 @@ const handleCategoryUpdate = () => {
 const handleTagUpdate = () => {
   // 如果筛选面板打开，更新筛选面板的标签列表
   if (showFilter.value && articleFilterRef.value) {
-    articleFilterRef.value.loadTags()
+    articleFilterRef.value.loadTags();
   }
-}
+};
 
 /**
  * 获取文章列表

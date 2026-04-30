@@ -491,7 +491,6 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .feedback-detail-page {
-
   .card-header {
     display: flex;
     justify-content: space-between;

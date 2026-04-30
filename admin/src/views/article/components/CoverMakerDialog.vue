@@ -889,7 +889,7 @@ onUnmounted(() => {
         }
 
         &.active {
-          border: 2px solid #409EFF;
+          border: 2px solid #409eff;
           box-shadow: 0 0 0 4px rgba(64, 158, 255, 0.2);
         }
 
@@ -929,7 +929,7 @@ onUnmounted(() => {
       transition: all 0.3s ease;
 
       &:hover {
-        border-color: #409EFF;
+        border-color: #409eff;
         background: rgba(64, 158, 255, 0.05);
       }
 
@@ -973,7 +973,7 @@ onUnmounted(() => {
       width: 0;
     }
 
-    >* {
+    > * {
       position: absolute;
       top: 0;
       left: 0;
@@ -1031,7 +1031,7 @@ onUnmounted(() => {
     left: 0;
     right: 0;
     bottom: 0;
-    background: #1F2937;
+    background: #1f2937;
     pointer-events: none;
     z-index: 1;
   }

@@ -97,7 +97,6 @@
             <div v-else-if="notifications.length > 0" class="no-more">没有更多了</div>
           </div>
         </div>
-
       </div>
     </el-popover>
   </div>
@@ -108,7 +107,13 @@ import { ref, onMounted, onUnmounted, type Component } from 'vue';
 import { useRouter } from 'vue-router';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Bell, ChatDotRound, QuestionFilled, Warning, Link } from '@element-plus/icons-vue';
-import { getNotifications, markAsRead, markAllAsRead, clearAllNotifications, clearReadNotifications } from '@/api/notification';
+import {
+  getNotifications,
+  markAsRead,
+  markAllAsRead,
+  clearAllNotifications,
+  clearReadNotifications,
+} from '@/api/notification';
 import type { Notification, NotificationType } from '@/types/notification';
 import { formatMomentTime } from '@/utils/date';
 import { notificationManager } from '@/utils/notification';
@@ -197,7 +202,7 @@ const handleClearAll = async () => {
     await ElMessageBox.confirm('确定要清空所有已读通知吗？', '提示', {
       type: 'warning',
       confirmButtonText: '确定',
-      cancelButtonText: '取消'
+      cancelButtonText: '取消',
     });
     await clearReadNotifications();
 

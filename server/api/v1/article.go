@@ -363,7 +363,7 @@ func (c *ArticleController) ImportArticles(ctx *gin.Context) {
 	}
 
 	var result *dto.ImportArticlesResult
-	result, err := c.articleService.ImportArticles(ctx.Request.Context(), fileContents, sourceType, uploadImages, host, imageProxy)
+	result, err = c.articleService.ImportArticles(ctx.Request.Context(), fileContents, sourceType, uploadImages, host, imageProxy)
 	if err != nil {
 		response.Failed(ctx, err.Error())
 		return

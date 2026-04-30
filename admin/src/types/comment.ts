@@ -64,4 +64,3 @@ export interface ImportCommentsResult {
   user_created: number;
   errors?: ImportCommentError[];
 }
-

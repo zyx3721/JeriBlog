@@ -72,10 +72,7 @@
                   width="120px"
                   height="120px"
                 />
-                <el-button
-                  class="select-file-btn"
-                  @click="handleSelectFile('avatar')"
-                >
+                <el-button class="select-file-btn" @click="handleSelectFile('avatar')">
                   <i class="ri-folder-image-line"></i>
                   选择文件
                 </el-button>
@@ -93,10 +90,7 @@
                   width="213px"
                   height="120px"
                 />
-                <el-button
-                  class="select-file-btn"
-                  @click="handleSelectFile('screenshot')"
-                >
+                <el-button class="select-file-btn" @click="handleSelectFile('screenshot')">
                   <i class="ri-folder-image-line"></i>
                   选择文件
                 </el-button>
@@ -272,17 +266,13 @@ const formRules: FormRules = {
     },
     { max: 255, message: '链接地址长度不能超过255个字符', trigger: 'blur' },
   ],
-  description: [
-    { max: 500, message: '描述长度不能超过500个字符', trigger: 'blur' },
-  ],
-  type_id: [
-    { required: true, message: '请选择友链类型', trigger: 'change' },
-  ],
+  description: [{ max: 500, message: '描述长度不能超过500个字符', trigger: 'blur' }],
+  type_id: [{ required: true, message: '请选择友链类型', trigger: 'change' }],
   sort: [
     { required: true, message: '请输入排序值', trigger: 'blur' },
     { type: 'number', min: 1, max: 10, message: '排序值必须在 1-10 之间', trigger: 'blur' },
-  ]
-}
+  ],
+};
 
 // 加载友链类型列表
 const loadFriendTypes = async () => {
@@ -350,7 +340,7 @@ watch(
       resetFormData();
     }
   },
-  { immediate: true}
+  { immediate: true }
 );
 
 // 取消
@@ -371,7 +361,11 @@ const downloadPreviewImage = async (
 ): Promise<PreviewImageInfo | null> => {
   try {
     // 使用更长的超时时间（5分钟）下载图片
-    const response = await request.post('/admin/tools/download-image', { url }, { timeout: 300000 })
+    const response = await request.post(
+      '/admin/tools/download-image',
+      { url },
+      { timeout: 300000 }
+    );
 
     // 简化：直接使用base64创建Blob
     const blob = await fetch(`data:image/png;base64,${response.data}`).then(res => res.blob());

@@ -30,4 +30,3 @@ export interface SubscriberListData {
   page: number;
   page_size: number;
 }
-

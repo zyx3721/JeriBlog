@@ -38,8 +38,7 @@
       @update:page="fetchFriends"
       @update:pageSize="fetchFriends"
     >
-
-    <!-- 快速筛选 -->
+      <!-- 快速筛选 -->
       <template #toolbar-before>
         <template v-if="!showFilter">
           <el-input

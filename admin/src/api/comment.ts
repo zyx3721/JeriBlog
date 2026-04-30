@@ -68,6 +68,6 @@ export function importComments(formData: FormData): Promise<ImportCommentsResult
     headers: {
       'Content-Type': 'multipart/form-data',
     },
-    timeout: 300000 // 5分钟超时，支持大量评论导入
+    timeout: 300000, // 5分钟超时，支持大量评论导入
   });
 }

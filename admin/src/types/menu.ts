@@ -58,4 +58,3 @@ export interface MenuResponse {
   is_enabled: boolean;
   parent_id: number | null;
 }
-

@@ -355,7 +355,7 @@ const handleEdit = (id: number) => {
 const handleDialogSuccess = () => {
   fetchMoments();
   fetchAllMomentsForTags();
-}
+};
 
 const handleDelete = async (id: number) => {
   try {

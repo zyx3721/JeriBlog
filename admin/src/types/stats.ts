@@ -56,7 +56,7 @@ export interface ArticleContribution {
 
 // 文章贡献查询参数
 export interface ContributionQuery {
-  year?: number;  // 年份（可选）
+  year?: number; // 年份（可选）
   month?: number; // 月份 1-12（可选）
 }
 

@@ -53,4 +53,3 @@ export function clearAllNotifications(): Promise<void> {
 export function clearReadNotifications(): Promise<void> {
   return request.delete('/admin/notifications/clear-read');
 }
-

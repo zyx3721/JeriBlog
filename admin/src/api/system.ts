@@ -27,4 +27,3 @@ export function getSystemStatic(): Promise<SystemStatic> {
 export function getSystemDynamic(): Promise<SystemDynamic> {
   return request.get('/admin/system/dynamic');
 }
-

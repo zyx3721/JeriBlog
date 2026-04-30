@@ -65,13 +65,13 @@
       <el-form-item label="网站Favicon">
         <div class="image-upload-wrapper">
           <ImageUploader
-          ref="faviconUploaderRef"
-          v-model="form.favicon"
-          upload-type="博客图标"
-          width="120px"
-          height="120px"
-          :disabled="loading"
-        />
+            ref="faviconUploaderRef"
+            v-model="form.favicon"
+            upload-type="博客图标"
+            width="120px"
+            height="120px"
+            :disabled="loading"
+          />
           <el-button class="select-file-btn" @click="openFilePicker('favicon')">
             <i class="ri-folder-image-line"></i>
             选择文件
@@ -436,9 +436,9 @@
       </el-form-item>
     </div>
 
-    <el-alert type="info" :closable="false" style="margin-bottom: 20px;">
+    <el-alert type="info" :closable="false" style="margin-bottom: 20px">
       <template #default>
-        <div style="line-height: 1.6;">
+        <div style="line-height: 1.6">
           上传收款码图片后将自动保存。保存后导航栏将显示打赏按钮，若两个字段均为空，点击打赏按钮时将提示"暂未开放打赏功能"。
         </div>
       </template>
@@ -672,20 +672,35 @@ const handleFontSiteCommand = (url: string) => {
 };
 
 // 文件选择对话框
-const filePickerVisible = ref(false)
-const currentField = ref<'favicon' | 'background_image' | 'screenshot' | 'about_exhibition' | 'wechat_qrcode' | 'alipay_qrcode'>('favicon')
+const filePickerVisible = ref(false);
+const currentField = ref<
+  | 'favicon'
+  | 'background_image'
+  | 'screenshot'
+  | 'about_exhibition'
+  | 'wechat_qrcode'
+  | 'alipay_qrcode'
+>('favicon');
 
 // 打开文件选择对话框
-const openFilePicker = (field: 'favicon' | 'background_image' | 'screenshot' | 'about_exhibition' | 'wechat_qrcode' | 'alipay_qrcode') => {
-  currentField.value = field
-  filePickerVisible.value = true
-}
+const openFilePicker = (
+  field:
+    | 'favicon'
+    | 'background_image'
+    | 'screenshot'
+    | 'about_exhibition'
+    | 'wechat_qrcode'
+    | 'alipay_qrcode'
+) => {
+  currentField.value = field;
+  filePickerVisible.value = true;
+};
 
 // 处理文件选择
 const handleFileSelect = (file: FileInfo) => {
-  form.value[currentField.value] = file.file_url
-  ElMessage.success('已选择文件')
-}
+  form.value[currentField.value] = file.file_url;
+  ElMessage.success('已选择文件');
+};
 
 // 暴露上传器引用给父组件
 defineExpose({

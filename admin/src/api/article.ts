@@ -76,7 +76,7 @@ export function importArticles(formData: FormData): Promise<ImportArticlesResult
     headers: {
       'Content-Type': 'multipart/form-data',
     },
-    timeout: 600000 // 10分钟超时，支持多文章 + 图片处理
+    timeout: 600000, // 10分钟超时，支持多文章 + 图片处理
   });
 }
 
@@ -99,6 +99,6 @@ export function exportToWeChat(id: number): Promise<WeChatExportResult> {
 export function downloadArticleZip(id: number): Promise<Blob> {
   return request.get(`/admin/articles/${id}/download/zip`, {
     responseType: 'blob',
-    timeout: 600000 // 10分钟超时，适应大文章导出
+    timeout: 600000, // 10分钟超时，适应大文章导出
   });
 }

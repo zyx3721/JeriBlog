@@ -98,7 +98,7 @@ import type { NotificationForm } from './components/NotificationSettingsTab.vue'
 import type { UploadForm } from './components/UploadSettingsTab.vue';
 
 // 定义存储类型
-type StorageType = 'local' | 's3' | 'oss' | 'cos' | 'kodo' | 'r2' | 'minio'
+type StorageType = 'local' | 's3' | 'oss' | 'cos' | 'kodo' | 'r2' | 'minio';
 
 // 页面状态
 const activeTab = ref('basic');
@@ -272,8 +272,8 @@ const uploadForm = ref<UploadForm>({
     endpoint: '',
     domain: '',
     use_ssl: true,
-  }
-})
+  },
+});
 
 // AI 配置表单
 const aiForm = ref({
@@ -479,7 +479,7 @@ const loadUploadConfigs = async () => {
         endpoint: configs[`${prefix}endpoint`] || '',
         domain: configs[`${prefix}domain`] || '',
         use_ssl: (configs[`${prefix}use_ssl`] || 'true') === 'true',
-      }
+      };
     });
   } catch {
     ElMessage.error('获取上传配置失败');
@@ -560,23 +560,23 @@ const loadAllConfigs = async () => {
 // 清理所有待上传文件状态
 const clearAllPendingFiles = () => {
   // 清理基本配置的待上传文件
-  const basicUploaders = basicTabRef.value
+  const basicUploaders = basicTabRef.value;
   if (basicUploaders) {
-    basicUploaders.authorAvatarUploaderRef?.clearPending?.()
-    basicUploaders.authorPhotoUploaderRef?.clearPending?.()
+    basicUploaders.authorAvatarUploaderRef?.clearPending?.();
+    basicUploaders.authorPhotoUploaderRef?.clearPending?.();
   }
 
   // 清理博客配置的待上传文件
-  const blogUploaders = blogTabRef.value
+  const blogUploaders = blogTabRef.value;
   if (blogUploaders) {
-    blogUploaders.faviconUploaderRef?.clearPending?.()
-    blogUploaders.backgroundUploaderRef?.clearPending?.()
-    blogUploaders.screenshotUploaderRef?.clearPending?.()
-    blogUploaders.aboutExhibitionUploaderRef?.clearPending?.()
-    blogUploaders.rewardWechatUploaderRef?.clearPending?.()
-    blogUploaders.rewardAlipayUploaderRef?.clearPending?.()
+    blogUploaders.faviconUploaderRef?.clearPending?.();
+    blogUploaders.backgroundUploaderRef?.clearPending?.();
+    blogUploaders.screenshotUploaderRef?.clearPending?.();
+    blogUploaders.aboutExhibitionUploaderRef?.clearPending?.();
+    blogUploaders.rewardWechatUploaderRef?.clearPending?.();
+    blogUploaders.rewardAlipayUploaderRef?.clearPending?.();
   }
-}
+};
 
 // 统一保存配置
 const handleSave = async () => {
@@ -716,7 +716,7 @@ const handleSave = async () => {
       'blog.moments_size': String(blogForm.value.moments_size),
       'blog.message_content': blogForm.value.message_content,
       'blog.home_layout': blogForm.value.home_layout,
-    }
+    };
 
     // 通知配置
     const notificationPayload: Record<string, string> = {
@@ -740,7 +740,7 @@ const handleSave = async () => {
       // 保存当前存储类型的基础配置（不带存储类型前缀）
       'upload.max_file_size': String(currentConfig.max_file_size),
       'upload.path_pattern': currentConfig.path_pattern,
-    }
+    };
 
     // 保存各存储类型的云存储配置（带存储类型前缀）
     const storageTypes: StorageType[] = ['s3', 'oss', 'cos', 'kodo', 'r2', 'minio'];

@@ -33,12 +33,7 @@
           clearable
           style="width: 100%"
         >
-          <el-option
-            v-for="tag in availableTags"
-            :key="tag"
-            :label="tag"
-            :value="tag"
-          />
+          <el-option v-for="tag in availableTags" :key="tag" :label="tag" :value="tag" />
         </el-select>
       </el-form-item>
     </el-col>
@@ -207,7 +202,7 @@ const availableTags = computed(() => {
       // 每个动态只有一个标签，直接添加
       tagsSet.add(moment.content.tags.trim());
     }
-  })
+  });
 
   return Array.from(tagsSet).sort();
 });
@@ -283,7 +278,7 @@ const handleMobileDateChange = () => {
     filterForm.value.start_time = undefined;
     filterForm.value.end_time = undefined;
     dateRange.value = null;
-    return
+    return;
   }
 
   // 情况2：只选择了开始日期或结束日期，不触发筛选
@@ -329,14 +324,10 @@ const handleReset = () => {
 };
 </script>
 
-onMounted(() => {
-  // 组件挂载时初始化日期范围
-  if (filterForm.value.start_time && filterForm.value.end_time) {
-    dateRange.value = [filterForm.value.start_time, filterForm.value.end_time];
-    startDate.value = filterForm.value.start_time;
-    endDate.value = filterForm.value.end_time;
-  }
-});
+onMounted(() => { // 组件挂载时初始化日期范围 if (filterForm.value.start_time &&
+filterForm.value.end_time) { dateRange.value = [filterForm.value.start_time,
+filterForm.value.end_time]; startDate.value = filterForm.value.start_time; endDate.value =
+filterForm.value.end_time; } });
 
 <style scoped>
 /* 时间选择器左对齐 */

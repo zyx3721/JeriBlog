@@ -346,7 +346,7 @@ const handleSubmit = async () => {
 
     // 如果图标是本地文件，先上传
     if (iconItem.value?.type === 'file' && iconItem.value.file) {
-      const result = await uploadFile(iconItem.value.file, '');  // 上传时不标记用途，保存时才标记
+      const result = await uploadFile(iconItem.value.file, ''); // 上传时不标记用途，保存时才标记
       formData.value.icon = result.file_url;
     }
 

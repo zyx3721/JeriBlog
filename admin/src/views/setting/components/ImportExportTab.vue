@@ -71,10 +71,17 @@
       </el-form-item>
 
       <el-form-item label="图片代理" v-if="articleUploadImages">
-        <el-input v-model="articleImageProxy" placeholder="https://gh.llkk.cc/" clearable style="width: 100%">
+        <el-input
+          v-model="articleImageProxy"
+          placeholder="https://gh.llkk.cc/"
+          clearable
+          style="width: 100%"
+        >
           <template #prepend>代理地址</template>
         </el-input>
-        <div class="form-tip">用于加速 GitHub 等国外图片下载，留空则使用默认代理：https://gh.llkk.cc/</div>
+        <div class="form-tip">
+          用于加速 GitHub 等国外图片下载，留空则使用默认代理：https://gh.llkk.cc/
+        </div>
       </el-form-item>
     </el-form>
 
@@ -251,7 +258,7 @@ const handleArticleImport = async () => {
     formData.append('upload_images', String(articleUploadImages.value));
     // 传递图片代理地址，留空则后端使用默认值
     if (articleUploadImages.value && articleImageProxy.value) {
-      formData.append('image_proxy', articleImageProxy.value.trim())
+      formData.append('image_proxy', articleImageProxy.value.trim());
     }
 
     articleFileList.value.forEach(file => {

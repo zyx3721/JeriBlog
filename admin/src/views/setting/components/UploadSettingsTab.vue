@@ -29,7 +29,7 @@
           placeholder="{timestamp}_{random}{ext}"
           :disabled="loading"
         />
-        <div style="margin-top: 4px; font-size: 12px; color: #909399;">
+        <div style="margin-top: 4px; font-size: 12px; color: #909399">
           支持变量: {timestamp} {random} {filename} {ext} {type} {userid} YYYY MM DD HH mm ss
         </div>
       </el-form-item>
@@ -156,7 +156,7 @@ export interface UploadForm {
   kodo: StorageConfig;
   r2: StorageConfig;
   minio: StorageConfig;
-};
+}
 
 const props = defineProps<{
   form: UploadForm;

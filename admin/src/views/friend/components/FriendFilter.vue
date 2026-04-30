@@ -224,7 +224,7 @@ const loadFriendTypes = async () => {
 
 // 暴露方法给父组件调用
 defineExpose({
-  loadFriendTypes
+  loadFriendTypes,
 });
 
 // 组件挂载时加载数据

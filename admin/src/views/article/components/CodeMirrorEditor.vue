@@ -613,7 +613,7 @@
         class="editor-pane"
         :class="{
           'full-width': viewMode === 'editor',
-          'hidden': viewMode === 'preview',
+          hidden: viewMode === 'preview',
         }"
         @scroll="handleEditorScroll"
         @mousedown="handleEditorPaneMouseDown"
@@ -701,7 +701,7 @@ import type { Panel, DecorationSet } from '@codemirror/view';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { markdown } from '@codemirror/lang-markdown';
 import { SearchCursor } from '@codemirror/search';
-import mermaid from 'mermaid'
+import mermaid from 'mermaid';
 
 // 简易搜索功能
 const setSearchQuery = StateEffect.define<string>();
@@ -824,8 +824,8 @@ function createSearchPanel(view: EditorView): Panel {
 }
 
 function openSearchPanelCustom() {
-  searchPanel?.show()
-  return true
+  searchPanel?.show();
+  return true;
 }
 
 // 类型定义
@@ -850,48 +850,52 @@ type ViewMode = 'split' | 'editor' | 'preview' | 'html';
 // 常量
 const SCROLL_DURATION = 100;
 
-const props = withDefaults(defineProps<{ modelValue: string }>(), { modelValue: '' })
-const emit = defineEmits<{ 'update:modelValue': [value: string], 'save': [content: string] }>()
+const props = withDefaults(defineProps<{ modelValue: string }>(), { modelValue: '' });
+const emit = defineEmits<{ 'update:modelValue': [value: string]; save: [content: string] }>();
 
 // Refs
-const editorRef = ref<HTMLElement>()
-const editorPaneRef = ref<HTMLElement>()
-const previewPaneRef = ref<HTMLElement>()
-const imageInputRef = ref<HTMLInputElement>()
-const viewMode = ref<ViewMode>('split')
-const isBrowserFullscreen = ref(false)
-const isPageFullscreen = ref(false)
-const showToc = ref(false)
-const onlineImageUrl = ref('')
-const downloadingImage = ref(false)
+const editorRef = ref<HTMLElement>();
+const editorPaneRef = ref<HTMLElement>();
+const previewPaneRef = ref<HTMLElement>();
+const imageInputRef = ref<HTMLInputElement>();
+const viewMode = ref<ViewMode>('split');
+const isBrowserFullscreen = ref(false);
+const isPageFullscreen = ref(false);
+const showToc = ref(false);
+const onlineImageUrl = ref('');
+const downloadingImage = ref(false);
 
 // 表情选择器状态
 const emojiState = reactive({
   visible: false,
-  groups: [] as Array<{ name: string; type: 'emoji' | 'image' | 'emoticon'; items: Array<{ key: string; val: string }> }>,
+  groups: [] as Array<{
+    name: string;
+    type: 'emoji' | 'image' | 'emoticon';
+    items: Array<{ key: string; val: string }>;
+  }>,
   activeTab: 0,
-  emojiMap: new Map<string, string>()
-})
+  emojiMap: new Map<string, string>(),
+});
 
 // 提示框弹窗状态
 const noteDialog = reactive({
   visible: false,
   type: 'info' as 'info' | 'warning' | 'success' | 'error',
-  title: ''
-})
+  title: '',
+});
 
 // 标签页弹窗状态
 const tabsDialog = reactive({
   visible: false,
-  tabs: ['标签1', '标签2'] as string[]
-})
+  tabs: ['标签1', '标签2'] as string[],
+});
 
 // 折叠面板弹窗状态
 const foldDialog = reactive({
   visible: false,
   title: '',
-  open: false
-})
+  open: false,
+});
 
 // 链接卡片弹窗状态
 const linkDialog = reactive({
@@ -899,8 +903,8 @@ const linkDialog = reactive({
   type: 'external' as 'external' | 'internal',
   title: '',
   url: '',
-  description: ''
-})
+  description: '',
+});
 
 // 视频弹窗状态
 const videoDialog = reactive({
@@ -908,8 +912,8 @@ const videoDialog = reactive({
   type: 'url' as 'url' | 'upload',
   videoUrl: '',
   uploading: false,
-  loading: false
-})
+  loading: false,
+});
 
 // 音频弹窗状态
 const audioDialog = reactive({
@@ -921,328 +925,329 @@ const audioDialog = reactive({
   loading: false,
   musicServer: 'netease',
   musicId: '',
-  musicInfo: null as { title: string; artist: string; pic: string } | null
-})
+  musicInfo: null as { title: string; artist: string; pic: string } | null,
+});
 
 // 照片墙弹窗状态
 const photoDialog = reactive({
   visible: false,
   rows: [['', '']] as string[][],
-  uploading: false as boolean
-})
+  uploading: false as boolean,
+});
 
 // 照片墙弹窗宽度（移动端自适应）
 const photoDialogWidth = computed(() => {
   if (typeof window !== 'undefined') {
-    return window.innerWidth <= 768 ? Math.min(window.innerWidth - 32, 400) : 520
+    return window.innerWidth <= 768 ? Math.min(window.innerWidth - 32, 400) : 520;
   }
-  return 520
-})
+  return 520;
+});
 
 // 安全获取照片墙图片 URL
 const getPhotoImageUrl = (rowIndex: number, imgIndex: number): string => {
-  const row = photoDialog.rows[rowIndex]
-  return row?.[imgIndex] ?? ''
-}
+  const row = photoDialog.rows[rowIndex];
+  return row?.[imgIndex] ?? '';
+};
 
 // 安全设置照片墙图片 URL
 const setPhotoImageUrl = (rowIndex: number, imgIndex: number, url: string) => {
-  const row = photoDialog.rows[rowIndex]
+  const row = photoDialog.rows[rowIndex];
   if (row) {
-    row[imgIndex] = url
+    row[imgIndex] = url;
   }
-}
+};
 
 // 编辑器实例
-const editorViewRef = shallowRef<EditorView | null>(null)
+const editorViewRef = shallowRef<EditorView | null>(null);
 
 // ==================== Mermaid 图表渲染 ====================
 const initMermaid = () => {
   mermaid.initialize({
     startOnLoad: false,
     theme: 'default',
-    securityLevel: 'loose'
-  })
-}
+    securityLevel: 'loose',
+  });
+};
 
 const renderMermaidDiagrams = async () => {
-  const preview = previewPaneRef.value
-  if (!preview) return
+  const preview = previewPaneRef.value;
+  if (!preview) return;
 
-  const elements = preview.querySelectorAll('.mermaid:not(:has(svg))')
+  const elements = preview.querySelectorAll('.mermaid:not(:has(svg))');
 
   for (const element of elements) {
     try {
-      const { svg } = await mermaid.render(`mermaid-${Date.now()}`, element.textContent || '')
-      element.innerHTML = svg
+      const { svg } = await mermaid.render(`mermaid-${Date.now()}`, element.textContent || '');
+      element.innerHTML = svg;
     } catch (error) {
-      console.error('Mermaid 渲染失败:', error)
+      console.error('Mermaid 渲染失败:', error);
     }
   }
-}
+};
 
 // ==================== 滚动同步 ====================
-let scrollSource: 'editor' | 'preview' | null = null
-let sourceResetTimer: ReturnType<typeof setTimeout> | null = null
-let cachedNodes: ScrollNode[] | null = null
-let currentAnimation: number | null = null
+let scrollSource: 'editor' | 'preview' | null = null;
+let sourceResetTimer: ReturnType<typeof setTimeout> | null = null;
+let cachedNodes: ScrollNode[] | null = null;
+let currentAnimation: number | null = null;
 
-const getEditorScroller = () => editorViewRef.value?.scrollDOM ?? null
+const getEditorScroller = () => editorViewRef.value?.scrollDOM ?? null;
 
 const setScrollSource = (source: 'editor' | 'preview') => {
-  scrollSource = source
-  if (sourceResetTimer) clearTimeout(sourceResetTimer)
+  scrollSource = source;
+  if (sourceResetTimer) clearTimeout(sourceResetTimer);
   sourceResetTimer = setTimeout(() => {
-    scrollSource = null
-    sourceResetTimer = null
-  }, SCROLL_DURATION + 200)
-}
+    scrollSource = null;
+    sourceResetTimer = null;
+  }, SCROLL_DURATION + 200);
+};
 
 const cancelAnimation = () => {
   if (currentAnimation !== null) {
-    cancelAnimationFrame(currentAnimation)
-    currentAnimation = null
+    cancelAnimationFrame(currentAnimation);
+    currentAnimation = null;
   }
-}
+};
 
 const smoothScroll = (element: HTMLElement, target: number) => {
-  cancelAnimation()
-  const start = element.scrollTop
-  const distance = target - start
+  cancelAnimation();
+  const start = element.scrollTop;
+  const distance = target - start;
   if (Math.abs(distance) < 2) {
-    element.scrollTop = target
-    return
+    element.scrollTop = target;
+    return;
   }
-  const startTime = performance.now()
+  const startTime = performance.now();
   const animate = (now: number) => {
-    const elapsed = now - startTime
-    const progress = Math.min(elapsed / SCROLL_DURATION, 1)
-    const eased = 1 - (1 - progress) * (1 - progress)
-    element.scrollTop = start + distance * eased
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / SCROLL_DURATION, 1);
+    const eased = 1 - (1 - progress) * (1 - progress);
+    element.scrollTop = start + distance * eased;
     if (progress < 1) {
-      currentAnimation = requestAnimationFrame(animate)
+      currentAnimation = requestAnimationFrame(animate);
     } else {
-      currentAnimation = null
+      currentAnimation = null;
     }
-  }
-  currentAnimation = requestAnimationFrame(animate)
-}
+  };
+  currentAnimation = requestAnimationFrame(animate);
+};
 
 const invalidateScrollCache = () => {
-  cachedNodes = null
-}
+  cachedNodes = null;
+};
 
 const buildNodeMap = (): ScrollNode[] => {
-  if (cachedNodes) return cachedNodes
-  const editor = editorViewRef.value
-  const preview = previewPaneRef.value
-  if (!editor || !preview) return []
+  if (cachedNodes) return cachedNodes;
+  const editor = editorViewRef.value;
+  const preview = previewPaneRef.value;
+  if (!editor || !preview) return [];
 
-  const nodes: ScrollNode[] = []
-  const previewStyle = getComputedStyle(preview)
-  const previewPaddingTop = parseFloat(previewStyle.paddingTop) || 0
+  const nodes: ScrollNode[] = [];
+  const previewStyle = getComputedStyle(preview);
+  const previewPaddingTop = parseFloat(previewStyle.paddingTop) || 0;
 
-  nodes.push({ line: -1, previewTop: 0, editorTop: 0 })
+  nodes.push({ line: -1, previewTop: 0, editorTop: 0 });
 
-  const elements = preview.querySelectorAll<HTMLElement>('[data-source-line]')
-  elements.forEach((el) => {
-    const line = parseInt(el.dataset.sourceLine || '0', 10)
-    let previewTop = el.offsetTop
-    let parent = el.offsetParent as HTMLElement | null
+  const elements = preview.querySelectorAll<HTMLElement>('[data-source-line]');
+  elements.forEach(el => {
+    const line = parseInt(el.dataset.sourceLine || '0', 10);
+    let previewTop = el.offsetTop;
+    let parent = el.offsetParent as HTMLElement | null;
     while (parent && parent !== preview && preview.contains(parent)) {
-      previewTop += parent.offsetTop
-      parent = parent.offsetParent as HTMLElement | null
+      previewTop += parent.offsetTop;
+      parent = parent.offsetParent as HTMLElement | null;
     }
-    previewTop = Math.max(0, previewTop - previewPaddingTop)
+    previewTop = Math.max(0, previewTop - previewPaddingTop);
 
-    let editorTop = 0
+    let editorTop = 0;
     try {
-      const docLine = editor.state.doc.line(line + 1)
-      const block = editor.lineBlockAt(docLine.from)
-      editorTop = block.top
+      const docLine = editor.state.doc.line(line + 1);
+      const block = editor.lineBlockAt(docLine.from);
+      editorTop = block.top;
     } catch {
-      editorTop = line * 22
+      editorTop = line * 22;
     }
-    nodes.push({ line, previewTop, editorTop })
-  })
+    nodes.push({ line, previewTop, editorTop });
+  });
 
-  const editorScrollHeight = editor.scrollDOM?.scrollHeight || editor.contentHeight
-  const previewScrollHeight = preview.scrollHeight
-  const editorClientHeight = editor.scrollDOM?.clientHeight || 0
-  const previewClientHeight = preview.clientHeight
+  const editorScrollHeight = editor.scrollDOM?.scrollHeight || editor.contentHeight;
+  const previewScrollHeight = preview.scrollHeight;
+  const editorClientHeight = editor.scrollDOM?.clientHeight || 0;
+  const previewClientHeight = preview.clientHeight;
 
   nodes.push({
     line: 999999,
     previewTop: Math.max(0, previewScrollHeight - previewClientHeight),
-    editorTop: Math.max(0, editorScrollHeight - editorClientHeight)
-  })
+    editorTop: Math.max(0, editorScrollHeight - editorClientHeight),
+  });
 
-  nodes.sort((a, b) => a.line - b.line)
-  const uniqueNodes: ScrollNode[] = []
-  let lastLine = -999
+  nodes.sort((a, b) => a.line - b.line);
+  const uniqueNodes: ScrollNode[] = [];
+  let lastLine = -999;
   for (const node of nodes) {
     if (node.line !== lastLine) {
-      uniqueNodes.push(node)
-      lastLine = node.line
+      uniqueNodes.push(node);
+      lastLine = node.line;
     }
   }
-  cachedNodes = uniqueNodes
-  return uniqueNodes
-}
+  cachedNodes = uniqueNodes;
+  return uniqueNodes;
+};
 
 const mapEditorToPreview = (editorScrollTop: number, nodes: ScrollNode[]): number => {
-  if (nodes.length === 0) return 0
-  if (nodes.length === 1) return nodes[0]!.previewTop
-  if (editorScrollTop <= 0) return 0
+  if (nodes.length === 0) return 0;
+  if (nodes.length === 1) return nodes[0]!.previewTop;
+  if (editorScrollTop <= 0) return 0;
 
-  let i = 0
-  while (i < nodes.length - 1 && nodes[i + 1]!.editorTop <= editorScrollTop) i++
+  let i = 0;
+  while (i < nodes.length - 1 && nodes[i + 1]!.editorTop <= editorScrollTop) i++;
 
-  const current = nodes[i]!
-  const next = nodes[i + 1]
-  if (!next) return current.previewTop
+  const current = nodes[i]!;
+  const next = nodes[i + 1];
+  if (!next) return current.previewTop;
 
-  const editorRange = next.editorTop - current.editorTop
-  const previewRange = next.previewTop - current.previewTop
-  if (editorRange <= 0) return current.previewTop
+  const editorRange = next.editorTop - current.editorTop;
+  const previewRange = next.previewTop - current.previewTop;
+  if (editorRange <= 0) return current.previewTop;
 
-  const ratio = Math.max(0, Math.min(1, (editorScrollTop - current.editorTop) / editorRange))
-  return current.previewTop + previewRange * ratio
-}
+  const ratio = Math.max(0, Math.min(1, (editorScrollTop - current.editorTop) / editorRange));
+  return current.previewTop + previewRange * ratio;
+};
 
 const mapPreviewToEditor = (previewScrollTop: number, nodes: ScrollNode[]): number => {
-  if (nodes.length === 0) return 0
-  if (nodes.length === 1) return nodes[0]!.editorTop
-  if (previewScrollTop <= 0) return 0
+  if (nodes.length === 0) return 0;
+  if (nodes.length === 1) return nodes[0]!.editorTop;
+  if (previewScrollTop <= 0) return 0;
 
-  let i = 0
-  while (i < nodes.length - 1 && nodes[i + 1]!.previewTop <= previewScrollTop) i++
+  let i = 0;
+  while (i < nodes.length - 1 && nodes[i + 1]!.previewTop <= previewScrollTop) i++;
 
-  const current = nodes[i]!
-  const next = nodes[i + 1]
-  if (!next) return current.editorTop
+  const current = nodes[i]!;
+  const next = nodes[i + 1];
+  if (!next) return current.editorTop;
 
-  const previewRange = next.previewTop - current.previewTop
-  const editorRange = next.editorTop - current.editorTop
-  if (previewRange <= 0) return current.editorTop
+  const previewRange = next.previewTop - current.previewTop;
+  const editorRange = next.editorTop - current.editorTop;
+  if (previewRange <= 0) return current.editorTop;
 
-  const ratio = Math.max(0, Math.min(1, (previewScrollTop - current.previewTop) / previewRange))
-  return current.editorTop + editorRange * ratio
-}
+  const ratio = Math.max(0, Math.min(1, (previewScrollTop - current.previewTop) / previewRange));
+  return current.editorTop + editorRange * ratio;
+};
 
 const syncToPreview = () => {
-  if (scrollSource === 'preview') return
-  const editorScroller = getEditorScroller()
-  const preview = previewPaneRef.value
-  if (!editorScroller || !preview) return
+  if (scrollSource === 'preview') return;
+  const editorScroller = getEditorScroller();
+  const preview = previewPaneRef.value;
+  if (!editorScroller || !preview) return;
 
-  const nodes = buildNodeMap()
-  if (nodes.length === 0) return
+  const nodes = buildNodeMap();
+  if (nodes.length === 0) return;
 
-  const targetTop = mapEditorToPreview(editorScroller.scrollTop, nodes)
-  setScrollSource('editor')
-  smoothScroll(preview, targetTop)
-}
+  const targetTop = mapEditorToPreview(editorScroller.scrollTop, nodes);
+  setScrollSource('editor');
+  smoothScroll(preview, targetTop);
+};
 
 const syncToEditor = () => {
-  if (scrollSource === 'editor') return
-  const editorScroller = getEditorScroller()
-  const preview = previewPaneRef.value
-  if (!editorScroller || !preview) return
+  if (scrollSource === 'editor') return;
+  const editorScroller = getEditorScroller();
+  const preview = previewPaneRef.value;
+  if (!editorScroller || !preview) return;
 
-  const nodes = buildNodeMap()
-  if (nodes.length === 0) return
+  const nodes = buildNodeMap();
+  if (nodes.length === 0) return;
 
-  const targetTop = mapPreviewToEditor(preview.scrollTop, nodes)
-  setScrollSource('preview')
-  smoothScroll(editorScroller, targetTop)
-}
+  const targetTop = mapPreviewToEditor(preview.scrollTop, nodes);
+  setScrollSource('preview');
+  smoothScroll(editorScroller, targetTop);
+};
 
-let editorScrollPending = false
-let previewScrollPending = false
+let editorScrollPending = false;
+let previewScrollPending = false;
 
 const handleEditorScroll = () => {
-  if (viewMode.value !== 'split' || scrollSource === 'preview') return
-  if (editorScrollPending) return
-  editorScrollPending = true
+  if (viewMode.value !== 'split' || scrollSource === 'preview') return;
+  if (editorScrollPending) return;
+  editorScrollPending = true;
   requestAnimationFrame(() => {
-    editorScrollPending = false
-    syncToPreview()
-  })
-}
+    editorScrollPending = false;
+    syncToPreview();
+  });
+};
 
 const handlePreviewScroll = () => {
-  if (viewMode.value !== 'split' || scrollSource === 'editor') return
-  if (previewScrollPending) return
-  previewScrollPending = true
+  if (viewMode.value !== 'split' || scrollSource === 'editor') return;
+  if (previewScrollPending) return;
+  previewScrollPending = true;
   requestAnimationFrame(() => {
-    previewScrollPending = false
-    syncToEditor()
-  })
-}
+    previewScrollPending = false;
+    syncToEditor();
+  });
+};
 
 const bindScrollEvents = () => {
-  const editorScroller = getEditorScroller()
-  const preview = previewPaneRef.value
-  editorScroller?.addEventListener('scroll', handleEditorScroll, { passive: true })
-  preview?.addEventListener('scroll', handlePreviewScroll, { passive: true })
-  preview?.addEventListener('click', togglePreviewImage)
-}
+  const editorScroller = getEditorScroller();
+  const preview = previewPaneRef.value;
+  editorScroller?.addEventListener('scroll', handleEditorScroll, { passive: true });
+  preview?.addEventListener('scroll', handlePreviewScroll, { passive: true });
+  preview?.addEventListener('click', togglePreviewImage);
+};
 
 const unbindScrollEvents = () => {
-  const editorScroller = getEditorScroller()
-  const preview = previewPaneRef.value
-  editorScroller?.removeEventListener('scroll', handleEditorScroll)
-  preview?.removeEventListener('scroll', handlePreviewScroll)
-  preview?.removeEventListener('click', togglePreviewImage)
-  cancelAnimation()
+  const editorScroller = getEditorScroller();
+  const preview = previewPaneRef.value;
+  editorScroller?.removeEventListener('scroll', handleEditorScroll);
+  preview?.removeEventListener('scroll', handlePreviewScroll);
+  preview?.removeEventListener('click', togglePreviewImage);
+  cancelAnimation();
   if (sourceResetTimer) {
-    clearTimeout(sourceResetTimer)
-    sourceResetTimer = null
+    clearTimeout(sourceResetTimer);
+    sourceResetTimer = null;
   }
-}
+};
 
 // 图片缩放切换
 const togglePreviewImage = (event: MouseEvent) => {
-  const target = event.target as HTMLElement | null
-  const image = target?.closest('.preview-collapsible-image') as HTMLImageElement | null
-  if (!image) return
-  if (image.closest('.custom-photo-wall')) return
-  if (image.classList.contains('emoji-image')) return
+  const target = event.target as HTMLElement | null;
+  const image = target?.closest('.preview-collapsible-image') as HTMLImageElement | null;
+  if (!image) return;
+  if (image.closest('.custom-photo-wall')) return;
+  if (image.classList.contains('emoji-image')) return;
 
-  image.classList.toggle('is-expanded')
-}
+  image.classList.toggle('is-expanded');
+};
 
 // 使用带行号映射的渲染函数（用于滚动同步）
 const renderedHtml = computed(() => {
-  const html = viewMode.value === 'html'
-    ? renderMarkdownWithStyles(props.modelValue)
-    : renderMarkdownWithSourceMap(props.modelValue)
+  const html =
+    viewMode.value === 'html'
+      ? renderMarkdownWithStyles(props.modelValue)
+      : renderMarkdownWithSourceMap(props.modelValue);
 
   // 替换表情占位符为 img 标签
   if (emojiState.emojiMap.size > 0) {
     return html.replace(/:([^:\s]+):/g, (match, key) => {
-      const url = emojiState.emojiMap.get(key)
+      const url = emojiState.emojiMap.get(key);
       if (url) {
-        return `<img src="${url}" alt="${key}" class="emoji-image" title="${key}" />`
+        return `<img src="${url}" alt="${key}" class="emoji-image" title="${key}" />`;
       }
-      return match
-    })
+      return match;
+    });
   }
 
-  return html
-})
+  return html;
+});
 
 // 计算字数
-const wordCount = computed(() => countWords(props.modelValue))
+const wordCount = computed(() => countWords(props.modelValue));
 
 // 计算阅读时长
-const readingTime = computed(() => estimateReadingTime(props.modelValue))
+const readingTime = computed(() => estimateReadingTime(props.modelValue));
 
 // 提取目录
 const tableOfContents = computed<TocItem[]>(() => {
-  return extractToc(props.modelValue)
-})
+  return extractToc(props.modelValue);
+});
 
 // ==================== 编辑器操作 ====================
 
@@ -1257,41 +1262,43 @@ const saveArticle = () => {
   emit('save', content);
 
   ElMessage.success('文章保存成功');
-}
+};
 
 // 插入文本到光标位置
 const insertText = (before: string, after = '') => {
-  if (!editorViewRef.value) return
-  const { from, to } = editorViewRef.value.state.selection.main
-  const text = editorViewRef.value.state.doc.sliceString(from, to)
+  if (!editorViewRef.value) return;
+  const { from, to } = editorViewRef.value.state.selection.main;
+  const text = editorViewRef.value.state.doc.sliceString(from, to);
 
   // 如果有选中文本，用语法包裹；否则只插入语法，光标定位在中间
   editorViewRef.value.dispatch({
     changes: { from, to, insert: `${before}${text}${after}` },
     // 如果有选中文本，保持选中状态；否则光标定位在中间
-    selection: text ? { anchor: from + before.length, head: from + before.length + text.length } : { anchor: from + before.length, head: from + before.length }
-  })
-  editorViewRef.value.focus()
-}
+    selection: text
+      ? { anchor: from + before.length, head: from + before.length + text.length }
+      : { anchor: from + before.length, head: from + before.length },
+  });
+  editorViewRef.value.focus();
+};
 
 // 插入标题
-const insertHeading = (level: string) => insertText(`${'#'.repeat(+level)} `)
+const insertHeading = (level: string) => insertText(`${'#'.repeat(+level)} `);
 
 // 滚动到指定标题
 const scrollToHeading = (heading: TocItem) => {
-  if (!editorViewRef.value) return
-  const lines = editorViewRef.value.state.doc.toString().split('\n')
-  const index = lines.findIndex(line => line.includes(heading.text) && line.startsWith('#'))
+  if (!editorViewRef.value) return;
+  const lines = editorViewRef.value.state.doc.toString().split('\n');
+  const index = lines.findIndex(line => line.includes(heading.text) && line.startsWith('#'));
 
   if (index !== -1) {
-    const pos = editorViewRef.value.state.doc.line(index + 1).from
+    const pos = editorViewRef.value.state.doc.line(index + 1).from;
     editorViewRef.value.dispatch({
       selection: { anchor: pos, head: pos },
-      effects: EditorView.scrollIntoView(pos, { y: 'start' })
-    })
-    editorViewRef.value.focus()
+      effects: EditorView.scrollIntoView(pos, { y: 'start' }),
+    });
+    editorViewRef.value.focus();
   }
-}
+};
 
 // 工具栏配置
 const toolbarItems: ToolbarItem[] = [
@@ -1323,9 +1330,13 @@ const toolbarItems: ToolbarItem[] = [
   { icon: 'ri-code-box-line', title: '块级代码', action: () => insertText('\n```', '\n```\n') },
   { icon: 'ri-link', title: '链接', action: () => insertText('[', '](https://)') },
   { icon: 'ri-image-add-line', title: '上传本地图片', action: () => imageInputRef.value?.click() },
-  { icon: 'ri-image-download-line', title: '下载在线图片', action: () => { } },
+  { icon: 'ri-image-download-line', title: '下载在线图片', action: () => {} },
   { icon: 'ri-emotion-line', title: '表情', action: () => toggleEmojiPicker() },
-  { icon: 'ri-table-2', title: '表格', action: () => insertText('\n| 列1 | 列2 | 列3 |\n|:---:|:---:|:---:|\n|  ', '  |    |    |\n') },
+  {
+    icon: 'ri-table-2',
+    title: '表格',
+    action: () => insertText('\n| 列1 | 列2 | 列3 |\n|:---:|:---:|:---:|\n|  ', '  |    |    |\n'),
+  },
   { icon: 'ri-mark-pen-line', title: '高亮', action: () => insertText('==', '==') },
   { icon: 'ri-superscript-2', title: '行内公式', action: () => insertText('$', '$') },
   { icon: 'ri-functions', title: '块级公式', action: () => insertText('\n$$\n', '\n$$\n') },
@@ -1347,640 +1358,658 @@ const toolbarItems: ToolbarItem[] = [
   {
     icon: 'ri-fullscreen-line',
     title: '浏览器全屏',
-    action: () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(),
-    isActive: () => isBrowserFullscreen.value
+    action: () =>
+      document.fullscreenElement
+        ? document.exitFullscreen()
+        : document.documentElement.requestFullscreen(),
+    isActive: () => isBrowserFullscreen.value,
   },
   {
     icon: 'ri-picture-in-picture-2-line',
     title: '页面全屏',
-    action: () => isPageFullscreen.value = !isPageFullscreen.value,
-    isActive: () => isPageFullscreen.value
+    action: () => (isPageFullscreen.value = !isPageFullscreen.value),
+    isActive: () => isPageFullscreen.value,
   },
   {
     icon: 'ri-code-s-slash-line',
     title: 'HTML 代码预览',
-    action: () => viewMode.value = viewMode.value === 'html' ? 'split' : 'html',
-    isActive: () => viewMode.value === 'html'
+    action: () => (viewMode.value = viewMode.value === 'html' ? 'split' : 'html'),
+    isActive: () => viewMode.value === 'html',
   },
   {
     icon: 'ri-eye-line',
     title: '切换预览',
-    action: () => viewMode.value = viewMode.value === 'preview' ? 'editor' : 'preview',
+    action: () => (viewMode.value = viewMode.value === 'preview' ? 'editor' : 'preview'),
     isActive: () => viewMode.value === 'preview',
-    mobileOnly: true
+    mobileOnly: true,
   },
   {
     icon: 'ri-list-unordered',
     title: '目录',
-    action: () => showToc.value = !showToc.value,
-    isActive: () => showToc.value
+    action: () => (showToc.value = !showToc.value),
+    isActive: () => showToc.value,
   },
-]
+];
 
 // ==================== 图片上传 ====================
 const handleImageSelect = async (event: Event) => {
-  const input = event.target as HTMLInputElement
+  const input = event.target as HTMLInputElement;
   const files = Array.from(input.files || []).filter(file => {
     if (!file.type.startsWith('image/')) {
-      ElMessage.error(`${file.name} 不是图片格式`)
-      return false
+      ElMessage.error(`${file.name} 不是图片格式`);
+      return false;
     }
-    return true
-  })
+    return true;
+  });
 
-  if (!files.length) return
+  if (!files.length) return;
 
-  const loading = ElMessage.info({ message: `正在上传 ${files.length} 张图片...`, duration: 0 })
+  const loading = ElMessage.info({ message: `正在上传 ${files.length} 张图片...`, duration: 0 });
   try {
-    const results = await Promise.all(files.map(f => uploadFile(f, '')))
-    insertText(results.map(r => `![图片](${r.file_url})`).join('\n'))
-    ElMessage.success(`成功上传 ${files.length} 张图片`)
+    const results = await Promise.all(files.map(f => uploadFile(f, '')));
+    insertText(results.map(r => `![图片](${r.file_url})`).join('\n'));
+    ElMessage.success(`成功上传 ${files.length} 张图片`);
   } catch (error: unknown) {
-    ElMessage.error(error.message || '图片上传失败')
+    ElMessage.error(error.message || '图片上传失败');
   } finally {
-    loading.close()
-    input.value = ''
+    loading.close();
+    input.value = '';
   }
-}
+};
 
 // 处理粘贴图片
 const handlePasteImage = async (files: File[]) => {
   const imageFiles = files.filter(file => {
     if (!file.type.startsWith('image/')) {
-      ElMessage.error(`${file.name} 不是图片格式`)
-      return false
+      ElMessage.error(`${file.name} 不是图片格式`);
+      return false;
     }
-    return true
-  })
+    return true;
+  });
 
-  if (!imageFiles.length) return
+  if (!imageFiles.length) return;
 
-  const loading = ElMessage.info({ message: `正在上传 ${imageFiles.length} 张图片...`, duration: 0 })
+  const loading = ElMessage.info({
+    message: `正在上传 ${imageFiles.length} 张图片...`,
+    duration: 0,
+  });
   try {
-    const results = await Promise.all(imageFiles.map(f => uploadFile(f, '')))
-    insertText(results.map(r => `![图片](${r.file_url})`).join('\n'))
-    ElMessage.success(`成功上传 ${imageFiles.length} 张图片`)
+    const results = await Promise.all(imageFiles.map(f => uploadFile(f, '')));
+    insertText(results.map(r => `![图片](${r.file_url})`).join('\n'));
+    ElMessage.success(`成功上传 ${imageFiles.length} 张图片`);
   } catch (error: unknown) {
-    ElMessage.error(error.message || '图片上传失败')
+    ElMessage.error(error.message || '图片上传失败');
   } finally {
-    loading.close()
+    loading.close();
   }
-}
+};
 
 // 处理下载在线图片
 const handleOnlineImageDownload = async () => {
   if (!onlineImageUrl.value.trim()) {
-    ElMessage.error('请输入图片URL')
-    return
+    ElMessage.error('请输入图片URL');
+    return;
   }
 
-  const url = onlineImageUrl.value.trim()
+  const url = onlineImageUrl.value.trim();
 
   // 验证URL格式
   if (!url.match(/^https?:\/\/.+/)) {
-    ElMessage.error('请输入有效的HTTP/HTTPS图片URL')
-    return
+    ElMessage.error('请输入有效的HTTP/HTTPS图片URL');
+    return;
   }
 
-  downloadingImage.value = true
+  downloadingImage.value = true;
   try {
     // 导入下载图片API
-    const { downloadImage } = await import('@/api/tools')
+    const { downloadImage } = await import('@/api/tools');
 
     // 下载图片
-    const downloadResult = await downloadImage({ url })
+    const downloadResult = await downloadImage({ url });
 
     // 将base64数据转换为Blob
-    const base64Data = downloadResult.data
-    const byteCharacters = atob(base64Data)
-    const byteNumbers = new Array(byteCharacters.length)
+    const base64Data = downloadResult.data;
+    const byteCharacters = atob(base64Data);
+    const byteNumbers = new Array(byteCharacters.length);
     for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i)
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
     }
-    const byteArray = new Uint8Array(byteNumbers)
-    const blob = new Blob([byteArray], { type: downloadResult.content_type })
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: downloadResult.content_type });
 
     // 创建文件对象并上传
-    const file = new File([blob], 'image.jpg', { type: downloadResult.content_type })
-    const uploadResult = await uploadFile(file, '')
+    const file = new File([blob], 'image.jpg', { type: downloadResult.content_type });
+    const uploadResult = await uploadFile(file, '');
 
     // 插入到编辑器
-    insertText(`![图片](${uploadResult.file_url})`)
+    insertText(`![图片](${uploadResult.file_url})`);
 
     // 清空输入
-    onlineImageUrl.value = ''
+    onlineImageUrl.value = '';
 
-    ElMessage.success('图片下载并上传成功')
+    ElMessage.success('图片下载并上传成功');
 
     // 关闭 Popover
-    document.body.click()
+    document.body.click();
   } catch (error: unknown) {
-    ElMessage.error(error.message || '图片下载失败')
+    ElMessage.error(error.message || '图片下载失败');
   } finally {
-    downloadingImage.value = false
+    downloadingImage.value = false;
   }
-}
+};
 
 // 表情选择器
 const loadEmojis = async () => {
-  if (emojiState.groups.length) return
+  if (emojiState.groups.length) return;
 
-  const blogSettings = await getSettingGroup('blog')
-  const emojisUrl = blogSettings.emojis || blogSettings['blog.emojis'] || ''
-  if (!emojisUrl) return
+  const blogSettings = await getSettingGroup('blog');
+  const emojisUrl = blogSettings.emojis || blogSettings['blog.emojis'] || '';
+  if (!emojisUrl) return;
 
-  const response = await fetch(emojisUrl)
-  const groups = await response.json()
-  emojiState.groups = groups
+  const response = await fetch(emojisUrl);
+  const groups = await response.json();
+  emojiState.groups = groups;
 
   // 构建 image 类型表情映射
   for (const group of groups) {
     if (group.type === 'image') {
       for (const item of group.items) {
-        emojiState.emojiMap.set(item.key, item.val)
+        emojiState.emojiMap.set(item.key, item.val);
       }
     }
   }
-}
+};
 
 const selectEmoji = (item: { key: string; val: string }, type: string) => {
-  const emoji = type === 'image' ? `:${item.key}:` : item.val
-  insertText(emoji)
-  emojiState.visible = false
-}
+  const emoji = type === 'image' ? `:${item.key}:` : item.val;
+  insertText(emoji);
+  emojiState.visible = false;
+};
 
 // 表情选择器显示时加载数据
 const handleEmojiPickerShow = () => {
   if (!emojiState.groups.length) {
-    loadEmojis()
+    loadEmojis();
   }
-}
+};
 
 const toggleEmojiPicker = () => {
-  emojiState.visible = !emojiState.visible
+  emojiState.visible = !emojiState.visible;
   if (emojiState.visible && !emojiState.groups.length) {
-    loadEmojis()
+    loadEmojis();
   }
-}
+};
 
 // ==================== 弹窗处理函数 ====================
 // 切换提示框弹窗显示
 const toggleNoteDialog = () => {
-  noteDialog.visible = !noteDialog.visible
+  noteDialog.visible = !noteDialog.visible;
   if (noteDialog.visible) {
-    noteDialog.type = 'info'
-    noteDialog.title = ''
+    noteDialog.type = 'info';
+    noteDialog.title = '';
   }
-}
+};
 
 // 插入提示框语法
 const handleInsertNote = () => {
-  const title = noteDialog.title.trim() || '标题'
-  const typeLabel = noteDialog.type
-  insertText(`:::note ${typeLabel} ${title}\n内容\n:::endnote\n`)
-  noteDialog.visible = false
-  noteDialog.title = ''
-}
+  const title = noteDialog.title.trim() || '标题';
+  const typeLabel = noteDialog.type;
+  insertText(`:::note ${typeLabel} ${title}\n内容\n:::endnote\n`);
+  noteDialog.visible = false;
+  noteDialog.title = '';
+};
 
 // 切换标签页弹窗显示
 const toggleTabsDialog = () => {
-  tabsDialog.visible = !tabsDialog.visible
+  tabsDialog.visible = !tabsDialog.visible;
   if (tabsDialog.visible) {
-    tabsDialog.tabs = ['标签1', '标签2']
+    tabsDialog.tabs = ['标签1', '标签2'];
   }
-}
+};
 
 // 插入标签页语法
 const handleInsertTabs = () => {
-  const tabs = tabsDialog.tabs.filter(t => t.trim())
+  const tabs = tabsDialog.tabs.filter(t => t.trim());
   if (tabs.length === 0) {
-    tabsDialog.tabs = ['标签1', '标签2']
-    return handleInsertTabs()
+    tabsDialog.tabs = ['标签1', '标签2'];
+    return handleInsertTabs();
   }
-  const tabBlocks = tabs.map((tab, i) => `:::tab ${tab}\n内容${i + 1}\n:::endtab`).join('\n')
-  insertText(`:::tabs\n${tabBlocks}\n:::endtabs\n`)
-  tabsDialog.visible = false
-  tabsDialog.tabs = ['标签1', '标签2']
-}
+  const tabBlocks = tabs.map((tab, i) => `:::tab ${tab}\n内容${i + 1}\n:::endtab`).join('\n');
+  insertText(`:::tabs\n${tabBlocks}\n:::endtabs\n`);
+  tabsDialog.visible = false;
+  tabsDialog.tabs = ['标签1', '标签2'];
+};
 
 // 添加标签页
 const addTabsDialogTab = () => {
   if (tabsDialog.tabs.length < 10) {
-    tabsDialog.tabs.push(`标签${tabsDialog.tabs.length + 1}`)
+    tabsDialog.tabs.push(`标签${tabsDialog.tabs.length + 1}`);
   }
-}
+};
 
 // 删除标签页
 const removeTabsDialogTab = (index: number) => {
   if (tabsDialog.tabs.length > 1) {
-    tabsDialog.tabs.splice(index, 1)
+    tabsDialog.tabs.splice(index, 1);
   }
-}
+};
 
 // 切换折叠面板弹窗显示
 const toggleFoldDialog = () => {
-  foldDialog.visible = !foldDialog.visible
+  foldDialog.visible = !foldDialog.visible;
   if (foldDialog.visible) {
-    foldDialog.title = ''
-    foldDialog.open = false
+    foldDialog.title = '';
+    foldDialog.open = false;
   }
-}
+};
 
 // 插入折叠面板语法
 const handleInsertFold = () => {
-  const title = foldDialog.title.trim() || '点击展开'
-  const openFlag = foldDialog.open ? ' open' : ''
-  insertText(`:::fold ${title}${openFlag}\n内容\n:::endfold\n`)
-  foldDialog.visible = false
-  foldDialog.title = ''
-  foldDialog.open = false
-}
+  const title = foldDialog.title.trim() || '点击展开';
+  const openFlag = foldDialog.open ? ' open' : '';
+  insertText(`:::fold ${title}${openFlag}\n内容\n:::endfold\n`);
+  foldDialog.visible = false;
+  foldDialog.title = '';
+  foldDialog.open = false;
+};
 
 // 切换链接卡片弹窗显示
 const toggleLinkDialog = () => {
-  linkDialog.visible = !linkDialog.visible
+  linkDialog.visible = !linkDialog.visible;
   if (linkDialog.visible) {
-    linkDialog.type = 'external'
-    linkDialog.title = ''
-    linkDialog.url = ''
-    linkDialog.description = ''
+    linkDialog.type = 'external';
+    linkDialog.title = '';
+    linkDialog.url = '';
+    linkDialog.description = '';
   }
-}
+};
 
 // 插入链接卡片语法
 const handleInsertLink = () => {
-  const title = linkDialog.title.trim() || '标题'
-  let url = linkDialog.url.trim()
-  const description = linkDialog.description.trim()
+  const title = linkDialog.title.trim() || '标题';
+  let url = linkDialog.url.trim();
+  const description = linkDialog.description.trim();
 
   if (linkDialog.type === 'external') {
     // 站外链接：必须以 http:// 或 https:// 开头
     if (!url) {
-      ElMessage.warning('请输入链接地址')
-      return
+      ElMessage.warning('请输入链接地址');
+      return;
     }
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
-      ElMessage.warning('站外链接必须以 http:// 或 https:// 开头')
-      return
+      ElMessage.warning('站外链接必须以 http:// 或 https:// 开头');
+      return;
     }
   } else {
     // 站内链接：不能以 http:// 或 https:// 开头
     if (!url) {
-      ElMessage.warning('请输入站内链接路径')
-      return
+      ElMessage.warning('请输入站内链接路径');
+      return;
     }
     if (url.startsWith('http://') || url.startsWith('https://')) {
-      ElMessage.warning('站内链接不能以 http:// 或 https:// 开头')
-      return
+      ElMessage.warning('站内链接不能以 http:// 或 https:// 开头');
+      return;
     }
   }
 
-  const descPart = description ? ` ${description}` : ''
-  insertText(`:::link ${title} ${url}${descPart} :::\n`)
-  linkDialog.visible = false
+  const descPart = description ? ` ${description}` : '';
+  insertText(`:::link ${title} ${url}${descPart} :::\n`);
+  linkDialog.visible = false;
   // 重置所有输入框
-  linkDialog.title = ''
-  linkDialog.url = ''
-  linkDialog.description = ''
-}
+  linkDialog.title = '';
+  linkDialog.url = '';
+  linkDialog.description = '';
+};
 
 // 切换视频弹窗显示
 const toggleVideoDialog = () => {
-  videoDialog.visible = !videoDialog.visible
+  videoDialog.visible = !videoDialog.visible;
   if (videoDialog.visible) {
-    videoDialog.type = 'url'
-    videoDialog.videoUrl = ''
-    videoDialog.uploading = false
-    videoDialog.loading = false
+    videoDialog.type = 'url';
+    videoDialog.videoUrl = '';
+    videoDialog.uploading = false;
+    videoDialog.loading = false;
   }
-}
+};
 
 // 处理视频上传
 const handleVideoUpload = async (file: File) => {
-  videoDialog.uploading = true
+  videoDialog.uploading = true;
   try {
-    const results = await uploadFile(file, '')
-    videoDialog.videoUrl = results.file_url
-    ElMessage.success('视频上传成功')
+    const results = await uploadFile(file, '');
+    videoDialog.videoUrl = results.file_url;
+    ElMessage.success('视频上传成功');
   } catch (error: unknown) {
-    ElMessage.error(error?.message || '视频上传失败')
+    ElMessage.error(error?.message || '视频上传失败');
   } finally {
-    videoDialog.uploading = false
+    videoDialog.uploading = false;
   }
-}
+};
 
 // 插入视频语法
 const handleInsertVideo = async () => {
   if (videoDialog.type === 'url') {
-    const url = videoDialog.videoUrl.trim() || 'https://example.com/video.mp4'
+    const url = videoDialog.videoUrl.trim() || 'https://example.com/video.mp4';
 
     // 验证 URL 格式
-    if (url !== 'https://example.com/video.mp4' && !url.startsWith('http://') && !url.startsWith('https://')) {
-      ElMessage.error('请输入有效的视频 URL（以 http:// 或 https:// 开头）')
-      return
+    if (
+      url !== 'https://example.com/video.mp4' &&
+      !url.startsWith('http://') &&
+      !url.startsWith('https://')
+    ) {
+      ElMessage.error('请输入有效的视频 URL（以 http:// 或 https:// 开头）');
+      return;
     }
 
     // 验证是否为视频格式
-    const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.flv', '.mkv']
-    const isVideoUrl = videoExtensions.some(ext => url.toLowerCase().includes(ext))
-    const isBilibiliOrYoutube = url.includes('bilibili.com') || url.includes('youtube.com') || url.includes('youtu.be')
+    const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.flv', '.mkv'];
+    const isVideoUrl = videoExtensions.some(ext => url.toLowerCase().includes(ext));
+    const isBilibiliOrYoutube =
+      url.includes('bilibili.com') || url.includes('youtube.com') || url.includes('youtu.be');
 
     if (!isVideoUrl && !isBilibiliOrYoutube && url !== 'https://example.com/video.mp4') {
-      ElMessage.error('URL 不是有效的视频格式（支持 .mp4, .webm, .ogg 等视频文件或 B站/YouTube 链接）')
-      return
+      ElMessage.error(
+        'URL 不是有效的视频格式（支持 .mp4, .webm, .ogg 等视频文件或 B站/YouTube 链接）'
+      );
+      return;
     }
 
-    videoDialog.loading = true
+    videoDialog.loading = true;
     try {
-      const { parseVideo } = await import('@/api/tools')
-      const info = await parseVideo({ url })
+      const { parseVideo } = await import('@/api/tools');
+      const info = await parseVideo({ url });
       if (info.platform && info.video_id) {
-        insertText(`:::video ${info.platform} ${info.video_id} :::\n`)
+        insertText(`:::video ${info.platform} ${info.video_id} :::\n`);
       } else {
-        insertText(`:::video ${url} :::\n`)
+        insertText(`:::video ${url} :::\n`);
       }
       // 插入成功后清空输入框
-      videoDialog.videoUrl = ''
-      videoDialog.visible = false
+      videoDialog.videoUrl = '';
+      videoDialog.visible = false;
     } catch {
-      insertText(`:::video ${url} :::\n`)
+      insertText(`:::video ${url} :::\n`);
       // 插入成功后清空输入框
-      videoDialog.videoUrl = ''
-      videoDialog.visible = false
+      videoDialog.videoUrl = '';
+      videoDialog.visible = false;
     } finally {
-      videoDialog.loading = false
+      videoDialog.loading = false;
     }
   } else {
-    const url = videoDialog.videoUrl.trim() || 'https://example.com/video.mp4'
-    insertText(`:::video ${url} :::\n`)
+    const url = videoDialog.videoUrl.trim() || 'https://example.com/video.mp4';
+    insertText(`:::video ${url} :::\n`);
     // 插入成功后清空输入框
-    videoDialog.videoUrl = ''
-    videoDialog.visible = false
+    videoDialog.videoUrl = '';
+    videoDialog.visible = false;
   }
-}
+};
 
 // 切换音频弹窗显示
 const toggleAudioDialog = () => {
-  audioDialog.visible = !audioDialog.visible
+  audioDialog.visible = !audioDialog.visible;
   if (audioDialog.visible) {
-    audioDialog.type = 'music'
-    audioDialog.title = ''
-    audioDialog.audioUrl = ''
-    audioDialog.uploading = false
-    audioDialog.loading = false
-    audioDialog.musicServer = 'netease'
-    audioDialog.musicId = ''
-    audioDialog.musicInfo = null
+    audioDialog.type = 'music';
+    audioDialog.title = '';
+    audioDialog.audioUrl = '';
+    audioDialog.uploading = false;
+    audioDialog.loading = false;
+    audioDialog.musicServer = 'netease';
+    audioDialog.musicId = '';
+    audioDialog.musicInfo = null;
   }
-}
+};
 
 // 处理音频上传
 const handleAudioUpload = async (file: File) => {
-  audioDialog.uploading = true
+  audioDialog.uploading = true;
   try {
-    const results = await uploadFile(file, '')
-    audioDialog.audioUrl = results.file_url
-    ElMessage.success('音频上传成功')
+    const results = await uploadFile(file, '');
+    audioDialog.audioUrl = results.file_url;
+    ElMessage.success('音频上传成功');
   } catch (error: unknown) {
-    ElMessage.error(error?.message || '音频上传失败')
+    ElMessage.error(error?.message || '音频上传失败');
   } finally {
-    audioDialog.uploading = false
+    audioDialog.uploading = false;
   }
-}
+};
 
 // 解析音乐
 const handleParseMusic = async () => {
   if (!audioDialog.musicId.trim()) {
-    ElMessage.warning('请输入音乐ID')
-    return
+    ElMessage.warning('请输入音乐ID');
+    return;
   }
-  audioDialog.loading = true
+  audioDialog.loading = true;
   try {
-    const apiUrl = `https://api.injahow.cn/meting/?server=${audioDialog.musicServer}&type=song&id=${audioDialog.musicId.trim()}`
-    const response = await fetch(apiUrl)
-    const data = await response.json()
+    const apiUrl = `https://api.injahow.cn/meting/?server=${audioDialog.musicServer}&type=song&id=${audioDialog.musicId.trim()}`;
+    const response = await fetch(apiUrl);
+    const data = await response.json();
     if (data && data.length > 0) {
-      const info = data[0]
+      const info = data[0];
       audioDialog.musicInfo = {
         title: info.name || info.title || '未知歌曲',
         artist: info.artist || info.author || '未知艺术家',
-        pic: info.pic || info.cover || ''
-      }
-      audioDialog.title = `${audioDialog.musicInfo.title} - ${audioDialog.musicInfo.artist}`
-      ElMessage.success('解析成功')
+        pic: info.pic || info.cover || '',
+      };
+      audioDialog.title = `${audioDialog.musicInfo.title} - ${audioDialog.musicInfo.artist}`;
+      ElMessage.success('解析成功');
     } else {
-      throw new Error('未获取到音乐信息')
+      throw new Error('未获取到音乐信息');
     }
   } catch {
-    ElMessage.error('解析失败，请检查音乐ID是否正确')
-    audioDialog.musicInfo = null
+    ElMessage.error('解析失败，请检查音乐ID是否正确');
+    audioDialog.musicInfo = null;
   } finally {
-    audioDialog.loading = false
+    audioDialog.loading = false;
   }
-}
+};
 
 // 插入音频语法
 const handleInsertAudio = () => {
   if (audioDialog.type === 'upload') {
     // 验证是否已上传文件
-    if (!audioDialog.audioUrl.trim() || audioDialog.audioUrl.trim() === 'https://example.com/audio.mp3') {
-      ElMessage.warning('请先上传音频文件')
-      return
+    if (
+      !audioDialog.audioUrl.trim() ||
+      audioDialog.audioUrl.trim() === 'https://example.com/audio.mp3'
+    ) {
+      ElMessage.warning('请先上传音频文件');
+      return;
     }
-    const title = audioDialog.title.trim() || '音频'
-    const url = audioDialog.audioUrl.trim()
-    insertText(`:::audio ${title} ${url} :::\n`)
-    audioDialog.visible = false
+    const title = audioDialog.title.trim() || '音频';
+    const url = audioDialog.audioUrl.trim();
+    insertText(`:::audio ${title} ${url} :::\n`);
+    audioDialog.visible = false;
     // 重置本地上传：清空标题、地址
-    audioDialog.title = ''
-    audioDialog.audioUrl = ''
+    audioDialog.title = '';
+    audioDialog.audioUrl = '';
   } else {
     if (!audioDialog.musicInfo) {
-      insertText(`:::music ${audioDialog.musicServer} ${audioDialog.musicId.trim() || '音乐ID'} :::\n`)
+      insertText(
+        `:::music ${audioDialog.musicServer} ${audioDialog.musicId.trim() || '音乐ID'} :::\n`
+      );
     } else {
-      insertText(`:::music ${audioDialog.musicServer} ${audioDialog.musicId.trim()} :::\n`)
+      insertText(`:::music ${audioDialog.musicServer} ${audioDialog.musicId.trim()} :::\n`);
     }
-    audioDialog.visible = false
+    audioDialog.visible = false;
     // 重置在线音乐：清空输入框，隐藏显示的地址
-    audioDialog.musicId = ''
-    audioDialog.musicInfo = null
+    audioDialog.musicId = '';
+    audioDialog.musicInfo = null;
     // 同时清空本地上传栏的标题（防止串数据）
-    audioDialog.title = ''
+    audioDialog.title = '';
   }
-}
+};
 
 // 切换照片墙弹窗显示
 const togglePhotoDialog = () => {
-  photoDialog.visible = !photoDialog.visible
+  photoDialog.visible = !photoDialog.visible;
   if (photoDialog.visible) {
-    photoDialog.rows = [['', '']]
+    photoDialog.rows = [['', '']];
   }
-}
+};
 
 // 添加照片墙行
 const addPhotoDialogRow = () => {
   if (photoDialog.rows.length < 6) {
-    photoDialog.rows.push(['', ''])
+    photoDialog.rows.push(['', '']);
   }
-}
+};
 
 // 删除照片墙行
 const removePhotoDialogRow = (index: number) => {
   if (photoDialog.rows.length > 1) {
-    photoDialog.rows.splice(index, 1)
+    photoDialog.rows.splice(index, 1);
   }
-}
+};
 
 // 添加照片墙图片
 const addPhotoDialogImage = (rowIndex: number) => {
-  const row = photoDialog.rows[rowIndex]
+  const row = photoDialog.rows[rowIndex];
   if (row && row.length < 4) {
-    row.push('')
+    row.push('');
   }
-}
+};
 
 // 删除照片墙图片
 const removePhotoDialogImage = (rowIndex: number, imgIndex: number) => {
-  const row = photoDialog.rows[rowIndex]
+  const row = photoDialog.rows[rowIndex];
   if (row && row.length > 1) {
-    row.splice(imgIndex, 1)
+    row.splice(imgIndex, 1);
   }
-}
+};
 
 // 处理照片墙图片上传
 const handlePhotoImageUpload = async (rowIndex: number, imgIndex: number, file: File) => {
-  photoDialog.uploading = true
+  photoDialog.uploading = true;
   try {
-    const results = await uploadFile(file, '')
-    const row = photoDialog.rows[rowIndex]
+    const results = await uploadFile(file, '');
+    const row = photoDialog.rows[rowIndex];
     if (row) {
-      row[imgIndex] = results.file_url
+      row[imgIndex] = results.file_url;
     }
-    ElMessage.success('图片上传成功')
+    ElMessage.success('图片上传成功');
   } catch (error: unknown) {
-    ElMessage.error(error?.message || '图片上传失败')
+    ElMessage.error(error?.message || '图片上传失败');
   } finally {
-    photoDialog.uploading = false
+    photoDialog.uploading = false;
   }
-}
+};
 
 // 照片墙图片上移
 const movePhotoImageUp = (rowIndex: number, imgIndex: number) => {
-  const row = photoDialog.rows[rowIndex]
+  const row = photoDialog.rows[rowIndex];
   if (row && imgIndex > 0) {
-    const temp = row[imgIndex] ?? ''
-    const prev = row[imgIndex - 1] ?? ''
-    row[imgIndex - 1] = temp as string
-    row[imgIndex] = prev as string
+    const temp = row[imgIndex] ?? '';
+    const prev = row[imgIndex - 1] ?? '';
+    row[imgIndex - 1] = temp as string;
+    row[imgIndex] = prev as string;
   }
-}
+};
 
 // 照片墙图片下移
 const movePhotoImageDown = (rowIndex: number, imgIndex: number) => {
-  const row = photoDialog.rows[rowIndex]
+  const row = photoDialog.rows[rowIndex];
   if (row && imgIndex < row.length - 1) {
-    const temp = row[imgIndex] ?? ''
-    const next = row[imgIndex + 1] ?? ''
-    row[imgIndex + 1] = temp as string
-    row[imgIndex] = next as string
+    const temp = row[imgIndex] ?? '';
+    const next = row[imgIndex + 1] ?? '';
+    row[imgIndex + 1] = temp as string;
+    row[imgIndex] = next as string;
   }
-}
+};
 
 // 照片墙行上移
 const movePhotoRowUp = (rowIndex: number) => {
   if (rowIndex > 0) {
-    const temp = photoDialog.rows[rowIndex]
-    const prevRow = photoDialog.rows[rowIndex - 1]
+    const temp = photoDialog.rows[rowIndex];
+    const prevRow = photoDialog.rows[rowIndex - 1];
     if (temp && prevRow) {
-      photoDialog.rows[rowIndex - 1] = temp
-      photoDialog.rows[rowIndex] = prevRow
+      photoDialog.rows[rowIndex - 1] = temp;
+      photoDialog.rows[rowIndex] = prevRow;
     }
   }
-}
+};
 
 // 照片墙行下移
 const movePhotoRowDown = (rowIndex: number) => {
   if (rowIndex < photoDialog.rows.length - 1) {
-    const temp = photoDialog.rows[rowIndex]
-    const nextRow = photoDialog.rows[rowIndex + 1]
+    const temp = photoDialog.rows[rowIndex];
+    const nextRow = photoDialog.rows[rowIndex + 1];
     if (temp && nextRow) {
-      photoDialog.rows[rowIndex + 1] = temp
-      photoDialog.rows[rowIndex] = nextRow
+      photoDialog.rows[rowIndex + 1] = temp;
+      photoDialog.rows[rowIndex] = nextRow;
     }
   }
-}
+};
 
 // 插入照片墙语法
 const handleInsertPhoto = () => {
-  const rows = photoDialog.rows.filter(row => row.some(img => img.trim()))
-  let photoBlocks
+  const rows = photoDialog.rows.filter(row => row.some(img => img.trim()));
+  let photoBlocks;
   if (rows.length === 0) {
-    photoBlocks = '图片1\n图片2\n:::n\n图片3\n图片4'
+    photoBlocks = '图片1\n图片2\n:::n\n图片3\n图片4';
   } else {
-    photoBlocks = rows.map(row => row.filter(img => img.trim()).join('\n')).join('\n:::n\n')
+    photoBlocks = rows.map(row => row.filter(img => img.trim()).join('\n')).join('\n:::n\n');
   }
 
-  insertText(`:::photo\n${photoBlocks}\n:::endphoto\n`)
-  photoDialog.visible = false
+  insertText(`:::photo\n${photoBlocks}\n:::endphoto\n`);
+  photoDialog.visible = false;
   // 重置为默认状态：两行空数据
-  photoDialog.rows = [['', '']]
-}
+  photoDialog.rows = [['', '']];
+};
 
 // ==================== 编辑器初始化 ====================
 const initEditor = () => {
-  if (!editorRef.value) return
+  if (!editorRef.value) return;
 
   // 创建粘贴事件处理器
   const pasteHandler = EditorView.domEventHandlers({
     paste: (event: ClipboardEvent, view) => {
       // 先检查是否有图片
-      const items = event.clipboardData?.items
+      const items = event.clipboardData?.items;
       if (items) {
-        const files: File[] = []
-        const textItems: DataTransferItem[] = []
+        const files: File[] = [];
+        const textItems: DataTransferItem[] = [];
 
         for (let i = 0; i < items.length; i++) {
-          const item = items[i]
+          const item = items[i];
           if (item && item.type) {
             if (item.type.startsWith('image/')) {
-              const file = item.getAsFile()
+              const file = item.getAsFile();
               if (file) {
-                files.push(file)
+                files.push(file);
               }
             } else if (item.kind === 'string' && item.type === 'text/plain') {
-              textItems.push(item)
+              textItems.push(item);
             }
           }
         }
 
         // 如果有图片，处理图片上传
         if (files.length > 0) {
-          event.preventDefault()
-          handlePasteImage(files)
+          event.preventDefault();
+          handlePasteImage(files);
 
           // 如果还有文本，在图片处理完后再处理文本
           if (textItems.length > 0) {
             textItems.forEach(item => {
-              item.getAsString((text) => {
+              item.getAsString(text => {
                 // 使用默认的粘贴行为来正确替换选中文本
                 view.dispatch({
                   changes: {
                     from: view.state.selection.main.from,
                     to: view.state.selection.main.to,
-                    insert: text
-                  }
-                })
-              })
-            })
+                    insert: text,
+                  },
+                });
+              });
+            });
           }
-          return
+          return;
         }
       }
 
       // 如果没有图片，让默认行为处理（这样能正确替换选中文本）
       // 不调用 event.preventDefault()
-    }
-  })
+    },
+  });
 
   editorViewRef.value = new EditorView({
     state: EditorState.create({
@@ -1994,105 +2023,115 @@ const initEditor = () => {
         keymap.of([
           { key: 'Mod-b', run: () => (insertText('**', '**'), true), preventDefault: true },
           { key: 'Mod-i', run: () => (insertText('*', '*'), true), preventDefault: true },
-          { key: 'Mod-s', run: () => { saveArticle(); return true; }, preventDefault: true },
+          {
+            key: 'Mod-s',
+            run: () => {
+              saveArticle();
+              return true;
+            },
+            preventDefault: true,
+          },
           { key: 'Mod-f', run: openSearchPanelCustom, preventDefault: true },
           ...defaultKeymap,
-          ...historyKeymap
+          ...historyKeymap,
         ]),
         EditorView.updateListener.of(update => {
           if (update.docChanged) {
-            emit('update:modelValue', update.state.doc.toString())
-            invalidateScrollCache()
+            emit('update:modelValue', update.state.doc.toString());
+            invalidateScrollCache();
           }
         }),
         EditorView.lineWrapping,
-        pasteHandler
-      ]
+        pasteHandler,
+      ],
     }),
-    parent: editorRef.value
-  })
+    parent: editorRef.value,
+  });
 
   // 编辑器初始化完成后，绑定滚动同步事件
   nextTick(() => {
-    bindScrollEvents()
-  })
-}
+    bindScrollEvents();
+  });
+};
 
 // 监听外部内容变化
-watch(() => props.modelValue, (newValue) => {
-  if (editorViewRef.value && newValue !== editorViewRef.value.state.doc.toString()) {
-    editorViewRef.value.dispatch({
-      changes: { from: 0, to: editorViewRef.value.state.doc.length, insert: newValue }
-    })
-    invalidateScrollCache()
+watch(
+  () => props.modelValue,
+  newValue => {
+    if (editorViewRef.value && newValue !== editorViewRef.value.state.doc.toString()) {
+      editorViewRef.value.dispatch({
+        changes: { from: 0, to: editorViewRef.value.state.doc.length, insert: newValue },
+      });
+      invalidateScrollCache();
+    }
   }
-})
+);
 
 // 监听预览区图片加载完成，使缓存失效
 watch(renderedHtml, async () => {
-  await nextTick()
-  const preview = previewPaneRef.value
-  if (!preview) return
+  await nextTick();
+  const preview = previewPaneRef.value;
+  if (!preview) return;
 
-  const images = preview.querySelectorAll('img')
-  images.forEach((img) => {
-    if (img.complete) return
-    img.addEventListener('load', () => invalidateScrollCache(), { once: true })
-  })
-  invalidateScrollCache()
+  const images = preview.querySelectorAll('img');
+  images.forEach(img => {
+    if (img.complete) return;
+    img.addEventListener('load', () => invalidateScrollCache(), { once: true });
+  });
+  invalidateScrollCache();
 
   // 渲染 Mermaid 图表
-  await renderMermaidDiagrams()
-})
+  await renderMermaidDiagrams();
+});
 
 // 监听视图模式变化
-watch(viewMode, (newMode) => {
+watch(viewMode, newMode => {
   if (newMode === 'split') {
     nextTick(() => {
-      invalidateScrollCache()
-      bindScrollEvents()
-    })
+      invalidateScrollCache();
+      bindScrollEvents();
+    });
   } else {
-    unbindScrollEvents()
+    unbindScrollEvents();
   }
 
   // 切换到非编辑模式时加载表情数据
-  loadEmojis()
-})
+  loadEmojis();
+});
 
 // ==================== 生命周期 ====================
-const handleFullscreenChange = () => isBrowserFullscreen.value = !!document.fullscreenElement
+const handleFullscreenChange = () => (isBrowserFullscreen.value = !!document.fullscreenElement);
 
 const handleEditorPaneMouseDown = (event: MouseEvent) => {
-  if (event.button !== 0) return
-  if (!editorViewRef.value) return
+  if (event.button !== 0) return;
+  if (!editorViewRef.value) return;
 
-  const target = event.target as HTMLElement | null
+  const target = event.target as HTMLElement | null;
   // 点击发生在 Codemirror 内部时，让 Codemirror 自己处理（避免影响选择/光标）
-  if (target?.closest('.cm-editor')) return
+  if (target?.closest('.cm-editor')) return;
 
   // 空白处点击：把焦点交给编辑器
-  editorViewRef.value.focus()
-}
+  editorViewRef.value.focus();
+};
 
 onMounted(() => {
-  initMermaid()
-  initEditor()
-  loadEmojis()
-  document.addEventListener('fullscreenchange', handleFullscreenChange)
+  initMermaid();
+  initEditor();
+  loadEmojis();
+  document.addEventListener('fullscreenchange', handleFullscreenChange);
 
   // 移动端保持分屏模式以启用滚动同步
   // 通过 CSS 控制编辑器和预览区各占 50% 宽度
-})
+});
 
 onBeforeUnmount(() => {
   // 解绑滚动同步事件
-  unbindScrollEvents()
+  unbindScrollEvents();
   // 销毁编辑器实例
-  editorViewRef.value?.destroy()
-  document.removeEventListener('fullscreenchange', handleFullscreenChange)
-  document.removeEventListener('fullscreenchange', handleFullscreenChange)
-})
+  editorViewRef.value?.destroy();
+  document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  document.removeEventListener('fullscreenchange', handleFullscreenChange);
+});
 </script>
 
 <style lang="scss">
@@ -2324,7 +2363,9 @@ onBeforeUnmount(() => {
           max-height: 160px;
           width: auto;
           cursor: zoom-in;
-          transition: max-height 0.2s ease, transform 0.2s ease;
+          transition:
+            max-height 0.2s ease,
+            transform 0.2s ease;
         }
 
         img.preview-collapsible-image.is-expanded {
@@ -2908,5 +2949,4 @@ onBeforeUnmount(() => {
     margin-top: 12px;
   }
 }
-
 </style>

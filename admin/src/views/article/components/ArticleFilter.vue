@@ -292,7 +292,7 @@ const handleMobileDateChange = () => {
     filterForm.value.start_time = undefined;
     filterForm.value.end_time = undefined;
     dateRange.value = null;
-    return
+    return;
   }
 
   // 情况2：只选择了开始日期或结束日期，不触发筛选
@@ -376,7 +376,7 @@ onMounted(() => {
 // 暴露方法供父组件调用
 defineExpose({
   loadCategories,
-  loadTags
+  loadTags,
 });
 </script>
 

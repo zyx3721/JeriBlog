@@ -129,11 +129,11 @@ const handleMenuClick = () => {
 // checkbox 选中时显示侧边栏
 .sidebar-toggle:checked {
   @media (max-width: 768px) {
-    ~.layout-container .sidebar {
+    ~ .layout-container .sidebar {
       left: 0;
     }
 
-    ~.layout-container .sidebar-overlay {
+    ~ .layout-container .sidebar-overlay {
       opacity: 1;
       pointer-events: auto;
       cursor: pointer;

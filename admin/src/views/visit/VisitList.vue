@@ -104,13 +104,7 @@
 
       <el-table-column label="操作" width="90" align="center" fixed="right">
         <template #default="{ row }">
-          <el-button
-            type="danger"
-            link
-            @click="handleDelete(row.id)"
-            >
-              删除
-          </el-button>
+          <el-button type="danger" link @click="handleDelete(row.id)"> 删除 </el-button>
         </template>
       </el-table-column>
     </common-list>
@@ -229,21 +223,21 @@ const fetchVisits = async () => {
 };
 
 const handleDelete = async (id: number) => {
-    try {
-        await ElMessageBox.confirm('确定要删除这条访问日志吗？', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning',
-        })
+  try {
+    await ElMessageBox.confirm('确定要删除这条访问日志吗？', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    });
 
-        await deleteVisit(id);
-        ElMessage.success('删除成功');
-        fetchVisits();
-    } catch (error: unknown) {
-        if (error !== 'cancel') {
-            ElMessage.error(error.message || '删除失败');
-        }
+    await deleteVisit(id);
+    ElMessage.success('删除成功');
+    fetchVisits();
+  } catch (error: unknown) {
+    if (error !== 'cancel') {
+      ElMessage.error(error.message || '删除失败');
     }
+  }
 };
 
 onMounted(() => {
