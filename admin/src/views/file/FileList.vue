@@ -210,289 +210,290 @@
       </template>
     </common-list>
   </div>
+</template>
 
-  <script setup lang="ts">
-    import { ref, reactive, onMounted, computed } from 'vue';
-    import { ElMessage, ElMessageBox } from 'element-plus';
-    import { useRouter } from 'vue-router';
-    import CommonList from '@/components/common/CommonList.vue';
-    import FileFilter from './components/FileFilter.vue';
-    import { getFileList, deleteFile, getFileReferences, type FileReference } from '@/api/file';
-    import type { FileInfo, FileListQuery } from '@/types/file';
-    import { formatDateTime } from '@/utils/date';
+<script setup lang="ts">
+import { ref, reactive, onMounted, computed } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { useRouter } from 'vue-router';
+import CommonList from '@/components/common/CommonList.vue';
+import FileFilter from './components/FileFilter.vue';
+import { getFileList, deleteFile, getFileReferences, type FileReference } from '@/api/file';
+import type { FileInfo, FileListQuery } from '@/types/file';
+import { formatDateTime } from '@/utils/date';
 
-    const query = ref<FileListQuery>({ page: 1, page_size: 20 });
-    const fileList = ref<FileInfo[]>([]);
-    const router = useRouter();
-    const total = ref(0);
-    const loading = ref(false);
-    const showFilter = ref(false);
+const query = ref<FileListQuery>({ page: 1, page_size: 20 });
+const fileList = ref<FileInfo[]>([]);
+const router = useRouter();
+const total = ref(0);
+const loading = ref(false);
+const showFilter = ref(false);
 
-    // 引用详情相关
-    const referencesDialogVisible = ref(false);
-    const referencesLoading = ref(false);
-    const references = ref<FileReference[]>([]);
-    const currentFile = ref<FileInfo | null>(null);
+// 引用详情相关
+const referencesDialogVisible = ref(false);
+const referencesLoading = ref(false);
+const references = ref<FileReference[]>([]);
+const currentFile = ref<FileInfo | null>(null);
 
-    const quickFilters = reactive({
-      file_type: undefined as string | undefined,
-      status: undefined as number | undefined,
+const quickFilters = reactive({
+  file_type: undefined as string | undefined,
+  status: undefined as number | undefined,
+});
+
+/**
+ * 计算当前激活的筛选项数量
+ */
+const activeFilterCount = computed(() => {
+  let count = 0;
+  if (query.value.keyword) count++;
+  if (query.value.file_type !== undefined) count++;
+  if (query.value.status !== undefined) count++;
+  if (query.value.upload_type) count++;
+  if (query.value.min_size || query.value.max_size) count++;
+  if (query.value.start_time || query.value.end_time) count++;
+  return count;
+});
+
+/**
+ * 切换筛选面板显示状态
+ */
+const toggleFilter = () => {
+  showFilter.value = !showFilter.value;
+  if (!showFilter.value) {
+    syncQuickFiltersFromQuery();
+  }
+};
+
+/**
+ * 从 query 同步筛选条件到快速筛选
+ */
+const syncQuickFiltersFromQuery = () => {
+  quickFilters.file_type = query.value.file_type;
+  quickFilters.status = query.value.status;
+};
+
+/**
+ * 处理快速筛选变化
+ */
+const handleQuickFilterChange = () => {
+  query.value.file_type = quickFilters.file_type;
+  query.value.status = quickFilters.status;
+  query.value.page = 1;
+  loadList();
+};
+
+const loadList = async () => {
+  loading.value = true;
+  try {
+    const [data] = await Promise.all([
+      getFileList(query.value),
+      new Promise(resolve => setTimeout(resolve, 300)),
+    ]);
+    fileList.value = data.list;
+    total.value = data.total;
+  } catch {
+    ElMessage.error('加载失败');
+  } finally {
+    loading.value = false;
+  }
+};
+
+const handleSearch = () => {
+  query.page = 1;
+  loadList();
+};
+
+const copyUrl = async (file: FileInfo) => {
+  try {
+    await navigator.clipboard.writeText(file.file_url);
+    ElMessage.success('已复制');
+  } catch {
+    ElMessage.error('复制失败');
+  }
+};
+
+const handleDelete = async (id: number) => {
+  try {
+    await ElMessageBox.confirm('确定要删除这个文件吗？', '提示', {
+      type: 'warning',
     });
+    await deleteFile(id);
+    ElMessage.success('删除成功');
+    loadList();
+  } catch (error) {
+    if (error !== 'cancel' && error instanceof Error) ElMessage.error(error.message);
+  }
+};
 
-    /**
-     * 计算当前激活的筛选项数量
-     */
-    const activeFilterCount = computed(() => {
-      let count = 0;
-      if (query.value.keyword) count++;
-      if (query.value.file_type !== undefined) count++;
-      if (query.value.status !== undefined) count++;
-      if (query.value.upload_type) count++;
-      if (query.value.min_size || query.value.max_size) count++;
-      if (query.value.start_time || query.value.end_time) count++;
-      return count;
-    });
+// 显示文件引用详情
+const handleShowReferences = async (file: FileInfo) => {
+  if (!file.reference_count || file.reference_count === 0) {
+    return;
+  }
 
-    /**
-     * 切换筛选面板显示状态
-     */
-    const toggleFilter = () => {
-      showFilter.value = !showFilter.value;
-      if (!showFilter.value) {
-        syncQuickFiltersFromQuery();
+  currentFile.value = file;
+  referencesDialogVisible.value = true;
+  referencesLoading.value = true;
+  references.value = [];
+
+  try {
+    references.value = await getFileReferences(file.id);
+  } catch (error: unknown) {
+    ElMessage.error((error as Error).message);
+  } finally {
+    referencesLoading.value = false;
+  }
+};
+
+// 处理引用详情点击跳转
+const handleReferenceClick = (ref: FileReference) => {
+  // 根据引用类型进行不同的跳转处理
+  switch (ref.type) {
+    case 'user':
+      // 跳转到用户管理页面，通过 state 传递搜索关键词
+      referencesDialogVisible.value = false; // 当前窗口跳转，关闭对话框
+      router.push({
+        path: '/users',
+        state: { keyword: ref.title },
+      });
+      break;
+
+    case 'article':
+      // 跳转到文章前端访问链接 /posts/<slug>/
+      if (ref.url) {
+        window.open(ref.url, '_blank'); // 新窗口打开，不关闭对话框
       }
-    };
+      break;
 
-    /**
-     * 从 query 同步筛选条件到快速筛选
-     */
-    const syncQuickFiltersFromQuery = () => {
-      quickFilters.file_type = query.value.file_type;
-      quickFilters.status = query.value.status;
-    };
-
-    /**
-     * 处理快速筛选变化
-     */
-    const handleQuickFilterChange = () => {
-      query.value.file_type = quickFilters.file_type;
-      query.value.status = quickFilters.status;
-      query.value.page = 1;
-      loadList();
-    };
-
-    const loadList = async () => {
-      loading.value = true;
-      try {
-        const [data] = await Promise.all([
-          getFileList(query.value),
-          new Promise(resolve => setTimeout(resolve, 300)),
-        ]);
-        fileList.value = data.list;
-        total.value = data.total;
-      } catch {
-        ElMessage.error('加载失败');
-      } finally {
-        loading.value = false;
+    case 'moment':
+      // 跳转到动态前端访问地址 /moment
+      if (ref.url) {
+        window.open(ref.url, '_blank'); // 新窗口打开，不关闭对话框
       }
-    };
+      break;
 
-    const handleSearch = () => {
-      query.page = 1;
-      loadList();
-    };
-
-    const copyUrl = async (file: FileInfo) => {
-      try {
-        await navigator.clipboard.writeText(file.file_url);
-        ElMessage.success('已复制');
-      } catch {
-        ElMessage.error('复制失败');
+    case 'comment':
+      // 跳转到评论所属文章前端访问链接 /posts/<slug>/
+      if (ref.url) {
+        window.open(ref.url, '_blank'); // 新窗口打开，不关闭对话框
       }
-    };
+      break;
 
-    const handleDelete = async (id: number) => {
-      try {
-        await ElMessageBox.confirm('确定要删除这个文件吗？', '提示', {
-          type: 'warning',
-        });
-        await deleteFile(id);
-        ElMessage.success('删除成功');
-        loadList();
-      } catch (error) {
-        if (error !== 'cancel' && error instanceof Error) ElMessage.error(error.message);
+    case 'friend':
+      // 跳转到友链前端访问地址 /friend
+      if (ref.url) {
+        window.open(ref.url, '_blank'); // 新窗口打开，不关闭对话框
       }
-    };
+      break;
 
-    // 显示文件引用详情
-    const handleShowReferences = async (file: FileInfo) => {
-      if (!file.reference_count || file.reference_count === 0) {
-        return;
-      }
+    case 'setting':
+      // 跳转到系统设置页面
+      referencesDialogVisible.value = false; // 当前窗口跳转，关闭对话框
+      router.push('/settings');
+      break;
 
-      currentFile.value = file;
-      referencesDialogVisible.value = true;
-      referencesLoading.value = true;
-      references.value = [];
+    case 'menu':
+      // 跳转到菜单管理页面
+      referencesDialogVisible.value = false; // 当前窗口跳转，关闭对话框
+      router.push('/menus');
+      break;
 
-      try {
-        references.value = await getFileReferences(file.id);
-      } catch (error: unknown) {
-        ElMessage.error(error.message);
-      } finally {
-        referencesLoading.value = false;
-      }
-    };
+    case 'feedback':
+      // 跳转到反馈投诉页面，通过 state 传递搜索关键词
+      referencesDialogVisible.value = false; // 当前窗口跳转，关闭对话框
+      router.push({
+        path: '/feedback',
+        state: { keyword: ref.title },
+      });
+      break;
 
-    // 处理引用详情点击跳转
-    const handleReferenceClick = (ref: FileReference) => {
-      // 根据引用类型进行不同的跳转处理
-      switch (ref.type) {
-        case 'user':
-          // 跳转到用户管理页面，通过 state 传递搜索关键词
-          referencesDialogVisible.value = false; // 当前窗口跳转，关闭对话框
-          router.push({
-            path: '/users',
-            state: { keyword: ref.title },
-          });
-          break;
+    default:
+      ElMessage.warning('未知的引用类型');
+  }
+};
 
-        case 'article':
-          // 跳转到文章前端访问链接 /posts/<slug>/
-          if (ref.url) {
-            window.open(ref.url, '_blank'); // 新窗口打开，不关闭对话框
-          }
-          break;
+// 获取引用类型标签颜色
+const getReferenceTypeTag = (
+  type: string
+): 'primary' | 'success' | 'warning' | 'info' | 'danger' => {
+  const typeMap: Record<string, 'primary' | 'success' | 'warning' | 'info' | 'danger'> = {
+    article: 'primary',
+    user: 'success',
+    friend: 'warning',
+    setting: 'info',
+    moment: 'primary',
+    comment: 'success',
+    menu: 'info',
+    feedback: 'danger',
+  };
+  return typeMap[type] || 'info';
+};
 
-        case 'moment':
-          // 跳转到动态前端访问地址 /moment
-          if (ref.url) {
-            window.open(ref.url, '_blank'); // 新窗口打开，不关闭对话框
-          }
-          break;
+// 获取引用类型名称
+const getReferenceTypeName = (type: string) => {
+  const nameMap: Record<string, string> = {
+    article: '文章',
+    user: '用户',
+    friend: '友链',
+    setting: '系统设置',
+    moment: '动态',
+    comment: '评论',
+    menu: '菜单',
+    feedback: '反馈',
+  };
+  return nameMap[type] || type;
+};
 
-        case 'comment':
-          // 跳转到评论所属文章前端访问链接 /posts/<slug>/
-          if (ref.url) {
-            window.open(ref.url, '_blank'); // 新窗口打开，不关闭对话框
-          }
-          break;
+// 获取引用标题显示内容
+const getReferenceTitle = (ref: FileReference) => {
+  // 如果是系统设置类型，根据字段名区分基本配置和博客配置
+  if (ref.type === 'setting' && ref.field) {
+    // 基本配置字段
+    const basicFields = ['站长头像', '站长形象'];
+    // 博客配置字段
+    const blogFields = [
+      '博客图标',
+      '博客背景',
+      '博客截图',
+      '展览图片',
+      '微信收款码',
+      '支付宝收款码',
+    ];
 
-        case 'friend':
-          // 跳转到友链前端访问地址 /friend
-          if (ref.url) {
-            window.open(ref.url, '_blank'); // 新窗口打开，不关闭对话框
-          }
-          break;
+    if (basicFields.includes(ref.field)) {
+      return '基本配置';
+    } else if (blogFields.includes(ref.field)) {
+      return '博客配置';
+    }
+  }
 
-        case 'setting':
-          // 跳转到系统设置页面
-          referencesDialogVisible.value = false; // 当前窗口跳转，关闭对话框
-          router.push('/settings');
-          break;
+  // 其他类型返回原始 title
+  return ref.title;
+};
 
-        case 'menu':
-          // 跳转到菜单管理页面
-          referencesDialogVisible.value = false; // 当前窗口跳转，关闭对话框
-          router.push('/menus');
-          break;
+const isImage = (file: FileInfo) => file.file_type?.startsWith('image/');
 
-        case 'feedback':
-          // 跳转到反馈投诉页面，通过 state 传递搜索关键词
-          referencesDialogVisible.value = false; // 当前窗口跳转，关闭对话框
-          router.push({
-            path: '/feedback',
-            state: { keyword: ref.title },
-          });
-          break;
+const formatFileSize = (size: number) => {
+  if (size < 1024) return size + ' B';
+  if (size < 1024 * 1024) return (size / 1024).toFixed(1) + ' KB';
+  return (size / (1024 * 1024)).toFixed(1) + ' MB';
+};
 
-        default:
-          ElMessage.warning('未知的引用类型');
-      }
-    };
+const getStatusTagType = (status: number) => {
+  return status === 1 ? 'success' : 'info';
+};
 
-    // 获取引用类型标签颜色
-    const getReferenceTypeTag = (
-      type: string
-    ): 'primary' | 'success' | 'warning' | 'info' | 'danger' => {
-      const typeMap: Record<string, 'primary' | 'success' | 'warning' | 'info' | 'danger'> = {
-        article: 'primary',
-        user: 'success',
-        friend: 'warning',
-        setting: 'info',
-        moment: 'primary',
-        comment: 'success',
-        menu: 'info',
-        feedback: 'danger',
-      };
-      return typeMap[type] || 'info';
-    };
+const getStatusText = (status: number) => {
+  return status === 1 ? '使用中' : '未使用';
+};
 
-    // 获取引用类型名称
-    const getReferenceTypeName = (type: string) => {
-      const nameMap: Record<string, string> = {
-        article: '文章',
-        user: '用户',
-        friend: '友链',
-        setting: '系统设置',
-        moment: '动态',
-        comment: '评论',
-        menu: '菜单',
-        feedback: '反馈',
-      };
-      return nameMap[type] || type;
-    };
+onMounted(() => {
+  syncQuickFiltersFromQuery();
+  loadList();
+});
+</script>
 
-    // 获取引用标题显示内容
-    const getReferenceTitle = (ref: FileReference) => {
-      // 如果是系统设置类型，根据字段名区分基本配置和博客配置
-      if (ref.type === 'setting' && ref.field) {
-        // 基本配置字段
-        const basicFields = ['站长头像', '站长形象'];
-        // 博客配置字段
-        const blogFields = [
-          '博客图标',
-          '博客背景',
-          '博客截图',
-          '展览图片',
-          '微信收款码',
-          '支付宝收款码',
-        ];
-
-        if (basicFields.includes(ref.field)) {
-          return '基本配置';
-        } else if (blogFields.includes(ref.field)) {
-          return '博客配置';
-        }
-      }
-
-      // 其他类型返回原始 title
-      return ref.title;
-    };
-
-    const isImage = (file: FileInfo) => file.file_type?.startsWith('image/');
-
-    const formatFileSize = (size: number) => {
-      if (size < 1024) return size + ' B';
-      if (size < 1024 * 1024) return (size / 1024).toFixed(1) + ' KB';
-      return (size / (1024 * 1024)).toFixed(1) + ' MB';
-    };
-
-    const getStatusTagType = (status: number) => {
-      return status === 1 ? 'success' : 'info';
-    };
-
-    const getStatusText = (status: number) => {
-      return status === 1 ? '使用中' : '未使用';
-    };
-
-    onMounted(() => {
-      syncQuickFiltersFromQuery();
-      loadList();
-    });
-  </script>
-
-  <style scoped lang="scss">
+<style scoped lang="scss">
     /* 搜索表单样式已移至全局样式 main.scss */
 
     .file-list-page {

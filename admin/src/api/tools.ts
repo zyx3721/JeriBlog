@@ -22,6 +22,25 @@ export interface DownloadImageResponse {
 }
 
 /**
+ * 音乐信息接口
+ */
+export interface MusicInfo {
+  title: string;
+  artist: string;
+  album?: string;
+  cover?: string;
+  url: string;
+  duration?: number;
+}
+
+/**
+ * 解析音乐请求接口
+ */
+export interface ParseMusicRequest {
+  url: string;
+}
+
+/**
  * 工具API模块 - 用于视频解析、链接元数据获取等通用工具功能
  */
 

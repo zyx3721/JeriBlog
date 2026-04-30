@@ -992,6 +992,7 @@ const handleCoverMakerSave = async (imageUrl: string) => {
 // 处理文件选择
 const handleFileSelect = (file: any) => {
   formData.cover = file.file_url;
+  filePickerVisible.value = false;
   ElMessage.success('已选择文件');
 };
 
