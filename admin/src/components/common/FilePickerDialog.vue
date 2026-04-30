@@ -209,8 +209,7 @@ const fetchFileList = async () => {
     fileList.value = response.list || [];
     total.value = response.total || 0;
   } catch (error: unknown) {
-    console.error('获取文件列表失败:', error);
-    ElMessage.error(error.message || '获取文件列表失败');
+    ElMessage.error((error as Error)?.message || '获取文件列表失败');
     fileList.value = [];
     total.value = 0;
   } finally {

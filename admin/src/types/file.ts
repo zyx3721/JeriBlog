@@ -23,14 +23,18 @@ export interface FileInfo {
   reference_count?: number; // 引用次数
 }
 
-// 文件列表查询
-export interface FileListQuery {
+// 文件查询参数(用于 FilePickerDialog)
+export interface FileQuery {
   page?: number;
   page_size?: number;
   keyword?: string;
   file_type?: string;
   status?: number;
   upload_type?: string;
+}
+
+// 将现有的 FileListQuery 改为继承 FileQuery
+export interface FileListQuery extends FileQuery {
   min_size?: number;
   max_size?: number;
   start_time?: string;

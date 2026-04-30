@@ -162,7 +162,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, onMounted, watch } from 'vue';
+import { ElMessage } from 'element-plus';
 import { Search } from '@element-plus/icons-vue';
 import FilterPanel from '@/components/common/FilterPanel.vue';
 import type { UserListQuery } from '@/types/user';
@@ -202,6 +203,10 @@ const emit = defineEmits<{
 const filterForm = ref<UserListQuery>({ ...props.modelValue });
 const dateRange = ref<[string, string] | null>(null);
 const lastLoginDateRange = ref<[string, string] | null>(null);
+const startDate = ref<string>('');
+const endDate = ref<string>('');
+const lastLoginStartDate = ref<string>('');
+const lastLoginEndDate = ref<string>('');
 
 // 避免 watch 循环的标记
 let isExternalUpdate = false;
@@ -331,7 +336,7 @@ const handleMobileDateChange = () => {
 /**
  * 处理移动端最后登录日期变化
  */
-const handleMobileLastLoginDateChange = () => {
+const handleLastLoginMobileDateChange = () => {
   // 情况1：两个日期都清空
   if (!lastLoginStartDate.value && !lastLoginEndDate.value) {
     filterForm.value.last_login_start = undefined;

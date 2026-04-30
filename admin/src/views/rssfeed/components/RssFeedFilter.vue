@@ -57,7 +57,7 @@
     <el-col :span="3">
       <el-form-item label="文章状态">
         <el-select
-          v-model="filterForm.is_delete"
+          v-model="filterForm.is_deleted"
           placeholder="选择文章状态"
           clearable
           style="width: 100%"
@@ -118,6 +118,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
+import { ElMessage } from 'element-plus';
 import { Search } from '@element-plus/icons-vue';
 import FilterPanel from '@/components/common/FilterPanel.vue';
 import type { RssArticleQuery } from '@/types/rssfeed';
@@ -159,6 +160,8 @@ const emit = defineEmits<{
 const filterForm = ref<RssArticleQuery>({ ...props.modelValue });
 const friendList = ref<Friend[]>([]);
 const dateRange = ref<[string, string] | null>(null);
+const startDate = ref<string>('');
+const endDate = ref<string>('');
 
 // 避免 watch 循环的标记
 let isExternalUpdate = false;

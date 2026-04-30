@@ -235,7 +235,7 @@ const handleDelete = async (id: number) => {
     fetchVisits();
   } catch (error: unknown) {
     if (error !== 'cancel') {
-      ElMessage.error(error.message || '删除失败');
+      ElMessage.error((error as Error)?.message || '删除失败');
     }
   }
 };

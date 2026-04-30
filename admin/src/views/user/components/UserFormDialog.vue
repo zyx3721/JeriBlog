@@ -97,6 +97,7 @@ import { createUser, updateUser } from '@/api/user';
 import ImageUploader from '@/components/common/ImageUploader.vue';
 import FilePickerDialog from '@/components/common/FilePickerDialog.vue';
 import type { FileInfo } from '@/types/file';
+import { isSuperAdmin } from '@/utils/auth';
 
 type UserRoleOption = CreateUserRequest['role'];
 

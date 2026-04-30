@@ -305,6 +305,7 @@ const coverUploaderRef = ref<InstanceType<typeof ImageUploader>>();
 const loading = ref(false);
 const drawerVisible = ref(false);
 const coverMakerVisible = ref(false);
+const filePickerVisible = ref(false);
 const categories = ref<Category[]>([]);
 const tags = ref<Tag[]>([]);
 const articleInfo = ref<Article>({} as Article);

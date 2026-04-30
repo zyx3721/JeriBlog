@@ -97,7 +97,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, onMounted, watch } from 'vue';
+import { ElMessage } from 'element-plus';
 import { Search } from '@element-plus/icons-vue';
 import FilterPanel from '@/components/common/FilterPanel.vue';
 import type { FeedbackListQuery } from '@/types/feedback';
@@ -136,6 +137,8 @@ const emit = defineEmits<{
 
 const filterForm = ref<FeedbackListQuery>({ ...props.modelValue });
 const dateRange = ref<[string, string] | null>(null);
+const startDate = ref<string>('');
+const endDate = ref<string>('');
 
 // 避免 watch 循环的标记
 let isExternalUpdate = false;
