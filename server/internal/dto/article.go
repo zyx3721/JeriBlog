@@ -15,30 +15,6 @@ import (
 	"jeri_blog/pkg/utils"
 )
 
-// ============ 通用文章请求 ============
-
-// ListArticlesRequest 文章列表请求
-type ListArticlesRequest struct {
-	Page       int      `form:"page,default=1" binding:"min=0"`
-	PageSize   int      `form:"page_size,default=10" binding:"min=0"`
-	Year       string   `form:"year"`
-	Month      string   `form:"month"`
-	Category   string   `form:"category"`
-	Tag        string   `form:"tag"`
-	Keyword    string   `form:"keyword"`       // 搜索关键词（标题或内容）
-	CategoryID *uint    `form:"category_id"`   // 分类ID
-	TagID      *uint    `form:"tag_id"`        // 单个标签ID（兼容旧版）
-	TagIDs     []uint   `form:"tag_ids"`       // 标签ID数组（新版多选）
-	Location   string   `form:"location"`      // 发布地点
-	Status     string   `form:"status"`        // 状态：published-已发布, draft-草稿
-	IsPublish  *bool    `form:"is_publish"`    // 是否已发布
-	IsTop      *bool    `form:"is_top"`        // 是否置顶
-	IsEssence  *bool    `form:"is_essence"`    // 是否精选
-	IsOutdated *bool    `form:"is_outdated"`   // 是否过时
-	StartTime  string   `form:"start_time"`    // 开始时间 YYYY-MM-DD
-	EndTime    string   `form:"end_time"`      // 结束时间 YYYY-MM-DD
-}
-
 // ============ 通用文章响应 ============
 
 // ArticleDetailResponse 文章详情响应（前台专用）
@@ -81,6 +57,16 @@ type ArticleDetailResponse struct {
 
 // ============ 前台文章请求 ============
 
+// ListArticlesForWebRequest 前台文章列表请求
+type ListArticlesForWebRequest struct {
+	Page     int    `form:"page,default=1" binding:"min=0"`
+	PageSize int    `form:"page_size,default=10" binding:"min=0"`
+	Year     string `form:"year"`
+	Month    string `form:"month"`
+	Category string `form:"category"`
+	Tag      string `form:"tag"`
+}
+
 // SearchArticlesRequest 文章搜索请求
 type SearchArticlesRequest struct {
 	Keyword  string `form:"keyword" binding:"required"`
@@ -119,10 +105,26 @@ type ArticleWebResponse struct {
 
 // ============ 后台文章管理请求 ============
 
+// ListArticlesRequest 后台文章列表请求（支持筛选）
+type ListArticlesRequest struct {
+	Page       int    `form:"page,default=1" binding:"min=0"`
+	PageSize   int    `form:"page_size,default=10" binding:"min=0"`
+	Keyword    string `form:"keyword"`     // 搜索关键词（标题/内容）
+	CategoryID uint   `form:"category_id"` // 分类ID
+	TagIDs     []uint `form:"tag_ids"`     // 标签ID列表
+	Location   string `form:"location"`    // 发布地点
+	IsPublish  *bool  `form:"is_publish"`  // 是否发布
+	IsTop      *bool  `form:"is_top"`      // 是否置顶
+	IsEssence  *bool  `form:"is_essence"`  // 是否精选
+	IsOutdated *bool  `form:"is_outdated"` // 是否过时
+	StartTime  string `form:"start_time"`  // 发布开始时间
+	EndTime    string `form:"end_time"`    // 发布结束时间
+}
+
 // CreateArticleRequest 创建文章请求
 type CreateArticleRequest struct {
 	Title      string `json:"title" binding:"required"`
-	Slug       string `json:"slug"`       // 自定义 URL slug
+	Slug       string `json:"slug"` // 自定义文章Slug
 	Content    string `json:"content" binding:"required"`
 	Summary    string `json:"summary"`
 	Cover      string `json:"cover"`
@@ -138,15 +140,15 @@ type CreateArticleRequest struct {
 // UpdateArticleRequest 更新文章请求
 type UpdateArticleRequest struct {
 	Title       string          `json:"title"`
-	Slug        string          `json:"slug"`       // 自定义 URL slug
+	Slug        string          `json:"slug"` // 自定义文章Slug
 	Content     string          `json:"content"`
 	Summary     string          `json:"summary"`
 	AISummary   string          `json:"ai_summary"` // AI 总结
 	Cover       string          `json:"cover"`
-	Location    string          `json:"location"`   // 发布地点
-	IsPublish   *bool           `json:"is_publish"` // 是否发布
-	IsTop       *bool           `json:"is_top"`     // 是否置顶
-	IsEssence   *bool           `json:"is_essence"` // 是否精选
+	Location    string          `json:"location"`    // 发布地点
+	IsPublish   *bool           `json:"is_publish"`  // 是否发布
+	IsTop       *bool           `json:"is_top"`      // 是否置顶
+	IsEssence   *bool           `json:"is_essence"`  // 是否精选
 	IsOutdated  *bool           `json:"is_outdated"` // 是否过时
 	CategoryID  *uint           `json:"category_id"`
 	TagIDs      []uint          `json:"tag_ids"`
@@ -160,6 +162,7 @@ type UpdateArticleRequest struct {
 type ArticleListResponse struct {
 	ID           uint            `json:"id"`
 	Title        string          `json:"title"`
+	Slug         string          `json:"slug"`
 	Cover        string          `json:"cover"`
 	Location     string          `json:"location"`
 	IsPublish    bool            `json:"is_publish"`
@@ -218,13 +221,6 @@ type ImportArticlesResult struct {
 	Errors          []ImportArticleError `json:"errors,omitempty"`
 }
 
-// ImportArticleError 导入错误信息
-type ImportArticleError struct {
-	Filename string `json:"filename"`
-	Title    string `json:"title"`
-	Error    string `json:"error"`
-}
-
 // AddError 添加错误信息
 func (r *ImportArticlesResult) AddError(filename, title, errMsg string) {
 	r.Failed++
@@ -235,12 +231,16 @@ func (r *ImportArticlesResult) AddError(filename, title, errMsg string) {
 	})
 }
 
+// ImportArticleError 导入错误信息
+type ImportArticleError struct {
+	Filename string `json:"filename"`
+	Title    string `json:"title"`
+	Error    string `json:"error"`
+}
+
 // ============ 微信公众号导出 ============
 
 // WeChatExportResult 微信导出结果
 type WeChatExportResult struct {
-	Success  bool     `json:"success"`            // 是否成功推送
-	MediaID  string   `json:"media_id,omitempty"` // 草稿 ID（成功时）
-	HTML     string   `json:"html,omitempty"`     // 公众号 HTML（失败时）
-	Warnings []string `json:"warnings,omitempty"` // 警告信息
+	HTML string `json:"html"` // 公众号 HTML，用于复制粘贴到微信公众平台
 }

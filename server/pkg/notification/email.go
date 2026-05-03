@@ -59,6 +59,9 @@ func (e *EmailNotifier) Send(to string, data Data) error {
 		return fmt.Errorf("渲染邮件模板失败: %w", err)
 	}
 
+	// 调试日志：输出邮件HTML内容（仅用于排查链接问题）
+	// logger.Debug("邮件HTML内容: %s", htmlBody)
+
 	// 生成邮件主题
 	subject := e.generateSubject(data)
 

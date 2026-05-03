@@ -12,6 +12,7 @@
 package repository
 
 import (
+	"strings"
 	"time"
 
 	"jeri_blog/internal/dto"
@@ -260,7 +261,7 @@ func (r *StatsRepository) GetTrendData(startDate, endDate time.Time, groupType s
 
 // GetCategoryStats 获取分类统计数据
 func (r *StatsRepository) GetCategoryStats() ([]dto.CategoryStats, error) {
-	results := make([]dto.CategoryStats, 0)
+	var results []dto.CategoryStats
 
 	// 实时统计每个分类下已发布文章的数量
 	err := r.db.Model(&model.Category{}).
@@ -289,7 +290,7 @@ func (r *StatsRepository) GetPublishedCategoryCount() (int64, error) {
 
 // GetTagStats 获取标签统计数据
 func (r *StatsRepository) GetTagStats() ([]dto.TagStats, error) {
-	results := make([]dto.TagStats, 0)
+	var results []dto.TagStats
 
 	// 实时统计每个标签下已发布文章的数量
 	err := r.db.Model(&model.Tag{}).
@@ -324,24 +325,25 @@ func (r *StatsRepository) GetPublishedTagCount() (int64, error) {
 
 // GetArticleContribution 获取文章贡献数据
 func (r *StatsRepository) GetArticleContribution(year *int, month *int) ([]dto.ArticleContribution, error) {
-	results := make([]dto.ArticleContribution, 0)
+	var results []dto.ArticleContribution
 
 	query := r.db.Model(&model.Article{}).
 		Select("TO_CHAR(DATE(publish_time), 'YYYY-MM-DD') as date, COUNT(*) as count").
 		Where("is_publish = ?", true)
 
 	// 根据参数构建查询条件
-	if year != nil && month != nil {
+	switch {
+	case year != nil && month != nil:
 		// 查询指定年月的数据
 		startDate := time.Date(*year, time.Month(*month), 1, 0, 0, 0, 0, time.UTC)
 		endDate := startDate.AddDate(0, 1, 0).Add(-time.Second) // 月末最后一秒
 		query = query.Where("publish_time >= ? AND publish_time <= ?", startDate, endDate)
-	} else if year != nil {
+	case year != nil:
 		// 查询指定年份全年的数据
 		startDate := time.Date(*year, 1, 1, 0, 0, 0, 0, time.UTC)
 		endDate := time.Date(*year, 12, 31, 23, 59, 59, 0, time.UTC)
 		query = query.Where("publish_time >= ? AND publish_time <= ?", startDate, endDate)
-	} else {
+	default:
 		// 默认查询过去一年的数据
 		oneYearAgo := time.Now().AddDate(-1, 0, 0)
 		query = query.Where("publish_time >= ?", oneYearAgo)
@@ -398,7 +400,7 @@ func (r *StatsRepository) GetOnlineUsers() (int64, error) {
 
 // GetArchives 获取文章归档数据（按年月分组）
 func (r *StatsRepository) GetArchives() ([]dto.ArchiveItem, error) {
-	results := make([]dto.ArchiveItem, 0)
+	var results []dto.ArchiveItem
 
 	// 查询已发布文章按年月分组统计
 	err := r.db.Model(&model.Article{}).
@@ -415,26 +417,61 @@ func (r *StatsRepository) GetArchives() ([]dto.ArchiveItem, error) {
 // 访问日志查询
 // ============================
 
-// GetVisitLogs 获取访问日志列表（分页）
+// GetVisitLogs 获取访问日志列表
 func (r *StatsRepository) GetVisitLogs(req *dto.GetVisitLogsRequest) ([]model.Visit, int64, error) {
 	var visits []model.Visit
 	var total int64
 
-	// 构建查询
 	query := r.db.Model(&model.Visit{})
 
-	// 关键词搜索（访客ID、IP、页面URL、地理位置、浏览器、操作系统、来源）
+	// 关键词搜索（页面URL）
 	if req.Keyword != "" {
-		query = query.Where("visitor_id LIKE ? OR ip LIKE ? OR page_url LIKE ? OR location LIKE ? OR browser LIKE ? OR os LIKE ? OR referer LIKE ?",
-			"%"+req.Keyword+"%", "%"+req.Keyword+"%", "%"+req.Keyword+"%", "%"+req.Keyword+"%", "%"+req.Keyword+"%", "%"+req.Keyword+"%", "%"+req.Keyword+"%")
+		query = query.Where("page_url ILIKE ?", "%"+req.Keyword+"%")
 	}
 
-	// 时间范围筛选（支持时分秒）
-	if req.StartDate != "" {
-		query = query.Where("created_at >= ?", req.StartDate)
+	// 访客ID筛选
+	if req.VisitorID != "" {
+		query = query.Where("visitor_id ILIKE ?", "%"+req.VisitorID+"%")
 	}
-	if req.EndDate != "" {
-		query = query.Where("created_at <= ?", req.EndDate)
+
+	// IP地址筛选
+	if req.IP != "" {
+		query = query.Where("ip ILIKE ?", "%"+req.IP+"%")
+	}
+
+	// 排除IP地址筛选（支持多个IP，用逗号分隔）
+	if req.ExcludeIPs != "" {
+		// 解析逗号分隔的IP列表
+		ips := strings.Split(req.ExcludeIPs, ",")
+		for _, ip := range ips {
+			ip = strings.TrimSpace(ip)
+			if ip != "" {
+				query = query.Where("ip NOT ILIKE ?", "%"+ip+"%")
+			}
+		}
+	}
+
+	// 地理位置筛选
+	if req.Location != "" {
+		query = query.Where("location ILIKE ?", "%"+req.Location+"%")
+	}
+
+	// 浏览器筛选（模糊匹配）
+	if req.Browser != "" {
+		query = query.Where("browser ILIKE ?", "%"+req.Browser+"%")
+	}
+
+	// 操作系统筛选（模糊匹配）
+	if req.OS != "" {
+		query = query.Where("os ILIKE ?", "%"+req.OS+"%")
+	}
+
+	// 时间范围筛选
+	if req.StartTime != "" {
+		query = query.Where("created_at >= ?", req.StartTime)
+	}
+	if req.EndTime != "" {
+		query = query.Where("created_at <= ?", req.EndTime+" 23:59:59")
 	}
 
 	// 获取总数
@@ -444,7 +481,8 @@ func (r *StatsRepository) GetVisitLogs(req *dto.GetVisitLogsRequest) ([]model.Vi
 
 	// 分页查询
 	offset := (req.Page - 1) * req.PageSize
-	err := query.Order("created_at DESC").
+	err := query.
+		Order("created_at DESC").
 		Limit(req.PageSize).
 		Offset(offset).
 		Find(&visits).Error
@@ -457,26 +495,8 @@ func (r *StatsRepository) DeleteVisitLog(id uint) error {
 	return r.db.Delete(&model.Visit{}, id).Error
 }
 
-// DeleteVisitLogsByCondition 根据条件批量删除访问日志
-func (r *StatsRepository) DeleteVisitLogsByCondition(req *dto.GetVisitLogsRequest) (int64, error) {
-	// 构建查询条件
-	query := r.db.Model(&model.Visit{})
-
-	// 关键词搜索
-	if req.Keyword != "" {
-		query = query.Where("visitor_id LIKE ? OR ip LIKE ? OR page_url LIKE ? OR location LIKE ? OR browser LIKE ? OR os LIKE ? OR referer LIKE ?",
-			"%"+req.Keyword+"%", "%"+req.Keyword+"%", "%"+req.Keyword+"%", "%"+req.Keyword+"%", "%"+req.Keyword+"%", "%"+req.Keyword+"%", "%"+req.Keyword+"%")
-	}
-
-	// 时间范围筛选
-	if req.StartDate != "" {
-		query = query.Where("created_at >= ?", req.StartDate)
-	}
-	if req.EndDate != "" {
-		query = query.Where("created_at <= ?", req.EndDate)
-	}
-
-	// 执行删除
-	result := query.Delete(&model.Visit{})
-	return result.RowsAffected, result.Error
+// BatchDeleteVisitLogs 批量删除访问日志
+func (r *StatsRepository) BatchDeleteVisitLogs(ids []uint) error {
+	return r.db.Delete(&model.Visit{}, ids).Error
 }
+

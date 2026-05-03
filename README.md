@@ -89,9 +89,28 @@ JeriBlog 是一个三端分离的博客系统，围绕内容创作这件事，�
 ```bash
 server/
 ├── api/                     # API 层
-│   ├── middleware/          # 中间件 (认证、CORS、日志、限流、RBAC)
+│   ├── middleware/          # 中间件 (认证、CORS、日志、限流、RBAC、恢复)
 │   ├── router/              # 路由配置
-│   └── v1/                  # API v1 接口 (文章、用户、评论、标签、分类、友链、动态、菜单、通知、反馈、订阅、RSS、AI、系统)
+│   └── v1/                  # API v1 接口
+│       ├── feeds/           # 订阅源 (Atom/RSS)
+│       ├── ai.go            # AI 功能
+│       ├── article.go       # 文章管理
+│       ├── category.go      # 分类管理
+│       ├── comment.go       # 评论管理
+│       ├── feedback.go      # 反馈投诉
+│       ├── file.go          # 文件管理
+│       ├── friend.go        # 友链管理
+│       ├── menu.go          # 菜单管理
+│       ├── moment.go        # 动态管理
+│       ├── notification.go  # 通知管理
+│       ├── rssfeed.go       # RSS 订阅管理
+│       ├── setting.go       # 配置管理
+│       ├── stats.go         # 统计数据
+│       ├── subscriber.go    # 订阅者管理
+│       ├── system.go        # 系统信息
+│       ├── tag.go           # 标签管理
+│       ├── tools.go         # 工具接口
+│       └── user.go          # 用户管理
 ├── cmd/                     # 应用入口
 │   └── main.go              # 主程序入口
 ├── config/                  # 配置管理
@@ -102,16 +121,23 @@ server/
 │   ├── repository/          # 数据访问层 (Repository Pattern)
 │   └── service/             # 业务逻辑层 (Service Layer)
 ├── pkg/                     # 可复用的公共包
+│   ├── ai/                  # AI 服务封装 (OpenAI/Claude 等)
+│   ├── auth/                # 认证工具 (JWT/OAuth)
 │   ├── database/            # 数据库连接管理
 │   ├── email/               # 邮件发送服务
 │   ├── errcode/             # 统一错误码定义
 │   ├── feishu/              # 飞书 SDK 封装
+│   ├── linkparser/          # 链接元数据解析
 │   ├── logger/              # 日志工具
+│   ├── mcp/                 # MCP 协议支持
 │   ├── notification/        # 通知服务聚合 (邮件/飞书)
+│   ├── random/              # 随机数生成工具
 │   ├── response/            # 统一响应格式
 │   ├── scheduler/           # 定时任务调度器
 │   ├── upload/              # 文件上传管理 (本地/MinIO/OSS/COS/七牛云)
-│   └── utils/               # 通用工具函数
+│   ├── utils/               # 通用工具函数
+│   ├── videoparser/         # 视频平台解析 (B站/抖音等)
+│   └── wechatmp/            # 微信公众号 SDK
 ├── templates/               # 邮件等模板文件
 ├── go.mod                   # Go 模块依赖
 └── Dockerfile               # Docker 镜像构建文件
@@ -1124,6 +1150,21 @@ server {
         proxy_pass http://127.0.0.1:8080/api/v1/tools/parse-music;
     }
     
+    # MCP 工具
+    location = /mcp {
+        proxy_pass http://127.0.0.1:8080/mcp;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_connect_timeout 600s;
+        proxy_send_timeout 600s;
+        proxy_read_timeout 600s;
+    }
+    
     # 后端 API 反向代理（其余 /api/* 请求）
     location /api/ {
         proxy_pass http://127.0.0.1:8080;  # 与后端 API 相同地址
@@ -1261,6 +1302,21 @@ server {
     # 动态音乐解析
     location /tools/parse-music {
         proxy_pass http://127.0.0.1:8080/api/v1/tools/parse-music;
+    }
+    
+    # MCP 工具
+    location = /mcp {
+        proxy_pass http://127.0.0.1:8080/mcp;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_connect_timeout 600s;
+        proxy_send_timeout 600s;
+        proxy_read_timeout 600s;
     }
     
     # 后端 API 反向代理（其余 /api/* 请求）
@@ -1444,6 +1500,10 @@ systemctl reload nginx
 - `POST /api/v1/subscribe` - 订阅邮件通知
 - `GET /api/v1/subscribe/unsubscribe` - 退订邮件通知
 
+### 6.3.15 工具接口
+
+- `POST /api/v1/tools/parse-music` - 解析音乐信息（支持网易云、QQ音乐等平台）
+
 ## 6.4 后台管理接口
 
 基础路径：`/api/v1/admin`，所有接口需携带管理员 JWT Token。
@@ -1529,6 +1589,7 @@ systemctl reload nginx
 - `GET /api/v1/admin/stats/tag` - 获取标签统计
 - `GET /api/v1/admin/stats/contribution` - 获取文章贡献数据
 - `GET /api/v1/admin/stats/visits` - 获取访问日志列表
+- `DELETE /api/v1/admin/stats/visits/:id` - 删除单条访问日志
 - `DELETE /api/v1/admin/stats/visits/batch` - 批量删除访问日志
 
 ### 6.4.10 菜单管理
@@ -1559,6 +1620,7 @@ systemctl reload nginx
 
 - `GET /api/v1/admin/settings/:group` - 获取指定分组配置
 - `PATCH /api/v1/admin/settings/:group` - 更新指定分组配置
+- `POST /api/v1/admin/settings/ai/mcp-secret/reset` - 重置 MCP 密钥（需超级管理员权限）
 
 ### 6.4.14 系统信息
 
@@ -1568,9 +1630,8 @@ systemctl reload nginx
 ### 6.4.15 管理工具
 
 - `POST /api/v1/admin/tools/parse-video` - 解析视频信息（支持 B站、抖音等平台）
-- `POST /api/v1/admin/tools/fetch-link-meta` - 获取链接元数据（标题、描述、图标）
+- `POST /api/v1/admin/tools/fetch-linkmeta` - 获取链接元数据（标题、描述、图标）
 - `POST /api/v1/admin/tools/download-image` - 下载图片到服务器
-- `GET /api/v1/admin/tools/parse-music` - 解析音乐信息（支持网易云、QQ音乐等平台）
 
 ### 6.4.16 AI 功能
 

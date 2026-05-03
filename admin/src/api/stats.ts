@@ -9,16 +9,25 @@
 功能描述：API 接口定义 - stats
 */
 
-import request from "@/utils/request";
-import type { DashboardStats, TrendDataItem, TrendQuery, CategoryStats, TagStats, ArticleContribution, VisitListData, ContributionQuery, VisitQuery } from "@/types/stats";
-import type { PaginationQuery } from "@/types/request";
+import request from '@/utils/request';
+import type {
+  DashboardStats,
+  TrendDataItem,
+  TrendQuery,
+  CategoryStats,
+  TagStats,
+  ArticleContribution,
+  VisitListData,
+  VisitListQuery,
+  ContributionQuery,
+} from '@/types/stats';
 
 /**
  * 获取仪表板统计数据
  * @returns Promise<DashboardStats>
  */
 export function getDashboardStats(): Promise<DashboardStats> {
-  return request.get("/admin/stats/dashboard");
+  return request.get('/admin/stats/dashboard');
 }
 
 /**
@@ -27,7 +36,7 @@ export function getDashboardStats(): Promise<DashboardStats> {
  * @returns Promise<TrendDataItem[]>
  */
 export function getTrendData(params: TrendQuery): Promise<TrendDataItem[]> {
-  return request.get("/admin/stats/trend", { params });
+  return request.get('/admin/stats/trend', { params });
 }
 
 /**
@@ -35,7 +44,7 @@ export function getTrendData(params: TrendQuery): Promise<TrendDataItem[]> {
  * @returns Promise<CategoryStats[]>
  */
 export function getCategoryStats(): Promise<CategoryStats[]> {
-  return request.get("/admin/stats/category");
+  return request.get('/admin/stats/category');
 }
 
 /**
@@ -43,7 +52,7 @@ export function getCategoryStats(): Promise<CategoryStats[]> {
  * @returns Promise<TagStats[]>
  */
 export function getTagStats(): Promise<TagStats[]> {
-  return request.get("/admin/stats/tag");
+  return request.get('/admin/stats/tag');
 }
 
 /**
@@ -52,7 +61,7 @@ export function getTagStats(): Promise<TagStats[]> {
  * @returns Promise<ArticleContribution[]>
  */
 export function getArticleContribution(params?: ContributionQuery): Promise<ArticleContribution[]> {
-  return request.get("/admin/stats/contribution", { params });
+  return request.get('/admin/stats/contribution', { params });
 }
 
 /**
@@ -60,8 +69,8 @@ export function getArticleContribution(params?: ContributionQuery): Promise<Arti
  * @param params 查询参数
  * @returns Promise<VisitListData>
  */
-export function getVisits(params: VisitQuery): Promise<VisitListData> {
-  return request.get("/admin/stats/visits", { params });
+export function getVisits(params: VisitListQuery): Promise<VisitListData> {
+  return request.get('/admin/stats/visits', { params });
 }
 
 /**
@@ -75,9 +84,9 @@ export function deleteVisit(id: number): Promise<void> {
 
 /**
  * 批量删除访问日志
- * @param params 搜索条件
+ * @param ids 访问日志ID数组
  * @returns Promise<void>
  */
-export function batchDeleteVisits(params: Omit<VisitQuery, 'page' | 'page_size'>): Promise<void> {
-  return request.delete("/admin/stats/visits/batch", { params });
+export function batchDeleteVisits(ids: number[]): Promise<void> {
+  return request.delete('/admin/stats/visits/batch', { data: { ids } });
 }

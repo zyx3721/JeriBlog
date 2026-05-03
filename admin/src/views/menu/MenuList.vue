@@ -10,12 +10,34 @@
 -->
 
 <template>
-  <common-list title="菜单管理" :data="menuTree" :loading="loading" :show-pagination="false" create-text="新增菜单"
-    @create="handleCreate" @refresh="fetchMenuTree" row-key="id"
-    :tree-props="{ children: 'children', hasChildren: 'hasChildren' }" default-expand-all>
+  <common-list
+    title="菜单管理"
+    :data="menuTree"
+    :loading="loading"
+    :show-pagination="false"
+    :show-filter="false"
+    create-text="新增菜单"
+    @create="handleCreate"
+    @refresh="fetchMenuTree"
+    row-key="id"
+    :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+    default-expand-all
+  >
     <!-- 菜单类型切换器 -->
     <template #toolbar-before>
-      <el-segmented v-model="selectedType" :options="menuTypeOptions" @change="handleTypeChange" />
+      <el-segmented
+        v-model="selectedType"
+        :options="menuTypeOptions"
+        class="menu-type-segmented"
+        @change="handleTypeChange"
+      >
+        <template #default="{ item }">
+          <div class="segmented-item">
+            <el-icon class="segmented-icon"><component :is="item.icon" /></el-icon
+            ><span class="segmented-text">{{ item.label }}</span>
+          </div>
+        </template>
+      </el-segmented>
     </template>
 
     <!-- 表格列 -->
@@ -42,124 +64,132 @@
 
     <el-table-column label="操作" width="180" align="center" fixed="right">
       <template #default="{ row }">
-        <el-button v-if="row.parent_id === null" type="primary" link size="small" @click="handleAddChild(row)">
+        <el-button
+          v-if="row.parent_id === null"
+          type="primary"
+          link
+          size="small"
+          @click="handleAddChild(row)"
+        >
           新增子菜单
         </el-button>
-        <el-button type="primary" link size="small" @click="handleEdit(row)">
-          编辑
-        </el-button>
-        <el-button type="danger" link size="small" @click="handleDelete(row.id)">
-          删除
-        </el-button>
+        <el-button type="primary" link size="small" @click="handleEdit(row)"> 编辑 </el-button>
+        <el-button type="danger" link size="small" @click="handleDelete(row.id)"> 删除 </el-button>
       </template>
     </el-table-column>
 
     <!-- 额外内容 -->
     <template #extra>
-      <menu-form-dialog v-model="dialogVisible" :edit-menu="currentMenu" :parent-menu="parentMenu"
-        :current-type="selectedType" @success="fetchMenuTree" />
+      <menu-form-dialog
+        v-model="dialogVisible"
+        :edit-menu="currentMenu"
+        :parent-menu="parentMenu"
+        :current-type="selectedType"
+        @success="fetchMenuTree"
+      />
     </template>
   </common-list>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import CommonList from '@/components/common/CommonList.vue'
-import type { MenuTreeNode } from '@/types/menu'
-import { getMenuTree, deleteMenu } from '@/api/menu'
-import MenuFormDialog from './components/MenuFormDialog.vue'
+import { ref, onMounted } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { Grid, Compass, Reading } from '@element-plus/icons-vue';
+import CommonList from '@/components/common/CommonList.vue';
+import type { MenuTreeNode } from '@/types/menu';
+import { getMenuTree, deleteMenu } from '@/api/menu';
+import MenuFormDialog from './components/MenuFormDialog.vue';
 
-const loading = ref(false)
-const menuTree = ref<MenuTreeNode[]>([])
-const selectedType = ref<string>('aggregate')
-const dialogVisible = ref(false)
-const currentMenu = ref<MenuTreeNode | null>(null)
-const parentMenu = ref<MenuTreeNode | null>(null)
+const loading = ref(false);
+const menuTree = ref<MenuTreeNode[]>([]);
+const selectedType = ref<string>('aggregate');
+const dialogVisible = ref(false);
+const currentMenu = ref<MenuTreeNode | null>(null);
+const parentMenu = ref<MenuTreeNode | null>(null);
 
 // 菜单类型选项
 const menuTypeOptions = [
-  { label: '聚合菜单', value: 'aggregate' },
-  { label: '导航菜单', value: 'navigation' },
-  { label: '页脚菜单', value: 'footer' }
-]
+  { label: '聚合菜单', value: 'aggregate', icon: Grid },
+  { label: '导航菜单', value: 'navigation', icon: Compass },
+  { label: '页脚菜单', value: 'footer', icon: Reading },
+];
 
 // 判断是否是 RemixIcon 图标类名
 const isRemixIcon = (icon: string) => {
-  return icon && icon.startsWith('ri-')
-}
+  return icon && icon.startsWith('ri-');
+};
 
 // 获取菜单树
 const fetchMenuTree = async () => {
-  loading.value = true
+  loading.value = true;
   try {
-    const data = await getMenuTree(selectedType.value)
-    menuTree.value = data
-  } catch (error) {
-    ElMessage.error('获取菜单列表失败')
+    const data = await getMenuTree(selectedType.value);
+    menuTree.value = data;
+  } catch (_error) {
+    ElMessage.error('获取菜单列表失败');
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 // 菜单类型切换
 const handleTypeChange = () => {
-  fetchMenuTree()
-}
+  fetchMenuTree();
+};
 
 // 新增菜单
 const handleCreate = () => {
-  currentMenu.value = null
-  parentMenu.value = null
-  dialogVisible.value = true
-}
+  currentMenu.value = null;
+  parentMenu.value = null;
+  dialogVisible.value = true;
+};
 
 // 新增子菜单
 const handleAddChild = (menu: MenuTreeNode) => {
-  currentMenu.value = null
-  parentMenu.value = menu
-  dialogVisible.value = true
-}
+  currentMenu.value = null;
+  parentMenu.value = menu;
+  dialogVisible.value = true;
+};
 
 // 查找父菜单
 const findParentMenu = (parentId: number | null): MenuTreeNode | null => {
-  if (!parentId) return null
+  if (!parentId) return null;
 
   for (const menu of menuTree.value) {
     if (menu.id === parentId) {
-      return menu
+      return menu;
     }
   }
-  return null
-}
+  return null;
+};
 
 // 编辑菜单
 const handleEdit = (menu: MenuTreeNode) => {
-  currentMenu.value = menu
+  currentMenu.value = menu;
   // 如果是子菜单，查找并设置父菜单
-  parentMenu.value = menu.parent_id ? findParentMenu(menu.parent_id) : null
-  dialogVisible.value = true
-}
+  parentMenu.value = menu.parent_id ? findParentMenu(menu.parent_id) : null;
+  dialogVisible.value = true;
+};
 
 // 查找菜单节点
 const findMenuNode = (id: number, nodes: MenuTreeNode[] = menuTree.value): MenuTreeNode | null => {
   for (const node of nodes) {
     if (node.id === id) {
-      return node
+      return node;
     }
     if (node.children && node.children.length > 0) {
-      const found = findMenuNode(id, node.children)
-      if (found) return found
+      const found = findMenuNode(id, node.children);
+      if (found) return found;
     }
   }
-  return null
-}
+  return null;
+};
 
 // 删除菜单
 const handleDelete = async (id: number) => {
   try {
-    const menuNode = findMenuNode(id)
-    const hasChildren = menuNode?.children && menuNode.children.length > 0
+    const menuNode = findMenuNode(id);
+    const hasChildren = menuNode?.children && menuNode.children.length > 0;
 
     if (hasChildren) {
       // 有子菜单，询问如何处理
@@ -170,37 +200,39 @@ const handleDelete = async (id: number) => {
           distinguishCancelAndClose: true,
           confirmButtonText: '保留子菜单',
           cancelButtonText: '全部删除',
-          type: 'warning'
+          type: 'warning',
         }
-      ).then(() => 'upgrade' as const).catch((action) => {
-        if (action === 'cancel') return 'delete' as const
-        throw 'close'
-      })
+      )
+        .then(() => 'upgrade' as const)
+        .catch(action => {
+          if (action === 'cancel') return 'delete' as const;
+          throw 'close';
+        });
 
-      await deleteMenu(id, { children_action: result })
-      ElMessage.success('删除成功')
-      fetchMenuTree()
+      await deleteMenu(id, { children_action: result });
+      ElMessage.success('删除成功');
+      fetchMenuTree();
     } else {
       // 无子菜单，直接删除
       await ElMessageBox.confirm('确定要删除此菜单吗？', '提示', {
-        type: 'warning'
-      })
-      await deleteMenu(id)
-      ElMessage.success('删除成功')
-      fetchMenuTree()
+        type: 'warning',
+      });
+      await deleteMenu(id);
+      ElMessage.success('删除成功');
+      fetchMenuTree();
     }
   } catch (error) {
     if (error !== 'cancel' && error !== 'close') {
       if (error instanceof Error) {
-        ElMessage.error(error.message)
+        ElMessage.error(error.message);
       }
     }
   }
-}
+};
 
 onMounted(() => {
-  fetchMenuTree()
-})
+  fetchMenuTree();
+});
 </script>
 
 <style scoped lang="scss">
@@ -253,6 +285,33 @@ onMounted(() => {
             align-items: center;
           }
         }
+      }
+    }
+  }
+}
+
+// 菜单类型切换器样式
+.menu-type-segmented {
+  .segmented-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    .segmented-icon {
+      display: none;
+    }
+  }
+}
+
+// 移动端显示图标，隐藏文字
+@media (max-width: 500px) {
+  .menu-type-segmented {
+    .segmented-item {
+      .segmented-icon {
+        display: inline-flex;
+      }
+      .segmented-text {
+        display: none;
       }
     }
   }

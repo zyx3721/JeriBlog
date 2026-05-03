@@ -10,84 +10,91 @@
 -->
 
 <template>
-    <div class="common-list">
-        <el-card>
-            <!-- 工具栏 -->
-            <div class="toolbar">
-                <h2>{{ title }}</h2>
-                <div class="actions">
-                    <!-- 前工具栏 -->
-                    <slot name="toolbar-before" />
-                    <el-button v-if="showCreate" type="primary" class="create-btn" @click="$emit('create')">
-                        <el-icon class="create-icon"><Plus /></el-icon>
-                        <span class="create-text">{{ createText }}</span>
-                    </el-button>
-                    <!-- 后工具栏 -->
-                    <slot name="toolbar-after" />
-                    <el-badge
-                        v-if="showFilter"
-                        :value="filterCount"
-                        :hidden="filterCount === 0"
-                        class="filter-badge"
-                    >
-                        <el-button :type="filterActive ? 'success' : 'default'" @click="$emit('filter')">
-                            <el-icon>
-                                <Filter />
-                            </el-icon>
-                        </el-button>
-                    </el-badge>
-                    <el-button class="refresh-btn" @click="$emit('refresh')">
-                        <el-icon>
-                            <Refresh />
-                        </el-icon>
-                    </el-button>
-                </div>
-            </div>
+  <div class="common-list">
+    <el-card shadow="never">
+      <!-- 工具栏 -->
+      <div class="toolbar">
+        <h2>{{ title }}</h2>
+        <div class="actions">
+          <!-- 前工具栏 -->
+          <slot name="toolbar-before" />
+          <el-button v-if="showCreate" type="primary" class="create-btn" @click="$emit('create')">
+            <el-icon class="create-icon"><Plus /></el-icon
+            ><span class="create-text">{{ createText }}</span>
+          </el-button>
+          <!-- 后工具栏 -->
+          <slot name="toolbar-after" />
+          <el-badge
+            v-if="showFilter"
+            :value="filterCount"
+            :hidden="filterCount === 0"
+            class="filter-badge"
+          >
+            <el-button :type="filterActive ? 'success' : 'default'" @click="$emit('filter')">
+              <el-icon>
+                <Filter />
+              </el-icon>
+            </el-button>
+          </el-badge>
+          <el-button class="refresh-btn" @click="$emit('refresh')">
+            <el-icon>
+              <Refresh />
+            </el-icon>
+          </el-button>
+        </div>
+      </div>
 
-            <!-- 额外内容 -->
-            <slot name="extra" />
+      <!-- 额外内容 -->
+      <slot name="extra" />
 
-            <!-- 表格区域 -->
-            <div class="table-wrapper">
-                <!-- 加载状态 -->
-                <div v-if="loading" class="common-list-loading">
-                    <el-skeleton :rows="5" animated />
-                </div>
+      <!-- 表格区域 -->
+      <div class="table-wrapper">
+        <!-- 加载状态 -->
+        <div v-if="loading" class="common-list-loading">
+          <el-skeleton :rows="5" animated />
+        </div>
 
-                <!-- 表格 - 完全由外部控制 -->
-                <el-table v-else :data="data" border style="width: 100%; height: 100%" v-bind="$attrs" :row-key="rowKey">
-                    <slot />
-                </el-table>
-            </div>
+        <!-- 表格 - 完全由外部控制 -->
+        <el-table v-else :data="data" border style="width: 100%; height: 100%" v-bind="$attrs">
+          <slot />
+        </el-table>
+      </div>
 
-            <!-- 分页 -->
-            <div v-if="showPagination" class="pagination">
-                <el-pagination :current-page="page" :page-size="pageSize" :page-sizes="[10, 20, 50, 100]" :total="total"
-                    layout="total, sizes, prev, pager, next" @current-change="$emit('update:page', $event)"
-                    @size-change="$emit('update:pageSize', $event)" />
-            </div>
-        </el-card>
-    </div>
+      <!-- 分页 -->
+      <div v-if="showPagination" class="pagination">
+        <el-pagination
+          :current-page="page"
+          :page-size="pageSize"
+          :page-sizes="[10, 20, 50, 100]"
+          :total="total"
+          layout="total, sizes, prev, pager, next"
+          @current-change="$emit('update:page', $event)"
+          @size-change="$emit('update:pageSize', $event)"
+        />
+      </div>
+    </el-card>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { Refresh, Filter, Plus } from '@element-plus/icons-vue'
+import { Refresh, Filter, Plus } from '@element-plus/icons-vue';
 
-withDefaults(defineProps<{
-    title: string
-    data: any[]
-    loading?: boolean
-    total?: number
-    page?: number
-    pageSize?: number
-    showPagination?: boolean
-    showCreate?: boolean
-    createText?: string
-    rowKey?: string
-    showFilter?: boolean
-    filterActive?: boolean
-    filterCount?: number
-}>(), {
+withDefaults(
+  defineProps<{
+    title: string;
+    data: unknown[];
+    loading?: boolean;
+    total?: number;
+    page?: number;
+    pageSize?: number;
+    showPagination?: boolean;
+    showCreate?: boolean;
+    createText?: string;
+    showFilter?: boolean;
+    filterActive?: boolean;
+    filterCount?: number;
+  }>(),
+  {
     loading: false,
     total: 0,
     page: 1,
@@ -95,160 +102,166 @@ withDefaults(defineProps<{
     showPagination: true,
     showCreate: true,
     createText: '新增',
-    rowKey: 'id',
     showFilter: true,
     filterActive: false,
-    filterCount: 0
-})
+    filterCount: 0,
+  }
+);
 
 defineEmits<{
-    create: []
-    refresh: []
-    filter: []
-    'update:page': [page: number]
-    'update:pageSize': [size: number]
-}>()
+  create: [];
+  refresh: [];
+  filter: [];
+  'update:page': [page: number];
+  'update:pageSize': [size: number];
+}>();
 </script>
 
 <style scoped lang="scss">
 .common-list {
+  height: 100%;
+
+  :deep(.el-card) {
     height: 100%;
+    display: flex;
+    flex-direction: column;
 
-    :deep(.el-card) {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
+    .el-card__body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+  }
 
-        .el-card__body {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+  .toolbar {
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 500;
     }
 
-    .toolbar {
-        margin-bottom: 12px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    .actions {
+      display: flex;
+      gap: 12px;
 
-        h2 {
-            margin: 0;
-            font-size: 20px;
-            font-weight: 500;
-        }
+      :deep(.el-button + .el-button) {
+        margin-left: 0;
+      }
 
-        .actions {
-            display: flex;
-            gap: 12px;
-
-            :deep(.el-button + .el-button) {
-                margin-left: 0;
-            }
-
-            // 筛选按钮hover时显示绿色，与active状态保持一致
-            :deep(.el-button--default:hover) {
-                color: var(--el-color-success);
-                border-color: var(--el-color-success-light-5);
-                background-color: var(--el-color-success-light-9);
-            }
-        }
-
-        @media (max-width: 769px) {
-            h2 {
-                font-size: 16px;
-            }
-
-            .actions {
-                flex-wrap: nowrap;
-                gap: 8px;
-
-                .refresh-btn {
-                    display: none;
-                }
-            }
-        }
-
-        // 默认显示文字
-        .create-btn {
-            .create-icon {
-                display: none;
-            }
-            // 覆盖 Element Plus 默认样式，消除图标隐藏后的左边距
-            .create-text {
-                margin-left: 0;
-            }
-        }
-
-        // 移动端（≤500px）显示图标，隐藏文字
-        @media (max-width: 500px) {
-            .create-btn {
-                .create-text {
-                    display: none;
-                }
-                .create-icon {
-                    display: inline-flex;
-                }
-            }
-        }
+      // 筛选按钮hover时显示绿色，与active状态保持一致
+      :deep(.el-button--default:hover) {
+        color: var(--el-color-success);
+        border-color: var(--el-color-success-light-5);
+        background-color: var(--el-color-success-light-9);
+      }
     }
 
-    .table-wrapper {
-        flex: 1;
-        overflow: auto;
+    @media (max-width: 769px) {
+      h2 {
+        font-size: 16px;
+      }
 
-        :deep(.el-table__header th .cell) {
-            text-align: center;
+      .actions {
+        flex-wrap: nowrap;
+        gap: 8px;
+
+        .refresh-btn {
+          display: none;
         }
+      }
     }
 
-    .pagination {
-        display: flex;
-        justify-content: flex-end;
-        padding-top: 12px;
-
-        @media (max-width: 769px) {
-            :deep(.el-pagination .el-select) {
-                width: 110px;
-            }
-        }
+    // 默认显示文字
+    .create-btn {
+      .create-icon {
+        display: none;
+      }
+      // 覆盖 Element Plus 默认样式，消除图标隐藏后的左边距
+      .create-text {
+        margin-left: 0;
+      }
     }
 
-    @media (max-width: 1200px) {
-        .actions :deep(.quick-filter-1200) {
-            display: none !important;
+    // 移动端（≤500px）显示图标，隐藏文字
+    @media (max-width: 500px) {
+      .create-btn {
+        .create-text {
+          display: none;
         }
+        .create-icon {
+          display: inline-flex;
+        }
+      }
     }
+  }
 
-    @media (max-width: 1080px) {
-        .actions :deep(.quick-filter-1080) {
-            display: none !important;
-        }
-    }
+  .table-wrapper {
+    flex: 1;
+    overflow: auto;
 
-    @media (max-width: 960px) {
-        .actions :deep(.quick-filter-960) {
-            display: none !important;
-        }
+    :deep(.el-table__header th .cell) {
+      text-align: center;
     }
+  }
 
-    @media (max-width: 900px) {
-        .actions :deep(.quick-filter-900) {
-            display: none !important;
-        }
-    }
+  .pagination {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 12px;
 
-    @media (max-width: 840px) {
-        .actions :deep(.quick-filter-840) {
-            display: none !important;
-        }
+    @media (max-width: 769px) {
+      :deep(.el-pagination .el-select) {
+        width: 110px;
+      }
     }
+  }
 
-    @media (max-width: 800px) {
-        .actions :deep(.quick-filter-800) {
-            display: none !important;
-        }
+  @media (max-width: 1200px) {
+    .actions :deep(.quick-filter-1200) {
+      display: none !important;
     }
+  }
+
+  @media (max-width: 1080px) {
+    .actions :deep(.quick-filter-1080) {
+      display: none !important;
+    }
+  }
+
+  @media (max-width: 960px) {
+    .actions :deep(.quick-filter-960) {
+      display: none !important;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .actions :deep(.quick-filter-900) {
+      display: none !important;
+    }
+  }
+
+  @media (max-width: 840px) {
+    .actions :deep(.quick-filter-840) {
+      display: none !important;
+    }
+  }
+
+  @media (max-width: 800px) {
+    .actions :deep(.quick-filter-800) {
+      display: none !important;
+    }
+  }
+
+  @media (max-width: 769px) {
+    .actions :deep(.quick-filter-769) {
+      display: none !important;
+    }
+  }
 }
 </style>

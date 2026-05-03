@@ -33,6 +33,7 @@ type UserResponse struct {
 	LinkedOAuths   []string        `json:"linked_oauths"` // ["github", "google", "qq"]
 	LastLogin      *utils.JSONTime `json:"last_login,omitempty"`
 	CreatedAt      utils.JSONTime  `json:"created_at"`
+	IsEnabled      bool            `json:"is_enabled"`
 }
 
 // NewUserResponse 从model.User创建UserResponse
@@ -92,8 +93,8 @@ type UpdateUserRequest struct {
 	Nickname string `json:"nickname,omitempty" binding:"omitempty,min=2,max=32"`
 	Email    string `json:"email,omitempty" binding:"omitempty,email"`
 	Avatar   string `json:"avatar,omitempty" binding:"omitempty,max=255"`
-	Badge    string `json:"badge,omitempty" binding:"omitempty,max=50"`
-	Website  string `json:"website,omitempty" binding:"omitempty,url,max=255"`
+	Badge    *string `json:"badge,omitempty" binding:"omitempty,max=50"`     // 使用指针以区分未设置和已设置
+	Website  *string `json:"website,omitempty" binding:"omitempty,max=255"`  // 使用指针以区分未设置和已设置
 }
 
 // ChangePasswordRequest 修改密码请求
@@ -115,26 +116,27 @@ type DeactivateAccountRequest struct {
 
 // ============ 前台用户响应 ============
 
-// LoginResponse 用户登录/注册/刷新token响应
+// LoginResponse 用户登录/注册响应
 type LoginResponse struct {
-	AccessToken  string        `json:"access_token"`
-	RefreshToken string        `json:"refresh_token"`
-	User         *UserResponse `json:"user,omitempty"` // 刷新token时为空
-}
-
-// RefreshTokenRequest 刷新token请求
-type RefreshTokenRequest struct {
-	RefreshToken string `json:"refresh_token" binding:"required"`
+	AccessToken string        `json:"access_token"`
+	User        *UserResponse `json:"user,omitempty"`
 }
 
 // ============ 后台用户管理请求 ============
 
 // ListUsersRequest 用户列表请求
 type ListUsersRequest struct {
-	Page     int            `form:"page,default=1" binding:"min=1"`
-	PageSize int            `form:"page_size,default=10" binding:"min=1,max=100"`
-	Keyword  string         `form:"keyword"`                                                  // 搜索关键词（昵称、邮箱、网站）
-	Role     model.UserRole `form:"role" binding:"omitempty,oneof=super_admin admin user guest"` // 角色筛选
+	Page           int    `form:"page,default=1" binding:"min=1"`
+	PageSize       int    `form:"page_size,default=10" binding:"min=1,max=100"`
+	Keyword        string `form:"keyword"`          // 搜索关键词（邮箱、昵称）
+	Role           string `form:"role"`             // 角色筛选
+	IsEnabled      *bool  `form:"is_enabled"`       // 状态筛选
+	IsDeleted      *bool  `form:"is_deleted"`       // 是否已删除
+	LoginMethod    string `form:"login_method"`     // 登录方式筛选（password/github/google/qq/microsoft）
+	LastLoginStart string `form:"last_login_start"` // 最后登录开始时间（格式：2006-01-02）
+	LastLoginEnd   string `form:"last_login_end"`   // 最后登录结束时间（格式：2006-01-02）
+	StartTime      string `form:"start_time"`       // 注册开始时间（格式：2006-01-02）
+	EndTime        string `form:"end_time"`         // 注册结束时间（格式：2006-01-02）
 }
 
 // AdminCreateUserRequest 管理员创建用户请求
@@ -153,8 +155,8 @@ type AdminUpdateUserRequest struct {
 	Email     string         `json:"email,omitempty" binding:"omitempty,email"`
 	Nickname  string         `json:"nickname,omitempty" binding:"omitempty,min=2,max=32"`
 	Avatar    string         `json:"avatar,omitempty" binding:"omitempty,max=255"`
-	Badge     string         `json:"badge,omitempty" binding:"omitempty,max=50"`
-	Website   string         `json:"website,omitempty" binding:"omitempty,url,max=255"`
+	Badge     *string        `json:"badge,omitempty" binding:"omitempty,max=50"`          // 使用指针以区分未设置和已设置
+	Website   *string        `json:"website,omitempty" binding:"omitempty,max=255"`       // 使用指针以区分未设置和已设置
 	Role      model.UserRole `json:"role,omitempty" binding:"omitempty,oneof=super_admin admin user guest"`
 	IsEnabled *bool          `json:"is_enabled,omitempty"`                                // 使用指针以区分未设置和false
 	Password  string         `json:"password,omitempty" binding:"omitempty,min=6,max=32"` // 可选的密码字段，用于更新密码

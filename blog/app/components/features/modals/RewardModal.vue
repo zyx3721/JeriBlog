@@ -11,34 +11,34 @@
 
 <script setup lang="ts">
 interface Props {
-  modelValue: boolean
+  modelValue: boolean;
 }
 
 interface Emits {
-  (e: 'update:modelValue', value: boolean): void
+  (e: 'update:modelValue', value: boolean): void;
 }
 
-const props = defineProps<Props>()
-const emit = defineEmits<Emits>()
+const props = defineProps<Props>();
+const emit = defineEmits<Emits>();
 
-const { blogConfig } = useSysConfig()
+const { blogConfig } = useSysConfig();
 
 // 关闭弹窗
 const closeModal = () => {
-  emit('update:modelValue', false)
-}
+  emit('update:modelValue', false);
+};
 
 // 点击遮罩层关闭
 const handleMaskClick = (e: MouseEvent) => {
   if (e.target === e.currentTarget) {
-    closeModal()
+    closeModal();
   }
-}
+};
 
 // 检查是否配置了打赏功能
 const isRewardEnabled = computed(() => {
-  return blogConfig.value.wechat_qrcode || blogConfig.value.alipay_qrcode
-})
+  return blogConfig.value.wechat_qrcode || blogConfig.value.alipay_qrcode;
+});
 </script>
 
 <template>

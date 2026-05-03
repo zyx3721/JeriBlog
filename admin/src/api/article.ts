@@ -9,17 +9,24 @@
 功能描述：API 接口定义 - article
 */
 
-import request from "@/utils/request";
-import type { Article, CreateArticleRequest, UpdateArticleRequest, ImportArticlesResult, WeChatExportResult, ArticleListQuery } from "@/types/article";
-import type { PaginationQuery } from "@/types/request";
+import request from '@/utils/request';
+import type {
+  Article,
+  ArticleListData,
+  ArticleListQuery,
+  CreateArticleRequest,
+  UpdateArticleRequest,
+  ImportArticlesResult,
+  WeChatExportResult,
+} from '@/types/article';
 
 /**
  * 获取文章列表
  * @param params 查询参数
- * @returns Promise<ArticleListResponse>
+ * @returns Promise<ArticleListData>
  */
-export function getArticles(params: ArticleListQuery): Promise<any> {
-  return request.get("/admin/articles", { params });
+export function getArticles(params: ArticleListQuery): Promise<ArticleListData> {
+  return request.get('/admin/articles', { params });
 }
 
 /**
@@ -37,7 +44,7 @@ export function getArticle(id: number): Promise<Article> {
  * @returns Promise<Article>
  */
 export function createArticle(data: CreateArticleRequest): Promise<Article> {
-  return request.post("/admin/articles", data);
+  return request.post('/admin/articles', data);
 }
 
 /**
@@ -65,18 +72,18 @@ export function deleteArticle(id: number): Promise<void> {
  * @returns Promise<ImportArticlesResult>
  */
 export function importArticles(formData: FormData): Promise<ImportArticlesResult> {
-  return request.post("/admin/articles/import", formData, {
+  return request.post('/admin/articles/import', formData, {
     headers: {
-      "Content-Type": "multipart/form-data"
+      'Content-Type': 'multipart/form-data',
     },
-    timeout: 600000 // 10分钟超时，支持多文章 + 图片处理
+    timeout: 600000, // 10分钟超时，支持多文章 + 图片处理
   });
 }
 
 // ==================== 微信公众号导出 ====================
 
 /**
- * 导出文章到微信公众号
+ * 将文章渲染为微信公众号 HTML 格式
  * @param id 文章ID
  * @returns Promise<WeChatExportResult>
  */
@@ -91,7 +98,7 @@ export function exportToWeChat(id: number): Promise<WeChatExportResult> {
  */
 export function downloadArticleZip(id: number): Promise<Blob> {
   return request.get(`/admin/articles/${id}/download/zip`, {
-    responseType: "blob",
-    timeout: 600000 // 10分钟超时，适应大文章导出
+    responseType: 'blob',
+    timeout: 600000, // 10分钟超时，适应大文章导出
   });
 }

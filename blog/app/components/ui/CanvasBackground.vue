@@ -13,26 +13,26 @@
 </template>
 
 <script setup lang="ts">
-const container = ref<HTMLElement | null>(null)
-let instance: any = null
+const container = ref<HTMLElement | null>(null);
+let instance: any = null;
 
 onMounted(async () => {
   // 动态导入 canvas-nest.js
-  const CanvasNest = (await import('canvas-nest.js')).default
+  const CanvasNest = (await import('canvas-nest.js')).default;
 
-  const el = container.value || document.body
+  const el = container.value || document.body;
   instance = new CanvasNest(el, {
     color: '24,170,204', // 主色调 RGB
-    opacity: 0.7,        // 线条透明度
-    count: 100,          // 线条数量
-    zIndex: -1           // 置于内容下方
-  })
-})
+    opacity: 0.7, // 线条透明度
+    count: 100, // 线条数量
+    zIndex: -1, // 置于内容下方
+  });
+});
 
 onBeforeUnmount(() => {
-  instance?.destroy()
-  instance = null
-})
+  instance?.destroy();
+  instance = null;
+});
 </script>
 
 <style scoped>

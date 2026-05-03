@@ -19,7 +19,9 @@ import (
 
 	"jeri_blog/config"
 	"jeri_blog/internal/dto"
+	"jeri_blog/internal/model"
 	"jeri_blog/internal/service"
+	"jeri_blog/pkg/auth"
 	"jeri_blog/pkg/response"
 	"jeri_blog/pkg/upload"
 
@@ -45,9 +47,9 @@ func NewUserController(userService *service.UserService, verificationService *se
 
 // ============ 认证接口 ============
 
-// BeginAuth 开始第三方认证
+// BeginAuth 第三方认证
 //
-//	@Summary		开始第三方认证
+//	@Summary		第三方认证
 //	@Description	跳转到第三方认证页面，支持登录和绑定
 //	@Tags			认证
 //	@Param			provider	path	string	true	"提供商 (github/google/qq)"
@@ -109,7 +111,8 @@ func (c *UserController) AuthCallback(ctx *gin.Context) {
 	var action string
 	var bindUserID uint
 	var redirect string
-	if strings.HasPrefix(state, "bind:") {
+	switch {
+	case strings.HasPrefix(state, "bind:"):
 		action = "bind"
 		parts := strings.Split(state, "|")
 		if len(parts) > 0 {
@@ -121,10 +124,10 @@ func (c *UserController) AuthCallback(ctx *gin.Context) {
 		if len(parts) > 1 && strings.HasPrefix(parts[1], "redirect:") {
 			redirect = strings.TrimPrefix(parts[1], "redirect:")
 		}
-	} else if strings.HasPrefix(state, "redirect:") {
+	case strings.HasPrefix(state, "redirect:"):
 		action = "login"
 		redirect = strings.TrimPrefix(state, "redirect:")
-	} else {
+	default:
 		action = "login"
 	}
 
@@ -177,13 +180,15 @@ func (c *UserController) AuthCallback(ctx *gin.Context) {
 		ctx.Redirect(http.StatusFound, frontendBaseURL+targetPath+"?bind=success&provider="+provider)
 	} else {
 		// 处理登录
-		loginResp, err := c.userService.LoginBySocial(provider, oauthUser.UserID, email, nickname, oauthUser.AvatarURL, host)
+		loginResp, refreshToken, err := c.userService.LoginBySocial(provider, oauthUser.UserID, email, nickname, oauthUser.AvatarURL, host)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "登录失败: " + err.Error()})
 			return
 		}
-		// 跳转到前端回调页
-		frontendURL := frontendBaseURL + "/oauth/callback?token=" + loginResp.AccessToken + "&refresh_token=" + loginResp.RefreshToken
+		// 设置 refresh token 到 HttpOnly Cookie
+		auth.SetRefreshTokenCookie(ctx, refreshToken)
+		// 跳转到前端回调页（只传递 access_token）
+		frontendURL := frontendBaseURL + "/oauth/callback?token=" + loginResp.AccessToken
 		if redirect != "" {
 			frontendURL += "&redirect=" + url.QueryEscape(redirect)
 		}
@@ -193,8 +198,8 @@ func (c *UserController) AuthCallback(ctx *gin.Context) {
 
 // Register 用户注册
 //
-//	@Summary		注册
-//	@Description	邮箱+密码注册，返回 Access Token、Refresh Token 和用户基本信息
+//	@Summary		用户注册
+//	@Description	邮箱密码注册
 //	@Tags			认证
 //	@Accept			json
 //	@Produce		json
@@ -212,19 +217,22 @@ func (c *UserController) Register(ctx *gin.Context) {
 	}
 
 	host := upload.ExtractHostFromContext(ctx, c.config.Server.Scheme)
-	loginResp, err := c.userService.Register(&req, host)
+	loginResp, refreshToken, err := c.userService.Register(&req, host)
 	if err != nil {
 		response.Failed(ctx, err.Error())
 		return
 	}
+
+	// 设置 refresh token 到 HttpOnly Cookie
+	auth.SetRefreshTokenCookie(ctx, refreshToken)
 
 	response.Success(ctx, loginResp)
 }
 
 // Login 用户登录
 //
-//	@Summary		登录
-//	@Description	邮箱+密码登录，返回 JWT token 和用户基本信息
+//	@Summary		用户登录
+//	@Description	邮箱密码登录，返回 JWT token 和用户基本信息
 //	@Tags			认证
 //	@Accept			json
 //	@Produce		json
@@ -241,11 +249,14 @@ func (c *UserController) Login(ctx *gin.Context) {
 		return
 	}
 
-	loginResp, err := c.userService.Login(&req)
+	loginResp, refreshToken, err := c.userService.Login(&req)
 	if err != nil {
 		response.Failed(ctx, err.Error())
 		return
 	}
+
+	// 设置 refresh token 到 HttpOnly Cookie
+	auth.SetRefreshTokenCookie(ctx, refreshToken)
 
 	response.Success(ctx, loginResp)
 }
@@ -253,35 +264,36 @@ func (c *UserController) Login(ctx *gin.Context) {
 // RefreshToken 刷新token
 //
 //	@Summary		刷新token
-//	@Description	使用refresh token获取新的access token和refresh token
+//	@Description	刷新访问令牌
 //	@Tags			认证
 //	@Accept			json
 //	@Produce		json
-//	@Param			request	body		dto.RefreshTokenRequest	true	"Refresh Token"
 //	@Success		200		{object}	response.Response{data=dto.LoginResponse}
 //	@Failure		400		{object}	response.Response
 //	@Failure		401		{object}	response.Response
 //	@Router			/auth/refresh [post]
 func (c *UserController) RefreshToken(ctx *gin.Context) {
-	var req dto.RefreshTokenRequest
-
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		response.ValidateFailed(ctx, err.Error())
+	refreshToken := auth.GetRefreshTokenFromCookie(ctx)
+	if refreshToken == "" {
+		response.Failed(ctx, "未提供 refresh token")
 		return
 	}
 
-	refreshResp, err := c.userService.RefreshToken(&req)
+	refreshResp, newRefreshToken, err := c.userService.RefreshToken(refreshToken)
 	if err != nil {
 		response.Failed(ctx, err.Error())
 		return
 	}
 
+	// 设置新的 refresh token 到 Cookie（Refresh Token 轮换）
+	auth.SetRefreshTokenCookie(ctx, newRefreshToken)
+
 	response.Success(ctx, refreshResp)
 }
 
-// ForgotPassword 请求重置密码
+// ForgotPassword 重置密码请求
 //
-//	@Summary		忘记密码
+//	@Summary		重置密码请求
 //	@Description	通过邮箱找回密码，发送重置验证码
 //	@Tags			认证
 //	@Accept			json
@@ -337,8 +349,8 @@ func (c *UserController) ResetPassword(ctx *gin.Context) {
 
 // Logout 用户登出
 //
-//	@Summary		登出
-//	@Description	将当前 token 加入黑名单使其失效
+//	@Summary		用户登出
+//	@Description	将当前 token 加入黑名单并清除 Refresh Token Cookie
 //	@Tags			认证
 //	@Accept			json
 //	@Produce		json
@@ -357,10 +369,16 @@ func (c *UserController) Logout(ctx *gin.Context) {
 		token = token[7:]
 	}
 
-	if err := c.userService.Logout(token); err != nil {
+	// 从 Cookie 获取 refresh token
+	refreshToken := auth.GetRefreshTokenFromCookie(ctx)
+
+	if err := c.userService.Logout(token, refreshToken); err != nil {
 		response.Failed(ctx, err.Error())
 		return
 	}
+
+	// 清除 Refresh Token Cookie
+	auth.ClearRefreshTokenCookie(ctx)
 
 	response.Success(ctx, nil)
 }
@@ -394,10 +412,10 @@ func (c *UserController) GetProfile(ctx *gin.Context) {
 	response.Success(ctx, userInfo)
 }
 
-// UpdateForWeb 前台更新用户信息
+// UpdateForWeb 更新用户信息
 //
 //	@Summary		更新资料
-//	@Description	修改昵称、头像等信息，支持部分更新
+//	@Description	修改用户资料信息
 //	@Tags			用户
 //	@Accept			json
 //	@Produce		json
@@ -437,7 +455,7 @@ func (c *UserController) UpdateForWeb(ctx *gin.Context) {
 // ChangePassword 修改当前用户密码
 //
 //	@Summary		修改密码
-//	@Description	修改密码需提供旧密码验证
+//	@Description	修改密码，需提供旧密码验证
 //	@Tags			用户
 //	@Accept			json
 //	@Produce		json
@@ -465,10 +483,12 @@ func (c *UserController) ChangePassword(ctx *gin.Context) {
 		return
 	}
 
+	auth.ClearRefreshTokenCookie(ctx)
+
 	response.Success(ctx, nil)
 }
 
-// SetPassword 设置密码（针对 OAuth 注册用户首次设置密码）
+// SetPassword OAuth用户设置密码
 //
 //	@Summary		设置密码
 //	@Description	OAuth 注册用户首次设置密码，无需旧密码验证
@@ -505,7 +525,7 @@ func (c *UserController) SetPassword(ctx *gin.Context) {
 // DeactivateAccount 用户注销账号
 //
 //	@Summary		注销账号
-//	@Description	用户主动注销自己的账号，需提供密码验证。注销后账号将被软删除，无法恢复
+//	@Description	主动注销自己的账号，需提供密码验证，注销后账号将被软删除
 //	@Tags			用户
 //	@Accept			json
 //	@Produce		json
@@ -533,170 +553,10 @@ func (c *UserController) DeactivateAccount(ctx *gin.Context) {
 		return
 	}
 
-	response.Success(ctx, nil)
-}
-
-// ============ 后台管理接口 ============
-
-// List 获取用户列表（管理员接口）
-//
-//	@Summary		用户列表（管理）
-//	@Description	获取所有用户列表
-//	@Tags			用户管理
-//	@Accept			json
-//	@Produce		json
-//	@Security		BearerAuth
-//	@Param			page		query		int	false	"页码"	default(1)
-//	@Param			page_size	query		int	false	"每页数量"	default(10)
-//	@Success		200			{object}	response.Response{data=response.PageResult}
-//	@Failure		400			{object}	response.Response
-//	@Failure		401			{object}	response.Response
-//	@Failure		403			{object}	response.Response
-//	@Router			/admin/users [get]
-func (c *UserController) List(ctx *gin.Context) {
-	var req dto.ListUsersRequest
-	if err := ctx.ShouldBindQuery(&req); err != nil {
-		response.ValidateFailed(ctx, err.Error())
-		return
-	}
-
-	users, total, err := c.userService.List(&req)
-	if err != nil {
-		response.Failed(ctx, err.Error())
-		return
-	}
-
-	response.PageSuccess(ctx, users, total, req.Page, req.PageSize)
-}
-
-// Get 获取用户详情（管理员接口）
-//
-//	@Summary		用户详情（管理）
-//	@Description	查看用户详情
-//	@Tags			用户管理
-//	@Accept			json
-//	@Produce		json
-//	@Security		BearerAuth
-//	@Param			id	path		int	true	"用户 ID"
-//	@Success		200	{object}	response.Response{data=dto.UserResponse}
-//	@Failure		400	{object}	response.Response
-//	@Failure		401	{object}	response.Response
-//	@Failure		403	{object}	response.Response
-//	@Router			/admin/users/{id} [get]
-func (c *UserController) Get(ctx *gin.Context) {
-	userID, err := strconv.ParseUint(ctx.Param("id"), 10, 32)
-	if err != nil {
-		response.ValidateFailed(ctx, "无效的用户ID")
-		return
-	}
-
-	userInfo, err := c.userService.Get(uint(userID))
-	if err != nil {
-		response.Failed(ctx, err.Error())
-		return
-	}
-
-	response.Success(ctx, userInfo)
-}
-
-// Create 管理员创建用户
-//
-//	@Summary		创建用户
-//	@Description	管理员快速创建用户，可指定角色和状态，无需邮箱验证
-//	@Tags			用户管理
-//	@Accept			json
-//	@Produce		json
-//	@Security		BearerAuth
-//	@Param			request	body		dto.AdminCreateUserRequest	true	"用户信息"
-//	@Success		200		{object}	response.Response
-//	@Failure		400		{object}	response.Response
-//	@Failure		401		{object}	response.Response
-//	@Failure		403		{object}	response.Response
-//	@Failure		409		{object}	response.Response
-//	@Router			/admin/users [post]
-func (c *UserController) Create(ctx *gin.Context) {
-	var req dto.AdminCreateUserRequest
-
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		response.ValidateFailed(ctx, err.Error())
-		return
-	}
-
-	host := upload.ExtractHostFromContext(ctx, c.config.Server.Scheme)
-	if err := c.userService.Create(&req, host); err != nil {
-		response.Failed(ctx, err.Error())
-		return
-	}
-
-	response.Created(ctx, nil)
-}
-
-// Update 管理员更新用户
-//
-//	@Summary		更新用户
-//	@Description	管理员修改用户信息、角色、是否启用、密码等（所有字段均为可选）
-//	@Tags			用户管理
-//	@Accept			json
-//	@Produce		json
-//	@Security		BearerAuth
-//	@Param			id		path		int							true	"用户 ID"
-//	@Param			request	body		dto.AdminUpdateUserRequest	true	"用户信息（包含可选的密码字段）"
-//	@Success		200		{object}	response.Response
-//	@Failure		400		{object}	response.Response
-//	@Failure		401		{object}	response.Response
-//	@Failure		403		{object}	response.Response
-//	@Router			/admin/users/{id} [put]
-func (c *UserController) Update(ctx *gin.Context) {
-	userID, err := strconv.ParseUint(ctx.Param("id"), 10, 32)
-	if err != nil {
-		response.ValidateFailed(ctx, "无效的用户ID")
-		return
-	}
-
-	var req dto.AdminUpdateUserRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		response.ValidateFailed(ctx, err.Error())
-		return
-	}
-
-	if err := c.userService.Update(uint(userID), &req); err != nil {
-		response.Failed(ctx, err.Error())
-		return
-	}
+	auth.ClearRefreshTokenCookie(ctx)
 
 	response.Success(ctx, nil)
 }
-
-// Delete 删除用户（管理员接口）
-//
-//	@Summary		删除用户
-//	@Description	软删除用户，可通过恢复接口还原
-//	@Tags			用户管理
-//	@Accept			json
-//	@Produce		json
-//	@Security		BearerAuth
-//	@Param			id	path		int	true	"用户 ID"
-//	@Success		200	{object}	response.Response
-//	@Failure		400	{object}	response.Response
-//	@Failure		401	{object}	response.Response
-//	@Failure		403	{object}	response.Response
-//	@Router			/admin/users/{id} [delete]
-func (c *UserController) Delete(ctx *gin.Context) {
-	userID, err := strconv.ParseUint(ctx.Param("id"), 10, 32)
-	if err != nil {
-		response.ValidateFailed(ctx, "无效的用户ID")
-		return
-	}
-
-	if err := c.userService.Delete(uint(userID)); err != nil {
-		response.Failed(ctx, err.Error())
-		return
-	}
-
-	response.Success(ctx, nil)
-}
-
-// ============ OAuth 解绑接口 ============
 
 // UnbindOAuth 解绑第三方账号
 //
@@ -728,6 +588,211 @@ func (c *UserController) UnbindOAuth(ctx *gin.Context) {
 
 	// 执行解绑
 	if err := c.userService.UnbindOAuth(userID.(uint), provider); err != nil {
+		response.Failed(ctx, err.Error())
+		return
+	}
+
+	response.Success(ctx, nil)
+}
+
+// ============ 后台管理接口 ============
+
+// List 获取用户列表
+//
+//	@Summary		用户列表
+//	@Description	获取所有用户，支持多种筛选条件
+//	@Tags			用户管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			page		query		int		false	"页码"	default(1)
+//	@Param			page_size	query		int		false	"每页数量"	default(10)
+//	@Param			keyword		query		string	false	"搜索关键词（邮箱、昵称）"
+//	@Param			role		query		string	false	"角色筛选（super_admin/admin/user/guest）"
+//	@Param			is_enabled	query		bool	false	"状态筛选（true:启用 false:禁用）"
+//	@Param			is_deleted	query		bool	false	"是否已删除（true:已删除 false:未删除）"
+//	@Param			login_method	query		string	false	"登录方式筛选（password/github/google/qq/microsoft）"
+//	@Param			last_login_start	query		string	false	"最后登录开始时间（格式：2006-01-02）"
+//	@Param			last_login_end	query		string	false	"最后登录结束时间（格式：2006-01-02）"
+//	@Param			start_time	query		string	false	"注册开始时间（格式：2006-01-02）"
+//	@Param			end_time	query		string	false	"注册结束时间（格式：2006-01-02）"
+//	@Success		200			{object}	response.Response{data=response.PageResult}
+//	@Failure		400			{object}	response.Response
+//	@Failure		401			{object}	response.Response
+//	@Failure		403			{object}	response.Response
+//	@Router			/admin/users [get]
+func (c *UserController) List(ctx *gin.Context) {
+	var req dto.ListUsersRequest
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		response.ValidateFailed(ctx, err.Error())
+		return
+	}
+
+	users, total, err := c.userService.List(&req)
+	if err != nil {
+		response.Failed(ctx, err.Error())
+		return
+	}
+
+	response.PageSuccess(ctx, users, total, req.Page, req.PageSize)
+}
+
+// Get 获取用户详情
+//
+//	@Summary		用户详情
+//	@Description	查看用户详细信息
+//	@Tags			用户管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id	path		int	true	"用户 ID"
+//	@Success		200	{object}	response.Response{data=dto.UserResponse}
+//	@Failure		400	{object}	response.Response
+//	@Failure		401	{object}	response.Response
+//	@Failure		403	{object}	response.Response
+//	@Router			/admin/users/{id} [get]
+func (c *UserController) Get(ctx *gin.Context) {
+	userID, err := strconv.ParseUint(ctx.Param("id"), 10, 32)
+	if err != nil {
+		response.ValidateFailed(ctx, "无效的用户ID")
+		return
+	}
+
+	userInfo, err := c.userService.Get(uint(userID))
+	if err != nil {
+		response.Failed(ctx, err.Error())
+		return
+	}
+
+	response.Success(ctx, userInfo)
+}
+
+// Create 创建用户
+//
+//	@Summary		创建用户
+//	@Description	创建新用户
+//	@Tags			用户管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			request	body		dto.AdminCreateUserRequest	true	"用户信息"
+//	@Success		200		{object}	response.Response
+//	@Failure		400		{object}	response.Response
+//	@Failure		401		{object}	response.Response
+//	@Failure		403		{object}	response.Response
+//	@Failure		409		{object}	response.Response
+//	@Router			/admin/users [post]
+func (c *UserController) Create(ctx *gin.Context) {
+	var req dto.AdminCreateUserRequest
+
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		response.ValidateFailed(ctx, err.Error())
+		return
+	}
+
+	operator, ok := ctx.Get("user")
+	if !ok {
+		response.Failed(ctx, "未找到当前用户信息")
+		return
+	}
+
+	authUser, ok := operator.(*model.User)
+	if !ok || authUser == nil {
+		response.Failed(ctx, "当前用户信息无效")
+		return
+	}
+
+	host := upload.ExtractHostFromContext(ctx, c.config.Server.Scheme)
+	if err := c.userService.Create(authUser, &req, host); err != nil {
+		response.Failed(ctx, err.Error())
+		return
+	}
+
+	response.Created(ctx, nil)
+}
+
+// Update 更新用户
+//
+//	@Summary		更新用户
+//	@Description	修改用户信息
+//	@Tags			用户管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id		path		int							true	"用户 ID"
+//	@Param			request	body		dto.AdminUpdateUserRequest	true	"用户信息（包含可选的密码字段）"
+//	@Success		200		{object}	response.Response
+//	@Failure		400		{object}	response.Response
+//	@Failure		401		{object}	response.Response
+//	@Failure		403		{object}	response.Response
+//	@Router			/admin/users/{id} [put]
+func (c *UserController) Update(ctx *gin.Context) {
+	userID, err := strconv.ParseUint(ctx.Param("id"), 10, 32)
+	if err != nil {
+		response.ValidateFailed(ctx, "无效的用户ID")
+		return
+	}
+
+	var req dto.AdminUpdateUserRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		response.ValidateFailed(ctx, err.Error())
+		return
+	}
+
+	operator, ok := ctx.Get("user")
+	if !ok {
+		response.Failed(ctx, "未找到当前用户信息")
+		return
+	}
+
+	authUser, ok := operator.(*model.User)
+	if !ok || authUser == nil {
+		response.Failed(ctx, "当前用户信息无效")
+		return
+	}
+
+	if err := c.userService.Update(authUser, uint(userID), &req); err != nil {
+		response.Failed(ctx, err.Error())
+		return
+	}
+
+	response.Success(ctx, nil)
+}
+
+// Delete 删除用户
+//
+//	@Summary		删除用户
+//	@Description	软删除用户
+//	@Tags			用户管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id	path		int	true	"用户 ID"
+//	@Success		200	{object}	response.Response
+//	@Failure		400	{object}	response.Response
+//	@Failure		401	{object}	response.Response
+//	@Failure		403	{object}	response.Response
+//	@Router			/admin/users/{id} [delete]
+func (c *UserController) Delete(ctx *gin.Context) {
+	userID, err := strconv.ParseUint(ctx.Param("id"), 10, 32)
+	if err != nil {
+		response.ValidateFailed(ctx, "无效的用户ID")
+		return
+	}
+
+	operator, ok := ctx.Get("user")
+	if !ok {
+		response.Failed(ctx, "未找到当前用户信息")
+		return
+	}
+
+	authUser, ok := operator.(*model.User)
+	if !ok || authUser == nil {
+		response.Failed(ctx, "当前用户信息无效")
+		return
+	}
+
+	if err := c.userService.Delete(authUser, uint(userID)); err != nil {
 		response.Failed(ctx, err.Error())
 		return
 	}

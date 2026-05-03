@@ -81,45 +81,15 @@ func (r *FileRepository) Delete(id uint) error {
 // ============ 查询方法 ============
 
 // List 获取文件列表
-func (r *FileRepository) List(offset, limit int, keyword string, status *int, fileType string, uploadType string) ([]model.File, int64, error) {
+func (r *FileRepository) List(offset, limit int) ([]model.File, int64, error) {
 	var files []model.File
 	var total int64
 
-	// 构建查询
-	query := r.db.Model(&model.File{})
-
-	// 关键词搜索（文件名、原始文件名）
-	if keyword != "" {
-		query = query.Where("file_name LIKE ? OR original_name LIKE ?",
-			"%"+keyword+"%", "%"+keyword+"%")
-	}
-
-	// 状态筛选
-	if status != nil {
-		query = query.Where("status = ?", *status)
-	}
-
-	// 文件类型筛选（image/video 等主类型）
-	if fileType != "" {
-		if strings.Contains(fileType, "/") {
-			query = query.Where("file_type LIKE ?", fileType+"%")
-		} else {
-			query = query.Where("file_type LIKE ?", fileType+"/%")
-		}
-	}
-
-	// 上传类型筛选
-	if uploadType != "" {
-		query = query.Where("upload_type LIKE ?", "%"+uploadType+"%")
-	}
-
-	// 统计总数
-	if err := query.Count(&total).Error; err != nil {
+	if err := r.db.Model(&model.File{}).Count(&total).Error; err != nil {
 		return nil, 0, err
 	}
 
-	// 查询列表
-	err := query.Order("created_at DESC").
+	err := r.db.Order("created_at DESC").
 		Offset(offset).
 		Limit(limit).
 		Find(&files).Error
@@ -131,19 +101,48 @@ func (r *FileRepository) List(offset, limit int, keyword string, status *int, fi
 	return files, total, nil
 }
 
-// GetByUploadType 根据上传类型获取文件列表
-func (r *FileRepository) GetByUploadType(uploadType string, offset, limit int) ([]model.File, int64, error) {
+// FileListFilter 文件列表筛选条件
+type FileListFilter struct {
+	Keyword    string
+	FileType   string
+	Status     *int
+	UploadType string
+	MinSize    int64
+	MaxSize    int64
+	StartTime  string
+	EndTime    string
+}
+
+// GetByFilter 根据筛选条件获取文件列表
+func (r *FileRepository) GetByFilter(filter *FileListFilter, offset, limit int) ([]model.File, int64, error) {
 	var files []model.File
 	var total int64
 
 	query := r.db.Model(&model.File{})
 
-	// 如果是 "image"，则查询所有图片类型的文件（通过 file_type 字段）
-	if uploadType == "image" {
-		query = query.Where("file_type LIKE ?", "image/%")
-	} else {
-		// 否则按 upload_type 精确匹配
-		query = query.Where("upload_type = ?", uploadType)
+	if filter.Keyword != "" {
+		query = query.Where("file_name LIKE ? OR original_name LIKE ?", "%"+filter.Keyword+"%", "%"+filter.Keyword+"%")
+	}
+	if filter.FileType != "" {
+		query = query.Where("file_type LIKE ?", filter.FileType+"%")
+	}
+	if filter.Status != nil {
+		query = query.Where("status = ?", *filter.Status)
+	}
+	if filter.UploadType != "" {
+		query = query.Where("upload_type LIKE ?", "%"+filter.UploadType+"%")
+	}
+	if filter.MinSize > 0 {
+		query = query.Where("file_size >= ?", filter.MinSize)
+	}
+	if filter.MaxSize > 0 {
+		query = query.Where("file_size <= ?", filter.MaxSize)
+	}
+	if filter.StartTime != "" {
+		query = query.Where("created_at >= ?", filter.StartTime)
+	}
+	if filter.EndTime != "" {
+		query = query.Where("created_at <= ?", filter.EndTime+" 23:59:59")
 	}
 
 	if err := query.Count(&total).Error; err != nil {
@@ -182,15 +181,9 @@ func (r *FileRepository) ExistsByURLExcludingID(url string, excludeID uint) (boo
 
 // UpdateStatus 更新文件使用状态
 func (r *FileRepository) UpdateStatus(url string, status int) error {
-	result := r.db.Model(&model.File{}).
+	return r.db.Model(&model.File{}).
 		Where("file_url = ?", url).
-		Update("status", status)
-
-	if result.Error != nil {
-		return result.Error
-	}
-
-	return nil
+		Update("status", status).Error
 }
 
 // CountByURL 统计指定URL的文件记录数量

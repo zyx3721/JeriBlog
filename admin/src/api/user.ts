@@ -9,8 +9,18 @@
 功能描述：API 接口定义 - user
 */
 
-import request from "@/utils/request";
-import type { LoginParams, LoginResponse, User, UserListData, ResetPasswordRequest, CreateUserRequest, UpdateUserRequest, RefreshTokenRequest, RefreshTokenResponse, UserQuery } from "@/types/user";
+import request from '@/utils/request';
+import type {
+  LoginParams,
+  LoginResponse,
+  User,
+  UserListData,
+  UserListQuery,
+  ResetPasswordRequest,
+  CreateUserRequest,
+  UpdateUserRequest,
+  RefreshTokenResponse,
+} from '@/types/user';
 
 /**
  * 用户登录
@@ -18,16 +28,23 @@ import type { LoginParams, LoginResponse, User, UserListData, ResetPasswordReque
  * @returns Promise<LoginResponse>
  */
 export function login(data: LoginParams): Promise<LoginResponse> {
-  return request.post("/auth/login", data);
+  return request.post('/auth/login', data);
+}
+
+/**
+ * 获取当前登录用户信息
+ * @returns Promise<User>
+ */
+export function getProfile(): Promise<User> {
+  return request.get('/user/profile');
 }
 
 /**
  * 刷新Token
- * @param data 刷新Token参数
  * @returns Promise<RefreshTokenResponse>
  */
-export function refreshToken(data: RefreshTokenRequest): Promise<RefreshTokenResponse> {
-  return request.post("/auth/refresh", data);
+export function refreshToken(): Promise<RefreshTokenResponse> {
+  return request.post('/auth/refresh');
 }
 
 /**
@@ -35,7 +52,7 @@ export function refreshToken(data: RefreshTokenRequest): Promise<RefreshTokenRes
  * @returns Promise<void>
  */
 export function logout(): Promise<void> {
-  return request.post("/auth/logout");
+  return request.post('/auth/logout');
 }
 
 /**
@@ -43,8 +60,8 @@ export function logout(): Promise<void> {
  * @param params 查询参数
  * @returns Promise<UserListData>
  */
-export function getUsers(params: UserQuery): Promise<UserListData> {
-  return request.get("/admin/users", { params });
+export function getUsers(params: UserListQuery): Promise<UserListData> {
+  return request.get('/admin/users', { params });
 }
 
 /**
@@ -81,7 +98,7 @@ export function resetUserPassword(id: number, data: ResetPasswordRequest): Promi
  * @returns Promise<User>
  */
 export function createUser(data: CreateUserRequest): Promise<User> {
-  return request.post("/admin/users", data);
+  return request.post('/admin/users', data);
 }
 
 /**

@@ -10,7 +10,7 @@
 -->
 
 <script setup lang="ts">
-const { blogConfig } = useSysConfig()
+const { blogConfig } = useSysConfig();
 </script>
 
 <template>
@@ -26,12 +26,6 @@ const { blogConfig } = useSysConfig()
   .logo {
     font-weight: bold;
     font-size: 1.25rem;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .logo-container {
-    display: none !important;
   }
 }
 </style>

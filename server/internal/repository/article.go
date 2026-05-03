@@ -12,7 +12,6 @@
 package repository
 
 import (
-	"jeri_blog/internal/dto"
 	"jeri_blog/internal/model"
 	"jeri_blog/pkg/utils"
 	"strings"
@@ -226,69 +225,73 @@ func (r *ArticleRepository) CountByTag(tagID uint, onlyPublished bool) (int64, e
 // ============ 基础CRUD ============
 
 // List 获取文章列表
-func (r *ArticleRepository) List(req *dto.ListArticlesRequest) ([]model.Article, int64, error) {
+func (r *ArticleRepository) List(
+	offset, limit int,
+	keyword, location string,
+	categoryID uint,
+	tagIDs []uint,
+	isPublish, isTop, isEssence, isOutdated *bool,
+	startTime, endTime string,
+) ([]model.Article, int64, error) {
 	var articles []model.Article
 	var total int64
 
 	query := r.db.Model(&model.Article{})
 
 	// 关键词搜索（标题或内容）
-	if req.Keyword != "" {
-		query = query.Where("title ILIKE ? OR content ILIKE ?", "%"+req.Keyword+"%", "%"+req.Keyword+"%")
+	if keyword != "" {
+		searchKeyword := "%" + keyword + "%"
+		query = query.Where("title ILIKE ? OR content ILIKE ?", searchKeyword, searchKeyword)
 	}
 
-	// 分类筛选
-	if req.CategoryID != nil && *req.CategoryID > 0 {
-		query = query.Where("category_id = ?", *req.CategoryID)
+	// 按发布地点筛选
+	if location != "" {
+		query = query.Where("location ILIKE ?", "%"+location+"%")
 	}
 
-	// 标签筛选（支持多选）
-	if len(req.TagIDs) > 0 {
+	// 按分类筛选
+	if categoryID > 0 {
+		query = query.Where("category_id = ?", categoryID)
+	}
+
+	// 按标签筛选
+	if len(tagIDs) > 0 {
 		query = query.Joins("JOIN article_tags ON article_tags.article_id = articles.id").
-			Where("article_tags.tag_id IN ?", req.TagIDs).
+			Where("article_tags.tag_id IN ?", tagIDs).
 			Distinct()
 	}
 
-	// 发布地点筛选
-	if req.Location != "" {
-		query = query.Where("location ILIKE ?", "%"+req.Location+"%")
+	// 按发布状态筛选
+	if isPublish != nil {
+		query = query.Where("is_publish = ?", *isPublish)
 	}
 
-	// 发布状态筛选
-	if req.IsPublish != nil {
-		query = query.Where("is_publish = ?", *req.IsPublish)
+	// 按置顶状态筛选
+	if isTop != nil {
+		query = query.Where("is_top = ?", *isTop)
 	}
 
-	// 置顶状态筛选
-	if req.IsTop != nil {
-		query = query.Where("is_top = ?", *req.IsTop)
+	// 按精选状态筛选
+	if isEssence != nil {
+		query = query.Where("is_essence = ?", *isEssence)
 	}
 
-	// 精选状态筛选
-	if req.IsEssence != nil {
-		query = query.Where("is_essence = ?", *req.IsEssence)
+	// 按过时状态筛选
+	if isOutdated != nil {
+		query = query.Where("is_outdated = ?", *isOutdated)
 	}
 
-	// 过时状态筛选
-	if req.IsOutdated != nil {
-		query = query.Where("is_outdated = ?", *req.IsOutdated)
+	// 按发布时间范围筛选
+	if startTime != "" {
+		query = query.Where("publish_time >= ?", startTime)
 	}
-
-	// 发布时间范围筛选
-	if req.StartTime != "" {
-		query = query.Where("publish_time >= ?", req.StartTime)
-	}
-	if req.EndTime != "" {
-		query = query.Where("publish_time <= ?", req.EndTime+" 23:59:59")
+	if endTime != "" {
+		query = query.Where("publish_time <= ?", endTime+" 23:59:59")
 	}
 
 	if err := query.Count(&total).Error; err != nil {
 		return nil, 0, err
 	}
-
-	// 计算分页偏移量
-	offset := (req.Page - 1) * req.PageSize
-	limit := req.PageSize
 
 	if err := query.Order("is_publish ASC, publish_time DESC NULLS LAST, created_at DESC").
 		Preload("Category").
@@ -445,14 +448,21 @@ func (r *ArticleRepository) FindByContentURLWithType(url string) ([]ArticleFileR
 	// 遍历文章，使用工具函数提取文件引用并匹配
 	for _, article := range allArticles {
 		references := utils.ExtractFileReferencesFromMarkdown(article.Content)
+
+		// 用于记录当前文章中已匹配的文件类型，避免重复
+		matchedTypes := make(map[utils.FileType]bool)
+
 		for _, ref := range references {
 			// 支持精确匹配和包含匹配（处理完整URL和相对路径的情况）
 			if ref.URL == url || strings.Contains(ref.URL, url) || strings.Contains(url, ref.URL) {
-				matchedReferences = append(matchedReferences, ArticleFileReference{
-					Article:  article,
-					FileType: ref.Type,
-				})
-				break // 找到匹配后跳出内层循环
+				// 如果当前文章中该类型尚未记录，则添加
+				if !matchedTypes[ref.Type] {
+					matchedReferences = append(matchedReferences, ArticleFileReference{
+						Article:  article,
+						FileType: ref.Type,
+					})
+					matchedTypes[ref.Type] = true
+				}
 			}
 		}
 	}

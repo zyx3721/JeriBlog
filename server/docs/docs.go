@@ -29,7 +29,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "基于文章内容生成AI摘要（150-200字，旁观者角度）",
+                "description": "基于文章内容和提示词生成AI摘要",
                 "consumes": [
                     "application/json"
                 ],
@@ -98,7 +98,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "基于文章内容自动生成摘要（50-100字，创作者角度）",
+                "description": "基于文章内容和提示词生成文章摘要",
                 "consumes": [
                     "application/json"
                 ],
@@ -218,7 +218,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "根据内容生成多个标题建议",
+                "description": "基于文章内容和提示词生成标题",
                 "consumes": [
                     "application/json"
                 ],
@@ -228,7 +228,7 @@ const docTemplate = `{
                 "tags": [
                     "AI功能"
                 ],
-                "summary": "生成标题建议",
+                "summary": "生成标题",
                 "parameters": [
                     {
                         "description": "文章内容",
@@ -287,7 +287,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "获取所有文章含草稿，用于后台管理",
+                "description": "获取包含草稿的所有文章，支持多种筛选条件",
                 "consumes": [
                     "application/json"
                 ],
@@ -297,7 +297,7 @@ const docTemplate = `{
                 "tags": [
                     "文章管理"
                 ],
-                "summary": "文章列表（管理）",
+                "summary": "文章列表",
                 "parameters": [
                     {
                         "type": "integer",
@@ -309,6 +309,64 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "每页数量（不传则返回全部）",
                         "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "搜索关键词（标题/内容）",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分类ID",
+                        "name": "category_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "标签ID列表",
+                        "name": "tag_ids",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否发布",
+                        "name": "is_publish",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否置顶",
+                        "name": "is_top",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否精选",
+                        "name": "is_essence",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否过时",
+                        "name": "is_outdated",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "发布开始时间（格式：2006-01-02）",
+                        "name": "start_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "发布结束时间（格式：2006-01-02）",
+                        "name": "end_time",
                         "in": "query"
                     }
                 ],
@@ -351,7 +409,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "创建草稿或发布文章，自动生成 slug。支持设置置顶状态和发布状态，发布时自动设置发布时间",
+                "description": "创建草稿或发布文章，支持设置文章各种信息，发布时自动设置发布时间",
                 "consumes": [
                     "application/json"
                 ],
@@ -514,7 +572,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "通过 ID 获取，用于编辑器回显",
+                "description": "文章详细信息，用于编辑器回显",
                 "consumes": [
                     "application/json"
                 ],
@@ -524,7 +582,7 @@ const docTemplate = `{
                 "tags": [
                     "文章管理"
                 ],
-                "summary": "文章详情（管理）",
+                "summary": "文章详情",
                 "parameters": [
                     {
                         "type": "integer",
@@ -585,7 +643,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "修改文章内容、分类、标签、置顶状态、发布状态等。支持调整发布时间，改为发布时自动设置发布时间，会自动更新相关统计",
+                "description": "修改文章各种信息，支持调整发布时间",
                 "consumes": [
                     "application/json"
                 ],
@@ -665,7 +723,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "硬删除文章，会自动更新分类和标签的文章计数",
+                "description": "硬删除文章，不可恢复",
                 "consumes": [
                     "application/json"
                 ],
@@ -781,7 +839,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "尝试推送到公众号草稿箱，失败则返回 HTML 供复制",
+                "description": "将文章 Markdown 转换为微信公众号 HTML 格式，供复制粘贴到微信公众平台",
                 "consumes": [
                     "application/json"
                 ],
@@ -791,7 +849,7 @@ const docTemplate = `{
                 "tags": [
                     "文章管理"
                 ],
-                "summary": "导出到微信公众号",
+                "summary": "生成微信公众号 HTML",
                 "parameters": [
                     {
                         "type": "integer",
@@ -848,7 +906,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "获取所有分类用于管理",
+                "description": "获取所有分类",
                 "consumes": [
                     "application/json"
                 ],
@@ -858,7 +916,7 @@ const docTemplate = `{
                 "tags": [
                     "分类管理"
                 ],
-                "summary": "分类列表（管理）",
+                "summary": "分类列表",
                 "parameters": [
                     {
                         "type": "integer",
@@ -969,7 +1027,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "通过 ID 获取分类信息",
+                "description": "获取分类的详细信息",
                 "consumes": [
                     "application/json"
                 ],
@@ -979,7 +1037,7 @@ const docTemplate = `{
                 "tags": [
                     "分类管理"
                 ],
-                "summary": "分类详情（管理）",
+                "summary": "分类详情",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1108,7 +1166,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "软删除分类",
+                "description": "硬删除分类，不可恢复",
                 "consumes": [
                     "application/json"
                 ],
@@ -1169,7 +1227,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "获取所有评论，支持按状态筛选",
+                "description": "获取所有评论，支持多种筛选条件",
                 "consumes": [
                     "application/json"
                 ],
@@ -1179,7 +1237,7 @@ const docTemplate = `{
                 "tags": [
                     "评论管理"
                 ],
-                "summary": "评论列表（管理）",
+                "summary": "评论列表",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1194,9 +1252,39 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "搜索关键词（评论内容）",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "状态筛选 0:隐藏 1:显示",
                         "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否已删除",
+                        "name": "is_deleted",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否子评论（true:子评论, false:父评论）",
+                        "name": "is_sub",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "评论开始时间（格式：2006-01-02）",
+                        "name": "start_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "评论结束时间（格式：2006-01-02）",
+                        "name": "end_time",
                         "in": "query"
                     }
                 ],
@@ -1245,7 +1333,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "管理员创建评论，用于回复用户",
+                "description": "管理员创建评论，用于回复用户，但无法设置评论IP等数据",
                 "consumes": [
                     "application/json"
                 ],
@@ -1314,7 +1402,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "从Artalk等第三方评论系统导入评论数据",
+                "description": "从Artalk评论系统导入评论数据，暂不支持更多评论系统",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -1401,7 +1489,7 @@ const docTemplate = `{
                 "tags": [
                     "评论管理"
                 ],
-                "summary": "评论详情（管理）",
+                "summary": "评论详情",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1462,7 +1550,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "硬删除评论，永久删除无法恢复，子评论会保留",
+                "description": "硬删除评论，将从数据库中彻底删除，不可恢复",
                 "consumes": [
                     "application/json"
                 ],
@@ -1472,7 +1560,7 @@ const docTemplate = `{
                 "tags": [
                     "评论管理"
                 ],
-                "summary": "删除评论（管理）",
+                "summary": "删除评论",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1523,7 +1611,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "切换评论的显示状态，隐藏后前台不可见",
+                "description": "切换评论的显示状态，隐藏后博客端不可见或被替换",
                 "consumes": [
                     "application/json"
                 ],
@@ -1533,7 +1621,7 @@ const docTemplate = `{
                 "tags": [
                     "评论管理"
                 ],
-                "summary": "显示/隐藏",
+                "summary": "切换评论状态",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1584,7 +1672,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "获取已上传的所有文件，支持按类型筛选",
+                "description": "获取已上传的所有文件",
                 "consumes": [
                     "application/json"
                 ],
@@ -1594,8 +1682,56 @@ const docTemplate = `{
                 "tags": [
                     "文件管理"
                 ],
-                "summary": "文件列表（管理）",
+                "summary": "文件列表",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "关键词搜索（文件名）",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "文件类型（image/video/audio/document等）",
+                        "name": "file_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "状态（0=未使用 1=使用中）",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "上传类型/用途",
+                        "name": "upload_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "最小文件大小（字节）",
+                        "name": "min_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "最大文件大小（字节）",
+                        "name": "max_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "开始时间",
+                        "name": "start_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "结束时间",
+                        "name": "end_time",
+                        "in": "query"
+                    },
                     {
                         "type": "integer",
                         "default": 1,
@@ -1608,12 +1744,6 @@ const docTemplate = `{
                         "default": 20,
                         "description": "每页数量",
                         "name": "page_size",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "文件类型筛选",
-                        "name": "type",
                         "in": "query"
                     }
                 ],
@@ -1654,7 +1784,7 @@ const docTemplate = `{
                 "tags": [
                     "文件管理"
                 ],
-                "summary": "文件上传（管理）",
+                "summary": "文件上传",
                 "parameters": [
                     {
                         "type": "file",
@@ -1771,7 +1901,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "删除指定文件",
+                "description": "删除指定文件，不可恢复，若支持也将同步删除存储桶文件",
                 "consumes": [
                     "application/json"
                 ],
@@ -1930,6 +2060,48 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "每页数量（不传则返回全部）",
                         "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键词搜索（名称、链接、描述）",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "友链类型ID",
+                        "name": "type_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否失效",
+                        "name": "is_invalid",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否待审核",
+                        "name": "is_pending",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "可访问性状态: normal=正常, abnormal=异常, ignored=忽略检查",
+                        "name": "accessible_status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "RSS状态: no_rss=无订阅, normal=正常订阅, warning=三个月未更新, danger=六个月未更新",
+                        "name": "rss_status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否包含截图",
+                        "name": "has_screenshot",
                         "in": "query"
                     }
                 ],
@@ -2123,7 +2295,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "通过 ID 获取友链类型信息",
+                "description": "获取友链类型详细信息",
                 "produces": [
                     "application/json"
                 ],
@@ -2247,7 +2419,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "删除友链类型（关联的友链 type_id 会被设置为 NULL）",
+                "description": "删除友链类型，关联友链的类型会被设置为 NULL",
                 "produces": [
                     "application/json"
                 ],
@@ -2305,7 +2477,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "通过 ID 获取友链信息",
+                "description": "获取友链详细信息",
                 "consumes": [
                     "application/json"
                 ],
@@ -2432,7 +2604,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "软删除友链",
+                "description": "硬删除友链，不可恢复",
                 "consumes": [
                     "application/json"
                 ],
@@ -2493,6 +2665,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
+                "description": "按类型获取菜单树",
                 "consumes": [
                     "application/json"
                 ],
@@ -2541,6 +2714,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
+                "description": "创建新的菜单项",
                 "consumes": [
                     "application/json"
                 ],
@@ -2637,6 +2811,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
+                "description": "更新菜单项信息",
                 "consumes": [
                     "application/json"
                 ],
@@ -2692,6 +2867,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
+                "description": "硬删除菜单项，不可恢复",
                 "consumes": [
                     "application/json"
                 ],
@@ -2736,7 +2912,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "获取所有动态用于管理",
+                "description": "获取所有动态，支持筛选",
                 "consumes": [
                     "application/json"
                 ],
@@ -2746,7 +2922,7 @@ const docTemplate = `{
                 "tags": [
                     "动态管理"
                 ],
-                "summary": "动态列表（管理）",
+                "summary": "动态列表",
                 "parameters": [
                     {
                         "type": "integer",
@@ -2762,14 +2938,62 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "搜索关键词（按内容模糊搜索）",
+                        "description": "搜索关键词（文本内容）",
                         "name": "keyword",
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "标签",
+                        "name": "tags",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "发布地点",
+                        "name": "location",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
-                        "description": "状态筛选（true=已发布, false=草稿）",
+                        "description": "是否发布",
                         "name": "is_publish",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否有图片",
+                        "name": "has_images",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否有视频",
+                        "name": "has_video",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否有音乐",
+                        "name": "has_music",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否有链接",
+                        "name": "has_link",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "发布开始时间",
+                        "name": "start_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "发布结束时间",
+                        "name": "end_time",
                         "in": "query"
                     }
                 ],
@@ -2881,7 +3105,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "通过 ID 获取动态详情",
+                "description": "获取动态详细信息",
                 "consumes": [
                     "application/json"
                 ],
@@ -2891,7 +3115,7 @@ const docTemplate = `{
                 "tags": [
                     "动态管理"
                 ],
-                "summary": "动态详情（管理）",
+                "summary": "动态详情",
                 "parameters": [
                     {
                         "type": "integer",
@@ -2985,7 +3209,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.MomentListResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -3020,7 +3256,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "删除动态",
+                "description": "硬删除动态，不可恢复",
                 "consumes": [
                     "application/json"
                 ],
@@ -3101,6 +3337,36 @@ const docTemplate = `{
                         "description": "每页数量",
                         "name": "page_size",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "搜索关键词",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "友链ID筛选",
+                        "name": "friend_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "已读状态筛选",
+                        "name": "is_read",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "发布开始时间（格式：2006-01-02）",
+                        "name": "start_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "发布结束时间（格式：2006-01-02）",
+                        "name": "end_time",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -3132,7 +3398,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "将所有未读文章标记为已读（仅超级管理员可操作）",
+                "description": "将所有未读文章标记为已读，限超级管理员",
                 "produces": [
                     "application/json"
                 ],
@@ -3169,7 +3435,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "手动触发刷新所有RSS订阅源（仅超级管理员可操作）",
+                "description": "手动触发刷新所有RSS订阅源，限超级管理员",
                 "produces": [
                     "application/json"
                 ],
@@ -3206,7 +3472,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "将指定文章标记为已读（仅超级管理员可操作）",
+                "description": "将指定文章标记为已读，限超级管理员",
                 "produces": [
                     "application/json"
                 ],
@@ -3257,6 +3523,61 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/settings/ai/mcp-secret/reset": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "重新生成并返回 MCP Secret，限超级管理员",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "配置管理"
+                ],
+                "summary": "重置 MCP Secret",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/settings/{group}": {
             "get": {
                 "security": [
@@ -3264,7 +3585,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "获取指定分组的所有配置项（需要管理员权限）",
+                "description": "获取指定分组的所有配置项",
                 "consumes": [
                     "application/json"
                 ],
@@ -3283,8 +3604,7 @@ const docTemplate = `{
                             "notification",
                             "upload",
                             "ai",
-                            "oauth",
-                            "wechat"
+                            "oauth"
                         ],
                         "type": "string",
                         "description": "配置分组",
@@ -3332,7 +3652,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "批量更新指定分组的配置项（patch 方式，只更新传入的配置）",
+                "description": "批量更新指定分组的配置项，限超级管理员",
                 "consumes": [
                     "application/json"
                 ],
@@ -3351,8 +3671,7 @@ const docTemplate = `{
                             "notification",
                             "upload",
                             "ai",
-                            "oauth",
-                            "wechat"
+                            "oauth"
                         ],
                         "type": "string",
                         "description": "配置分组",
@@ -3657,7 +3976,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "获取访问日志列表，支持分页查询",
+                "description": "获取访问日志列表，支持分页和多种筛选条件",
                 "consumes": [
                     "application/json"
                 ],
@@ -3684,6 +4003,54 @@ const docTemplate = `{
                         "default": 20,
                         "description": "每页数量",
                         "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "搜索关键词（页面URL）",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访客ID",
+                        "name": "visitor_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "IP地址",
+                        "name": "ip",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "地理位置",
+                        "name": "location",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "浏览器",
+                        "name": "browser",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "操作系统",
+                        "name": "os",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "开始时间（格式：2006-01-02）",
+                        "name": "start_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "结束时间（格式：2006-01-02）",
+                        "name": "end_time",
                         "in": "query"
                     }
                 ],
@@ -3716,7 +4083,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "根据搜索条件批量删除访问日志",
+                "description": "批量删除指定的访问日志",
                 "consumes": [
                     "application/json"
                 ],
@@ -3729,45 +4096,20 @@ const docTemplate = `{
                 "summary": "批量删除访问日志",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "关键词",
-                        "name": "keyword",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "开始时间",
-                        "name": "start_date",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "结束时间",
-                        "name": "end_date",
-                        "in": "query"
+                        "description": "访问日志ID列表",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/jeri_blog_internal_dto.BatchDeleteRequest"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object",
-                                            "additionalProperties": {
-                                                "type": "integer",
-                                                "format": "int64"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
                         }
                     }
                 }
@@ -3817,7 +4159,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "获取系统动态信息（CPU使用率、内存使用率、磁盘使用率等）",
+                "description": "获取系统运行时动态信息，每10秒更新一次",
                 "consumes": [
                     "application/json"
                 ],
@@ -3825,26 +4167,26 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "系统信息"
+                    "系统管理"
                 ],
-                "summary": "获取系统动态信息",
+                "summary": "系统动态信息",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.SystemDynamicInfo"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -3857,7 +4199,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "获取系统静态信息（操作系统、Go版本、架构等）",
+                "description": "获取系统静态配置信息，页面加载时更新一次",
                 "consumes": [
                     "application/json"
                 ],
@@ -3865,26 +4207,26 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "系统信息"
+                    "系统管理"
                 ],
-                "summary": "获取系统静态信息",
+                "summary": "系统静态信息",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/jeri_blog_internal_dto.SystemStaticInfo"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -3897,7 +4239,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "获取所有标签用于管理",
+                "description": "获取所有标签",
                 "consumes": [
                     "application/json"
                 ],
@@ -3907,7 +4249,7 @@ const docTemplate = `{
                 "tags": [
                     "标签管理"
                 ],
-                "summary": "标签列表（管理）",
+                "summary": "标签列表",
                 "parameters": [
                     {
                         "type": "integer",
@@ -4018,7 +4360,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "通过 ID 获取标签信息",
+                "description": "获取标签详细信息",
                 "consumes": [
                     "application/json"
                 ],
@@ -4028,7 +4370,7 @@ const docTemplate = `{
                 "tags": [
                     "标签管理"
                 ],
-                "summary": "标签详情（管理）",
+                "summary": "标签详情",
                 "parameters": [
                     {
                         "type": "integer",
@@ -4157,7 +4499,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "软删除标签",
+                "description": "硬删除标签，不可恢复",
                 "consumes": [
                     "application/json"
                 ],
@@ -4211,237 +4553,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/tools/download-image": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "从指定URL下载图片并保存到服务器",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "管理工具"
-                ],
-                "summary": "下载图片到服务器",
-                "parameters": [
-                    {
-                        "description": "图片URL",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "url": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/tools/fetch-link-meta": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "获取链接的标题、描述、图标等元数据信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "管理工具"
-                ],
-                "summary": "获取链接元数据",
-                "parameters": [
-                    {
-                        "description": "链接URL",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "url": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/tools/parse-music": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "通过 Meting API 解析音乐平台的歌曲信息（网易云、QQ音乐等）",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "管理工具"
-                ],
-                "summary": "解析音乐信息",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "音乐平台（netease/tencent/kugou等）",
-                        "name": "server",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "类型（song/playlist/album等）",
-                        "name": "type",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "音乐ID",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/tools/parse-video": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "解析视频URL，支持多个视频平台（抖音、快手、B站等）",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "管理工具"
-                ],
-                "summary": "解析视频URL",
-                "parameters": [
-                    {
-                        "description": "视频URL",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "url": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/admin/users": {
             "get": {
                 "security": [
@@ -4449,7 +4560,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "获取所有用户列表",
+                "description": "获取所有用户，支持多种筛选条件",
                 "consumes": [
                     "application/json"
                 ],
@@ -4459,7 +4570,7 @@ const docTemplate = `{
                 "tags": [
                     "用户管理"
                 ],
-                "summary": "用户列表（管理）",
+                "summary": "用户列表",
                 "parameters": [
                     {
                         "type": "integer",
@@ -4473,6 +4584,60 @@ const docTemplate = `{
                         "default": 10,
                         "description": "每页数量",
                         "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "搜索关键词（邮箱、昵称）",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "角色筛选（super_admin/admin/user/guest）",
+                        "name": "role",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "状态筛选（true:启用 false:禁用）",
+                        "name": "is_enabled",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否已删除（true:已删除 false:未删除）",
+                        "name": "is_deleted",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "登录方式筛选（password/github/google/qq/microsoft）",
+                        "name": "login_method",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "最后登录开始时间（格式：2006-01-02）",
+                        "name": "last_login_start",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "最后登录结束时间（格式：2006-01-02）",
+                        "name": "last_login_end",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "注册开始时间（格式：2006-01-02）",
+                        "name": "start_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "注册结束时间（格式：2006-01-02）",
+                        "name": "end_time",
                         "in": "query"
                     }
                 ],
@@ -4521,7 +4686,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "管理员快速创建用户，可指定角色和状态，无需邮箱验证",
+                "description": "创建新用户",
                 "consumes": [
                     "application/json"
                 ],
@@ -4584,7 +4749,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "查看用户详情",
+                "description": "查看用户详细信息",
                 "consumes": [
                     "application/json"
                 ],
@@ -4594,7 +4759,7 @@ const docTemplate = `{
                 "tags": [
                     "用户管理"
                 ],
-                "summary": "用户详情（管理）",
+                "summary": "用户详情",
                 "parameters": [
                     {
                         "type": "integer",
@@ -4649,7 +4814,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "管理员修改用户信息、角色、是否启用、密码等（所有字段均为可选）",
+                "description": "修改用户信息",
                 "consumes": [
                     "application/json"
                 ],
@@ -4711,7 +4876,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "软删除用户，可通过恢复接口还原",
+                "description": "软删除用户",
                 "consumes": [
                     "application/json"
                 ],
@@ -4761,6 +4926,11 @@ const docTemplate = `{
         },
         "/api/v1/admin/feedback": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -4785,6 +4955,36 @@ const docTemplate = `{
                         "name": "page_size",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "搜索关键词（工单号、投诉地址）",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "反馈类型筛选（copyright/inappropriate/summary/suggestion）",
+                        "name": "report_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "状态筛选（pending/resolved/closed）",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "反馈开始时间（格式：2006-01-02）",
+                        "name": "start_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "反馈结束时间（格式：2006-01-02）",
+                        "name": "end_time",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -4826,6 +5026,11 @@ const docTemplate = `{
         },
         "/api/v1/admin/feedback/{id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -4867,6 +5072,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -4905,6 +5115,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -4941,7 +5156,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "获取管理员的通知列表（评论通知、问题反馈、友链申请等），包含未读数量",
+                "description": "获取管理员的通知列表（评论通知、问题反馈、友链申请、异常友链等），包含未读数量",
                 "consumes": [
                     "application/json"
                 ],
@@ -4951,7 +5166,7 @@ const docTemplate = `{
                 "tags": [
                     "通知管理"
                 ],
-                "summary": "获取后台管理员通知列表",
+                "summary": "获取通知列表",
                 "parameters": [
                     {
                         "type": "integer",
@@ -5084,6 +5299,11 @@ const docTemplate = `{
         },
         "/api/v1/admin/subscribers": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -5149,6 +5369,11 @@ const docTemplate = `{
         },
         "/api/v1/admin/subscribers/{id}": {
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -5178,8 +5403,210 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/admin/tools/download-image": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "从远程URL下载图片并返回图片数据",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "工具"
+                ],
+                "summary": "下载图片",
+                "parameters": [
+                    {
+                        "description": "图片URL",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "url": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "content_length": {
+                                                    "type": "integer"
+                                                },
+                                                "content_type": {
+                                                    "type": "string"
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "integer",
+                                                        "format": "int32"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/tools/fetch-linkmeta": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "解析URL并提取网页元数据（标题、描述、图片等）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "工具"
+                ],
+                "summary": "获取链接元数据",
+                "parameters": [
+                    {
+                        "description": "网页URL",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "url": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/jeri_blog_pkg_linkparser.Metadata"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/tools/parse-video": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "解析短视频平台链接，提取视频信息（支持哔哩哔哩、Youtube等）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "工具"
+                ],
+                "summary": "解析视频URL",
+                "parameters": [
+                    {
+                        "description": "视频URL",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "url": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/jeri_blog_pkg_videoparser.VideoInfo"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/feedback": {
             "post": {
+                "description": "用户提交反馈投诉",
                 "consumes": [
                     "application/json"
                 ],
@@ -5225,6 +5652,7 @@ const docTemplate = `{
         },
         "/api/v1/feedback/ticket/{ticket_no}": {
             "get": {
+                "description": "根据工单号查询反馈投诉的处理进度和结果",
                 "consumes": [
                     "application/json"
                 ],
@@ -5234,7 +5662,7 @@ const docTemplate = `{
                 "tags": [
                     "反馈"
                 ],
-                "summary": "根据工单号查询反馈",
+                "summary": "查询反馈投诉进度",
                 "parameters": [
                     {
                         "type": "string",
@@ -5273,7 +5701,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "获取当前用户的通知列表（仅评论回复、全站通知等），包含未读数量",
+                "description": "获取当前用户的通知列表（评论回复、全站通知等），包含未读数量",
                 "consumes": [
                     "application/json"
                 ],
@@ -5283,7 +5711,7 @@ const docTemplate = `{
                 "tags": [
                     "通知"
                 ],
-                "summary": "获取前台用户通知列表",
+                "summary": "获取用户通知列表",
                 "parameters": [
                     {
                         "type": "integer",
@@ -5349,7 +5777,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "通知管理"
+                    "通知"
                 ],
                 "summary": "标记所有通知为已读",
                 "responses": {
@@ -5389,7 +5817,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "通知管理"
+                    "通知"
                 ],
                 "summary": "标记通知为已读",
                 "parameters": [
@@ -5425,6 +5853,7 @@ const docTemplate = `{
         },
         "/api/v1/subscribe": {
             "post": {
+                "description": "用户通过提交邮箱地址订阅博客更新",
                 "consumes": [
                     "application/json"
                 ],
@@ -5463,6 +5892,7 @@ const docTemplate = `{
         },
         "/api/v1/subscribe/unsubscribe": {
             "get": {
+                "description": "用户通过退订令牌退订邮件通知",
                 "consumes": [
                     "application/json"
                 ],
@@ -5472,7 +5902,7 @@ const docTemplate = `{
                 "tags": [
                     "订阅"
                 ],
-                "summary": "退订",
+                "summary": "订阅退订",
                 "parameters": [
                     {
                         "type": "string",
@@ -5492,9 +5922,66 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/tools/parse-music": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "通过 Meting API 解析音乐平台的歌曲信息（网易云、QQ音乐等）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "工具"
+                ],
+                "summary": "解析音乐信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "音乐平台（netease/tencent/kugou等）",
+                        "name": "server",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "类型（song/playlist/album等）",
+                        "name": "type",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "音乐ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/jeri_blog_pkg_response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/articles": {
             "get": {
-                "description": "获取已发布文章，置顶文章在前。支持按年/月/分类/标签筛选，参数可组合。不传分页参数则返回全部",
+                "description": "获取已发布文章，置顶文章在前，支持按年/月/分类/标签筛选",
                 "consumes": [
                     "application/json"
                 ],
@@ -5504,7 +5991,7 @@ const docTemplate = `{
                 "tags": [
                     "文章"
                 ],
-                "summary": "文章列表",
+                "summary": "获取文章列表",
                 "parameters": [
                     {
                         "type": "integer",
@@ -5573,7 +6060,7 @@ const docTemplate = `{
         },
         "/articles/search": {
             "get": {
-                "description": "全文搜索标题和正文，返回匹配的文章及高亮摘要",
+                "description": "全文搜索标题和正文",
                 "consumes": [
                     "application/json"
                 ],
@@ -5583,7 +6070,7 @@ const docTemplate = `{
                 "tags": [
                     "文章"
                 ],
-                "summary": "搜索",
+                "summary": "搜索文章",
                 "parameters": [
                     {
                         "type": "string",
@@ -5635,7 +6122,7 @@ const docTemplate = `{
         },
         "/articles/{slug}": {
             "get": {
-                "description": "通过 slug 读取文章完整内容，自动增加阅读数",
+                "description": "通过 slug 读取文章完整内容",
                 "consumes": [
                     "application/json"
                 ],
@@ -5718,7 +6205,7 @@ const docTemplate = `{
                 "tags": [
                     "认证"
                 ],
-                "summary": "忘记密码",
+                "summary": "重置密码请求",
                 "parameters": [
                     {
                         "description": "邮箱地址",
@@ -5754,7 +6241,7 @@ const docTemplate = `{
         },
         "/auth/login": {
             "post": {
-                "description": "邮箱+密码登录，返回 JWT token 和用户基本信息",
+                "description": "邮箱密码登录，返回 JWT token 和用户基本信息",
                 "consumes": [
                     "application/json"
                 ],
@@ -5764,7 +6251,7 @@ const docTemplate = `{
                 "tags": [
                     "认证"
                 ],
-                "summary": "登录",
+                "summary": "用户登录",
                 "parameters": [
                     {
                         "description": "登录信息",
@@ -5817,7 +6304,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "将当前 token 加入黑名单使其失效",
+                "description": "将当前 token 加入黑名单并清除 Refresh Token Cookie",
                 "consumes": [
                     "application/json"
                 ],
@@ -5827,7 +6314,7 @@ const docTemplate = `{
                 "tags": [
                     "认证"
                 ],
-                "summary": "登出",
+                "summary": "用户登出",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -5846,7 +6333,7 @@ const docTemplate = `{
         },
         "/auth/refresh": {
             "post": {
-                "description": "使用refresh token获取新的access token和refresh token",
+                "description": "刷新访问令牌",
                 "consumes": [
                     "application/json"
                 ],
@@ -5857,17 +6344,6 @@ const docTemplate = `{
                     "认证"
                 ],
                 "summary": "刷新token",
-                "parameters": [
-                    {
-                        "description": "Refresh Token",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/jeri_blog_internal_dto.RefreshTokenRequest"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -5904,7 +6380,7 @@ const docTemplate = `{
         },
         "/auth/register": {
             "post": {
-                "description": "邮箱+密码注册，返回 Access Token、Refresh Token 和用户基本信息",
+                "description": "邮箱密码注册",
                 "consumes": [
                     "application/json"
                 ],
@@ -5914,7 +6390,7 @@ const docTemplate = `{
                 "tags": [
                     "认证"
                 ],
-                "summary": "注册",
+                "summary": "用户注册",
                 "parameters": [
                     {
                         "description": "注册信息",
@@ -6012,7 +6488,7 @@ const docTemplate = `{
                 "tags": [
                     "认证"
                 ],
-                "summary": "开始第三方认证",
+                "summary": "第三方认证",
                 "parameters": [
                     {
                         "type": "string",
@@ -6447,7 +6923,7 @@ const docTemplate = `{
         },
         "/friends": {
             "get": {
-                "description": "获取友链列表（按类型分组并排序，包括失效友链，通过 is_invalid 字段标识）",
+                "description": "按类型获取友链列表",
                 "produces": [
                     "application/json"
                 ],
@@ -6484,7 +6960,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "用户提交友链申请，系统将通知管理员审核（需要登录）",
+                "description": "用户提交友链申请，需登录",
                 "consumes": [
                     "application/json"
                 ],
@@ -6666,8 +7142,7 @@ const docTemplate = `{
                             "notification",
                             "upload",
                             "ai",
-                            "oauth",
-                            "wechat"
+                            "oauth"
                         ],
                         "type": "string",
                         "description": "配置分组",
@@ -6872,7 +7347,7 @@ const docTemplate = `{
         },
         "/upload": {
             "post": {
-                "description": "前台用户上传图片、头像等，支持匿名上传",
+                "description": "用户上传文件，存在限制",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -6934,7 +7409,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "用户主动注销自己的账号，需提供密码验证。注销后账号将被软删除，无法恢复",
+                "description": "主动注销自己的账号，需提供密码验证，注销后账号将被软删除",
                 "consumes": [
                     "application/json"
                 ],
@@ -7034,7 +7509,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "修改密码需提供旧密码验证",
+                "description": "修改密码，需提供旧密码验证",
                 "consumes": [
                     "application/json"
                 ],
@@ -7178,7 +7653,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "修改昵称、头像等信息，支持部分更新",
+                "description": "修改用户资料信息",
                 "consumes": [
                     "application/json"
                 ],
@@ -7375,6 +7850,7 @@ const docTemplate = `{
                     "maxLength": 255
                 },
                 "badge": {
+                    "description": "使用指针以区分未设置和已设置",
                     "type": "string",
                     "maxLength": 50
                 },
@@ -7410,6 +7886,7 @@ const docTemplate = `{
                     ]
                 },
                 "website": {
+                    "description": "使用指针以区分未设置和已设置",
                     "type": "string",
                     "maxLength": 255
                 }
@@ -7668,6 +8145,22 @@ const docTemplate = `{
                 },
                 "view_count": {
                     "type": "integer"
+                }
+            }
+        },
+        "jeri_blog_internal_dto.BatchDeleteRequest": {
+            "type": "object",
+            "required": [
+                "ids"
+            ],
+            "properties": {
+                "ids": {
+                    "description": "要删除的ID列表",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },
@@ -7975,7 +8468,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "slug": {
-                    "description": "自定义 URL slug",
+                    "description": "自定义文章Slug",
                     "type": "string"
                 },
                 "summary": {
@@ -8295,6 +8788,14 @@ const docTemplate = `{
                     "description": "引用对象ID",
                     "type": "integer"
                 },
+                "target_key": {
+                    "description": "评论所属内容标识：文章slug/页面key（仅 type=comment 时有值）",
+                    "type": "string"
+                },
+                "target_type": {
+                    "description": "评论所属内容类型：article/page/moment（仅 type=comment 时有值）",
+                    "type": "string"
+                },
                 "title": {
                     "description": "引用对象标题",
                     "type": "string"
@@ -8544,16 +9045,8 @@ const docTemplate = `{
                 "access_token": {
                     "type": "string"
                 },
-                "refresh_token": {
-                    "type": "string"
-                },
                 "user": {
-                    "description": "刷新token时为空",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/jeri_blog_internal_dto.UserResponse"
-                        }
-                    ]
+                    "$ref": "#/definitions/jeri_blog_internal_dto.UserResponse"
                 }
             }
         },
@@ -8731,9 +9224,26 @@ const docTemplate = `{
                 }
             }
         },
+        "jeri_blog_internal_dto.MomentAudio": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "description": "音频URL（本地音频或在线音频链接）",
+                    "type": "string"
+                }
+            }
+        },
         "jeri_blog_internal_dto.MomentContent": {
             "type": "object",
             "properties": {
+                "audio": {
+                    "description": "音频（本地或在线）",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/jeri_blog_internal_dto.MomentAudio"
+                        }
+                    ]
+                },
                 "book": {
                     "description": "书籍",
                     "type": "object",
@@ -8828,11 +9338,11 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "server": {
-                    "description": "音乐平台：netease, tencent, kugou, xiami, baidu",
+                    "description": "音乐平台：netease, tencent",
                     "type": "string"
                 },
                 "type": {
-                    "description": "类型：song, playlist, album, search, artist",
+                    "description": "类型：song, playlist, album, artist",
                     "type": "string"
                 }
             }
@@ -8923,17 +9433,6 @@ const docTemplate = `{
                 },
                 "type_text": {
                     "description": "类型中文文本（前端直接显示）",
-                    "type": "string"
-                }
-            }
-        },
-        "jeri_blog_internal_dto.RefreshTokenRequest": {
-            "type": "object",
-            "required": [
-                "refresh_token"
-            ],
-            "properties": {
-                "refresh_token": {
                     "type": "string"
                 }
             }
@@ -9155,6 +9654,109 @@ const docTemplate = `{
                 }
             }
         },
+        "jeri_blog_internal_dto.SystemDynamicInfo": {
+            "type": "object",
+            "properties": {
+                "cpu_usage": {
+                    "type": "number"
+                },
+                "db_conn_count": {
+                    "type": "integer"
+                },
+                "db_size": {
+                    "type": "integer"
+                },
+                "db_status": {
+                    "type": "string"
+                },
+                "disk_free": {
+                    "type": "integer"
+                },
+                "disk_used": {
+                    "type": "integer"
+                },
+                "host_uptime": {
+                    "type": "integer"
+                },
+                "load_1": {
+                    "type": "number"
+                },
+                "load_15": {
+                    "type": "number"
+                },
+                "load_5": {
+                    "type": "number"
+                },
+                "memory_available": {
+                    "type": "integer"
+                },
+                "memory_used": {
+                    "type": "integer"
+                },
+                "swap_used": {
+                    "type": "integer"
+                },
+                "version_last_check_error": {
+                    "type": "string"
+                },
+                "version_latest_version": {
+                    "type": "string"
+                }
+            }
+        },
+        "jeri_blog_internal_dto.SystemStaticInfo": {
+            "type": "object",
+            "properties": {
+                "app_version": {
+                    "type": "string"
+                },
+                "cpu_arch": {
+                    "type": "string"
+                },
+                "cpu_core": {
+                    "type": "integer"
+                },
+                "cpu_model": {
+                    "type": "string"
+                },
+                "db_tables": {
+                    "type": "integer"
+                },
+                "db_type": {
+                    "type": "string"
+                },
+                "disk_total": {
+                    "type": "integer"
+                },
+                "email_status": {
+                    "type": "string"
+                },
+                "feishu_status": {
+                    "type": "string"
+                },
+                "hostname": {
+                    "type": "string"
+                },
+                "memory_total": {
+                    "type": "integer"
+                },
+                "os": {
+                    "type": "string"
+                },
+                "server_ip": {
+                    "type": "string"
+                },
+                "storage_status": {
+                    "type": "string"
+                },
+                "swap_total": {
+                    "type": "integer"
+                },
+                "timezone": {
+                    "type": "string"
+                }
+            }
+        },
         "jeri_blog_internal_dto.TagForWebResponse": {
             "type": "object",
             "properties": {
@@ -9248,7 +9850,7 @@ const docTemplate = `{
                     "$ref": "#/definitions/jeri_blog_pkg_utils.JSONTime"
                 },
                 "slug": {
-                    "description": "自定义 URL slug",
+                    "description": "自定义文章Slug",
                     "type": "string"
                 },
                 "summary": {
@@ -9452,6 +10054,7 @@ const docTemplate = `{
                     "maxLength": 255
                 },
                 "badge": {
+                    "description": "使用指针以区分未设置和已设置",
                     "type": "string",
                     "maxLength": 50
                 },
@@ -9464,6 +10067,7 @@ const docTemplate = `{
                     "minLength": 2
                 },
                 "website": {
+                    "description": "使用指针以区分未设置和已设置",
                     "type": "string",
                     "maxLength": 255
                 }
@@ -9494,6 +10098,9 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "is_enabled": {
+                    "type": "boolean"
+                },
                 "is_virtual_email": {
                     "description": "是否为虚拟邮箱（需绑定真实邮箱）",
                     "type": "boolean"
@@ -9523,23 +10130,8 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "html": {
-                    "description": "公众号 HTML（失败时）",
+                    "description": "公众号 HTML，用于复制粘贴到微信公众平台",
                     "type": "string"
-                },
-                "media_id": {
-                    "description": "草稿 ID（成功时）",
-                    "type": "string"
-                },
-                "success": {
-                    "description": "是否成功推送",
-                    "type": "boolean"
-                },
-                "warnings": {
-                    "description": "警告信息",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 }
             }
         },
@@ -9619,6 +10211,23 @@ const docTemplate = `{
                 "RoleGuest"
             ]
         },
+        "jeri_blog_pkg_linkparser.Metadata": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "favicon": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
         "jeri_blog_pkg_response.PageResult": {
             "type": "object",
             "properties": {
@@ -9659,6 +10268,19 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "jeri_blog_pkg_videoparser.VideoInfo": {
+            "type": "object",
+            "properties": {
+                "platform": {
+                    "description": "bilibili, youtube, 或空（本地视频）",
+                    "type": "string"
+                },
+                "video_id": {
+                    "description": "视频ID",
+                    "type": "string"
+                }
+            }
         }
     },
     "securityDefinitions": {
@@ -9677,7 +10299,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "Jeri-Server",
+	Title:            "JeriBlog",
 	Description:      "一个基于 Go 语言的现代化博客后端服务",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

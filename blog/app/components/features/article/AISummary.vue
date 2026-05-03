@@ -10,45 +10,48 @@
 -->
 
 <script setup lang="ts">
-const props = withDefaults(defineProps<{
-  summary: string
-  modelName?: string
-  chatTitle?: string
-}>(), { modelName: 'AI', chatTitle: 'AI 摘要' })
+const props = withDefaults(
+  defineProps<{
+    summary: string;
+    modelName?: string;
+    chatTitle?: string;
+  }>(),
+  { modelName: 'AI', chatTitle: 'AI 摘要' }
+);
 
-const displayText = ref('正在生成摘要...')
+const displayText = ref('正在生成摘要...');
 
 function typeText(text: string) {
-  let i = 0
+  let i = 0;
   const type = () => {
     if (i <= text.length) {
-      displayText.value = text.slice(0, i++)
-      setTimeout(type, 50)
+      displayText.value = text.slice(0, i++);
+      setTimeout(type, 50);
     }
-  }
+  };
 
-  let len = displayText.value.length
+  let len = displayText.value.length;
   const erase = () => {
     if (len > 0) {
-      displayText.value = displayText.value.slice(0, --len)
-      setTimeout(erase, 80)
+      displayText.value = displayText.value.slice(0, --len);
+      setTimeout(erase, 80);
     } else {
-      type()
+      type();
     }
-  }
-  erase()
+  };
+  erase();
 }
 
 onMounted(() => {
-  if (props.summary) setTimeout(() => typeText(props.summary), 2000)
-})
+  if (props.summary) setTimeout(() => typeText(props.summary), 2000);
+});
 </script>
 
 <template>
   <div v-if="summary" class="ai-summary">
     <div class="ai-title">
       <div class="ai-title-left">
-        <i class="ri-sparkling-line"></i>
+        <i class="ri-sparkling-line" />
         <div class="ai-title-text">{{ chatTitle }}</div>
       </div>
       <div class="ai-tag">{{ modelName }}</div>
@@ -59,7 +62,7 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .ai-summary {
-  font-size: .9rem;
+  font-size: 0.9rem;
   background: var(--jeri-card-bg);
   border-radius: 12px;
   padding: 8px 8px 12px;
@@ -117,7 +120,6 @@ onMounted(() => {
 }
 
 @keyframes blink-underline {
-
   0%,
   100% {
     opacity: 1;

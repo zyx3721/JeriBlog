@@ -9,17 +9,21 @@
 功能描述：API 接口定义 - comment
 */
 
-import request from "@/utils/request";
-import type { Comment, CommentListData, CommentQuery, ImportCommentsResult } from "@/types/comment";
-import type { PaginationQuery } from "@/types/request";
+import request from '@/utils/request';
+import type {
+  Comment,
+  CommentListData,
+  CommentListQuery,
+  ImportCommentsResult,
+} from '@/types/comment';
 
 /**
  * 获取评论列表
  * @param params 查询参数
  * @returns Promise<CommentListData>
  */
-export function getComments(params?: CommentQuery): Promise<CommentListData> {
-  return request.get("/admin/comments", { params });
+export function getComments(params: CommentListQuery): Promise<CommentListData> {
+  return request.get('/admin/comments', { params });
 }
 
 /**
@@ -33,7 +37,7 @@ export function createComment(data: {
   target_key: string;
   parent_id?: number;
 }): Promise<Comment> {
-  return request.post("/admin/comments", data);
+  return request.post('/admin/comments', data);
 }
 
 /**
@@ -60,10 +64,10 @@ export function deleteComment(id: number): Promise<void> {
  * @returns Promise<ImportCommentsResult>
  */
 export function importComments(formData: FormData): Promise<ImportCommentsResult> {
-  return request.post("/admin/comments/import", formData, {
+  return request.post('/admin/comments/import', formData, {
     headers: {
-      "Content-Type": "multipart/form-data"
+      'Content-Type': 'multipart/form-data',
     },
-    timeout: 300000 // 5分钟超时，支持大量评论导入
+    timeout: 300000, // 5分钟超时，支持大量评论导入
   });
 }

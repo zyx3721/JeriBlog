@@ -40,8 +40,13 @@ func (r *FeedbackRepository) Get(ctx context.Context, id uint) (*model.Feedback,
 	return &feedback, err
 }
 
-// List 获取反馈列表（后台）
-func (r *FeedbackRepository) List(ctx context.Context, offset, limit int, keyword string, reportType *string, status *string) ([]model.Feedback, int64, error) {
+// List 获取反馈列表
+func (r *FeedbackRepository) List(
+	ctx context.Context,
+	offset, limit int,
+	keyword, reportType, status string,
+	startTime, endTime string,
+) ([]model.Feedback, int64, error) {
 	var feedbacks []model.Feedback
 	var total int64
 
@@ -49,17 +54,26 @@ func (r *FeedbackRepository) List(ctx context.Context, offset, limit int, keywor
 
 	// 关键词搜索（包含工单号、投诉地址、联系方式）
 	if keyword != "" {
-		query = query.Where("ticket_no LIKE ? OR report_url LIKE ? OR email LIKE ?", "%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%")
+		searchKeyword := "%" + keyword + "%"
+		query = query.Where("ticket_no ILIKE ? OR report_url ILIKE ? OR email ILIKE ?", searchKeyword, searchKeyword, searchKeyword)
 	}
 
-	// 类型筛选
-	if reportType != nil && *reportType != "" {
-		query = query.Where("report_type = ?", *reportType)
+	// 反馈类型筛选
+	if reportType != "" {
+		query = query.Where("report_type = ?", reportType)
 	}
 
 	// 状态筛选
-	if status != nil && *status != "" {
-		query = query.Where("status = ?", *status)
+	if status != "" {
+		query = query.Where("status = ?", status)
+	}
+
+	// 反馈时间范围筛选
+	if startTime != "" {
+		query = query.Where("feedback_time >= ?", startTime)
+	}
+	if endTime != "" {
+		query = query.Where("feedback_time <= ?", endTime+" 23:59:59")
 	}
 
 	// 获取总数

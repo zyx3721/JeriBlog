@@ -9,18 +9,18 @@
 功能描述：工具函数 - date工具
 */
 
-import dayjs from 'dayjs'
-import 'dayjs/locale/zh-cn'
-import relativeTime from 'dayjs/plugin/relativeTime'
-import customParseFormat from 'dayjs/plugin/customParseFormat'
+import dayjs from 'dayjs';
+import 'dayjs/locale/zh-cn';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 // 配置 dayjs
-dayjs.locale('zh-cn')
-dayjs.extend(relativeTime)
-dayjs.extend(customParseFormat)
+dayjs.locale('zh-cn');
+dayjs.extend(relativeTime);
+dayjs.extend(customParseFormat);
 
 // 后端统一格式
-export const BACKEND_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss'
+export const BACKEND_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
 /**
  * 格式化日期为完整的日期时间
@@ -28,8 +28,8 @@ export const BACKEND_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss'
  * @returns 格式化后的字符串，如 "2025-10-03 13:46:59"
  */
 export function formatDateTime(date: string | Date | null | undefined): string {
-  if (!date) return '-'
-  return dayjs(date).format(BACKEND_DATE_FORMAT)
+  if (!date) return '-';
+  return dayjs(date).format(BACKEND_DATE_FORMAT);
 }
 
 /**
@@ -38,8 +38,8 @@ export function formatDateTime(date: string | Date | null | undefined): string {
  * @returns 格式化后的字符串，如 "2025-10-03"
  */
 export function formatDate(date: string | Date | null | undefined): string {
-  if (!date) return '-'
-  return dayjs(date).format('YYYY-MM-DD')
+  if (!date) return '-';
+  return dayjs(date).format('YYYY-MM-DD');
 }
 
 /**
@@ -48,9 +48,9 @@ export function formatDate(date: string | Date | null | undefined): string {
  * @returns Date 对象或 null
  */
 export function parseBackendDate(dateString: string | null | undefined): Date | null {
-  if (!dateString || !dateString.trim()) return null
-  const parsed = dayjs(dateString, BACKEND_DATE_FORMAT, true)
-  return parsed.isValid() ? parsed.toDate() : null
+  if (!dateString || !dateString.trim()) return null;
+  const parsed = dayjs(dateString, BACKEND_DATE_FORMAT, true);
+  return parsed.isValid() ? parsed.toDate() : null;
 }
 
 /**
@@ -59,8 +59,8 @@ export function parseBackendDate(dateString: string | null | undefined): Date | 
  * @returns 后端格式的日期字符串
  */
 export function formatForBackend(date: Date | null | undefined): string {
-  if (!date) return ''
-  return dayjs(date).format(BACKEND_DATE_FORMAT)
+  if (!date) return '';
+  return dayjs(date).format(BACKEND_DATE_FORMAT);
 }
 
 /**
@@ -69,8 +69,8 @@ export function formatForBackend(date: Date | null | undefined): string {
  * @returns 是否有效
  */
 export function isValidDate(date: string | Date | null | undefined): boolean {
-  if (!date) return false
-  return dayjs(date).isValid()
+  if (!date) return false;
+  return dayjs(date).isValid();
 }
 
 /**
@@ -79,7 +79,7 @@ export function isValidDate(date: string | Date | null | undefined): boolean {
  * @returns 格式化后的日期字符串 YYYY-MM-DD
  */
 export function getDaysAgo(days: number): string {
-  return dayjs().subtract(days, 'day').format('YYYY-MM-DD')
+  return dayjs().subtract(days, 'day').format('YYYY-MM-DD');
 }
 
 /**
@@ -88,7 +88,7 @@ export function getDaysAgo(days: number): string {
  * @returns 格式化后的日期字符串 YYYY-MM-DD
  */
 export function getMonthsAgo(months: number): string {
-  return dayjs().subtract(months, 'month').format('YYYY-MM-DD')
+  return dayjs().subtract(months, 'month').format('YYYY-MM-DD');
 }
 
 /**
@@ -96,7 +96,7 @@ export function getMonthsAgo(months: number): string {
  * @returns 格式化后的日期字符串 YYYY-MM-DD
  */
 export function getToday(): string {
-  return dayjs().format('YYYY-MM-DD')
+  return dayjs().format('YYYY-MM-DD');
 }
 
 /**
@@ -115,23 +115,23 @@ export function generateDateSeries(
   format: string = 'YYYY-MM-DD',
   minCount: number = 7
 ): string[] {
-  const dates: string[] = []
-  const start = dayjs(startDate)
-  const end = dayjs(endDate)
-  
-  let current = start
-  const seen = new Set<string>()
-  
+  const dates: string[] = [];
+  const start = dayjs(startDate);
+  const end = dayjs(endDate);
+
+  let current = start;
+  const seen = new Set<string>();
+
   while (current.isBefore(end) || current.isSame(end, 'day') || dates.length < minCount) {
-    const dateStr = current.format(format)
+    const dateStr = current.format(format);
     if (!seen.has(dateStr)) {
-      dates.push(dateStr)
-      seen.add(dateStr)
+      dates.push(dateStr);
+      seen.add(dateStr);
     }
-    current = current.add(1, unit)
+    current = current.add(1, unit);
   }
-  
-  return dates
+
+  return dates;
 }
 
 /**
@@ -140,36 +140,35 @@ export function generateDateSeries(
  * @returns 友好时间字符串：n小时前（24小时内）、n天前（3天内）、几月几日（本年）、几年几月几日（非本年）
  */
 export function formatMomentTime(date: string | Date | null | undefined): string {
-  if (!date) return '-'
-  
-  const now = dayjs()
-  const target = dayjs(date)
-  const diffHours = now.diff(target, 'hour')
-  const diffDays = now.diff(target, 'day')
-  
+  if (!date) return '-';
+
+  const now = dayjs();
+  const target = dayjs(date);
+  const diffHours = now.diff(target, 'hour');
+  const diffDays = now.diff(target, 'day');
+
   // 24小时内显示小时
   if (diffHours < 24) {
     if (diffHours < 1) {
-      const diffMinutes = now.diff(target, 'minute')
+      const diffMinutes = now.diff(target, 'minute');
       if (diffMinutes < 1) {
-        return '刚刚'
+        return '刚刚';
       }
-      return `${diffMinutes}分钟前`
+      return `${diffMinutes}分钟前`;
     }
-    return `${diffHours}小时前`
+    return `${diffHours}小时前`;
   }
-  
+
   // 3天内显示天数
   if (diffDays < 3) {
-    return `${diffDays}天前`
+    return `${diffDays}天前`;
   }
-  
+
   // 今年的日期显示月日
   if (now.year() === target.year()) {
-    return target.format('M月D日')
+    return target.format('M月D日');
   }
-  
-  // 其他年份显示年月日
-  return target.format('YYYY年M月D日')
-}
 
+  // 其他年份显示年月日
+  return target.format('YYYY年M月D日');
+}

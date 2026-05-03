@@ -22,6 +22,25 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
+// 邮件加密方式常量
+const (
+	emailSecureNone     = "none"     // 无加密 (端口 25)
+	emailSecureSSL      = "ssl"      // SSL/TLS (端口 465)
+	emailSecureSTARTTLS = "starttls" // STARTTLS (端口 587)
+)
+
+var (
+	globalClient *Client
+	globalMu     sync.RWMutex
+)
+
+// GetClient 获取全局邮件客户端实例
+func GetClient() *Client {
+	globalMu.RLock()
+	defer globalMu.RUnlock()
+	return globalClient
+}
+
 // Client 邮件客户端
 type Client struct {
 	config      *config.Config // 全局配置对象引用（支持热重载）
@@ -78,6 +97,17 @@ type Config struct {
 
 // Initialize 从全局配置创建邮件客户端
 func Initialize(conf *config.Config) *Client {
+	c := newClient(conf)
+
+	globalMu.Lock()
+	globalClient = c
+	globalMu.Unlock()
+
+	return c
+}
+
+// newClient 创建邮件客户端实例
+func newClient(conf *config.Config) *Client {
 	if conf == nil || conf.Notification.EmailHost == "" || conf.Notification.EmailUsername == "" {
 		return nil
 	}
@@ -86,6 +116,14 @@ func Initialize(conf *config.Config) *Client {
 		config:      conf,
 		rateLimiter: NewRateLimiter(5, time.Hour), // 5次/小时
 	}
+}
+
+// Reload 重新加载邮件配置（热重载）
+func Reload(conf *config.Config) {
+	globalMu.Lock()
+	defer globalMu.Unlock()
+
+	globalClient = newClient(conf)
 }
 
 // SendEmail 发送邮件
@@ -106,16 +144,37 @@ func (c *Client) SendEmail(to, subject, htmlBody, fromName string) error {
 		fromName = c.config.Blog.Title
 	}
 
+	// 确定发件人邮箱地址
+	fromEmail := cfg.EmailFrom
+	if fromEmail == "" {
+		fromEmail = cfg.EmailUsername
+	}
+
 	// 创建邮件
 	msg := gomail.NewMessage()
-	msg.SetHeader("From", msg.FormatAddress(cfg.EmailUsername, fromName))
+	msg.SetHeader("From", msg.FormatAddress(fromEmail, fromName))
 	msg.SetHeader("To", to)
 	msg.SetHeader("Subject", subject)
 	msg.SetBody("text/html", htmlBody)
 
 	// 发送邮件
 	dialer := gomail.NewDialer(cfg.EmailHost, cfg.EmailPort, cfg.EmailUsername, cfg.EmailPassword)
-	dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+
+	// 根据加密方式配置连接
+	// #nosec G402 - 允许自签名证书，用于兼容某些邮件服务器配置
+	switch cfg.EmailSecure {
+	case emailSecureSSL:
+		dialer.SSL = true
+		dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+	case emailSecureNone:
+		dialer.SSL = false
+		dialer.TLSConfig = nil
+	case emailSecureSTARTTLS:
+		fallthrough
+	default:
+		dialer.SSL = false
+		dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+	}
 
 	if err := dialer.DialAndSend(msg); err != nil {
 		logger.Error("邮件发送失败 to=%s err=%v", to, err)
@@ -133,11 +192,27 @@ func (c *Client) HealthCheck() error {
 	}
 	cfg := c.config.Notification
 	dialer := gomail.NewDialer(cfg.EmailHost, cfg.EmailPort, cfg.EmailUsername, cfg.EmailPassword)
-	dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+
+	// 根据加密方式配置连接
+	// #nosec G402 - 允许自签名证书，用于兼容某些邮件服务器配置
+	switch cfg.EmailSecure {
+	case emailSecureSSL:
+		dialer.SSL = true
+		dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+	case emailSecureNone:
+		dialer.SSL = false
+		dialer.TLSConfig = nil
+	case emailSecureSTARTTLS:
+		fallthrough
+	default:
+		dialer.SSL = false
+		dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+	}
+
 	conn, err := dialer.Dial()
 	if err != nil {
 		return err
 	}
-	conn.Close()
+	_ = conn.Close()
 	return nil
 }

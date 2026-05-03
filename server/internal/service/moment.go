@@ -45,7 +45,8 @@ func NewMomentService(repo *repository.MomentRepository, fileService *FileServic
 func (s *MomentService) ListForWeb(ctx context.Context, page, pageSize int) ([]dto.MomentForWebResponse, int64, error) {
 	// 前台只显示已发布的动态
 	isPublish := true
-	moments, total, err := s.repo.List(ctx, page, pageSize, &isPublish, "")
+
+	moments, total, err := s.repo.List(ctx, page, pageSize, nil, "", "", &isPublish, nil, nil, nil, nil, "", "")
 	if err != nil {
 		return nil, 0, err
 	}
@@ -73,8 +74,26 @@ func (s *MomentService) ListForWeb(ctx context.Context, page, pageSize int) ([]d
 // ============ 后台管理服务 ============
 
 // List 获取动态列表（管理）
-func (s *MomentService) List(ctx context.Context, page, pageSize int, keyword string, isPublish *bool) ([]dto.MomentListResponse, int64, error) {
-	moments, total, err := s.repo.List(ctx, page, pageSize, isPublish, keyword)
+func (s *MomentService) List(
+	ctx context.Context,
+	req dto.ListMomentsRequest,
+) ([]dto.MomentListResponse, int64, error) {
+	moments, total, err := s.repo.List(
+		ctx,
+		req.Page,
+		req.PageSize,
+		req.Tags,
+		req.Keyword,
+		req.Location,
+		req.IsPublish,
+		req.HasImages,
+		req.HasVideo,
+		req.HasMusic,
+		req.HasLink,
+		req.StartTime,
+		req.EndTime,
+	)
+
 	if err != nil {
 		return nil, 0, err
 	}
@@ -125,7 +144,7 @@ func (s *MomentService) Get(ctx context.Context, id uint) (*dto.MomentListRespon
 }
 
 // Create 创建动态
-func (s *MomentService) Create(ctx context.Context, req *dto.CreateMomentRequest) (*model.Moment, error) {
+func (s *MomentService) Create(ctx context.Context, req *dto.CreateMomentRequest) (*dto.MomentListResponse, error) {
 	// 如果有视频且未提供platform和video_id，自动识别
 	if req.Content.Video != nil && req.Content.Video.URL != "" {
 		// 只在前端没有提供解析结果时才进行解析（避免重复处理）
@@ -157,17 +176,17 @@ func (s *MomentService) Create(ctx context.Context, req *dto.CreateMomentRequest
 	// 标记文件为使用中
 	s.markFilesAsUsed(&req.Content)
 
-	return moment, nil
+	return s.Get(ctx, moment.ID)
 }
 
 // Update 更新动态
-func (s *MomentService) Update(ctx context.Context, id uint, req *dto.UpdateMomentRequest) error {
+func (s *MomentService) Update(ctx context.Context, id uint, req *dto.UpdateMomentRequest) (*dto.MomentListResponse, error) {
 	moment, err := s.repo.Get(ctx, id)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return errors.New("动态不存在")
+			return nil, errors.New("动态不存在")
 		}
-		return err
+		return nil, err
 	}
 
 	// 如果有视频且未提供platform和video_id，自动识别
@@ -185,7 +204,7 @@ func (s *MomentService) Update(ctx context.Context, id uint, req *dto.UpdateMome
 	// 将内容转换为JSON字符串
 	contentBytes, err := json.Marshal(req.Content)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// 获取旧内容，用于对比文件变化
@@ -199,13 +218,13 @@ func (s *MomentService) Update(ctx context.Context, id uint, req *dto.UpdateMome
 	moment.PublishTime = utils.FromJSONTime(req.PublishTime)
 
 	if err := s.repo.Update(ctx, moment); err != nil {
-		return err
+		return nil, err
 	}
 
 	// 更新文件使用状态
 	s.updateFileStatus(&oldContent, &req.Content)
 
-	return nil
+	return s.Get(ctx, id)
 }
 
 // Delete 删除动态
@@ -251,6 +270,11 @@ func (s *MomentService) markFilesAsUsed(content *dto.MomentContent) {
 	if content.Video != nil && content.Video.URL != "" && content.Video.Platform == "" {
 		_ = s.fileService.MarkAsUsed(content.Video.URL, "动态视频")
 	}
+
+	// 标记音频（如果是本地音频）
+	if content.Audio != nil && content.Audio.URL != "" {
+		_ = s.fileService.MarkAsUsed(content.Audio.URL, "动态音频")
+	}
 }
 
 // markFilesAsUnused 标记内容中的所有文件为未使用
@@ -267,6 +291,11 @@ func (s *MomentService) markFilesAsUnused(content *dto.MomentContent) {
 	// 标记视频（如果是本地视频）
 	if content.Video != nil && content.Video.URL != "" && content.Video.Platform == "" {
 		_ = s.fileService.MarkAsUnused(content.Video.URL, "动态视频")
+	}
+
+	// 标记音频（如果是本地音频）
+	if content.Audio != nil && content.Audio.URL != "" {
+		_ = s.fileService.MarkAsUnused(content.Audio.URL, "动态音频")
 	}
 }
 
@@ -315,6 +344,26 @@ func (s *MomentService) updateFileStatus(oldContent, newContent *dto.MomentConte
 		}
 		if newVideoURL != "" {
 			_ = s.fileService.MarkAsUsed(newVideoURL, "动态视频")
+		}
+	}
+
+	// 对比音频变化（仅本地音频）
+	oldAudioURL := ""
+	if oldContent.Audio != nil {
+		oldAudioURL = oldContent.Audio.URL
+	}
+
+	newAudioURL := ""
+	if newContent.Audio != nil {
+		newAudioURL = newContent.Audio.URL
+	}
+
+	if oldAudioURL != newAudioURL {
+		if oldAudioURL != "" {
+			_ = s.fileService.MarkAsUnused(oldAudioURL, "动态音频")
+		}
+		if newAudioURL != "" {
+			_ = s.fileService.MarkAsUsed(newAudioURL, "动态音频")
 		}
 	}
 }

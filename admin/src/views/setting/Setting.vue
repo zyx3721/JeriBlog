@@ -11,12 +11,17 @@
 
 <template>
   <div class="system-settings">
-    <el-card>
+    <el-card shadow="never">
       <!-- 工具栏 -->
       <div class="toolbar">
         <h2>系统设置</h2>
         <div class="actions">
-          <el-button type="primary" :loading="saving" @click="handleSave">
+          <el-button
+            type="primary"
+            :loading="saving"
+            :disabled="!canEditSettings"
+            @click="handleSave"
+          >
             保存配置
           </el-button>
           <el-button @click="loadAllConfigs">重置</el-button>
@@ -27,42 +32,48 @@
       <el-tabs v-model="activeTab" class="setting-tabs">
         <!-- 基本配置标签页 -->
         <el-tab-pane label="基本配置" name="basic">
-          <BasicSettingsTab ref="basicTabRef" v-model:form="basicForm" :loading="loading" />
+          <BasicSettingsTab
+            ref="basicTabRef"
+            v-model:form="basicForm"
+            :loading="loading || !canEditSettings"
+          />
         </el-tab-pane>
 
         <!-- 博客配置标签页 -->
         <el-tab-pane label="博客配置" name="blog">
-          <BlogSettingsTab ref="blogTabRef" v-model:form="blogForm" :loading="loading" />
+          <BlogSettingsTab
+            ref="blogTabRef"
+            v-model:form="blogForm"
+            :loading="loading || !canEditSettings"
+          />
         </el-tab-pane>
 
         <!-- 通知配置标签页 -->
         <el-tab-pane label="通知配置" name="notification">
-          <NotificationSettingsTab v-model:form="notificationForm" :loading="loading" />
+          <NotificationSettingsTab
+            v-model:form="notificationForm"
+            :loading="loading || !canEditSettings"
+          />
         </el-tab-pane>
 
         <!-- 上传配置标签页 -->
         <el-tab-pane label="上传配置" name="upload">
-          <UploadSettingsTab v-model:form="uploadForm" :loading="loading" />
+          <UploadSettingsTab v-model:form="uploadForm" :loading="loading || !canEditSettings" />
         </el-tab-pane>
 
         <!-- AI 配置标签页 -->
         <el-tab-pane label="AI 配置" name="ai">
-          <AISettingsTab v-model:form="aiForm" :loading="loading" />
+          <AISettingsTab v-model:form="aiForm" :loading="loading || !canEditSettings" />
         </el-tab-pane>
 
         <!-- OAuth 配置标签页 -->
         <el-tab-pane label="OAuth 配置" name="oauth">
-          <OAuthSettingsTab v-model:form="oauthForm" :loading="loading" />
-        </el-tab-pane>
-
-        <!-- 微信公众号配置标签页 -->
-        <el-tab-pane label="微信公众号" name="wechat">
-          <WeChatSettingsTab v-model:form="wechatForm" :loading="loading" />
+          <OAuthSettingsTab v-model:form="oauthForm" :loading="loading || !canEditSettings" />
         </el-tab-pane>
 
         <!-- 导入导出标签页 -->
         <el-tab-pane label="导入导出" name="import-export">
-          <ImportExportTab @import-success="handleImportSuccess" />
+          <ImportExportTab :readonly="!canEditSettings" @import-success="handleImportSuccess" />
         </el-tab-pane>
       </el-tabs>
     </el-card>
@@ -70,32 +81,35 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
-import { getSettingGroup, updateSettingGroup } from '@/api/sysconfig'
-import BasicSettingsTab from './components/BasicSettingsTab.vue'
-import BlogSettingsTab from './components/BlogSettingsTab.vue'
-import NotificationSettingsTab from './components/NotificationSettingsTab.vue'
-import UploadSettingsTab from './components/UploadSettingsTab.vue'
-import AISettingsTab from './components/AISettingsTab.vue'
-import OAuthSettingsTab from './components/OAuthSettingsTab.vue'
-import WeChatSettingsTab from './components/WeChatSettingsTab.vue'
-import ImportExportTab from './components/ImportExportTab.vue'
-import type { SettingGroupType } from '@/types/sysconfig'
-import type { NotificationForm } from './components/NotificationSettingsTab.vue'
-import type { UploadForm } from './components/UploadSettingsTab.vue'
+import { computed, ref, onMounted, watch } from 'vue';
+import { useRoute } from 'vue-router';
+import { ElMessage } from 'element-plus';
+import { getSettingGroup, updateSettingGroup } from '@/api/sysconfig';
+import { isSuperAdmin } from '@/utils/auth';
+import BasicSettingsTab from './components/BasicSettingsTab.vue';
+import BlogSettingsTab from './components/BlogSettingsTab.vue';
+import NotificationSettingsTab from './components/NotificationSettingsTab.vue';
+import UploadSettingsTab from './components/UploadSettingsTab.vue';
+import AISettingsTab from './components/AISettingsTab.vue';
+import OAuthSettingsTab from './components/OAuthSettingsTab.vue';
+import ImportExportTab from './components/ImportExportTab.vue';
+import type { SettingGroupType } from '@/types/sysconfig';
+import type { NotificationForm } from './components/NotificationSettingsTab.vue';
+import type { UploadForm } from './components/UploadSettingsTab.vue';
 
 // 定义存储类型
-type StorageType = 'local' | 's3' | 'oss' | 'cos' | 'kodo' | 'r2' | 'minio'
+type StorageType = 'local' | 's3' | 'oss' | 'cos' | 'kodo' | 'r2' | 'minio';
 
 // 页面状态
-const activeTab = ref('basic')
-const loading = ref(false)
-const saving = ref(false)
+const activeTab = ref('basic');
+const route = useRoute();
+const loading = ref(false);
+const saving = ref(false);
+const canEditSettings = computed(() => isSuperAdmin());
 
 // 标签页引用
-const blogTabRef = ref<InstanceType<typeof BlogSettingsTab>>()
-const basicTabRef = ref<InstanceType<typeof BasicSettingsTab>>()
+const blogTabRef = ref<InstanceType<typeof BlogSettingsTab>>();
+const basicTabRef = ref<InstanceType<typeof BasicSettingsTab>>();
 
 // 基本配置表单
 const basicForm = ref({
@@ -108,101 +122,21 @@ const basicForm = ref({
   police_record: '',
   admin_url: '',
   blog_url: '',
-  home_url: ''
-})
+  home_url: '',
+});
 
 // 通知配置表单
 const notificationForm = ref<NotificationForm>({
   email_host: '',
   email_port: '465',
+  email_secure: 'ssl',
   email_username: '',
+  email_from: '',
   email_password: '',
   feishu_app_id: '',
   feishu_secret: '',
-  feishu_chat_id: ''
-})
-
-// 上传配置表单
-const uploadForm = ref<UploadForm>({
-  storage_type: 'local',
-  local: {
-    max_file_size: 10,
-    path_pattern: '{timestamp}_{random}{ext}',
-    access_key: '',
-    secret_key: '',
-    region: '',
-    bucket: '',
-    endpoint: '',
-    domain: '',
-    use_ssl: true
-  },
-  s3: {
-    max_file_size: 10,
-    path_pattern: '{timestamp}_{random}{ext}',
-    access_key: '',
-    secret_key: '',
-    region: '',
-    bucket: '',
-    endpoint: '',
-    domain: '',
-    use_ssl: true
-  },
-  oss: {
-    max_file_size: 10,
-    path_pattern: '{timestamp}_{random}{ext}',
-    access_key: '',
-    secret_key: '',
-    region: '',
-    bucket: '',
-    endpoint: '',
-    domain: '',
-    use_ssl: true
-  },
-  cos: {
-    max_file_size: 10,
-    path_pattern: '{timestamp}_{random}{ext}',
-    access_key: '',
-    secret_key: '',
-    region: '',
-    bucket: '',
-    endpoint: '',
-    domain: '',
-    use_ssl: true
-  },
-  kodo: {
-    max_file_size: 10,
-    path_pattern: '{timestamp}_{random}{ext}',
-    access_key: '',
-    secret_key: '',
-    region: '',
-    bucket: '',
-    endpoint: '',
-    domain: '',
-    use_ssl: true
-  },
-  r2: {
-    max_file_size: 10,
-    path_pattern: '{timestamp}_{random}{ext}',
-    access_key: '',
-    secret_key: '',
-    region: '',
-    bucket: '',
-    endpoint: '',
-    domain: '',
-    use_ssl: true
-  },
-  minio: {
-    max_file_size: 10,
-    path_pattern: '{timestamp}_{random}{ext}',
-    access_key: '',
-    secret_key: '',
-    region: '',
-    bucket: '',
-    endpoint: '',
-    domain: '',
-    use_ssl: true
-  }
-})
+  feishu_chat_id: '',
+});
 
 // 博客配置表单
 const blogForm = ref({
@@ -223,7 +157,20 @@ const blogForm = ref({
 
   // 社交媒体
   sidebarSocialList: [] as Array<{ name: string; url: string; icon: string }>,
-  footerSocialList: [] as Array<{ name: string; url: string; icon: string; position: string }>,
+  footerSocialList: [] as Array<{
+    name: string;
+    url: string;
+    icon: string;
+    position: string;
+  }>,
+
+  // 页脚链接
+  footerLinksList: [] as Array<{ name: string; url: string }>,
+
+  // 页面配置
+  moments_size: 30,
+  message_content: '',
+  home_layout: 'waterfall',
 
   // 关于页面配置
   about_describe: '',
@@ -243,8 +190,90 @@ const blogForm = ref({
   wechat_qrcode: '',
   alipay_qrcode: '',
   emojis: '',
-  font: ''
-})
+  font: '',
+});
+
+// 上传配置表单
+const uploadForm = ref<UploadForm>({
+  storage_type: 'local',
+  local: {
+    max_file_size: 10,
+    path_pattern: '{timestamp}_{random}{ext}',
+    access_key: '',
+    secret_key: '',
+    region: '',
+    bucket: '',
+    endpoint: '',
+    domain: '',
+    use_ssl: true,
+  },
+  s3: {
+    max_file_size: 10,
+    path_pattern: '{timestamp}_{random}{ext}',
+    access_key: '',
+    secret_key: '',
+    region: '',
+    bucket: '',
+    endpoint: '',
+    domain: '',
+    use_ssl: true,
+  },
+  oss: {
+    max_file_size: 10,
+    path_pattern: '{timestamp}_{random}{ext}',
+    access_key: '',
+    secret_key: '',
+    region: '',
+    bucket: '',
+    endpoint: '',
+    domain: '',
+    use_ssl: true,
+  },
+  cos: {
+    max_file_size: 10,
+    path_pattern: '{timestamp}_{random}{ext}',
+    access_key: '',
+    secret_key: '',
+    region: '',
+    bucket: '',
+    endpoint: '',
+    domain: '',
+    use_ssl: true,
+  },
+  kodo: {
+    max_file_size: 10,
+    path_pattern: '{timestamp}_{random}{ext}',
+    access_key: '',
+    secret_key: '',
+    region: '',
+    bucket: '',
+    endpoint: '',
+    domain: '',
+    use_ssl: true,
+  },
+  r2: {
+    max_file_size: 10,
+    path_pattern: '{timestamp}_{random}{ext}',
+    access_key: '',
+    secret_key: '',
+    region: '',
+    bucket: '',
+    endpoint: '',
+    domain: '',
+    use_ssl: true,
+  },
+  minio: {
+    max_file_size: 10,
+    path_pattern: '{timestamp}_{random}{ext}',
+    access_key: '',
+    secret_key: '',
+    region: '',
+    bucket: '',
+    endpoint: '',
+    domain: '',
+    use_ssl: true,
+  },
+});
 
 // AI 配置表单
 const aiForm = ref({
@@ -253,8 +282,9 @@ const aiForm = ref({
   model: '',
   summary_prompt: '',
   ai_summary_prompt: '',
-  title_prompt: ''
-})
+  title_prompt: '',
+  mcp_secret: '',
+});
 
 // OAuth 配置表单
 const oauthForm = ref({
@@ -273,35 +303,28 @@ const oauthForm = ref({
   'microsoft.enabled': 'false',
   'microsoft.client_id': '',
   'microsoft.client_secret': '',
-  'microsoft.redirect_url': ''
-})
-
-// 微信公众号配置表单
-const wechatForm = ref({
-  app_id: '',
-  app_secret: '',
-  token_url: ''
-})
+  'microsoft.redirect_url': '',
+});
 
 // 通用配置加载函数
 const loadConfigs = async (group: SettingGroupType) => {
-  const data = await getSettingGroup(group)
-  const configs: Record<string, string> = {}
+  const data = await getSettingGroup(group);
+  const configs: Record<string, string> = {};
 
   // 适配新的扁平化数据格式
   Object.entries(data).forEach(([key, value]) => {
     // 将键名中的分组前缀去掉，例如将 'basic.author' 转换为 'author'
-    const shortKey = key.replace(`${group}.`, '')
-    configs[shortKey] = value
-  })
+    const shortKey = key.replace(`${group}.`, '');
+    configs[shortKey] = value;
+  });
 
-  return configs
-}
+  return configs;
+};
 
 // 加载基本配置
 const loadBasicConfigs = async () => {
   try {
-    const configs = await loadConfigs('basic')
+    const configs = await loadConfigs('basic');
     Object.assign(basicForm.value, {
       author: configs.author || '',
       author_email: configs.author_email || '',
@@ -312,17 +335,17 @@ const loadBasicConfigs = async () => {
       police_record: configs.police_record || '',
       admin_url: configs.admin_url || '',
       blog_url: configs.blog_url || '',
-      home_url: configs.home_url || ''
-    })
+      home_url: configs.home_url || '',
+    });
   } catch {
-    ElMessage.error('获取基本配置失败')
+    ElMessage.error('获取基本配置失败');
   }
-}
+};
 
 // 加载博客配置
 const loadBlogConfigs = async () => {
   try {
-    const configs = await loadConfigs('blog')
+    const configs = await loadConfigs('blog');
 
     // 博客网站信息
     Object.assign(blogForm.value, {
@@ -345,82 +368,104 @@ const loadBlogConfigs = async () => {
       about_exhibition: configs.about_exhibition || '',
       about_personality: configs.about_personality || '',
       about_motto_sub: configs.about_motto_sub || '',
-      about_story: configs.about_story || ''
-    })
+      about_story: configs.about_story || '',
+      moments_size: Number(configs.moments_size) || 30,
+      message_content: configs.message_content || '',
+      home_layout: configs.home_layout || 'waterfall',
+    });
 
     // 解析 JSON 字段
-    const parsed = parseJSON(configs.typing_texts || '', [])
-    blogForm.value.typingTextsList = parsed.map((item: any) =>
+    const parsed = parseJSON<(string | { value: string } | { label: string; value: string })[]>(
+      configs.typing_texts || '',
+      []
+    );
+    blogForm.value.typingTextsList = parsed.map(item =>
       typeof item === 'string' ? { value: item } : item
-    )
+    );
 
-    blogForm.value.sidebarSocialList = parseJSON(configs.sidebar_social || '', [])
-    blogForm.value.footerSocialList = parseJSON(configs.footer_social || '', [])
+    blogForm.value.sidebarSocialList = parseJSON(configs.sidebar_social || '', []);
+    blogForm.value.footerSocialList = parseJSON(configs.footer_social || '', []);
+    blogForm.value.footerLinksList = parseJSON(configs.footer_links || '', []);
 
-    blogForm.value.profileList = Array(6).fill(null).map((_, i) =>
-      parseJSON(configs.about_profile || '', [])[i] || { label: '', value: '', color: '#43a6c6' }
-    )
+    blogForm.value.profileList = Array(6)
+      .fill(null)
+      .map(
+        (_, i) =>
+          parseJSON(configs.about_profile || '', [])[i] || {
+            label: '',
+            value: '',
+            color: '#43a6c6',
+          }
+      );
 
-    blogForm.value.mottoMainList = Array(2).fill(null).map((_, i) =>
-      parseJSON(configs.about_motto_main || '', [])[i] || ''
-    )
+    blogForm.value.mottoMainList = Array(2)
+      .fill(null)
+      .map((_, i) => parseJSON(configs.about_motto_main || '', [])[i] || '');
 
-    blogForm.value.socializeList = parseJSON(configs.about_socialize || '', [])
-    blogForm.value.creationList = parseJSON(configs.about_creation || '', [])
+    blogForm.value.socializeList = parseJSON(configs.about_socialize || '', []);
+    blogForm.value.creationList = parseJSON(configs.about_creation || '', []);
 
-    blogForm.value.versionsList = Array(3).fill(null).map((_, i) =>
-      parseJSON(configs.about_versions || '', [])[i] || { name: '', version: '' }
-    )
+    blogForm.value.versionsList = Array(3)
+      .fill(null)
+      .map(
+        (_, i) =>
+          parseJSON(configs.about_versions || '', [])[i] || {
+            name: '',
+            version: '',
+          }
+      );
 
-    blogForm.value.unionsList = parseJSON(configs.about_unions || '', [])
-    blogForm.value.custom_head = configs.custom_head || ''
-    blogForm.value.custom_body = configs.custom_body || ''
-    blogForm.value.wechat_qrcode = configs.wechat_qrcode || ''
-    blogForm.value.alipay_qrcode = configs.alipay_qrcode || ''
-    blogForm.value.emojis = configs.emojis || ''
-    blogForm.value.font = configs.font || ''
+    blogForm.value.unionsList = parseJSON(configs.about_unions || '', []);
+    blogForm.value.custom_head = configs.custom_head || '';
+    blogForm.value.custom_body = configs.custom_body || '';
+    blogForm.value.wechat_qrcode = configs.wechat_qrcode || '';
+    blogForm.value.alipay_qrcode = configs.alipay_qrcode || '';
+    blogForm.value.emojis = configs.emojis || '';
+    blogForm.value.font = configs.font || '';
   } catch {
-    ElMessage.error('获取博客配置失败')
+    ElMessage.error('获取博客配置失败');
   }
-}
+};
 
 // 加载通知配置
 const loadNotificationConfigs = async () => {
   try {
-    const configs = await loadConfigs('notification')
+    const configs = await loadConfigs('notification');
     Object.assign(notificationForm.value, {
       email_host: configs.email_host || '',
       email_port: configs.email_port || '465',
+      email_secure: configs.email_secure || 'ssl',
       email_username: configs.email_username || '',
+      email_from: configs.email_from || '',
       email_password: configs.email_password || '',
       feishu_app_id: configs.feishu_app_id || '',
       feishu_secret: configs.feishu_secret || '',
-      feishu_chat_id: configs.feishu_chat_id || ''
-    })
+      feishu_chat_id: configs.feishu_chat_id || '',
+    });
   } catch {
-    ElMessage.error('获取通知配置失败')
+    ElMessage.error('获取通知配置失败');
   }
-}
+};
 
 // 加载上传配置
 const loadUploadConfigs = async () => {
   try {
-    const configs = await loadConfigs('upload')
+    const configs = await loadConfigs('upload');
 
     // 加载当前存储类型
-    uploadForm.value.storage_type = configs.storage_type || 'local'
+    uploadForm.value.storage_type = configs.storage_type || 'local';
 
     // 加载基础配置（不带存储类型前缀）
-    const maxFileSize = Number(configs.max_file_size || 10)
-    const pathPattern = configs.path_pattern || '{timestamp}_{random}{ext}'
+    const maxFileSize = Number(configs.max_file_size || 10);
+    const pathPattern = configs.path_pattern || '{timestamp}_{random}{ext}';
 
     // 加载各存储类型的配置
-    const storageTypes: StorageType[] = ['local', 's3', 'oss', 'cos', 'kodo', 'r2', 'minio']
+    const storageTypes: StorageType[] = ['local', 's3', 'oss', 'cos', 'kodo', 'r2', 'minio'];
     storageTypes.forEach(type => {
-      const prefix = `${type}.`
+      const prefix = `${type}.`;
 
       // 腾讯云 COS 使用 secret_id，其他使用 access_key
-      const accessKeyField = type === 'cos' ? 'secret_id' : 'access_key'
+      const accessKeyField = type === 'cos' ? 'secret_id' : 'access_key';
 
       uploadForm.value[type] = {
         // 所有存储类型共享相同的基础配置
@@ -433,44 +478,45 @@ const loadUploadConfigs = async () => {
         bucket: configs[`${prefix}bucket`] || '',
         endpoint: configs[`${prefix}endpoint`] || '',
         domain: configs[`${prefix}domain`] || '',
-        use_ssl: (configs[`${prefix}use_ssl`] || 'true') === 'true'
-      }
-    })
+        use_ssl: (configs[`${prefix}use_ssl`] || 'true') === 'true',
+      };
+    });
   } catch {
-    ElMessage.error('获取上传配置失败')
+    ElMessage.error('获取上传配置失败');
   }
-}
+};
 
 // JSON 解析辅助函数
-const parseJSON = <T>(jsonStr: string, fallback: T): T => {
+const parseJSON = <T,>(jsonStr: string, fallback: T): T => {
   try {
-    return jsonStr ? JSON.parse(jsonStr) : fallback
+    return jsonStr ? JSON.parse(jsonStr) : fallback;
   } catch {
-    return fallback
+    return fallback;
   }
-}
+};
 
 // 加载 AI 配置
 const loadAIConfigs = async () => {
   try {
-    const configs = await loadConfigs('ai')
+    const configs = await loadConfigs('ai');
     Object.assign(aiForm.value, {
       base_url: configs.base_url || '',
       api_key: configs.api_key || '',
       model: configs.model || '',
       summary_prompt: configs.summary_prompt || '',
       ai_summary_prompt: configs.ai_summary_prompt || '',
-      title_prompt: configs.title_prompt || ''
-    })
+      title_prompt: configs.title_prompt || '',
+      mcp_secret: configs.mcp_secret || '',
+    });
   } catch {
-    ElMessage.error('获取 AI 配置失败')
+    ElMessage.error('获取 AI 配置失败');
   }
-}
+};
 
 // 加载 OAuth 配置
 const loadOAuthConfigs = async () => {
   try {
-    const configs = await loadConfigs('oauth')
+    const configs = await loadConfigs('oauth');
     Object.assign(oauthForm.value, {
       'github.enabled': configs['github.enabled'] || 'false',
       'github.client_id': configs['github.client_id'] || '',
@@ -487,30 +533,16 @@ const loadOAuthConfigs = async () => {
       'microsoft.enabled': configs['microsoft.enabled'] || 'false',
       'microsoft.client_id': configs['microsoft.client_id'] || '',
       'microsoft.client_secret': configs['microsoft.client_secret'] || '',
-      'microsoft.redirect_url': configs['microsoft.redirect_url'] || ''
-    })
+      'microsoft.redirect_url': configs['microsoft.redirect_url'] || '',
+    });
   } catch {
-    ElMessage.error('获取 OAuth 配置失败')
+    ElMessage.error('获取 OAuth 配置失败');
   }
-}
-
-// 加载微信公众号配置
-const loadWeChatConfigs = async () => {
-  try {
-    const configs = await loadConfigs('wechat')
-    Object.assign(wechatForm.value, {
-      app_id: configs.app_id || '',
-      app_secret: configs.app_secret || '',
-      token_url: configs.token_url || ''
-    })
-  } catch {
-    ElMessage.error('获取微信配置失败')
-  }
-}
+};
 
 // 加载所有配置
 const loadAllConfigs = async () => {
-  loading.value = true
+  loading.value = true;
   try {
     await Promise.all([
       loadBasicConfigs(),
@@ -519,78 +551,117 @@ const loadAllConfigs = async () => {
       loadUploadConfigs(),
       loadAIConfigs(),
       loadOAuthConfigs(),
-      loadWeChatConfigs()
-    ])
+    ]);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 // 清理所有待上传文件状态
 const clearAllPendingFiles = () => {
   // 清理基本配置的待上传文件
-  const basicUploaders = basicTabRef.value
+  const basicUploaders = basicTabRef.value;
   if (basicUploaders) {
-    basicUploaders.authorAvatarUploaderRef?.clearPending?.()
-    basicUploaders.authorPhotoUploaderRef?.clearPending?.()
+    basicUploaders.authorAvatarUploaderRef?.clearPending?.();
+    basicUploaders.authorPhotoUploaderRef?.clearPending?.();
   }
 
   // 清理博客配置的待上传文件
-  const blogUploaders = blogTabRef.value
+  const blogUploaders = blogTabRef.value;
   if (blogUploaders) {
-    blogUploaders.faviconUploaderRef?.clearPending?.()
-    blogUploaders.backgroundUploaderRef?.clearPending?.()
-    blogUploaders.screenshotUploaderRef?.clearPending?.()
-    blogUploaders.aboutExhibitionUploaderRef?.clearPending?.()
-    blogUploaders.rewardWechatUploaderRef?.clearPending?.()
-    blogUploaders.rewardAlipayUploaderRef?.clearPending?.()
+    blogUploaders.faviconUploaderRef?.clearPending?.();
+    blogUploaders.backgroundUploaderRef?.clearPending?.();
+    blogUploaders.screenshotUploaderRef?.clearPending?.();
+    blogUploaders.aboutExhibitionUploaderRef?.clearPending?.();
+    blogUploaders.rewardWechatUploaderRef?.clearPending?.();
+    blogUploaders.rewardAlipayUploaderRef?.clearPending?.();
   }
-}
+};
 
 // 统一保存配置
 const handleSave = async () => {
-  saving.value = true
+  if (!canEditSettings.value) {
+    ElMessage.warning('仅超级管理员可修改系统配置');
+    return;
+  }
+
+  saving.value = true;
   try {
-    // 先上传待上传的图片
-    // 处理基本配置的图片上传
-    const basicUploaders = basicTabRef.value
+    const uploadPromises: Promise<void>[] = [];
+
+    // 收集所有待上传的图片（并行上传）
+    const basicUploaders = basicTabRef.value;
     if (basicUploaders) {
       if (basicUploaders.authorAvatarUploaderRef?.getPendingCount()) {
-        const uploadedUrl = await basicUploaders.authorAvatarUploaderRef.uploadPendingFile()
-        if (uploadedUrl) basicForm.value.author_avatar = uploadedUrl
+        uploadPromises.push(
+          basicUploaders.authorAvatarUploaderRef.uploadPendingFile().then(url => {
+            if (url) basicForm.value.author_avatar = url;
+          })
+        );
       }
       if (basicUploaders.authorPhotoUploaderRef?.getPendingCount()) {
-        const uploadedUrl = await basicUploaders.authorPhotoUploaderRef.uploadPendingFile()
-        if (uploadedUrl) basicForm.value.author_photo = uploadedUrl
+        uploadPromises.push(
+          basicUploaders.authorPhotoUploaderRef.uploadPendingFile().then(url => {
+            if (url) basicForm.value.author_photo = url;
+          })
+        );
       }
     }
 
-    // 处理博客配置的图片上传
-    const blogUploaders = blogTabRef.value
+    const blogUploaders = blogTabRef.value;
     if (blogUploaders) {
       if (blogUploaders.faviconUploaderRef?.getPendingCount()) {
-        const uploadedUrl = await blogUploaders.faviconUploaderRef.uploadPendingFile()
-        if (uploadedUrl) blogForm.value.favicon = uploadedUrl
+        uploadPromises.push(
+          blogUploaders.faviconUploaderRef.uploadPendingFile().then(url => {
+            if (url) blogForm.value.favicon = url;
+          })
+        );
       }
       if (blogUploaders.backgroundUploaderRef?.getPendingCount()) {
-        const uploadedUrl = await blogUploaders.backgroundUploaderRef.uploadPendingFile()
-        if (uploadedUrl) blogForm.value.background_image = uploadedUrl
+        uploadPromises.push(
+          blogUploaders.backgroundUploaderRef.uploadPendingFile().then(url => {
+            if (url) blogForm.value.background_image = url;
+          })
+        );
       }
       if (blogUploaders.screenshotUploaderRef?.getPendingCount()) {
-        const uploadedUrl = await blogUploaders.screenshotUploaderRef.uploadPendingFile()
-        if (uploadedUrl) blogForm.value.screenshot = uploadedUrl
+        uploadPromises.push(
+          blogUploaders.screenshotUploaderRef.uploadPendingFile().then(url => {
+            if (url) blogForm.value.screenshot = url;
+          })
+        );
       }
       if (blogUploaders.aboutExhibitionUploaderRef?.getPendingCount()) {
-        const uploadedUrl = await blogUploaders.aboutExhibitionUploaderRef.uploadPendingFile()
-        if (uploadedUrl) blogForm.value.about_exhibition = uploadedUrl
+        uploadPromises.push(
+          blogUploaders.aboutExhibitionUploaderRef.uploadPendingFile().then(url => {
+            if (url) blogForm.value.about_exhibition = url;
+          })
+        );
       }
       if (blogUploaders.rewardWechatUploaderRef?.getPendingCount()) {
-        const uploadedUrl = await blogUploaders.rewardWechatUploaderRef.uploadPendingFile()
-        if (uploadedUrl) blogForm.value.wechat_qrcode = uploadedUrl
+        uploadPromises.push(
+          blogUploaders.rewardWechatUploaderRef.uploadPendingFile().then(url => {
+            if (url) blogForm.value.wechat_qrcode = url;
+          })
+        );
       }
       if (blogUploaders.rewardAlipayUploaderRef?.getPendingCount()) {
-        const uploadedUrl = await blogUploaders.rewardAlipayUploaderRef.uploadPendingFile()
-        if (uploadedUrl) blogForm.value.alipay_qrcode = uploadedUrl
+        uploadPromises.push(
+          blogUploaders.rewardAlipayUploaderRef.uploadPendingFile().then(url => {
+            if (url) blogForm.value.alipay_qrcode = url;
+          })
+        );
+      }
+    }
+
+    // 等待所有上传完成（使用 allSettled 确保即使部分失败也继续）
+    if (uploadPromises.length > 0) {
+      const results = await Promise.allSettled(uploadPromises);
+      const failedUploads = results.filter(r => r.status === 'rejected');
+      if (failedUploads.length > 0) {
+        saving.value = false;
+        ElMessage.error(`${failedUploads.length} 个文件上传失败，请重试`);
+        return;
       }
     }
 
@@ -605,8 +676,8 @@ const handleSave = async () => {
       'basic.police_record': basicForm.value.police_record,
       'basic.admin_url': basicForm.value.admin_url,
       'basic.blog_url': basicForm.value.blog_url,
-      'basic.home_url': basicForm.value.home_url
-    }
+      'basic.home_url': basicForm.value.home_url,
+    };
 
     // 博客配置
     const blogPayload: Record<string, string> = {
@@ -623,6 +694,7 @@ const handleSave = async () => {
       'blog.typing_texts': JSON.stringify(blogForm.value.typingTextsList.map(item => item.value)),
       'blog.sidebar_social': JSON.stringify(blogForm.value.sidebarSocialList),
       'blog.footer_social': JSON.stringify(blogForm.value.footerSocialList),
+      'blog.footer_links': JSON.stringify(blogForm.value.footerLinksList),
       'blog.about_describe': blogForm.value.about_describe,
       'blog.about_describe_tips': blogForm.value.about_describe_tips,
       'blog.about_exhibition': blogForm.value.about_exhibition,
@@ -640,50 +712,67 @@ const handleSave = async () => {
       'blog.wechat_qrcode': blogForm.value.wechat_qrcode,
       'blog.alipay_qrcode': blogForm.value.alipay_qrcode,
       'blog.emojis': blogForm.value.emojis,
-      'blog.font': blogForm.value.font
-    }
+      'blog.font': blogForm.value.font,
+      'blog.moments_size': String(blogForm.value.moments_size),
+      'blog.message_content': blogForm.value.message_content,
+      'blog.home_layout': blogForm.value.home_layout,
+    };
 
     // 通知配置
     const notificationPayload: Record<string, string> = {
       'notification.email_host': notificationForm.value.email_host,
       'notification.email_port': String(notificationForm.value.email_port),
+      'notification.email_secure': notificationForm.value.email_secure,
       'notification.email_username': notificationForm.value.email_username,
+      'notification.email_from': notificationForm.value.email_from,
       'notification.email_password': notificationForm.value.email_password,
       'notification.feishu_app_id': notificationForm.value.feishu_app_id,
       'notification.feishu_secret': notificationForm.value.feishu_secret,
-      'notification.feishu_chat_id': notificationForm.value.feishu_chat_id
-    }
+      'notification.feishu_chat_id': notificationForm.value.feishu_chat_id,
+    };
 
     // 上传配置
-    const currentStorageType = uploadForm.value.storage_type as StorageType
-    const currentConfig = uploadForm.value[currentStorageType]
+    const currentStorageType = uploadForm.value.storage_type as StorageType;
+    const currentConfig = uploadForm.value[currentStorageType];
 
     const uploadPayload: Record<string, string> = {
       'upload.storage_type': uploadForm.value.storage_type,
       // 保存当前存储类型的基础配置（不带存储类型前缀）
       'upload.max_file_size': String(currentConfig.max_file_size),
-      'upload.path_pattern': currentConfig.path_pattern
-    }
+      'upload.path_pattern': currentConfig.path_pattern,
+    };
 
     // 保存各存储类型的云存储配置（带存储类型前缀）
-    const storageTypes: StorageType[] = ['s3', 'oss', 'cos', 'kodo', 'r2', 'minio']
+    const storageTypes: StorageType[] = ['s3', 'oss', 'cos', 'kodo', 'r2', 'minio'];
     storageTypes.forEach(type => {
-      const config = uploadForm.value[type]
+      const config = uploadForm.value[type];
 
       // 腾讯云 COS 使用 secret_id，其他使用 access_key
       if (type === 'cos') {
-        uploadPayload[`upload.${type}.secret_id`] = config.access_key
+        uploadPayload[`upload.${type}.secret_id`] = config.access_key;
       } else {
-        uploadPayload[`upload.${type}.access_key`] = config.access_key
+        uploadPayload[`upload.${type}.access_key`] = config.access_key;
       }
 
-      uploadPayload[`upload.${type}.secret_key`] = config.secret_key
-      uploadPayload[`upload.${type}.region`] = config.region
-      uploadPayload[`upload.${type}.bucket`] = config.bucket
-      uploadPayload[`upload.${type}.endpoint`] = config.endpoint
-      uploadPayload[`upload.${type}.domain`] = config.domain
-      uploadPayload[`upload.${type}.use_ssl`] = config.use_ssl ? 'true' : 'false'
-    })
+      uploadPayload[`upload.${type}.secret_key`] = config.secret_key;
+
+      if (type !== 'r2') {
+        uploadPayload[`upload.${type}.region`] = String(config.region);
+      }
+
+      uploadPayload[`upload.${type}.bucket`] = config.bucket;
+      uploadPayload[`upload.${type}.domain`] = config.domain;
+
+      // endpoint 只有 S3、R2、MinIO 需要
+      if (type === 's3' || type === 'r2' || type === 'minio') {
+        uploadPayload[`upload.${type}.endpoint`] = config.endpoint;
+      }
+
+      // use_ssl 只有 R2、MinIO 需要
+      if (type === 'r2' || type === 'minio') {
+        uploadPayload[`upload.${type}.use_ssl`] = config.use_ssl ? 'true' : 'false';
+      }
+    });
 
     // AI 配置
     const aiPayload: Record<string, string> = {
@@ -692,8 +781,8 @@ const handleSave = async () => {
       'ai.model': aiForm.value.model,
       'ai.summary_prompt': aiForm.value.summary_prompt,
       'ai.ai_summary_prompt': aiForm.value.ai_summary_prompt,
-      'ai.title_prompt': aiForm.value.title_prompt
-    }
+      'ai.title_prompt': aiForm.value.title_prompt,
+    };
 
     // OAuth 配置
     const oauthPayload: Record<string, string> = {
@@ -712,15 +801,8 @@ const handleSave = async () => {
       'oauth.microsoft.enabled': oauthForm.value['microsoft.enabled'],
       'oauth.microsoft.client_id': oauthForm.value['microsoft.client_id'],
       'oauth.microsoft.client_secret': oauthForm.value['microsoft.client_secret'],
-      'oauth.microsoft.redirect_url': oauthForm.value['microsoft.redirect_url']
-    }
-
-    // 微信公众号配置
-    const wechatPayload: Record<string, string> = {
-      'wechat.app_id': wechatForm.value.app_id,
-      'wechat.app_secret': wechatForm.value.app_secret,
-      'wechat.token_url': wechatForm.value.token_url
-    }
+      'oauth.microsoft.redirect_url': oauthForm.value['microsoft.redirect_url'],
+    };
 
     // 构建需要保存的配置组列表
     const savePromises = [
@@ -730,35 +812,48 @@ const handleSave = async () => {
       updateSettingGroup('upload', uploadPayload),
       updateSettingGroup('ai', aiPayload),
       updateSettingGroup('oauth', oauthPayload),
-      updateSettingGroup('wechat', wechatPayload)
-    ]
+    ];
 
     // 并行保存所有配置组
-    await Promise.all(savePromises)
+    await Promise.all(savePromises);
 
-    // 保存成功后重新加载配置，确保显示最新的值
-    await loadAllConfigs()
-
-    ElMessage.success('配置保存成功')
+    ElMessage.success('配置保存成功');
   } catch (e) {
-    // 保存失败时清理所有待上传文件状态，避免状态残留
-    clearAllPendingFiles()
-
-    if (e instanceof Error) ElMessage.error(e.message)
-    else ElMessage.error('保存失败')
+    if (e instanceof Error) ElMessage.error(e.message);
+    else ElMessage.error('保存失败');
   } finally {
-    saving.value = false
+    saving.value = false;
   }
-}
+};
+
+const validTabs = new Set<SettingGroupType | 'import-export'>([
+  'basic',
+  'blog',
+  'notification',
+  'upload',
+  'ai',
+  'oauth',
+  'import-export',
+]);
+
+watch(
+  () => route.query.tab,
+  tab => {
+    if (typeof tab === 'string' && validTabs.has(tab as SettingGroupType | 'import-export')) {
+      activeTab.value = tab;
+    }
+  },
+  { immediate: true }
+);
 
 // 导入成功回调
 const handleImportSuccess = () => {
   // 可以在这里添加导入成功后的逻辑
-}
+};
 
 onMounted(() => {
-  loadAllConfigs()
-})
+  loadAllConfigs();
+});
 </script>
 
 <style lang="scss" scoped>
@@ -794,6 +889,10 @@ onMounted(() => {
   .actions {
     display: flex;
     gap: 12px;
+
+    .el-button {
+      margin: 0;
+    }
   }
 }
 

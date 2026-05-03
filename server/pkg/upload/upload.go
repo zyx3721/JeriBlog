@@ -46,6 +46,7 @@ var AllowedFileTypes = []string{
 	"image/png",
 	"image/gif",
 	"image/webp",
+	"image/avif",
 	"image/svg+xml",
 	"image/bmp",
 	"image/tiff",
@@ -241,7 +242,9 @@ func (m *Manager) HandleUpload(req *Request, host string) (*Response, error) {
 	if err != nil {
 		return m.createErrorResponse(fmt.Sprintf("打开文件失败: %v", err)), err
 	}
-	defer file.Close()
+	defer func() {
+		_ = file.Close()
+	}()
 
 	// 5. 保存文件
 	if err := m.storage.Save(file, filePath, req.File.Size); err != nil {
@@ -399,7 +402,9 @@ func (m *Manager) CalculateFileHash(fileHeader *multipart.FileHeader) (string, e
 	if err != nil {
 		return "", fmt.Errorf("打开文件失败: %v", err)
 	}
-	defer file.Close()
+	defer func() {
+		_ = file.Close()
+	}()
 
 	hash := sha256.New()
 	if _, err := io.Copy(hash, file); err != nil {
@@ -432,16 +437,24 @@ func (m *Manager) createFileInfo(req *Request, filePath string, fileHash string,
 
 // ExtractHostFromContext 从 gin.Context 中提取完整的 host 地址（包含 scheme）
 func ExtractHostFromContext(c *gin.Context, forceScheme string) string {
+	// 1. 检查是否有反向代理的 header
 	scheme := "http"
 	if forceScheme != "" {
 		scheme = forceScheme
-	} else if c.Request.TLS != nil {
+	}
+	if c.Request.TLS != nil {
 		scheme = "https"
-	} else if proto := c.GetHeader("X-Forwarded-Proto"); proto != "" {
+	}
+
+	// 检查 X-Forwarded-Proto header（反向代理场景）
+	if proto := c.GetHeader("X-Forwarded-Proto"); proto != "" {
 		scheme = proto
 	}
 
+	// 2. 获取 host
 	host := c.Request.Host
+
+	// 检查 X-Forwarded-Host header（反向代理场景）
 	if forwardedHost := c.GetHeader("X-Forwarded-Host"); forwardedHost != "" {
 		host = forwardedHost
 	}

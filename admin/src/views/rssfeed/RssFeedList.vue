@@ -10,136 +10,183 @@
 -->
 
 <template>
-  <common-list title="RSS订阅" :data="articleList" :loading="loading" :total="total" v-model:page="queryParams.page"
-    v-model:page-size="queryParams.page_size" :show-create="false" @refresh="fetchArticles"
-    @update:page="fetchArticles" @update:pageSize="fetchArticles">
-    <!-- 搜索表单 -->
-    <template #toolbar-before>
-      <div class="search-form rss-search">
-        <el-input
-          v-model="queryParams.keyword"
-          placeholder="搜索文章标题..."
-          clearable
-          style="width: 200px"
-          @keyup.enter="handleSearch"
-          @clear="handleSearch"
-        />
-        <el-select
-          v-model="statusFilter"
-          placeholder="状态"
-          clearable
-          style="width: 100px"
-          @change="handleStatusChange"
-        >
-          <el-option label="未读" value="unread" />
-          <el-option label="已读" value="read" />
-          <el-option label="已删除" value="deleted" />
-        </el-select>
-        <el-select
-          v-model="queryParams.friend_id"
-          placeholder="来源"
-          clearable
-          style="width: 150px"
-          @change="handleSearch"
-        >
-          <el-option
-            v-for="friend in friendList"
-            :key="friend.id"
-            :label="friend.name"
-            :value="friend.id"
-          />
-        </el-select>
-        <el-button type="primary" @click="handleSearch">搜索</el-button>
-        <el-button @click="handleReset">重置</el-button>
-      </div>
-    </template>
+  <div class="rss-feed-list-page">
+    <!-- 筛选面板 -->
+    <transition name="filter-slide">
+      <rss-feed-filter
+        v-if="showFilter"
+        v-model="queryParams"
+        @search="fetchArticles"
+        @close="showFilter = false"
+      />
+    </transition>
 
-    <!-- 额外按钮 -->
-    <template #toolbar-after>
-      <el-button type="primary" @click="openSubscriberDialog">
-        本站订阅
-      </el-button>
-      <el-button type="warning" :loading="refreshing" @click="handleRefreshRss" v-if="isSuperAdmin">
-        <el-icon v-if="!refreshing">
-          <Download />
-        </el-icon>
-        {{ refreshing ? '抓取中...' : '立即抓取RSS' }}
-      </el-button>
-      <el-badge :value="unreadCount" :hidden="unreadCount === 0" :max="99" class="unread-badge">
-        <el-button type="success" :disabled="unreadCount === 0" @click="handleMarkAllRead"
-          v-if="isSuperAdmin">
-          全部已读
+    <common-list
+      title="RSS订阅"
+      :data="articleList"
+      :loading="loading"
+      :total="total"
+      v-model:page="queryParams.page"
+      v-model:page-size="queryParams.page_size"
+      :show-create="false"
+      :filter-active="showFilter"
+      :filter-count="filterCount"
+      @refresh="fetchArticles"
+      @filter="toggleFilter"
+      @update:page="fetchArticles"
+      @update:pageSize="fetchArticles"
+    >
+      <template #toolbar-before>
+        <template v-if="!showFilter">
+          <el-select
+            v-model="quickFilters.friend_id"
+            placeholder="全部友链"
+            clearable
+            class="quick-filter-960"
+            style="width: 150px"
+            @change="handleQuickFilterChange"
+          >
+            <el-option
+              v-for="friend in friendList"
+              :key="friend.id"
+              :label="friend.name"
+              :value="friend.id"
+            />
+          </el-select>
+          <el-select
+            v-model="quickFilters.is_read"
+            placeholder="阅读状态"
+            clearable
+            class="quick-filter-800"
+            style="width: 110px"
+            @change="handleQuickFilterChange"
+          >
+            <el-option label="已读" :value="true" />
+            <el-option label="未读" :value="false" />
+          </el-select>
+        </template>
+        <el-button class="icon-btn" @click="openSubscriberDialog">
+          <el-icon><Bell /></el-icon><span class="btn-text">本站订阅</span>
         </el-button>
-      </el-badge>
-    </template>
 
-    <!-- 表格列 -->
-    <el-table-column label="状态" width="80" align="center">
-      <template #default="{ row }">
-        <el-tag v-if="row.is_deleted" type="danger" size="small">
-          已删除
-        </el-tag>
-        <el-tag v-else :type="row.is_read ? 'info' : 'warning'" size="small">
-          {{ row.is_read ? '已读' : '未读' }}
-        </el-tag>
+        <el-button
+          class="icon-btn"
+          type="warning"
+          :loading="refreshing"
+          @click="handleRefreshRss"
+          v-if="isSuperAdmin"
+        >
+          <el-icon v-if="!refreshing">
+            <Download />
+          </el-icon>
+          <span class="btn-text">
+            {{ refreshing ? '抓取中...' : '立即抓取RSS' }}
+          </span>
+        </el-button>
+
+        <el-badge :value="unreadCount" :hidden="unreadCount === 0" :max="99" class="unread-badge">
+          <el-button
+            class="icon-btn"
+            :disabled="unreadCount === 0"
+            @click="handleMarkAllRead"
+            v-if="isSuperAdmin"
+            type="primary"
+          >
+            <el-icon><Check /></el-icon><span class="btn-text">全部已读</span>
+          </el-button>
+        </el-badge>
       </template>
-    </el-table-column>
 
-    <el-table-column label="文章标题" min-width="300" align="center">
-      <template #default="{ row }">
-        <div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
-          <a :href="row.link" target="_blank" class="article-link" :class="{ read: row.is_read }">
-            {{ row.title }}
+      <!-- 表格列 -->
+      <el-table-column label="状态" width="80" align="center">
+        <template #default="{ row }">
+          <el-tag v-if="row.is_deleted" type="danger" size="small"> 已删除 </el-tag>
+          <el-tag v-else :type="row.is_read ? 'info' : 'warning'" size="small">
+            {{ row.is_read ? '已读' : '未读' }}
+          </el-tag>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="文章标题" min-width="300" align="center">
+        <template #default="{ row }">
+          <div style="display: flex; align-items: center; gap: 8px; justify-content: center">
+            <a :href="row.link" target="_blank" class="article-link" :class="{ read: row.is_read }">
+              {{ row.title }}
+            </a>
+            <el-tag
+              v-if="row.update_type && row.update_type.includes('title')"
+              type="success"
+              size="small"
+            >
+              标题已更新
+            </el-tag>
+            <el-tag
+              v-if="row.update_type && row.update_type.includes('link')"
+              type="warning"
+              size="small"
+            >
+              链接已更新
+            </el-tag>
+            <el-tag
+              v-if="row.update_type && row.update_type.includes('published_at')"
+              type="info"
+              size="small"
+            >
+              发布时间已更新
+            </el-tag>
+          </div>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="来源" width="180" align="center">
+        <template #default="{ row }">
+          <a :href="row.friend_url" target="_blank" class="friend-link">
+            {{ row.friend_name }}
           </a>
-          <el-tag v-if="row.update_type && row.update_type.includes('title')" type="success" size="small">
-            标题已更新
-          </el-tag>
-          <el-tag v-if="row.update_type && row.update_type.includes('link')" type="warning" size="small">
-            链接已更新
-          </el-tag>
-          <el-tag v-if="row.update_type && row.update_type.includes('published_at')" type="info" size="small">
-            发布时间已更新
-          </el-tag>
-        </div>
-      </template>
-    </el-table-column>
+        </template>
+      </el-table-column>
 
-    <el-table-column label="来源" width="180" align="center">
-      <template #default="{ row }">
-        <a :href="row.friend_url" target="_blank" class="friend-link">
-          {{ row.friend_name }}
-        </a>
-      </template>
-    </el-table-column>
+      <el-table-column label="发布时间" width="180" align="center">
+        <template #default="{ row }">
+          <span v-if="row.published_at">{{ formatDateTime(row.published_at) }}</span>
+          <span v-else style="color: #999">-</span>
+        </template>
+      </el-table-column>
 
-    <el-table-column label="发布时间" width="180" align="center">
-      <template #default="{ row }">
-        <span v-if="row.published_at">{{ formatDateTime(row.published_at) }}</span>
-        <span v-else style="color: #999">-</span>
-      </template>
-    </el-table-column>
+      <el-table-column label="抓取时间" width="180" align="center">
+        <template #default="{ row }">
+          {{ formatDateTime(row.created_at) }}
+        </template>
+      </el-table-column>
 
-    <el-table-column label="抓取时间" width="180" align="center">
-      <template #default="{ row }">
-        {{ formatDateTime(row.created_at) }}
-      </template>
-    </el-table-column>
-
-    <el-table-column label="操作" width="120" align="center" fixed="right">
-      <template #default="{ row }">
-        <el-button v-if="!row.is_read && isSuperAdmin" type="primary" link size="small"
-          @click="handleMarkRead(row)">
-          标记已读
-        </el-button>
-        <span v-else style="color: #999">-</span>
-      </template>
-    </el-table-column>
-  </common-list>
+      <el-table-column label="操作" width="120" align="center" fixed="right">
+        <template #default="{ row }">
+          <el-button
+            v-if="!row.is_read && isSuperAdmin"
+            type="primary"
+            link
+            size="small"
+            @click="handleMarkRead(row)"
+          >
+            标记已读
+          </el-button>
+          <span v-else style="color: #999">-</span>
+        </template>
+      </el-table-column>
+    </common-list>
+  </div>
 
   <!-- 本站订阅弹窗 -->
-  <el-dialog v-model="subscriberDialogVisible" title="本站订阅者" width="700px" destroy-on-close>
+  <el-dialog
+    v-model="subscriberDialogVisible"
+    title="本站订阅者"
+    width="90%"
+    style="max-width: 700px"
+    :align-center="true"
+    destroy-on-close
+  >
     <el-table :data="subscriberList" v-loading="subscriberLoading" border style="width: 100%">
-      <el-table-column label="邮箱地址" min-width="240">
+      <el-table-column label="邮箱地址" min-width="200">
         <template #default="{ row }">
           <div style="display: flex; align-items: center; gap: 8px">
             <el-icon size="16" color="#409eff">
@@ -161,7 +208,7 @@
           {{ formatDateTime(row.created_at) }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="80" align="center">
+      <el-table-column label="操作" width="80" align="center" fixed="right">
         <template #default="{ row }">
           <el-button type="danger" link size="small" @click="handleDeleteSubscriber(row.id)">
             删除
@@ -169,148 +216,165 @@
         </template>
       </el-table-column>
     </el-table>
-    <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
-      <el-pagination v-model:current-page="subscriberQuery.page" v-model:page-size="subscriberQuery.page_size"
-        :total="subscriberTotal" :page-sizes="[10, 20, 50]" layout="total, sizes, prev, pager, next"
-        @current-change="fetchSubscribers" @size-change="fetchSubscribers" />
+    <div style="margin-top: 16px; display: flex; justify-content: flex-end">
+      <el-pagination
+        v-model:current-page="subscriberQuery.page"
+        v-model:page-size="subscriberQuery.page_size"
+        :total="subscriberTotal"
+        :page-sizes="[10, 20, 50]"
+        layout="total, sizes, prev, pager, next"
+        @current-change="fetchSubscribers"
+        @size-change="fetchSubscribers"
+      />
     </div>
   </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, reactive } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { Message, Download } from '@element-plus/icons-vue'
-import CommonList from '@/components/common/CommonList.vue'
-import type { RssArticle, RssArticleQuery } from '@/types/rssfeed'
-import type { User } from '@/types/user'
-import type { Subscriber } from '@/types/subscriber'
-import type { Friend } from '@/types/friend'
-import { getRssArticles, markRssArticleRead, markAllRssArticlesRead, refreshAllRssFeeds } from '@/api/rssfeed'
-import { getSubscribers, deleteSubscriber } from '@/api/subscriber'
-import { getFriends } from '@/api/friend'
-import { formatDateTime } from '@/utils/date'
+import { ref, onMounted, computed, reactive } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { Message, Download, Bell, Check } from '@element-plus/icons-vue';
+import CommonList from '@/components/common/CommonList.vue';
+import RssFeedFilter from './components/RssFeedFilter.vue';
+import type { RssArticle, RssArticleQuery } from '@/types/rssfeed';
+import type { Subscriber } from '@/types/subscriber';
+import type { Friend } from '@/types/friend';
+import {
+  getRssArticles,
+  markRssArticleRead,
+  markAllRssArticlesRead,
+  refreshAllRssFeeds,
+} from '@/api/rssfeed';
+import { getSubscribers, deleteSubscriber } from '@/api/subscriber';
+import { getFriends } from '@/api/friend';
+import { formatDateTime } from '@/utils/date';
+import { isSuperAdmin as checkSuperAdmin } from '@/utils/auth';
 
-const userInfo = computed(() => {
-  const stored = localStorage.getItem('userInfo')
-  if (stored) {
-    return JSON.parse(stored) as User
-  }
-  return null
-})
+const isSuperAdmin = computed(() => checkSuperAdmin());
 
-const isSuperAdmin = computed(() => userInfo.value?.role === 'super_admin')
+const loading = ref(false);
+const refreshing = ref(false);
+const articleList = ref<RssArticle[]>([]);
+const total = ref(0);
+const unreadCount = ref(0);
+const showFilter = ref(false);
+const queryParams = ref<RssArticleQuery>({ page: 1, page_size: 20 });
 
-const loading = ref(false)
-const refreshing = ref(false)
-const articleList = ref<RssArticle[]>([])
-const total = ref(0)
-const unreadCount = ref(0)
-const queryParams = ref<RssArticleQuery>({ page: 1, page_size: 20 })
-const friendList = ref<Friend[]>([])
-const statusFilter = ref<string>('')
+// 快速筛选相关
+const friendList = ref<Friend[]>([]);
+const quickFilters = reactive({
+  friend_id: undefined as number | undefined,
+  is_read: undefined as boolean | undefined,
+});
 
 /**
- * 获取友链列表（用于来源筛选）
+ * 计算当前应用的筛选条件数量
  */
-const fetchFriends = async () => {
-  try {
-    const result = await getFriends({ page: 1, page_size: 1000 })
-    // 只显示配置了RSS的友链
-    friendList.value = result.list.filter(f => f.rss_url && f.rss_url.trim() !== '')
-  } catch {
-    // 静默失败，不影响主功能
+const filterCount = computed(() => {
+  let count = 0;
+  if (queryParams.value.keyword) count++;
+  if (queryParams.value.friend_id !== undefined) count++;
+  if (queryParams.value.is_read !== undefined) count++;
+  if (queryParams.value.is_deleted !== undefined) count++;
+  if (queryParams.value.start_time && queryParams.value.end_time) count++;
+  return count;
+});
+
+/**
+ * 切换筛选面板显示状态
+ */
+const toggleFilter = () => {
+  showFilter.value = !showFilter.value;
+  if (!showFilter.value) {
+    syncQuickFiltersFromQueryParams();
   }
-}
+};
+
+/**
+ * 从 queryParams 同步筛选条件到快速筛选
+ */
+const syncQuickFiltersFromQueryParams = () => {
+  quickFilters.friend_id = queryParams.value.friend_id;
+  quickFilters.is_read = queryParams.value.is_read;
+};
+
+/**
+ * 加载友链列表（用于快速筛选）
+ */
+const loadFriendList = async () => {
+  try {
+    const result = await getFriends({ page: 1, page_size: 1000 });
+    friendList.value = result.list || [];
+  } catch (error) {
+    console.error('加载友链列表失败:', error);
+  }
+};
+
+/**
+ * 处理快速筛选变化
+ */
+const handleQuickFilterChange = () => {
+  // 将快速筛选条件同步到查询参数
+  queryParams.value.friend_id = quickFilters.friend_id;
+  queryParams.value.is_read = quickFilters.is_read;
+  // 重置到第一页并搜索
+  queryParams.value.page = 1;
+  fetchArticles();
+};
 
 /**
  * 获取RSS文章列表
  */
 const fetchArticles = async () => {
-  loading.value = true
+  loading.value = true;
   try {
-    const result = await getRssArticles(queryParams.value)
-    articleList.value = result.list
-    total.value = result.total
-    unreadCount.value = result.unread_count
+    const result = await getRssArticles(queryParams.value);
+    articleList.value = result.list;
+    total.value = result.total;
+    unreadCount.value = result.unread_count;
   } catch {
-    ElMessage.error('获取RSS文章列表失败')
+    ElMessage.error('获取RSS文章列表失败');
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
-
-/**
- * 状态筛选变化处理
- */
-const handleStatusChange = () => {
-  if (statusFilter.value === 'unread') {
-    queryParams.value.is_read = false
-    queryParams.value.is_deleted = false
-  } else if (statusFilter.value === 'read') {
-    queryParams.value.is_read = true
-    queryParams.value.is_deleted = false
-  } else if (statusFilter.value === 'deleted') {
-    queryParams.value.is_read = undefined
-    queryParams.value.is_deleted = true
-  } else {
-    queryParams.value.is_read = undefined
-    queryParams.value.is_deleted = undefined
-  }
-  handleSearch()
-}
-
-/**
- * 搜索
- */
-const handleSearch = () => {
-  queryParams.value.page = 1
-  fetchArticles()
-}
-
-/**
- * 重置搜索
- */
-const handleReset = () => {
-  queryParams.value = { page: 1, page_size: 20 }
-  statusFilter.value = ''
-  fetchArticles()
-}
+};
 
 /**
  * 标记单篇文章已读
  */
 const handleMarkRead = async (article: RssArticle) => {
   try {
-    await markRssArticleRead(article.id)
+    await markRssArticleRead(article.id);
     // 在列表中找到对应文章并更新
-    const index = articleList.value.findIndex(a => a.id === article.id)
+    const index = articleList.value.findIndex(a => a.id === article.id);
     if (index !== -1 && articleList.value[index]) {
-      articleList.value[index].is_read = true
-      articleList.value[index].update_type = ''
+      articleList.value[index].is_read = true;
+      articleList.value[index].update_type = '';
     }
-    unreadCount.value = Math.max(0, unreadCount.value - 1)
-    ElMessage.success('已标记为已读')
+    unreadCount.value = Math.max(0, unreadCount.value - 1);
+    ElMessage.success('已标记为已读');
   } catch {
-    ElMessage.error('操作失败')
+    ElMessage.error('操作失败');
   }
-}
+};
 
 /**
  * 全部标记已读
  */
 const handleMarkAllRead = async () => {
   try {
-    await ElMessageBox.confirm('确定要将所有未读文章标记为已读吗？', '提示', { type: 'warning' })
-    const result = await markAllRssArticlesRead()
-    ElMessage.success(`已标记 ${result.affected} 篇文章为已读`)
-    fetchArticles()
+    await ElMessageBox.confirm('确定要将所有未读文章标记为已读吗？', '提示', {
+      type: 'warning',
+    });
+    const result = await markAllRssArticlesRead();
+    ElMessage.success(`已标记 ${result.affected} 篇文章为已读`);
+    fetchArticles();
   } catch (error) {
     if (error !== 'cancel' && error instanceof Error) {
-      ElMessage.error(error.message)
+      ElMessage.error(error.message);
     }
   }
-}
+};
 
 /**
  * 立即刷新RSS订阅源
@@ -320,78 +384,114 @@ const handleRefreshRss = async () => {
     await ElMessageBox.confirm('确定要立即抓取所有友链的RSS订阅内容吗？', '提示', {
       type: 'info',
       confirmButtonText: '立即抓取',
-      cancelButtonText: '取消'
-    })
-    refreshing.value = true
-    await refreshAllRssFeeds()
-    ElMessage.success('RSS订阅源刷新成功，正在重新加载列表...')
+      cancelButtonText: '取消',
+    });
+    refreshing.value = true;
+    await refreshAllRssFeeds();
+    ElMessage.success('RSS订阅源刷新成功，正在重新加载列表...');
     // 延迟1秒后刷新列表，确保数据已入库
     setTimeout(() => {
-      fetchArticles()
-    }, 1000)
+      fetchArticles();
+    }, 1000);
   } catch (error) {
     if (error !== 'cancel' && error instanceof Error) {
-      ElMessage.error(error.message)
+      ElMessage.error(error.message);
     }
   } finally {
-    refreshing.value = false
+    refreshing.value = false;
   }
-}
+};
 
 // 订阅者相关
-const subscriberDialogVisible = ref(false)
-const subscriberLoading = ref(false)
-const subscriberList = ref<Subscriber[]>([])
-const subscriberTotal = ref(0)
-const subscriberQuery = reactive({ page: 1, page_size: 10 })
+const subscriberDialogVisible = ref(false);
+const subscriberLoading = ref(false);
+const subscriberList = ref<Subscriber[]>([]);
+const subscriberTotal = ref(0);
+const subscriberQuery = reactive({ page: 1, page_size: 10 });
 
 /**
  * 打开订阅者弹窗
  */
 const openSubscriberDialog = () => {
-  subscriberDialogVisible.value = true
-  subscriberQuery.page = 1
-  fetchSubscribers()
-}
+  subscriberDialogVisible.value = true;
+  subscriberQuery.page = 1;
+  fetchSubscribers();
+};
 
 /**
  * 获取订阅者列表
  */
 const fetchSubscribers = async () => {
-  subscriberLoading.value = true
+  subscriberLoading.value = true;
   try {
-    const result = await getSubscribers(subscriberQuery)
-    subscriberList.value = result.list
-    subscriberTotal.value = result.total
+    const result = await getSubscribers(subscriberQuery);
+    subscriberList.value = result.list;
+    subscriberTotal.value = result.total;
   } catch {
-    ElMessage.error('获取订阅者列表失败')
+    ElMessage.error('获取订阅者列表失败');
   } finally {
-    subscriberLoading.value = false
+    subscriberLoading.value = false;
   }
-}
+};
 
 /**
  * 删除订阅者
  */
 const handleDeleteSubscriber = async (id: number) => {
   try {
-    await ElMessageBox.confirm('确定要删除该订阅者吗？此操作不可恢复。', '提示', { type: 'warning' })
-    await deleteSubscriber(id)
-    ElMessage.success('删除成功')
-    fetchSubscribers()
+    await ElMessageBox.confirm('确定要删除该订阅者吗？此操作不可恢复。', '提示', {
+      type: 'warning',
+    });
+    await deleteSubscriber(id);
+    ElMessage.success('删除成功');
+    fetchSubscribers();
   } catch (error) {
-    if (error !== 'cancel' && error instanceof Error) ElMessage.error(error.message)
+    if (error !== 'cancel' && error instanceof Error) ElMessage.error(error.message);
   }
-}
+};
 
 onMounted(() => {
-  fetchFriends()
-  fetchArticles()
-})
+  loadFriendList();
+  // 初始化快速筛选值（从 queryParams）
+  syncQuickFiltersFromQueryParams();
+  fetchArticles();
+});
 </script>
 
-<style scoped>
-/* 搜索表单样式已移至全局样式 main.scss */
+<style scoped lang="scss">
+.rss-feed-list-page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 筛选面板滑入滑出动画 */
+.filter-slide-enter-active,
+.filter-slide-leave-active {
+  transition: all 0.1s linear;
+}
+
+.filter-slide-enter-from,
+.filter-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+.filter-slide-enter-to,
+.filter-slide-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.rss-feed-list-page > :deep(.filter-panel) {
+  flex-shrink: 0;
+}
+
+.rss-feed-list-page > :deep(.common-list) {
+  flex: 1;
+  min-height: 0;
+}
 
 .article-link {
   color: var(--el-color-primary);
@@ -417,4 +517,25 @@ onMounted(() => {
   text-decoration: underline;
 }
 
+// 默认显示文字，移动端显示图标
+.icon-btn {
+  .el-icon {
+    display: none;
+  }
+  // 覆盖 Element Plus 默认样式，消除图标隐藏后的左边距
+  .btn-text {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 500px) {
+  .icon-btn {
+    .btn-text {
+      display: none;
+    }
+    .el-icon {
+      display: inline-flex;
+    }
+  }
+}
 </style>

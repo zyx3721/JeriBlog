@@ -10,94 +10,97 @@
 -->
 
 <script setup lang="ts">
-import { searchArticles } from '@/composables/api/article'
-import type { Article } from '@@/types/article'
+import { searchArticles } from '@/composables/api/article';
+import type { Article } from '@@/types/article';
 
-const props = defineProps<{ modelValue: boolean }>()
-const emit = defineEmits<{ 'update:modelValue': [value: boolean] }>()
+const props = defineProps<{ modelValue: boolean }>();
+const emit = defineEmits<{ 'update:modelValue': [value: boolean] }>();
 
-const keyword = ref('')
-const articles = ref<Article[]>([])
-const total = ref(0)
-const page = ref(1)
-const pageSize = 5
-const loading = ref(false)
-const inputRef = ref<HTMLInputElement | null>(null)
+const keyword = ref('');
+const articles = ref<Article[]>([]);
+const total = ref(0);
+const page = ref(1);
+const pageSize = 5;
+const loading = ref(false);
+const inputRef = ref<HTMLInputElement | null>(null);
 
-const totalPages = computed(() => Math.ceil(total.value / pageSize))
-const hasSearched = computed(() => keyword.value.trim().length > 0)
+const totalPages = computed(() => Math.ceil(total.value / pageSize));
+const hasSearched = computed(() => keyword.value.trim().length > 0);
 
 // 高亮关键词
 const highlight = (text: string) => {
-  const kw = keyword.value.trim()
-  if (!kw || !text) return text
+  const kw = keyword.value.trim();
+  if (!kw || !text) return text;
 
   // 转义正则特殊字符
-  const escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const regex = new RegExp(`(${escaped})`, 'gi')
+  const escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(`(${escaped})`, 'gi');
 
-  return text.replace(regex, '<mark>$1</mark>')
-}
+  return text.replace(regex, '<mark>$1</mark>');
+};
 
 const close = () => {
-  emit('update:modelValue', false)
+  emit('update:modelValue', false);
   setTimeout(() => {
-    keyword.value = ''
-    articles.value = []
-    total.value = 0
-    page.value = 1
-  }, 300)
-}
+    keyword.value = '';
+    articles.value = [];
+    total.value = 0;
+    page.value = 1;
+  }, 300);
+};
 
 const search = async (newPage = 1) => {
-  const searchTerm = keyword.value.trim()
+  const searchTerm = keyword.value.trim();
   if (!searchTerm) {
-    articles.value = []
-    total.value = 0
-    return
+    articles.value = [];
+    total.value = 0;
+    return;
   }
 
-  loading.value = true
-  page.value = newPage
+  loading.value = true;
+  page.value = newPage;
 
   try {
     const data = await searchArticles(searchTerm, {
       page: newPage,
-      page_size: pageSize
-    })
-    articles.value = data.list
-    total.value = data.total
-  } catch (error) {
-    articles.value = []
-    total.value = 0
+      page_size: pageSize,
+    });
+    articles.value = data.list;
+    total.value = data.total;
+  } catch {
+    articles.value = [];
+    total.value = 0;
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 // 防抖搜索（500ms）
-const debouncedSearch = useDebounceFn(() => search(1), 500)
+const debouncedSearch = useDebounceFn(() => search(1), 500);
 
 // 监听关键词变化，自动触发搜索
 watch(keyword, () => {
-  page.value = 1
-  debouncedSearch()
-})
+  page.value = 1;
+  debouncedSearch();
+});
 
 const prevPage = () => {
-  if (page.value > 1) search(page.value - 1)
-}
+  if (page.value > 1) search(page.value - 1);
+};
 
 const nextPage = () => {
-  if (page.value < totalPages.value) search(page.value + 1)
-}
+  if (page.value < totalPages.value) search(page.value + 1);
+};
 
-watch(() => props.modelValue, async (open) => {
-  if (open) {
-    await nextTick()
-    inputRef.value?.focus()
+watch(
+  () => props.modelValue,
+  async open => {
+    if (open) {
+      await nextTick();
+      inputRef.value?.focus();
+    }
   }
-})
+);
 </script>
 
 <template>
@@ -108,28 +111,41 @@ watch(() => props.modelValue, async (open) => {
           <!-- 标题栏 -->
           <div class="header">
             <span class="title">搜索</span>
-            <button class="close" @click="close"><i class="ri-close-line"></i></button>
+            <button class="close" @click="close"><i class="ri-close-line" /></button>
           </div>
 
           <!-- 搜索栏 -->
           <div class="search">
-            <input ref="inputRef" v-model="keyword" placeholder="输入关键词搜索..." @keyup.esc="close" />
-            <i v-if="loading" class="ri-loader-4-line spin loading-icon"></i>
+            <input
+              ref="inputRef"
+              v-model="keyword"
+              placeholder="输入关键词搜索..."
+              @keyup.esc="close"
+            />
+            <i v-if="loading" class="ri-loader-4-line spin loading-icon" />
           </div>
 
           <!-- 结果区域 -->
           <div v-if="hasSearched" class="results">
             <!-- 加载中 -->
             <div v-if="loading" class="loading">
-              <i class="ri-loader-4-line spin"></i>
+              <i class="ri-loader-4-line spin" />
             </div>
             <!-- 有结果 -->
             <template v-else-if="articles.length > 0">
-              <NuxtLink v-for="item in articles" :key="item.id" :to="item.url" class="item" @click="close">
-                <NuxtImg v-if="item.cover" :src="item.cover" :alt="item.title" loading="lazy"  />
+              <NuxtLink
+                v-for="item in articles"
+                :key="item.id"
+                :to="item.url"
+                class="item"
+                @click="close"
+              >
+                <NuxtImg v-if="item.cover" :src="item.cover" :alt="item.title" loading="lazy" />
                 <div class="info">
-                  <h3 v-html="highlight(item.title)"></h3>
-                  <p v-if="item.excerpt" class="excerpt" v-html="highlight(item.excerpt)"></p>
+                  <!-- eslint-disable-next-line vue/no-v-html -- 高亮关键词已转义特殊字符 -->
+                  <h3 v-html="highlight(item.title)" />
+                  <!-- eslint-disable-next-line vue/no-v-html -- 高亮关键词已转义特殊字符 -->
+                  <p v-if="item.excerpt" class="excerpt" v-html="highlight(item.excerpt)" />
                   <div class="meta">
                     <span>{{ formatDate(item.publish_time) }}</span>
                     <span v-if="item.category">{{ item.category.name }}</span>
@@ -139,18 +155,18 @@ watch(() => props.modelValue, async (open) => {
 
               <!-- 分页 -->
               <div v-if="totalPages > 1" class="pagination">
-                <button @click="prevPage" :disabled="page <= 1">
-                  <i class="ri-arrow-left-s-line"></i>
+                <button :disabled="page <= 1" @click="prevPage">
+                  <i class="ri-arrow-left-s-line" />
                 </button>
                 <span>{{ page }} / {{ totalPages }}</span>
-                <button @click="nextPage" :disabled="page >= totalPages">
-                  <i class="ri-arrow-right-s-line"></i>
+                <button :disabled="page >= totalPages" @click="nextPage">
+                  <i class="ri-arrow-right-s-line" />
                 </button>
               </div>
             </template>
             <!-- 无结果 -->
             <div v-else class="empty">
-              <i class="ri-search-line"></i>
+              <i class="ri-search-line" />
               <p>未找到相关文章</p>
             </div>
           </div>

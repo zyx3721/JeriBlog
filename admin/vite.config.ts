@@ -1,15 +1,15 @@
-import { defineConfig, loadEnv } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import { VitePWA } from 'vite-plugin-pwa'
-import { resolve } from 'path'
+import { defineConfig, loadEnv } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import { VitePWA } from 'vite-plugin-pwa';
+import { resolve } from 'path';
 
 export default defineConfig(({ mode }) => {
   // 加载环境变量
-  const env = loadEnv(mode, process.cwd(), '')
+  const env = loadEnv(mode, process.cwd(), '');
 
   // 从 VITE_API_URL 提取后端基础地址，提供默认值
-  const apiBaseUrl = env.VITE_API_URL || 'http://localhost:8080/api/v1'
-  const backendBaseUrl = apiBaseUrl.replace(/\/api\/v\d+$/, '') || 'http://localhost:8080'
+  const apiBaseUrl = env.VITE_API_URL || 'http://localhost:8080/api/v1';
+  const backendBaseUrl = apiBaseUrl.replace(/\/api\/v\d+$/, '') || 'http://localhost:8080';
 
   return {
     base: '/admin/',
@@ -28,19 +28,19 @@ export default defineConfig(({ mode }) => {
             {
               src: '/admin/pwa-192x192.png',
               sizes: '192x192',
-              type: 'image/png'
+              type: 'image/png',
             },
             {
               src: '/admin/pwa-512x512.png',
               sizes: '512x512',
               type: 'image/png',
-              purpose: 'any maskable'
-            }
-          ]
+              purpose: 'any maskable',
+            },
+          ],
         },
         includeAssets: ['favicon.ico', 'pwa-192x192.png', 'pwa-512x512.png'],
         devOptions: {
-          enabled: true
+          enabled: true,
         },
         workbox: {
           // 只缓存静态资源
@@ -48,23 +48,27 @@ export default defineConfig(({ mode }) => {
           // 排除大文件
           globIgnores: ['**/remixicon*.svg'],
           // 不缓存 API 请求
-          navigateFallbackDenylist: [/^\/api/]
-        }
-      })
+          navigateFallbackDenylist: [/^\/api/],
+        },
+      }),
     ],
     resolve: {
       alias: {
-        '@': resolve(__dirname, 'src')
-      }
+        '@': resolve(__dirname, 'src'),
+      },
     },
     server: {
       port: 5174,
       proxy: {
+        '/api': {
+          target: backendBaseUrl,
+          changeOrigin: true,
+        },
         '/uploads': {
           target: backendBaseUrl,
-          changeOrigin: true
-        }
-      }
+          changeOrigin: true,
+        },
+      },
     },
     build: {
       rollupOptions: {
@@ -75,7 +79,7 @@ export default defineConfig(({ mode }) => {
             // Element Plus UI 框架
             'element-plus': ['element-plus'],
             // CodeMirror 编辑器核心
-            'codemirror': [
+            codemirror: [
               '@codemirror/autocomplete',
               '@codemirror/commands',
               '@codemirror/lang-markdown',
@@ -84,12 +88,12 @@ export default defineConfig(({ mode }) => {
               '@codemirror/search',
               '@codemirror/state',
               '@codemirror/view',
-              'codemirror'
+              'codemirror',
             ],
             // Mermaid 图表库（体积较大，单独分割）
-            'mermaid': ['mermaid'],
+            mermaid: ['mermaid'],
             // Markdown 解析器及插件
-            'markdown': [
+            markdown: [
               'markdown-it',
               'markdown-it-anchor',
               'markdown-it-kbd',
@@ -98,15 +102,17 @@ export default defineConfig(({ mode }) => {
               'markdown-it-plugin-underline',
               'markdown-it-sub',
               'markdown-it-sup',
-              'markdown-it-task-lists'
+              'markdown-it-task-lists',
             ],
+            // KaTeX 数学公式渲染
+            katex: ['katex'],
             // 其他工具库
-            'utils': ['axios', 'dayjs', 'dompurify', '@vueuse/core'],
+            utils: ['axios', 'dayjs', 'dompurify', '@vueuse/core'],
             // 图表库
-            'echarts': ['echarts', 'echarts-wordcloud']
-          }
-        }
-      }
-    }
-  }
-})
+            echarts: ['echarts', 'echarts-wordcloud'],
+          },
+        },
+      },
+    },
+  };
+});

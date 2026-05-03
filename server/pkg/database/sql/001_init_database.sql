@@ -15,7 +15,7 @@
 -- 数据库：PostgreSQL 12+
 -- 编码：UTF-8
 -- 作用：创建表结构、索引、触发器、函数和示例数据
--- 版本：v1.0
+-- 版本：v3.0.0
 -- =============================================
 
 
@@ -316,7 +316,7 @@ COMMENT ON COLUMN rss_articles.update_type IS '更新类型：title-标题已更
 CREATE TABLE IF NOT EXISTS moments (
     id BIGSERIAL PRIMARY KEY,
     content JSONB NOT NULL,
-    is_publish BOOLEAN DEFAULT TRUE,
+    is_publish BOOLEAN,
     publish_time TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -466,7 +466,7 @@ CREATE TRIGGER tsvector_update
   EXECUTE FUNCTION articles_search_trigger();
 
 -- 创建 GIN 索引
-CREATE INDEX IF NOT EXISTS idx_articles_search_vector 
+CREATE INDEX IF NOT EXISTS idx_articles_search_vector
   ON articles USING GIN(search_vector);
 
 
@@ -757,7 +757,7 @@ BEGIN
     INSERT INTO menus (type, parent_id, title, url, icon, sort, is_enabled)
     VALUES ('aggregate', NULL, '个站', '', '', 1, TRUE)
     RETURNING id INTO aggregate_id;
-    
+
     INSERT INTO menus (type, parent_id, title, url, icon, sort, is_enabled) VALUES
     ('aggregate', aggregate_id, '主页', 'https://blog.jerion.cn', 'ri-home-line', 1, TRUE),
     ('aggregate', aggregate_id, '博客', 'https://blog.jerion.cn', 'ri-article-line', 2, TRUE),
@@ -777,7 +777,7 @@ BEGIN
     INSERT INTO menus (type, parent_id, title, url, icon, sort, is_enabled)
     VALUES ('footer', NULL, '导航', '', '', 1, TRUE)
     RETURNING id INTO nav_id;
-    
+
     INSERT INTO menus (type, parent_id, title, url, icon, sort, is_enabled) VALUES
     ('footer', nav_id, '文章归档', '/archive', '', 1, TRUE),
     ('footer', nav_id, '文章分类', '/categories', '', 2, TRUE),
@@ -788,7 +788,7 @@ BEGIN
     INSERT INTO menus (type, parent_id, title, url, icon, sort, is_enabled)
     VALUES ('footer', NULL, '直达', '', '', 2, TRUE)
     RETURNING id INTO zhida_id;
-    
+
     INSERT INTO menus (type, parent_id, title, url, icon, sort, is_enabled) VALUES
     ('footer', zhida_id, '申请友链', '/friend#apply', '', 1, TRUE);
 
@@ -796,7 +796,7 @@ BEGIN
     INSERT INTO menus (type, parent_id, title, url, icon, sort, is_enabled)
     VALUES ('footer', NULL, '服务', '', '', 3, TRUE)
     RETURNING id INTO service_id;
-    
+
     INSERT INTO menus (type, parent_id, title, url, icon, sort, is_enabled) VALUES
     ('footer', service_id, '服务状态', '/status', '', 2, TRUE),
     ('footer', service_id, '反馈投诉', '/feedback', '', 3, TRUE);
@@ -805,7 +805,7 @@ BEGIN
     INSERT INTO menus (type, parent_id, title, url, icon, sort, is_enabled)
     VALUES ('footer', NULL, '协议', '', '', 4, TRUE)
     RETURNING id INTO protocol_id;
-    
+
     INSERT INTO menus (type, parent_id, title, url, icon, sort, is_enabled) VALUES
     ('footer', protocol_id, 'Cookies', '/cookies', '', 1, TRUE),
     ('footer', protocol_id, '隐私协议', '/privacy', '', 2, TRUE),
@@ -816,7 +816,7 @@ BEGIN
     INSERT INTO menus (type, parent_id, title, url, icon, sort, is_enabled)
     VALUES ('footer', NULL, '支持', '', '', 5, TRUE)
     RETURNING id INTO support_id;
-    
+
     INSERT INTO menus (type, parent_id, title, url, icon, sort, is_enabled) VALUES
     ('footer', support_id, '腾讯云', 'https://cloud.tencent.com', '', 1, TRUE);
 

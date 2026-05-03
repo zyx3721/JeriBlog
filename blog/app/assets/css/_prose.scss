@@ -32,14 +32,25 @@
   --prose-quote-text: #5a6c7d;
 
   // 表格颜色
-  --prose-table-header-bg: linear-gradient(135deg, rgba(73, 177, 245, 0.1), rgba(73, 177, 245, 0.05));
+  --prose-table-header-bg: linear-gradient(
+    135deg,
+    rgba(73, 177, 245, 0.1),
+    rgba(73, 177, 245, 0.05)
+  );
   --prose-table-border: rgba(128, 128, 128, 0.15);
   --prose-table-row-even: rgba(128, 128, 128, 0.02);
   --prose-table-row-hover: rgba(73, 177, 245, 0.05);
   --prose-table-shadow: rgba(0, 0, 0, 0.1);
 
   // 分割线颜色
-  --prose-hr-bg: linear-gradient(to right, transparent, rgba(73, 177, 245, 0.2), rgba(73, 177, 245, 0.6), rgba(73, 177, 245, 0.2), transparent);
+  --prose-hr-bg: linear-gradient(
+    to right,
+    transparent,
+    rgba(73, 177, 245, 0.2),
+    rgba(73, 177, 245, 0.6),
+    rgba(73, 177, 245, 0.2),
+    transparent
+  );
   --prose-hr-dot: #49b1f5;
   --prose-hr-shadow: white;
 
@@ -98,14 +109,25 @@
   --prose-quote-text: #b8b8b8;
 
   // 表格颜色
-  --prose-table-header-bg: linear-gradient(135deg, rgba(73, 177, 245, 0.15), rgba(73, 177, 245, 0.08));
+  --prose-table-header-bg: linear-gradient(
+    135deg,
+    rgba(73, 177, 245, 0.15),
+    rgba(73, 177, 245, 0.08)
+  );
   --prose-table-border: rgba(255, 255, 255, 0.1);
   --prose-table-row-even: rgba(255, 255, 255, 0.02);
   --prose-table-row-hover: rgba(73, 177, 245, 0.08);
   --prose-table-shadow: rgba(0, 0, 0, 0.3);
 
   // 分割线颜色
-  --prose-hr-bg: linear-gradient(to right, transparent, rgba(73, 177, 245, 0.3), rgba(73, 177, 245, 0.7), rgba(73, 177, 245, 0.3), transparent);
+  --prose-hr-bg: linear-gradient(
+    to right,
+    transparent,
+    rgba(73, 177, 245, 0.3),
+    rgba(73, 177, 245, 0.7),
+    rgba(73, 177, 245, 0.3),
+    transparent
+  );
   --prose-hr-dot: #49b1f5;
   --prose-hr-shadow: #121212;
 
@@ -136,7 +158,14 @@
 // ========== Markdown 内容排版样式 ==========
 .markdown-content {
   // ===== 基础设置 =====
-  font-family: 'LXGW WenKai Lite', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+  font-family:
+    'LXGW WenKai Lite',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'Roboto',
+    'Helvetica Neue',
+    sans-serif;
   font-size: 1rem;
   line-height: 1.8;
   color: var(--prose-text);
@@ -226,8 +255,8 @@
     }
 
     // 外部链接图标
-    &[target="_blank"]::after {
-      content: "↗";
+    &[target='_blank']::after {
+      content: '↗';
       margin-left: 0.2rem;
       font-size: 0.8rem;
       opacity: 0.6;
@@ -273,19 +302,19 @@
     margin: 0.5rem 0;
     line-height: 1.75;
 
-    >p {
+    > p {
       margin: 0.5rem 0;
     }
 
     // 任务列表
     &.task-list-item,
-    &:has(> input[type="checkbox"]) {
+    &:has(> input[type='checkbox']) {
       list-style-type: none;
       margin-left: -1.5rem;
     }
 
     // 任务列表复选框样式
-    input[type="checkbox"] {
+    input[type='checkbox'] {
       margin-right: 0.5rem;
       pointer-events: none;
     }
@@ -336,7 +365,7 @@
       font-style: italic;
 
       &::before {
-        content: "—— ";
+        content: '—— ';
       }
     }
   }
@@ -385,7 +414,9 @@
           font-size: 24px;
           font-style: normal;
           color: var(--prose-codeblock-lang);
-          transition: color 0.2s ease, transform 0.3s ease;
+          transition:
+            color 0.2s ease,
+            transform 0.3s ease;
         }
 
         &:hover i {
@@ -438,7 +469,7 @@
 
       code {
         display: block;
-        padding: .5rem 1rem .5rem 0;
+        padding: 0.5rem 1rem 0.5rem 0;
         overflow-x: visible; // 移除横向滚动
         background: none;
         border: none;
@@ -455,7 +486,7 @@
         .line-number {
           flex-shrink: 0;
           width: 3.5rem; // 支持三位数行号
-          padding-right: .5rem;
+          padding-right: 0.5rem;
           margin-right: 1rem;
           text-align: right;
           color: var(--prose-codeblock-line-number);
@@ -570,7 +601,7 @@
 
     // 中间装饰 - 三段（中间方块，两边长条）
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       left: 50%;
       top: 50%;
@@ -578,12 +609,11 @@
       width: 6px;
       height: 6px;
       background: var(--prose-hr-dot);
-      box-shadow:
-        0 0 0 3px var(--prose-hr-shadow);
+      box-shadow: 0 0 0 3px var(--prose-hr-shadow);
     }
 
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       left: 50%;
       top: 50%;
@@ -666,9 +696,9 @@
 
   // 标记/高亮
   mark {
-    background: linear-gradient(to bottom, transparent 50%, var(--prose-mark-bg) 50%);
-    padding: 0.1rem 0.2rem;
-    border-radius: 2px;
+    background: var(--prose-mark-bg);
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
     color: inherit;
   }
 
@@ -698,7 +728,9 @@
     background: var(--prose-kbd-bg);
     border: 1px solid var(--prose-kbd-border);
     border-radius: 4px;
-    box-shadow: 0 2px 0 var(--prose-kbd-shadow), inset 0 1px 0 var(--prose-kbd-inner-shadow);
+    box-shadow:
+      0 2px 0 var(--prose-kbd-shadow),
+      inset 0 1px 0 var(--prose-kbd-inner-shadow);
     color: var(--prose-kbd-text);
     white-space: nowrap;
   }
@@ -708,6 +740,53 @@
     text-decoration: underline dotted;
     cursor: help;
     text-decoration-color: var(--prose-link);
+  }
+
+  // ===== KaTeX 数学公式 =====
+  // 行内公式
+  .katex-inline {
+    display: inline;
+  }
+
+  // 块级公式（独立行展示）
+  .katex-block {
+    display: block;
+    margin: 1.5rem 0;
+    text-align: center;
+    overflow-x: auto;
+    padding: 0.5rem 0;
+
+    .katex {
+      font-size: 1.15em;
+    }
+  }
+
+  // 行内公式中的 katex 容器
+  .katex {
+    font-size: 1em;
+    line-height: 1.6;
+  }
+
+  // 确保公式在暗色主题下可见
+  .katex .base {
+    color: inherit;
+  }
+
+  // MathML 辅助（屏幕阅读器用，视觉上隐藏）
+  .katex .katex-mathml {
+    position: absolute;
+    clip: rect(1px, 1px, 1px, 1px);
+    padding: 0;
+    border: 0;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+  }
+
+  // 公式错误提示样式
+  .katex-error {
+    color: #cc0000;
+    font-style: italic;
   }
 
   // ===== 自定义块设计系统 =====
@@ -828,7 +907,7 @@
     }
 
     .custom-tabs-content {
-      >* {
+      > * {
         &:first-child {
           margin-top: 0;
         }
@@ -883,10 +962,10 @@
       transition: max-height 0.35s ease;
 
       // 使用内层容器处理 padding，避免折叠时的抖动
-      >div {
+      > div {
         padding: 0 16px 16px;
 
-        >* {
+        > * {
           &:first-child {
             margin-top: 0;
           }
@@ -1014,7 +1093,151 @@
         transition: transform 0.3s ease;
       }
     }
+  }
 
+  // 视频播放器
+  .custom-video {
+    margin: 1.5em 0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #000;
+
+    video,
+    iframe {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      border: none;
+      display: block;
+    }
+  }
+
+  // 音频播放器
+  .custom-audio {
+    margin: 1.5em 0;
+    border-radius: 8px;
+    background: var(--prose-custom-bg);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .custom-audio-type {
+      padding: 6px 16px;
+      font-size: 0.75em;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: var(--prose-meta);
+      background: rgba(76, 175, 80, 0.08);
+      border-bottom: 1px solid var(--prose-custom-border);
+      transition: all 0.3s ease;
+    }
+
+    .custom-audio-main {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+    }
+
+    .custom-audio-icon {
+      position: relative;
+      flex-shrink: 0;
+      width: 64px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      background: var(--prose-custom-bg);
+      border: 1px solid var(--prose-custom-border);
+      cursor: pointer;
+
+      > i {
+        font-size: 1.6em;
+        font-style: normal;
+        color: var(--prose-meta);
+        transition: opacity 0.2s ease;
+      }
+
+      .custom-audio-btn {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        border-radius: 8px;
+        color: #fff;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+
+        i {
+          font-size: 1.4em;
+          font-style: normal;
+        }
+      }
+
+      &:hover .custom-audio-btn {
+        opacity: 1;
+      }
+
+      &:hover > i {
+        opacity: 0;
+      }
+    }
+
+    .custom-audio-content {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .custom-audio-info {
+      font-weight: 600;
+      font-size: 1.1em;
+      color: var(--prose-heading);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .custom-audio-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .custom-audio-progress {
+      flex: 1;
+      height: 4px;
+      background: var(--prose-custom-border);
+      border-radius: 2px;
+      cursor: pointer;
+      position: relative;
+
+      .custom-audio-progress-bar {
+        height: 100%;
+        background: var(--prose-link);
+        border-radius: 2px;
+        width: 0;
+        transition: width 0.1s linear;
+      }
+    }
+
+    .custom-audio-time {
+      flex-shrink: 0;
+      font-size: 0.75em;
+      color: var(--prose-meta);
+      min-width: 80px;
+      text-align: right;
+    }
   }
 
   // ===== 响应式调整 =====
@@ -1109,7 +1332,7 @@
         padding: 8px 12px;
       }
 
-      .custom-fold-content>div {
+      .custom-fold-content > div {
         padding: 0 12px 12px;
       }
     }
@@ -1184,195 +1407,3 @@
   background: rgba(249, 250, 251, 0.8);
   aspect-ratio: auto;
 }
-// ===== KaTeX 数学公式 =====
-// 行内公式
-.katex-inline {
-  display: inline;
-}
-
-// 块级公式（独立行展示）
-.katex-block {
-  display: block;
-  margin: 1.5rem 0;
-  text-align: center;
-  overflow-x: auto;
-  padding: 0.5rem 0;
-
-  .katex {
-    font-size: 1.15em;
-  }
-}
-
-// 行内公式中的 katex 容器
-.katex {
-  font-size: 1em;
-  line-height: 1.6;
-}
-
-// 确保公式在暗色主题下可见
-.katex .base {
-  color: inherit;
-}
-
-// MathML 辅助（屏幕阅读器用，视觉上隐藏）
-.katex .katex-mathml {
-  position: absolute;
-  clip: rect(1px, 1px, 1px, 1px);
-  padding: 0;
-  border: 0;
-  height: 1px;
-  width: 1px;
-  overflow: hidden;
-}
-
-// 公式错误提示样式
-.katex-error {
-  color: #cc0000;
-  font-style: italic;
-}
-
-// ===== 视频播放器 =====
-.custom-video {
-  margin: 1.5em 0;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #000;
-
-  video,
-  iframe {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 9;
-    border: none;
-    display: block;
-  }
-}
-
-// ===== 音频播放器 =====
-.custom-audio {
-  margin: 1.5em 0;
-  border-radius: 8px;
-  background: var(--prose-custom-bg);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-  overflow: hidden;
-  transition: box-shadow 0.3s ease;
-
-  &:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  }
-
-  .custom-audio-type {
-    padding: 6px 16px;
-    font-size: 0.75em;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    color: var(--prose-meta);
-    background: rgba(76, 175, 80, 0.08);
-    border-bottom: 1px solid var(--prose-custom-border);
-    transition: all 0.3s ease;
-  }
-
-  .custom-audio-main {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-  }
-
-  .custom-audio-icon {
-    position: relative;
-    flex-shrink: 0;
-    width: 64px;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    background: var(--prose-custom-bg);
-    border: 1px solid var(--prose-custom-border);
-    cursor: pointer;
-
-    > i {
-      font-size: 1.6em;
-      font-style: normal;
-      color: var(--prose-meta);
-      transition: opacity 0.2s ease;
-    }
-
-    .custom-audio-btn {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      border-radius: 8px;
-      color: #fff;
-      cursor: pointer;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-
-      i {
-        font-size: 1.4em;
-        font-style: normal;
-      }
-    }
-
-    &:hover .custom-audio-btn {
-      opacity: 1;
-    }
-
-    &:hover > i {
-      opacity: 0;
-    }
-  }
-
-  .custom-audio-content {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .custom-audio-info {
-    font-weight: 600;
-    font-size: 1.1em;
-    color: var(--prose-heading);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .custom-audio-controls {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .custom-audio-progress {
-    flex: 1;
-    height: 4px;
-    background: var(--prose-custom-border);
-    border-radius: 2px;
-    cursor: pointer;
-    position: relative;
-
-    .custom-audio-progress-bar {
-      height: 100%;
-      background: var(--prose-link);
-      border-radius: 2px;
-      width: 0;
-      transition: width 0.1s linear;
-    }
-  }
-
-  .custom-audio-time {
-    flex-shrink: 0;
-    font-size: 0.75em;
-    color: var(--prose-meta);
-    min-width: 80px;
-    text-align: right;
-  }
-}
-

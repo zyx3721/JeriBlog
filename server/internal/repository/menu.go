@@ -107,17 +107,17 @@ func (r *MenuRepository) loadChildren(menu *model.Menu, isEnabled *bool) error {
 	return nil
 }
 
-// HasChildren 检查菜单是否有子菜单
-func (r *MenuRepository) HasChildren(id uint) (bool, error) {
-	var count int64
-	err := r.db.Model(&model.Menu{}).Where("parent_id = ?", id).Count(&count).Error
-	return count > 0, err
-}
-
 // ExistsByIcon 检查是否有菜单图标引用该文件
 func (r *MenuRepository) ExistsByIcon(url string) (bool, error) {
 	var count int64
 	err := r.db.Model(&model.Menu{}).Where("icon = ?", url).Count(&count).Error
+	return count > 0, err
+}
+
+// HasChildren 检查菜单是否有子菜单
+func (r *MenuRepository) HasChildren(id uint) (bool, error) {
+	var count int64
+	err := r.db.Model(&model.Menu{}).Where("parent_id = ?", id).Count(&count).Error
 	return count > 0, err
 }
 

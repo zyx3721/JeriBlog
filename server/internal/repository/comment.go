@@ -126,8 +126,15 @@ func (r *CommentRepository) GetForWeb(ctx context.Context, id uint) (*model.Comm
 	return &comment, nil
 }
 
-// List 获取评论列表（后台管理）
-func (r *CommentRepository) List(ctx context.Context, offset, limit int, keyword string, status *int) ([]model.Comment, int64, error) {
+// List 获取评论列表
+func (r *CommentRepository) List(
+	ctx context.Context,
+	offset, limit int,
+	keyword string,
+	status *int,
+	isDeleted, isSub *bool,
+	startTime, endTime string,
+) ([]model.Comment, int64, error) {
 	var comments []model.Comment
 	var total int64
 
@@ -151,7 +158,7 @@ func (r *CommentRepository) List(ctx context.Context, offset, limit int, keyword
 
 		// 构建搜索条件
 		query = query.Joins("LEFT JOIN users ON users.id = comments.user_id").
-			Joins("LEFT JOIN articles ON comments.target_type = 'article' AND articles.slug = comments.target_key")
+			Joins("LEFT JOIN articles ON comments.target_type = 'article' AND  (articles.id = comments.target_id OR articles.slug = comments.target_key)")
 
 		// 基础搜索条件
 		conditions := "comments.content LIKE ? OR users.nickname LIKE ? OR users.email LIKE ? OR articles.title LIKE ?"
@@ -187,9 +194,35 @@ func (r *CommentRepository) List(ctx context.Context, offset, limit int, keyword
 		query = query.Where(conditions, args...)
 	}
 
-	// 状态过滤
+	// 状态筛选
 	if status != nil {
 		query = query.Where("comments.status = ?", *status)
+	}
+
+	// 删除状态筛选
+	if isDeleted != nil {
+		if *isDeleted {
+			query = query.Where("comments.deleted_at IS NOT NULL")
+		} else {
+			query = query.Where("comments.deleted_at IS NULL")
+		}
+	}
+
+	// 评论类型筛选（子评论/父评论）
+	if isSub != nil {
+		if *isSub {
+			query = query.Where("comments.parent_id IS NOT NULL")
+		} else {
+			query = query.Where("comments.parent_id IS NULL")
+		}
+	}
+
+	// 时间范围筛选
+	if startTime != "" {
+		query = query.Where("comments.created_at >= ?", startTime)
+	}
+	if endTime != "" {
+		query = query.Where("comments.created_at <= ?", endTime+" 23:59:59")
 	}
 
 	if err := query.Count(&total).Error; err != nil {
@@ -259,15 +292,21 @@ func (r *CommentRepository) UpdateStatus(ctx context.Context, id uint, status in
 		Update("status", status).Error
 }
 
-// Delete 软删除评论
-func (r *CommentRepository) Delete(ctx context.Context, id uint) error {
+// DeleteForWeb 软删除评论
+func (r *CommentRepository) DeleteForWeb(ctx context.Context, id uint) error {
 	// 只删除评论本身，子评论保留
 	return r.db.WithContext(ctx).Delete(&model.Comment{}, id).Error
 }
 
-// HardDelete 硬删除评论
-func (r *CommentRepository) HardDelete(ctx context.Context, id uint) error {
-	// 永久删除评论本身，子评论保留
+// Delete 硬删除评论
+func (r *CommentRepository) Delete(ctx context.Context, id uint) error {
+	// 删除子评论
+	if err := r.db.WithContext(ctx).Unscoped().
+		Where("root_id = ? OR parent_id = ?", id, id).
+		Delete(&model.Comment{}).Error; err != nil {
+		return err
+	}
+	// 删除评论本身
 	return r.db.WithContext(ctx).Unscoped().Delete(&model.Comment{}, id).Error
 }
 

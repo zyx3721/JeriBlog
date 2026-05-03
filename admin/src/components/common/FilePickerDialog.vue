@@ -10,16 +10,17 @@
 -->
 
 <template>
-  <el-dialog v-model="dialogVisible" title="选择文件" :width="dialogWidth" :close-on-click-modal="false" @close="handleClose">
+  <el-dialog
+    v-model="dialogVisible"
+    title="选择文件"
+    :width="dialogWidth"
+    :close-on-click-modal="false"
+    @close="handleClose"
+  >
     <div class="file-picker-container">
       <!-- 搜索栏 -->
       <div class="filter-bar">
-        <el-input
-          v-model="searchKeyword"
-          placeholder="搜索文件名"
-          clearable
-          @input="handleSearch"
-        >
+        <el-input v-model="searchKeyword" placeholder="搜索文件名" clearable @input="handleSearch">
           <template #prefix>
             <i class="ri-search-line"></i>
           </template>
@@ -36,7 +37,11 @@
             v-for="file in fileList"
             :key="file.id"
             class="file-item"
-            :class="{ selected: props.multiple ? selectedFiles.some(f => f.id === file.id) : selectedFile?.id === file.id }"
+            :class="{
+              selected: props.multiple
+                ? selectedFiles.some(f => f.id === file.id)
+                : selectedFile?.id === file.id,
+            }"
             @click="handleSelectFile(file)"
           >
             <div class="file-preview">
@@ -49,7 +54,14 @@
                 <span>{{ formatFileSize(file.file_size) }}</span>
               </div>
             </div>
-            <div v-if="props.multiple ? selectedFiles.some(f => f.id === file.id) : selectedFile?.id === file.id" class="selected-badge">
+            <div
+              v-if="
+                props.multiple
+                  ? selectedFiles.some(f => f.id === file.id)
+                  : selectedFile?.id === file.id
+              "
+              class="selected-badge"
+            >
               <i class="ri-check-line"></i>
             </div>
           </div>
@@ -83,8 +95,14 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="handleClose">取消</el-button>
-        <el-button type="primary" :disabled="props.multiple ? selectedFiles.length === 0 : !selectedFile" @click="handleConfirm">
-          确定{{ props.multiple && selectedFiles.length > 0 ? `（已选${selectedFiles.length}个）` : '' }}
+        <el-button
+          type="primary"
+          :disabled="props.multiple ? selectedFiles.length === 0 : !selectedFile"
+          @click="handleConfirm"
+        >
+          确定{{
+            props.multiple && selectedFiles.length > 0 ? `（已选${selectedFiles.length}个）` : ''
+          }}
         </el-button>
       </div>
     </template>
@@ -92,179 +110,178 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import { ElMessage } from 'element-plus'
-import { useDebounceFn } from '@vueuse/core'
-import { getFileList } from '@/api/file'
-import type { FileInfo, FileQuery } from '@/types/file'
+import { computed, ref, watch } from 'vue';
+import { ElMessage } from 'element-plus';
+import { useDebounceFn } from '@vueuse/core';
+import { getFileList } from '@/api/file';
+import type { FileInfo, FileQuery } from '@/types/file';
 
 interface Props {
-  modelValue: boolean
-  fileType?: string // 限制文件类型，如 'image'
-  multiple?: boolean // 是否支持多选
-  accept?: string // 文件类型过滤，如 'image/*' 或 'video/*'
+  modelValue: boolean;
+  fileType?: string; // 限制文件类型，如 'image'
+  multiple?: boolean; // 是否支持多选
+  accept?: string; // 文件类型过滤，如 'image/*' 或 'video/*'
 }
 
 interface Emits {
-  (e: 'update:modelValue', value: boolean): void
-  (e: 'confirm', file: FileInfo): void
-  (e: 'select', files: FileInfo[]): void // 多选时触发
+  (e: 'update:modelValue', value: boolean): void;
+  (e: 'confirm', file: FileInfo): void;
+  (e: 'select', files: FileInfo[]): void; // 多选时触发
 }
 
 const props = withDefaults(defineProps<Props>(), {
   fileType: '',
   multiple: false,
-  accept: ''
-})
+  accept: '',
+});
 
-const emit = defineEmits<Emits>()
+const emit = defineEmits<Emits>();
 
-const dialogVisible = ref(false)
-const loading = ref(false)
-const fileList = ref<FileInfo[]>([])
-const selectedFile = ref<FileInfo | null>(null)
-const selectedFiles = ref<FileInfo[]>([]) // 多选时使用
-const currentPage = ref(1)
-const pageSize = ref(20)
-const total = ref(0)
-const searchKeyword = ref('')
+const dialogVisible = ref(false);
+const loading = ref(false);
+const fileList = ref<FileInfo[]>([]);
+const selectedFile = ref<FileInfo | null>(null);
+const selectedFiles = ref<FileInfo[]>([]); // 多选时使用
+const currentPage = ref(1);
+const pageSize = ref(20);
+const total = ref(0);
+const searchKeyword = ref('');
 
 const resolvedFileType = computed(() => {
-  if (props.fileType) return props.fileType
-  if (props.accept.includes('image')) return 'image'
-  if (props.accept.includes('video')) return 'video'
-  return ''
-})
+  if (props.fileType) return props.fileType;
+  if (props.accept.includes('image')) return 'image';
+  if (props.accept.includes('video')) return 'video';
+  return '';
+});
 
 // 响应式对话框宽度
 const dialogWidth = computed(() => {
-  const width = window.innerWidth
-  if (width <= 768) return '95%'
-  if (width <= 1024) return '80%'
-  if (width <= 1440) return '700px'
-  return '800px'
-})
+  const width = window.innerWidth;
+  if (width <= 768) return '95%';
+  if (width <= 1024) return '80%';
+  if (width <= 1440) return '700px';
+  return '800px';
+});
 
 // 监听 modelValue 变化
 watch(
   () => props.modelValue,
-  (val) => {
-    dialogVisible.value = val
+  val => {
+    dialogVisible.value = val;
     if (val) {
       // 打开对话框时重置并加载数据
-      selectedFile.value = null
-      selectedFiles.value = []
-      searchKeyword.value = ''
-      currentPage.value = 1
-      fetchFileList()
+      selectedFile.value = null;
+      selectedFiles.value = [];
+      searchKeyword.value = '';
+      currentPage.value = 1;
+      fetchFileList();
     }
   },
   { immediate: true }
-)
+);
 
 // 监听 dialogVisible 变化
-watch(dialogVisible, (val) => {
-  emit('update:modelValue', val)
-})
+watch(dialogVisible, val => {
+  emit('update:modelValue', val);
+});
 
 // 获取文件列表
 const fetchFileList = async () => {
   try {
-    loading.value = true
+    loading.value = true;
 
     const params: FileQuery = {
       page: currentPage.value,
-      page_size: pageSize.value > 0 ? pageSize.value : 1000
-    }
+      page_size: pageSize.value > 0 ? pageSize.value : 1000,
+    };
 
-    const keyword = searchKeyword.value.trim()
+    const keyword = searchKeyword.value.trim();
     if (keyword) {
-      params.keyword = keyword
+      params.keyword = keyword;
     }
 
     if (resolvedFileType.value) {
-      params.type = resolvedFileType.value
+      params.file_type = resolvedFileType.value;
     }
 
-    const response = await getFileList(params)
+    const response = await getFileList(params);
 
-    fileList.value = response.list || []
-    total.value = response.total || 0
-  } catch (error: any) {
-    console.error('获取文件列表失败:', error)
-    ElMessage.error(error.message || '获取文件列表失败')
-    fileList.value = []
-    total.value = 0
+    fileList.value = response.list || [];
+    total.value = response.total || 0;
+  } catch (error: unknown) {
+    ElMessage.error((error as Error)?.message || '获取文件列表失败');
+    fileList.value = [];
+    total.value = 0;
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 // 判断是否为图片
 const isImage = (fileType: string) => {
-  return fileType.startsWith('image/')
-}
+  return fileType.startsWith('image/');
+};
 
 // 格式化文件大小
 const formatFileSize = (size: number) => {
-  if (size < 1024) return `${size} B`
-  if (size < 1024 * 1024) return `${(size / 1024).toFixed(2)} KB`
-  return `${(size / (1024 * 1024)).toFixed(2)} MB`
-}
+  if (size < 1024) return `${size} B`;
+  if (size < 1024 * 1024) return `${(size / 1024).toFixed(2)} KB`;
+  return `${(size / (1024 * 1024)).toFixed(2)} MB`;
+};
 
 // 选择文件
 const handleSelectFile = (file: FileInfo) => {
   if (props.multiple) {
     // 多选模式
-    const index = selectedFiles.value.findIndex(f => f.id === file.id)
+    const index = selectedFiles.value.findIndex(f => f.id === file.id);
     if (index > -1) {
-      selectedFiles.value.splice(index, 1)
+      selectedFiles.value.splice(index, 1);
     } else {
-      selectedFiles.value.push(file)
+      selectedFiles.value.push(file);
     }
   } else {
     // 单选模式
-    selectedFile.value = file
+    selectedFile.value = file;
   }
-}
+};
 
 // 搜索（使用防抖）
 const handleSearch = useDebounceFn(() => {
-  currentPage.value = 1
-  fetchFileList()
-}, 500)
+  currentPage.value = 1;
+  fetchFileList();
+}, 500);
 
 // 分页变化
 const handlePageChange = () => {
-  fetchFileList()
-}
+  fetchFileList();
+};
 
 const handleSizeChange = () => {
-  currentPage.value = 1
-  fetchFileList()
-}
+  currentPage.value = 1;
+  fetchFileList();
+};
 
 // 确认选择
 const handleConfirm = () => {
   if (props.multiple) {
     if (selectedFiles.value.length > 0) {
-      emit('select', selectedFiles.value)
-      handleClose()
+      emit('select', selectedFiles.value);
+      handleClose();
     }
   } else {
     if (selectedFile.value) {
-      emit('confirm', selectedFile.value)
-      handleClose()
+      emit('confirm', selectedFile.value);
+      handleClose();
     }
   }
-}
+};
 
 // 关闭对话框
 const handleClose = () => {
-  dialogVisible.value = false
-  selectedFile.value = null
-  selectedFiles.value = []
-}
+  dialogVisible.value = false;
+  selectedFile.value = null;
+  selectedFiles.value = [];
+};
 </script>
 
 <style scoped lang="scss">

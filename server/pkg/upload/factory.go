@@ -82,7 +82,6 @@ func InitializeUploadSystem(globalCfg *config.Config, router *gin.Engine) *Manag
 	uploadStorage := MustNewStorage(&globalCfg.Upload)
 
 	// 2. 注册本地静态文件服务
-	router.Static("/uploads", "./uploads")
 	_ = storage.NewHelper(uploadStorage).CreateUploadDir("./uploads")
 
 	// 3. 创建并返回上传管理器

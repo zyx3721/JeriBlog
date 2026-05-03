@@ -374,9 +374,9 @@ func (s *StatsService) DeleteVisitLog(id uint) error {
 	return s.statsRepo.DeleteVisitLog(id)
 }
 
-// DeleteVisitLogsByCondition 根据条件批量删除访问日志
-func (s *StatsService) DeleteVisitLogsByCondition(req *dto.GetVisitLogsRequest) (int64, error) {
-	return s.statsRepo.DeleteVisitLogsByCondition(req)
+// BatchDeleteVisitLogs 批量删除访问日志
+func (s *StatsService) BatchDeleteVisitLogs(ids []uint) error {
+	return s.statsRepo.BatchDeleteVisitLogs(ids)
 }
 
 // ============ 辅助方法 ============
@@ -384,6 +384,7 @@ func (s *StatsService) DeleteVisitLogsByCondition(req *dto.GetVisitLogsRequest) 
 // generateVisitorID 生成访客唯一标识
 func (s *StatsService) generateVisitorID(ip, userAgent string) string {
 	data := fmt.Sprintf("%s:%s", ip, userAgent)
+	// #nosec G401 - MD5 用于生成访客标识，不需要加密安全
 	hash := md5.Sum([]byte(data))
 	return fmt.Sprintf("%x", hash)
 }

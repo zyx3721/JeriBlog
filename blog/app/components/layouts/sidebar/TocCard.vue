@@ -10,136 +10,105 @@
 -->
 
 <script setup lang="ts">
-const { currentArticle } = useCurrentArticle()
-const activeId = ref<string>('')
-const tocListRef = ref<HTMLElement | null>(null)
+const { currentArticle } = useCurrentArticle();
+const activeId = ref<string>('');
+const tocListRef = ref<HTMLElement | null>(null);
 
 // 从当前文章中提取目录
 const toc = computed<TocItem[]>(() => {
-  if (!currentArticle.value?.content) return []
-  return extractToc(currentArticle.value.content)
-})
+  if (!currentArticle.value?.content) return [];
+  return extractToc(currentArticle.value.content);
+});
 
 // 判断是否有目录项
-const hasToc = computed(() => toc.value.length > 0)
+const hasToc = computed(() => toc.value.length > 0);
 
 // 滚动目录列表，使激活项居中
 const scrollTocToActive = (id: string) => {
-  if (!tocListRef.value) return
+  if (!tocListRef.value) return;
 
   nextTick(() => {
-    const activeButton = tocListRef.value?.querySelector(`[data-toc-id="${id}"]`) as HTMLElement
-    if (!activeButton) return
+    const activeButton = tocListRef.value?.querySelector(`[data-toc-id="${id}"]`) as HTMLElement;
+    if (!activeButton) return;
 
-    const container = tocListRef.value!
-    const containerHeight = container.clientHeight
-    const buttonTop = activeButton.offsetTop
-    const buttonHeight = activeButton.clientHeight
+    const container = tocListRef.value!;
+    const containerHeight = container.clientHeight;
+    const buttonTop = activeButton.offsetTop;
+    const buttonHeight = activeButton.clientHeight;
 
     // 计算让按钮居中的滚动位置
-    const targetScroll = buttonTop - (containerHeight / 2) + (buttonHeight / 2)
+    const targetScroll = buttonTop - containerHeight / 2 + buttonHeight / 2;
 
     // 平滑滚动到目标位置
     container.scrollTo({
       top: targetScroll,
-      behavior: 'smooth'
-    })
-  })
-}
+      behavior: 'smooth',
+    });
+  });
+};
 
 // 滚动到指定标题
 const scrollToHeading = (id: string) => {
-  scrollToElement(`#${id}`, { block: 'start' })
-}
+  scrollToElement(`#${id}`, { block: 'start' });
+};
 
 // 监听滚动，高亮当前阅读项
 const handleScroll = () => {
-  const referencePoint = 64 // 参考线位置（距视口顶部64px）
-  const headings = toc.value
+  const referencePoint = 64; // 参考线位置（距视口顶部64px）
+  const headings = toc.value;
 
-  if (headings.length === 0) return
+  if (headings.length === 0) return;
 
-  let closestHeading: TocItem | undefined = undefined
-  let closestDistance = Infinity
+  let closestHeading: TocItem | undefined = undefined;
+  let closestDistance = Infinity;
 
   // 找到距离参考线最近的标题
   for (const heading of headings) {
-    const element = document.getElementById(heading.id)
-    if (!element) continue
+    const element = document.getElementById(heading.id);
+    if (!element) continue;
 
-    const rect = element.getBoundingClientRect()
-    const distanceToReference = Math.abs(rect.top - referencePoint)
+    const rect = element.getBoundingClientRect();
+    const distanceToReference = Math.abs(rect.top - referencePoint);
 
     // 只考虑在参考线上方或稍微下方的标题（不超过50px�?    // 且距离参考线最近的
     if (rect.top <= referencePoint + 50 && distanceToReference < closestDistance) {
-      closestDistance = distanceToReference
-      closestHeading = heading
+      closestDistance = distanceToReference;
+      closestHeading = heading;
     }
   }
 
   // 如果找到了，激活它；否则激活第一个标题
-  const targetHeading = closestHeading || headings[0]
+  const targetHeading = closestHeading || headings[0];
   if (targetHeading && targetHeading.id !== activeId.value) {
-    activeId.value = targetHeading.id
-    scrollTocToActive(targetHeading.id)
+    activeId.value = targetHeading.id;
+    scrollTocToActive(targetHeading.id);
   }
-}
-
-// 阻止目录滚动时触发页面滚动
-const handleTocWheel = (e: WheelEvent) => {
-  if (!tocListRef.value) return
-
-  const container = tocListRef.value
-  const { scrollTop, scrollHeight, clientHeight } = container
-  const atTop = scrollTop === 0
-  const atBottom = scrollTop + clientHeight >= scrollHeight - 1
-
-  // 向上滚动
-  if (e.deltaY < 0) {
-    if (atTop) {
-      // 已经在顶部，阻止默认行为（防止触发外部滚动）
-      e.preventDefault()
-    }
-  }
-  // 向下滚动
-  else if (e.deltaY > 0) {
-    if (atBottom) {
-      // 已经在底部，阻止默认行为（防止触发外部滚动）
-      e.preventDefault()
-    }
-  }
-
-  // 阻止事件冒泡
-  e.stopPropagation()
-}
+};
 
 onMounted(() => {
   // 使用 VueUse 自动管理事件监听（自动清理）
-  useEventListener(window, 'scroll', handleScroll, { passive: true })
-
-  // 监听目录容器的滚动事件，阻止冒泡
-  if (tocListRef.value) {
-    useEventListener(tocListRef.value, 'wheel', handleTocWheel, { passive: false })
-  }
-
-  handleScroll() // 初始化当前阅读项
-})
+  useEventListener(window, 'scroll', handleScroll, { passive: true });
+  handleScroll(); // 初始化当前阅读项
+});
 </script>
 
 <template>
-  <div class="card-widget" v-if="hasToc">
+  <div v-if="hasToc" class="card-widget">
     <div class="item-headline">
-      <i class="ri-list-unordered"></i>
+      <i class="ri-list-unordered" />
       <span>目录</span>
     </div>
 
-    <nav ref="tocListRef" class="toc-list" aria-label="文章目录">
-      <button v-for="item in toc" :key="item.id" :data-toc-id="item.id" :class="[
-        'toc-item',
-        `toc-level-${item.level}`,
-        { 'active': activeId === item.id }
-      ]" @click="scrollToHeading(item.id)" :aria-label="`跳转到 ${item.text}`"
-        :aria-current="activeId === item.id ? 'location' : undefined">
+    <nav ref="tocListRef" class="toc-list" aria-label="文章目录" data-lenis-prevent>
+      <button
+        v-for="item in toc"
+        :key="item.id"
+        :data-toc-id="item.id"
+        :class="['toc-item', `toc-level-${item.level}`, { active: activeId === item.id }]"
+        :aria-label="`跳转到 ${item.text}`"
+        :aria-current="activeId === item.id ? 'location' : undefined"
+        @click="scrollToHeading(item.id)"
+      >
         <span class="toc-text">{{ item.text }}</span>
       </button>
     </nav>
@@ -152,18 +121,20 @@ onMounted(() => {
   padding: 0;
   max-height: calc(100vh - 176px);
   overflow-y: auto;
-  overflow-x: hidden;
   scroll-behavior: smooth;
-  overscroll-behavior: contain;
 
   // 自定义滚动条样式
   &::-webkit-scrollbar {
-    width: 4px;
+    width: 3px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: var(--jeri-btn-hover);
-    border-radius: 4px;
+    background: color-mix(in srgb, var(--jeri-btn-hover) 50%, transparent);
+    border-radius: 3px;
+
+    &:hover {
+      background: color-mix(in srgb, var(--jeri-btn-hover) 70%, transparent);
+    }
   }
 
   &::-webkit-scrollbar-track {

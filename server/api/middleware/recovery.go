@@ -13,6 +13,7 @@ package middleware
 
 import (
 	"bytes"
+	"jeri_blog/pkg/logger"
 	"fmt"
 	"io"
 	"net/http"
@@ -21,9 +22,6 @@ import (
 	"runtime/debug"
 	"strings"
 	"time"
-
-	"jeri_blog/pkg/logger"
-	"jeri_blog/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -41,7 +39,7 @@ const (
 func init() {
 	// 确保日志目录存在
 	logDir := "./logs"
-	if err := os.MkdirAll(logDir, 0755); err != nil {
+	if err := os.MkdirAll(logDir, 0750); err != nil {
 		logger.Warn("创建日志目录失败: %v", err)
 		return
 	}
@@ -49,7 +47,8 @@ func init() {
 	// 打开 panic 日志文件（追加模式）
 	panicLogPath := filepath.Join(logDir, "panic.log")
 	var err error
-	panicLogFile, err = os.OpenFile(panicLogPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	// #nosec G304 - panic.log 是固定的日志文件名，不是用户输入
+	panicLogFile, err = os.OpenFile(panicLogPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
 	if err != nil {
 		logger.Warn("打开 panic 日志文件失败: %v", err)
 		return
@@ -83,7 +82,7 @@ func Recovery() gin.HandlerFunc {
 				method := c.Request.Method
 				path := c.Request.URL.Path
 				query := c.Request.URL.RawQuery
-				clientIP := utils.GetRealIP(c)
+				clientIP := c.ClientIP()
 				userAgent := c.Request.UserAgent()
 
 				// 拼接完整路径
@@ -123,28 +122,28 @@ func Recovery() gin.HandlerFunc {
 				var logBuilder strings.Builder
 				logBuilder.WriteString("\n")
 				logBuilder.WriteString("╔═══════════════════════════════════ PANIC RECOVERED ═══════════════════════════════════╗\n")
-				logBuilder.WriteString(fmt.Sprintf("║ Time: %s                                                              ║\n", timestamp))
+				fmt.Fprintf(&logBuilder, "║ Time: %s                                                              ║\n", timestamp)
 				if requestIDStr != "" {
-					logBuilder.WriteString(fmt.Sprintf("║ Request ID: %s                                                                     ║\n", requestIDStr))
+					fmt.Fprintf(&logBuilder, "║ Request ID: %s                                                                     ║\n", requestIDStr)
 				}
 				logBuilder.WriteString("╠═══════════════════════════════════════════════════════════════════════════════════════╣\n")
 				logBuilder.WriteString("║ 🔥 Panic Error:                                                                       ║\n")
-				logBuilder.WriteString(fmt.Sprintf("║ %s\n", formatMultiline(fmt.Sprintf("%v", err), 85)))
+				fmt.Fprintf(&logBuilder, "║ %s\n", formatMultiline(fmt.Sprintf("%v", err), 85))
 				logBuilder.WriteString("╠═══════════════════════════════════════════════════════════════════════════════════════╣\n")
 				logBuilder.WriteString("║ 📨 Request Info:                                                                      ║\n")
-				logBuilder.WriteString(fmt.Sprintf("║   Method: %s                                                                          ║\n", padRight(method, 80)))
-				logBuilder.WriteString(fmt.Sprintf("║   Path: %s\n", formatMultiline(fullPath, 83)))
-				logBuilder.WriteString(fmt.Sprintf("║   Client IP: %s                                                                   ║\n", padRight(clientIP, 77)))
-				logBuilder.WriteString(fmt.Sprintf("║   User-Agent: %s\n", formatMultiline(userAgent, 82)))
+				fmt.Fprintf(&logBuilder, "║   Method: %s                                                                          ║\n", padRight(method, 80))
+				fmt.Fprintf(&logBuilder, "║   Path: %s\n", formatMultiline(fullPath, 83))
+				fmt.Fprintf(&logBuilder, "║   Client IP: %s                                                                   ║\n", padRight(clientIP, 77))
+				fmt.Fprintf(&logBuilder, "║   User-Agent: %s\n", formatMultiline(userAgent, 82))
 				if contentType != "" {
-					logBuilder.WriteString(fmt.Sprintf("║   Content-Type: %s                                                              ║\n", padRight(contentType, 78)))
+					fmt.Fprintf(&logBuilder, "║   Content-Type: %s                                                              ║\n", padRight(contentType, 78))
 				}
 				if authorization != "" {
-					logBuilder.WriteString(fmt.Sprintf("║   Authorization: %s                                                             ║\n", padRight(authorization, 77)))
+					fmt.Fprintf(&logBuilder, "║   Authorization: %s                                                             ║\n", padRight(authorization, 77))
 				}
 				if body != "" {
 					logBuilder.WriteString("║   Request Body:                                                                       ║\n")
-					logBuilder.WriteString(fmt.Sprintf("║   %s\n", formatMultiline(body, 85)))
+					fmt.Fprintf(&logBuilder, "║   %s\n", formatMultiline(body, 85))
 				}
 				logBuilder.WriteString("╠═══════════════════════════════════════════════════════════════════════════════════════╣\n")
 				logBuilder.WriteString("║ 📚 Stack Trace (Full):                                                                ║\n")
@@ -210,9 +209,9 @@ func formatStackTrace(stack string, simplified bool) string {
 
 		// 格式化每一行
 		if len(trimmedLine) > 85 {
-			result.WriteString(fmt.Sprintf("║   %s... ║\n", trimmedLine[:82]))
+			fmt.Fprintf(&result, "║   %s... ║\n", trimmedLine[:82])
 		} else {
-			result.WriteString(fmt.Sprintf("║   %-85s ║\n", trimmedLine))
+			fmt.Fprintf(&result, "║   %-85s ║\n", trimmedLine)
 		}
 		lineCount++
 	}
@@ -229,16 +228,16 @@ func buildConsoleLog(timestamp, requestID string, err interface{}, method, path,
 
 	builder.WriteString("\n")
 	builder.WriteString("╔════════════════════════ PANIC RECOVERED ═══════════════════════╗\n")
-	builder.WriteString(fmt.Sprintf("║ %s | ID: %s\n", timestamp, requestID))
+	fmt.Fprintf(&builder, "║ %s | ID: %s\n", timestamp, requestID)
 	builder.WriteString("╠════════════════════════════════════════════════════════════════╣\n")
-	builder.WriteString(fmt.Sprintf("║ 🔥 Error: %v\n", formatErrorLine(fmt.Sprintf("%v", err))))
-	builder.WriteString(fmt.Sprintf("║ 📨 %s %s | IP: %s\n", method, formatPathLine(path), ip))
+	fmt.Fprintf(&builder, "║ 🔥 Error: %v\n", formatErrorLine(fmt.Sprintf("%v", err)))
+	fmt.Fprintf(&builder, "║ 📨 %s %s | IP: %s\n", method, formatPathLine(path), ip)
 	if keyStack != "" {
 		builder.WriteString("╠════════════════════════════════════════════════════════════════╣\n")
-		builder.WriteString(fmt.Sprintf("║ 📍 Location: %s\n", keyStack))
+		fmt.Fprintf(&builder, "║ 📍 Location: %s\n", keyStack)
 	}
 	builder.WriteString("╚════════════════════════════════════════════════════════════════╝\n")
-	builder.WriteString(fmt.Sprintf("💡 Full details saved to logs/panic.log (Request ID: %s)\n", requestID))
+	fmt.Fprintf(&builder, "💡 Full details saved to logs/panic.log (Request ID: %s)\n", requestID)
 	builder.WriteString("\n")
 
 	return builder.String()
@@ -302,7 +301,7 @@ func formatMultiline(text string, width int) string {
 			end = len(text)
 		}
 		line := text[i:end]
-		result.WriteString(fmt.Sprintf("%-*s ║\n", width, line))
+		fmt.Fprintf(&result, "%-*s ║\n", width, line)
 		if end < len(text) {
 			result.WriteString("║   ")
 		}
@@ -327,6 +326,6 @@ func padRight(s string, length int) string {
 // ClosePanicLogFile 关闭 panic 日志文件（在程序退出时调用）
 func ClosePanicLogFile() {
 	if panicLogFile != nil {
-		panicLogFile.Close()
+		_ = panicLogFile.Close()
 	}
 }

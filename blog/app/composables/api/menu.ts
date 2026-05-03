@@ -9,12 +9,12 @@
 功能描述：TypeScript 模块
 */
 
-import type { Menu } from '@@/types/menu'
-import { createApi } from './createApi'
+import type { Menu } from '@@/types/menu';
+import { createApi } from './createApi';
 
-const menuApi = createApi<Menu[]>('')
+const menuApi = createApi<Menu[]>('');
 
 /** 获取菜单列表 */
 export const getMenus = async () => {
-  return menuApi.get<Menu[]>('/menus')
-}
+  return menuApi.get<Menu[]>('/menus');
+};

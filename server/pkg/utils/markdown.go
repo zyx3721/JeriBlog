@@ -42,7 +42,7 @@ func ExtractFileReferencesFromMarkdown(content string) []FileReference {
 	var references []FileReference
 
 	// 1. 提取标准 Markdown 图片：![alt](url) -> 文章配图
-	markdownImageRegex := regexp.MustCompile(`!\[.*?\]\((.*?)\)`)
+	markdownImageRegex := regexp.MustCompile(`!\[[^\]]*\]\(([^)]+)\)`)
 	matches := markdownImageRegex.FindAllStringSubmatch(content, -1)
 	for _, match := range matches {
 		if len(match) > 1 && match[1] != "" {
@@ -53,15 +53,27 @@ func ExtractFileReferencesFromMarkdown(content string) []FileReference {
 		}
 	}
 
-	// 2. 提取照片墙中的图片：:::photo ... :::endphoto -> 文章配图
-	photoWallRegex := regexp.MustCompile(`(?s):::photo\s+(.*?)\s+:::endphoto`)
+	// 2. 提取 HTML img 标签：<img src="url" /> -> 文章配图
+	markdownImage2Regex := regexp.MustCompile(`<img[^>]+src=["']([^"']+)["'][^>]*>`)
+	matches = markdownImage2Regex.FindAllStringSubmatch(content, -1)
+	for _, match := range matches {
+		if len(match) > 1 {
+			url := strings.TrimSpace(match[1])
+			if _, exists := urlMap[url]; !exists {
+				urlMap[url] = FileTypeImage
+			}
+		}
+	}
+
+	// 3. 提取照片墙中的图片：:::photo ... :::endphoto -> 文章配图
+	photoWallRegex := regexp.MustCompile(`(?s):::photo\s*\n(.*?)\n:::endphoto`)
 	photoMatches := photoWallRegex.FindAllStringSubmatch(content, -1)
 	for _, photoMatch := range photoMatches {
 		if len(photoMatch) > 1 {
 			photoContent := photoMatch[1]
 
 			// 提取照片墙内的 Markdown 图片：![](url)
-			photoImageRegex := regexp.MustCompile(`!\[.*?\]\((.*?)\)`)
+			photoImageRegex := regexp.MustCompile(`!\[[^\]]*\]\(([^)]+)\)`)
 			photoImageMatches := photoImageRegex.FindAllStringSubmatch(photoContent, -1)
 			for _, imgMatch := range photoImageMatches {
 				if len(imgMatch) > 1 && imgMatch[1] != "" {
@@ -83,9 +95,7 @@ func ExtractFileReferencesFromMarkdown(content string) []FileReference {
 				parts := strings.Fields(line)
 				for _, part := range parts {
 					part = strings.TrimSpace(part)
-					if strings.HasPrefix(part, "http://") ||
-						strings.HasPrefix(part, "https://") ||
-						strings.HasPrefix(part, "/") {
+					if strings.HasPrefix(part, "http://") || strings.HasPrefix(part, "https://") {
 						if !strings.Contains(part, "](") {
 							if _, exists := urlMap[part]; !exists {
 								urlMap[part] = FileTypeImage
@@ -97,9 +107,9 @@ func ExtractFileReferencesFromMarkdown(content string) []FileReference {
 		}
 	}
 
-	// 3. 提取视频 URL：:::video url ::: -> 文章视频
+	// 4. 提取视频 URL：:::video url ::: -> 文章视频
 	// 修复：使用 [ \t] 替代 \s，避免匹配换行符导致连续视频块被错误合并
-	videoRegex := regexp.MustCompile(`:::video[ \t]+([^\s]+)(?:[ \t]+([^\s]+))?[ \t]*:::`)
+	videoRegex := regexp.MustCompile(`(?s):::video[ \t]+([^\s]+)(?:[ \t]+([^\s]+))?[ \t]*:::`)
 	videoMatches := videoRegex.FindAllStringSubmatch(content, -1)
 	for _, videoMatch := range videoMatches {
 		if len(videoMatch) > 1 {
@@ -116,7 +126,7 @@ func ExtractFileReferencesFromMarkdown(content string) []FileReference {
 	}
 
 	// 4. 提取音频 URL：:::audio 标题 url ::: -> 文章音频
-	audioRegex := regexp.MustCompile(`:::audio\s+[^\s]+\s+([^\s]+)\s+:::`)
+	audioRegex := regexp.MustCompile(`(?s):::audio\s+[^\s]+\s+([^\s]+)\s+:::`)
 	audioMatches := audioRegex.FindAllStringSubmatch(content, -1)
 	for _, audioMatch := range audioMatches {
 		if len(audioMatch) > 1 {
@@ -131,7 +141,7 @@ func ExtractFileReferencesFromMarkdown(content string) []FileReference {
 	}
 
 	// 5. 提取链接卡片中的本地文件链接：:::link 标题 url 描述 ::: -> 文章附件
-	linkCardRegex := regexp.MustCompile(`:::link\s+[^\s]+\s+([^\s]+)(?:\s+.*?)?\s+:::`)
+	linkCardRegex := regexp.MustCompile(`(?s):::link\s+[^\s]+\s+([^\s]+)(?:\s+.*?)?\s+:::`)
 	linkMatches := linkCardRegex.FindAllStringSubmatch(content, -1)
 	for _, linkMatch := range linkMatches {
 		if len(linkMatch) > 1 {

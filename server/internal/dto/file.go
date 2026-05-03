@@ -35,12 +35,16 @@ type FileUploadForWebResponse struct {
 
 // ListFilesRequest 文件列表请求
 type ListFilesRequest struct {
-	Type       string `form:"type"`
 	Page       int    `form:"page,default=1" binding:"min=1"`
-	PageSize   int    `form:"page_size,default=20" binding:"min=1,max=1000"`
-	Keyword    string `form:"keyword"`     // 搜索关键词（文件名、原始文件名）
-	Status     *int   `form:"status"`      // 状态筛选（0=未使用，1=使用中）
-	UploadType string `form:"upload_type"` // 上传类型筛选
+	PageSize   int    `form:"page_size,default=20" binding:"min=1,max=100"`
+	Keyword    string `form:"keyword"`
+	FileType   string `form:"file_type"`
+	Status     *int   `form:"status"`
+	UploadType string `form:"upload_type"`
+	MinSize    int64  `form:"min_size"`
+	MaxSize    int64  `form:"max_size"`
+	StartTime  string `form:"start_time"`
+	EndTime    string `form:"end_time"`
 }
 
 // ============ 后台文件管理响应 ============
@@ -62,9 +66,11 @@ type FileResponse struct {
 
 // FileReferenceResponse 文件引用详情响应
 type FileReferenceResponse struct {
-	Type  string `json:"type"`  // 引用类型：article/friend/moment/setting/user/menu/feedback/comment
-	ID    uint   `json:"id"`    // 引用对象ID
-	Title string `json:"title"` // 引用对象标题
-	Field string `json:"field"` // 引用字段：封面图片/正文图片/头像等
-	URL   string `json:"url"`   // 跳转链接
+	Type        string `json:"type"`         // 引用类型：article/friend/moment/setting/user/menu/feedback/comment
+	ID          uint   `json:"id"`           // 引用对象ID
+	Title       string `json:"title"`        // 引用对象标题
+	Field       string `json:"field"`        // 引用字段：封面图片/正文图片/头像等
+	URL         string `json:"url"`          // 跳转链接
+	TargetType  string `json:"target_type"`  // 评论所属内容类型：article/page/moment（仅 type=comment 时有值）
+	TargetKey   string `json:"target_key"`   // 评论所属内容标识：文章slug/页面key（仅 type=comment 时有值）
 }
