@@ -755,11 +755,23 @@ const handleSave = async () => {
       }
 
       uploadPayload[`upload.${type}.secret_key`] = config.secret_key;
-      uploadPayload[`upload.${type}.region`] = config.region;
+
+      if (type !== 'r2') {
+        uploadPayload[`upload.${type}.region`] = String(config.region);
+      }
+
       uploadPayload[`upload.${type}.bucket`] = config.bucket;
-      uploadPayload[`upload.${type}.endpoint`] = config.endpoint;
       uploadPayload[`upload.${type}.domain`] = config.domain;
-      uploadPayload[`upload.${type}.use_ssl`] = config.use_ssl ? 'true' : 'false';
+
+      // endpoint 只有 S3、R2、MinIO 需要
+      if (type === 's3' || type === 'r2' || type === 'minio') {
+        uploadPayload[`upload.${type}.endpoint`] = config.endpoint;
+      }
+
+      // use_ssl 只有 R2、MinIO 需要
+      if (type === 'r2' || type === 'minio') {
+        uploadPayload[`upload.${type}.use_ssl`] = config.use_ssl ? 'true' : 'false';
+      }
     });
 
     // AI 配置

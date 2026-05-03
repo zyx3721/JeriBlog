@@ -70,6 +70,7 @@
         </el-button>
 
         <el-button
+          class="icon-btn"
           type="warning"
           :loading="refreshing"
           @click="handleRefreshRss"
@@ -78,7 +79,9 @@
           <el-icon v-if="!refreshing">
             <Download />
           </el-icon>
-          {{ refreshing ? '抓取中...' : '立即抓取RSS' }}
+          <span class="btn-text">
+            {{ refreshing ? '抓取中...' : '立即抓取RSS' }}
+          </span>
         </el-button>
 
         <el-badge :value="unreadCount" :hidden="unreadCount === 0" :max="99" class="unread-badge">

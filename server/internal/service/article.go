@@ -493,7 +493,7 @@ func (s *ArticleService) Create(ctx context.Context, req *dto.CreateArticleReque
 	s.markContentImagesAsUsed(req.Content)
 	s.markContentVideosAsUsed(req.Content)
 	s.markContentAudiosAsUsed(req.Content)
-	s.markContentAttachmentsAsUnused(article.Content)
+	s.markContentAttachmentsAsUsed(article.Content)
 
 	// 如果是发布状态，异步发送订阅推送
 	if article.IsPublish && s.subscriberService != nil {
@@ -716,8 +716,8 @@ func (s *ArticleService) markContentAudiosAsUsed(content string) {
 	}
 }
 
-// markContentAttachmentsAsused 标记内容中的附件为已使用
-func (s *ArticleService) markContentAttachmentsAsused(content string) {
+// markContentAttachmentsAsUsed 标记内容中的附件为已使用
+func (s *ArticleService) markContentAttachmentsAsUsed(content string) {
 	if s.fileService == nil {
 		return
 	}
@@ -1091,7 +1091,7 @@ func (s *ArticleService) uploadSingleImage(ctx context.Context, imgURL string, h
 
 	// 上传图片
 	reader := bytes.NewReader(data)
-	uploadedURL, err := s.fileService.UploadFromReader(reader, filename, mimeType, "文章配图", 0, host)
+	uploadedURL, err := s.fileService.UploadFromReader(reader, filename, mimeType, "", 0, host)
 	if err != nil {
 		return imgURL, fmt.Errorf("上传图片失败: %w", err)
 	}

@@ -201,7 +201,7 @@ const fetchFileList = async () => {
     }
 
     if (resolvedFileType.value) {
-      params.type = resolvedFileType.value;
+      params.file_type = resolvedFileType.value;
     }
 
     const response = await getFileList(params);

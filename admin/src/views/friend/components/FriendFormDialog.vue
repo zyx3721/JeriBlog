@@ -305,39 +305,39 @@ const resetFormData = () => {
   }, 0);
 };
 
-// 弹窗打开时加载友链类型（immediate 确保懒挂载组件首次打开时也能加载）
+// 弹窗打开时加载友链类型并初始化表单数据
 watch(
   visible,
   val => {
-    if (val) loadFriendTypes();
-  },
-  { immediate: true }
-);
+    if (val) {
+      // 加载友链类型列表
+      loadFriendTypes();
 
-// 监听编辑友链变化
-watch(
-  () => props.editFriend,
-  friend => {
-    if (friend) {
-      formData.value = {
-        name: friend.name,
-        url: friend.url,
-        description: friend.description || '',
-        avatar: friend.avatar || '',
-        screenshot: friend.screenshot || '',
-        sort: friend.sort || 5,
-        type_id: friend.type_id ?? null,
-        is_invalid: friend.is_invalid ?? false,
-        is_pending: friend.is_pending ?? false,
-        rss_url: friend.rss_url || '',
-        ignoreCheck: friend.accessible === -1,
-      };
-      // 清除表单验证
+      // 根据 editFriend 初始化表单数据
+      if (props.editFriend) {
+        // 编辑模式：填充友链数据
+        formData.value = {
+          name: props.editFriend.name,
+          url: props.editFriend.url,
+          description: props.editFriend.description || '',
+          avatar: props.editFriend.avatar || '',
+          screenshot: props.editFriend.screenshot || '',
+          sort: props.editFriend.sort || 5,
+          type_id: props.editFriend.type_id ?? null,
+          is_invalid: props.editFriend.is_invalid ?? false,
+          is_pending: props.editFriend.is_pending ?? false,
+          rss_url: props.editFriend.rss_url || '',
+          ignoreCheck: props.editFriend.accessible === -1,
+        };
+      } else {
+        // 新增模式：重置表单
+        resetFormData();
+      }
+
+      // 清除表单验证状态
       setTimeout(() => {
         formRef.value?.clearValidate();
       }, 0);
-    } else {
-      resetFormData();
     }
   },
   { immediate: true }

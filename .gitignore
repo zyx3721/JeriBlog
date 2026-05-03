@@ -80,3 +80,6 @@ coverage.txt
 # 上传文件
 server/uploads/*
 !server/uploads/.gitkeep
+
+# 文档文件
+优化.md

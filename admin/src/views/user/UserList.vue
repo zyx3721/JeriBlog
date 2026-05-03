@@ -173,6 +173,7 @@
 import { computed, ref, onMounted, reactive } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { User } from '@element-plus/icons-vue';
+import { useRoute } from 'vue-router';
 import CommonList from '@/components/common/CommonList.vue';
 import UserFilter from './components/UserFilter.vue';
 import type { User as UserType, UserListQuery } from '@/types/user';
@@ -181,6 +182,7 @@ import UserFormDialog from './components/UserFormDialog.vue';
 import { formatDateTime } from '@/utils/date';
 import { getCurrentUserRole } from '@/utils/auth';
 
+const route = useRoute();
 const loading = ref(false);
 const userList = ref<UserType[]>([]);
 const total = ref(0);
@@ -291,6 +293,11 @@ const handleDelete = async (id: number) => {
 };
 
 onMounted(() => {
+  // 检查路由 state，如果有 keyword 则自动填充并搜索
+  const state = history.state as { keyword?: string };
+  if (state?.keyword) {
+    queryParams.value.keyword = state.keyword;
+  }
   // 初始化快速筛选值（从 queryParams）
   syncQuickFiltersFromQueryParams();
   fetchUsers();

@@ -431,7 +431,7 @@ func (r *StatsRepository) GetVisitLogs(req *dto.GetVisitLogsRequest) ([]model.Vi
 
 	// 访客ID筛选
 	if req.VisitorID != "" {
-		query = query.Where("visitor_id = ?", req.VisitorID)
+		query = query.Where("visitor_id ILIKE ?", "%"+req.VisitorID+"%")
 	}
 
 	// IP地址筛选
@@ -493,5 +493,10 @@ func (r *StatsRepository) GetVisitLogs(req *dto.GetVisitLogsRequest) ([]model.Vi
 // DeleteVisitLog 删除访问日志
 func (r *StatsRepository) DeleteVisitLog(id uint) error {
 	return r.db.Delete(&model.Visit{}, id).Error
+}
+
+// BatchDeleteVisitLogs 批量删除访问日志
+func (r *StatsRepository) BatchDeleteVisitLogs(ids []uint) error {
+	return r.db.Delete(&model.Visit{}, ids).Error
 }
 

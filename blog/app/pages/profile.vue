@@ -149,7 +149,7 @@ const handleEditSubmit = async () => {
     const data = await updateUserProfile({
       nickname: nickname.trim(),
       email: email.trim(),
-      website: website.trim() || undefined,
+      website: website.trim(),
       avatar: editForm.value.avatar || undefined,
     });
     showSuccess('保存成功');
@@ -186,7 +186,7 @@ const handleBadgeSubmit = async () => {
     const data = await updateUserProfile({
       nickname: userInfo.value!.nickname,
       email: userInfo.value!.email,
-      badge: badge.value.trim() || undefined,
+      badge: badge.value.trim(),
     });
     showSuccess('铭牌设置成功');
     setTimeout(() => {
@@ -272,9 +272,12 @@ const handleSetPasswordSubmit = async () => {
   setPasswordLoading.value = true;
   try {
     await setPassword({ password, confirm_password });
-    showSuccess('密码设置成功');
+    showSuccess('密码设置成功，请重新登录');
     showSetPasswordDialog.value = false;
-    await fetchProfile(); // 刷新用户信息
+    setTimeout(() => {
+      logout();
+      router.push('/');
+    }, 1500);
   } catch (error: unknown) {
     const err = error as Error;
     showError(err?.message || '密码设置失败');

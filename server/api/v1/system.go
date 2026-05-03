@@ -14,6 +14,7 @@ package v1
 import (
 	"net/http"
 
+	_ "jeri_blog/internal/dto" // swagger 类型引用
 	"jeri_blog/internal/service"
 	"jeri_blog/pkg/response"
 

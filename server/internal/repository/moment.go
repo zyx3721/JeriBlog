@@ -121,7 +121,7 @@ func (r *MomentRepository) List(
 		query = query.Where("publish_time >= ?", startTime)
 	}
 	if endTime != "" {
-		query = query.Where("publish_time <= ?", endTime)
+		query = query.Where("publish_time <= ?", endTime+" 23:59:59")
 	}
 
 	err := query.Count(&total).Error
@@ -169,7 +169,7 @@ func (r *MomentRepository) Update(ctx context.Context, moment *model.Moment) err
 // ExistsByContentURL 检查是否有动态内容引用该文件
 func (r *MomentRepository) ExistsByContentURL(url string) (bool, error) {
 	var count int64
-	err := r.db.Model(&model.Moment{}).Where("content LIKE ?", "%"+url+"%").Count(&count).Error
+	err := r.db.Model(&model.Moment{}).Where("content::text LIKE ?", "%"+url+"%").Count(&count).Error
 	return count > 0, err
 }
 

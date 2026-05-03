@@ -66,9 +66,11 @@ type FileResponse struct {
 
 // FileReferenceResponse 文件引用详情响应
 type FileReferenceResponse struct {
-	Type  string `json:"type"`  // 引用类型：article/friend/moment/setting/user/menu/feedback/comment
-	ID    uint   `json:"id"`    // 引用对象ID
-	Title string `json:"title"` // 引用对象标题
-	Field string `json:"field"` // 引用字段：封面图片/正文图片/头像等
-	URL   string `json:"url"`   // 跳转链接
+	Type        string `json:"type"`         // 引用类型：article/friend/moment/setting/user/menu/feedback/comment
+	ID          uint   `json:"id"`           // 引用对象ID
+	Title       string `json:"title"`        // 引用对象标题
+	Field       string `json:"field"`        // 引用字段：封面图片/正文图片/头像等
+	URL         string `json:"url"`          // 跳转链接
+	TargetType  string `json:"target_type"`  // 评论所属内容类型：article/page/moment（仅 type=comment 时有值）
+	TargetKey   string `json:"target_key"`   // 评论所属内容标识：文章slug/页面key（仅 type=comment 时有值）
 }

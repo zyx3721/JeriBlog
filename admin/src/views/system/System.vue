@@ -11,7 +11,7 @@
 
 <template>
   <div class="system-info">
-    <el-card>
+    <el-card shadow="never">
       <!-- 工具栏 -->
       <div class="toolbar">
         <h2>系统信息</h2>
@@ -473,6 +473,7 @@ onUnmounted(() => {
   flex-direction: column;
   gap: 6px;
   min-width: 0;
+  text-align: center;
 
   .label {
     color: #909399;
@@ -491,8 +492,10 @@ onUnmounted(() => {
 .version-value {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   min-width: 0;
+  width: 100%;
 }
 
 .error-dot {
@@ -621,8 +624,21 @@ onUnmounted(() => {
   }
 
   .version-list {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 16px;
     row-gap: 12px;
+  }
+
+  .version-item {
+    text-align: center;
+
+    .label {
+      font-size: 12px;
+    }
+
+    .value {
+      font-size: 13px;
+    }
   }
 }
 </style>

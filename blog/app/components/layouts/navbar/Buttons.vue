@@ -26,6 +26,10 @@ const { userAvatar, userNickname, userEmail, fetchUserInfo, clearUserInfo } = us
 // 通知相关
 const { unreadCount, clearNotifications, fetchNotifications } = useNotifications();
 
+// 获取管理后台 URL
+const config = useRuntimeConfig();
+const adminUrl = config.public.adminUrl || '/admin';
+
 let pollingTimer: number | null = null;
 
 // 监听登录状态，自动启动/停止轮询（仅在客户端执行）
@@ -133,6 +137,10 @@ const handleLogout = () => {
             <a href="/profile" class="dropdown-item" @click="showUserMenu = false">
               <i class="ri-user-settings-line" />
               个人设置
+            </a>
+            <a :href="adminUrl" class="dropdown-item" @click="showUserMenu = false">
+              <i class="ri-dashboard-line" />
+              管理后台
             </a>
             <a
               href="/notifications"

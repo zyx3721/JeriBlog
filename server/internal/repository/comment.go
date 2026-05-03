@@ -158,7 +158,7 @@ func (r *CommentRepository) List(
 
 		// 构建搜索条件
 		query = query.Joins("LEFT JOIN users ON users.id = comments.user_id").
-			Joins("LEFT JOIN articles ON comments.target_type = 'article' AND articles.slug = comments.target_key")
+			Joins("LEFT JOIN articles ON comments.target_type = 'article' AND  (articles.id = comments.target_id OR articles.slug = comments.target_key)")
 
 		// 基础搜索条件
 		conditions := "comments.content LIKE ? OR users.nickname LIKE ? OR users.email LIKE ? OR articles.title LIKE ?"

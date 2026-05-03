@@ -14,7 +14,7 @@
     <!-- 第一行：关键词、显示状态、删除状态、评论类型、评论时间 -->
     <el-col :span="5">
       <el-form-item label="关键词">
-        <el-input v-model="filterForm.keyword" placeholder="搜索评论内容" clearable>
+        <el-input v-model="filterForm.keyword" placeholder="搜索内容、用户、来源" clearable>
           <template #prefix>
             <el-icon><Search /></el-icon>
           </template>

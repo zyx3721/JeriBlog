@@ -18,6 +18,7 @@ import (
 	"strings"
 	"time"
 
+	"jeri_blog/config"
 	"jeri_blog/internal/dto"
 	"jeri_blog/internal/model"
 	"jeri_blog/internal/repository"
@@ -111,13 +112,15 @@ type FileService struct {
 	fileRepo      *repository.FileRepository
 	uploadManager *upload.Manager
 	usageChecker  *FileUsageChecker
+	config        *config.Config
 }
 
 // NewFileService 创建文件服务
-func NewFileService(fileRepo *repository.FileRepository, uploadManager *upload.Manager) *FileService {
+func NewFileService(fileRepo *repository.FileRepository, uploadManager *upload.Manager, cfg *config.Config) *FileService {
 	return &FileService{
 		fileRepo:      fileRepo,
 		uploadManager: uploadManager,
+		config:        cfg,
 	}
 }
 
@@ -267,11 +270,6 @@ func (s *FileService) MarkAsUnused(fileUrl string, usageType string) error {
 
 // UploadForWeb 前台文件上传
 func (s *FileService) UploadForWeb(req *upload.Request, host string) (*dto.FileUploadForWebResponse, error) {
-	// 验证上传类型
-	if string(req.UploadType) == "" {
-		return nil, fmt.Errorf("上传类型不能为空")
-	}
-
 	// 文件大小限制（从配置获取，单位MB）
 	maxFileSizeMB := s.uploadManager.GetMaxFileSize()
 	if maxFileSizeMB <= 0 {
@@ -317,11 +315,6 @@ func (s *FileService) UploadForWeb(req *upload.Request, host string) (*dto.FileU
 
 // Upload 文件上传
 func (s *FileService) Upload(req *upload.Request, host string) (*dto.FileResponse, error) {
-	// 验证上传类型
-	if string(req.UploadType) == "" {
-		return nil, fmt.Errorf("上传类型不能为空")
-	}
-
 	// 调用通用上传方法（传递 host）
 	file, err := s.handleUpload(req, host)
 	if err != nil {
@@ -414,6 +407,9 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 		return nil, fmt.Errorf("文件不存在: %w", err)
 	}
 
+	// 获取博客前台地址
+	BlogURL := strings.TrimSuffix(s.config.Basic.BlogURL, "/")
+
 	if s.usageChecker == nil {
 		return []dto.FileReferenceResponse{}, nil
 	}
@@ -429,7 +425,7 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 				ID:    article.ID,
 				Title: article.Title,
 				Field: "文章封面",
-				URL:   fmt.Sprintf("/posts/%s/", article.Slug),
+				URL:   "",
 			})
 		}
 	}
@@ -443,7 +439,7 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 				ID:    ref.Article.ID,
 				Title: ref.Article.Title,
 				Field: string(ref.FileType), // 使用文件类型：文章配图/文章视频/文章音频/文章附件
-				URL:   fmt.Sprintf("/posts/%s/", ref.Article.Slug),
+				URL:   "", // 前端通过 Title 搜索，不需要 URL
 			})
 		}
 	}
@@ -457,7 +453,7 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 				ID:    friend.ID,
 				Title: friend.Name,
 				Field: "友情链接A",
-				URL:   "/friend",
+				URL:   "", // 前端通过 Title 搜索，不需要 URL
 			})
 		}
 	}
@@ -471,7 +467,7 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 				ID:    friend.ID,
 				Title: friend.Name,
 				Field: "友情链接S",
-				URL:   "/friend",
+				URL:   "", // 前端通过 Title 搜索，不需要 URL
 			})
 		}
 	}
@@ -500,7 +496,7 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 				ID:    setting.ID,
 				Title: "系统设置",
 				Field: fieldName,
-				URL:   "/admin/settings",
+				URL:   "", // 前端直接指定 URL，不需要跳转链接
 			})
 		}
 	}
@@ -523,7 +519,7 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 				ID:    ref.Moment.ID,
 				Title: title,
 				Field: ref.FileType, // 直接使用返回的文件类型
-				URL:   "/moment",
+				URL:   "", // 前端通过 Title 搜索，不需要 URL
 			})
 		}
 	}
@@ -543,34 +539,40 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 				if comment.TargetID != nil && *comment.TargetID > 0 {
 					article, err := s.usageChecker.articleRepo.Get(*comment.TargetID)
 					if err == nil {
-						url = fmt.Sprintf("/posts/%s/", article.Slug)
+						url = fmt.Sprintf("%s/posts/%s/", BlogURL, article.Slug)
 					}
 				}
 				// 兼容旧数据：通过 TargetKey（slug）查询
 				if url == "" {
 					article, err := s.usageChecker.articleRepo.GetBySlug(comment.TargetKey)
 					if err == nil {
-						url = fmt.Sprintf("/posts/%s/", article.Slug)
+						url = fmt.Sprintf("%s/posts/%s/", BlogURL, article.Slug)
 					} else {
 						url = "" // 文章已删除
 					}
 				}
 			case "page":
-				url = ""
-			case "moment":
-				url = "/moment"
-			case "guestbook":
-				url = ""
-			default:
-				url = ""
+				// 根据 TargetKey 确定具体页面
+				switch comment.TargetKey {
+				case "moment":
+					url = fmt.Sprintf("%s/moment", BlogURL)
+				case "message":
+					url = fmt.Sprintf("%s/message", BlogURL)
+				case "friend":
+					url = fmt.Sprintf("%s/friend", BlogURL)
+				default:
+					url = ""
+				}
 			}
 
 			references = append(references, dto.FileReferenceResponse{
-				Type:  "comment",
-				ID:    comment.ID,
-				Title: title,
-				Field: "评论贴图",
-				URL:   url,
+				Type:       "comment",
+				ID:         comment.ID,
+				Title:      title,
+				Field:      "评论贴图",
+				URL:        url,
+				TargetType: comment.TargetType,
+				TargetKey:  comment.TargetKey,
 			})
 		}
 	}
@@ -584,7 +586,7 @@ func (s *FileService) GetReferences(id uint) ([]dto.FileReferenceResponse, error
 				ID:    menu.ID,
 				Title: menu.Title,
 				Field: "菜单图标",
-				URL:   "/admin/menus",
+				URL:   "", // 前端直接指定 URL，不需要跳转链接
 			})
 		}
 	}

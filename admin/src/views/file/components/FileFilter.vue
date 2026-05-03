@@ -13,7 +13,7 @@
   <filter-panel v-model="filterForm" title="筛选条件" @reset="handleReset" @close="$emit('close')">
     <el-col :span="5">
       <el-form-item label="关键词">
-        <el-input v-model="filterForm.keyword" placeholder="搜索文件名" clearable>
+        <el-input v-model="filterForm.keyword" placeholder="搜索文件名、原始文件名" clearable>
           <template #prefix>
             <el-icon><Search /></el-icon>
           </template>

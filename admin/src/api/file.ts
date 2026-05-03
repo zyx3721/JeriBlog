@@ -24,7 +24,7 @@ export interface UploadResponse {
 /**
  * 上传文件
  * @param file 要上传的文件
- * @param type 文件类型（默认为'image'）
+ * @param {string} [type=''] - 文件类型（默认为空，由文章保存时设置）
  * @returns Promise<UploadResponse>
  */
 export async function uploadFile(file: File, type = ''): Promise<UploadResponse> {
@@ -58,19 +58,28 @@ export function getFileList(params: FileListQuery): Promise<FileListData> {
  * @param id 文件ID
  * @returns Promise<void>
  */
-export function deleteFile(id: number): Promise<void> {
-  return request.delete(`/admin/files/${id}`);
+export async function deleteFile(id: number): Promise<void> {
+  try {
+    return await request.delete(`/admin/files/${id}`);
+  } catch (error: unknown) {
+    const err = error as { response?: { data?: { message?: string; details?: string[] } }; message?: string };
+    const serverMessage = err.response?.data?.details?.[0] || err.response?.data?.message;
+    const errorMessage = serverMessage || err.message || '删除失败';
+    throw new Error(errorMessage);
+  }
 }
 
 /**
  * 文件引用信息
  */
 export interface FileReference {
-  type: string; // 引用类型：article/user/friend/setting
+  type: string; // 引用类型：article/user/friend/setting/comment/moment/menu/feedback
   id: number; // 引用对象ID
   title: string; // 引用对象标题
   field: string; // 引用字段
   url?: string; // 引用对象链接
+  target_type?: string; // 评论所属内容类型：article/page（仅 type=comment 时有值）
+  target_key?: string; // 评论所属内容标识：文章slug/页面key（仅 type=comment 时有值）
 }
 
 /**

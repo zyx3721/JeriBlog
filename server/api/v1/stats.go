@@ -285,3 +285,34 @@ func (h *StatsHandler) DeleteVisitLog(c *gin.Context) {
 
 	response.Success(c, nil)
 }
+
+// BatchDeleteVisitLogs 批量删除访问日志
+//
+//	@Summary		批量删除访问日志
+//	@Description	批量删除指定的访问日志
+//	@Tags			统计管理
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			body	body		dto.BatchDeleteRequest	true	"访问日志ID列表"
+//	@Success		200		{object}	response.Response
+//	@Router			/admin/stats/visits/batch [delete]
+func (h *StatsHandler) BatchDeleteVisitLogs(c *gin.Context) {
+	var req dto.BatchDeleteRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.ValidateFailed(c, err.Error())
+		return
+	}
+
+	if len(req.IDs) == 0 {
+		response.ValidateFailed(c, "请选择要删除的访问日志")
+		return
+	}
+
+	if err := h.statsService.BatchDeleteVisitLogs(req.IDs); err != nil {
+		response.Failed(c, err.Error())
+		return
+	}
+
+	response.Success(c, nil)
+}

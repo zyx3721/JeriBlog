@@ -389,6 +389,8 @@ const click = (item: MenuItem) => {
   } else if (item.route) {
     router.push(item.route);
   }
+  close();
+};
 
 // 事件监听器
 const onClickOut = (e: MouseEvent) =>

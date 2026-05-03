@@ -590,6 +590,9 @@ const fetchCategoryData = async () => {
 const renderPieChart = () => {
   if (!pieChart) return;
 
+  // 确保数据为数组，即使为空也显示图表
+  const chartData = categoryData.value || [];
+
   const option = {
     tooltip: {
       trigger: 'item',
@@ -603,7 +606,7 @@ const renderPieChart = () => {
         fontSize: 12,
       },
       formatter: (name: string) => {
-        const item = categoryData.value.find(d => d.name === name);
+        const item = chartData.find(d => d.name === name);
         return `${name} (${item?.count || 0})`;
       },
     },
@@ -660,6 +663,9 @@ const fetchTagData = async () => {
 const renderTagCloud = () => {
   if (!tagCloud) return;
 
+  // 确保数据为数组，即使为空也显示图表
+  const chartData = tagData.value || [];
+
   const option = {
     tooltip: {
       formatter: '{b}: {c}篇',
@@ -679,7 +685,7 @@ const renderTagCloud = () => {
             return CHART_COLORS[Math.floor(Math.random() * CHART_COLORS.length)];
           },
         },
-        data: tagData.value.map(item => ({
+        data: chartData.map(item => ({
           name: item.name,
           value: item.count,
         })),

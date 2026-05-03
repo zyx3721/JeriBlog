@@ -35,6 +35,7 @@
       @filter="toggleFilter"
       @update:page="fetchVisits"
       @update:pageSize="fetchVisits"
+      @selection-change="handleSelectionChange"
     >
       <!-- 快速筛选 -->
       <template #toolbar-before>
@@ -51,10 +52,36 @@
               <el-icon><Connection /></el-icon>
             </template>
           </el-input>
+          <!-- 批量删除按钮 - PC端 (仅超级管理员可见) -->
+          <el-button
+            v-if="isSuperAdmin && selectedIds.length > 0"
+            type="danger"
+            class="batch-delete-btn-pc"
+            @click="handleBatchDelete"
+          >
+            批量删除
+          </el-button>
+          <!-- 批量删除按钮 - 移动端 (仅超级管理员可见) -->
+          <el-button
+            v-if="isSuperAdmin && selectedIds.length > 0"
+            type="danger"
+            class="batch-delete-btn-mobile"
+            @click="handleBatchDelete"
+          >
+            <el-icon><Delete /></el-icon>
+          </el-button>
         </template>
       </template>
 
       <!-- 表格列 -->
+      <!-- 选择列 (仅超级管理员可选择) -->
+      <el-table-column
+        v-if="isSuperAdmin"
+        type="selection"
+        width="55"
+        align="center"
+      />
+
       <el-table-column label="访客ID" width="150" align="center">
         <template #default="{ row }">
           <el-tooltip :content="row.visitor_id" placement="top">
@@ -67,7 +94,7 @@
 
       <el-table-column label="IP地址" width="140" align="center" prop="ip" />
 
-      <el-table-column label="访问页面" min-width="170" align="center">
+      <el-table-column label="访问页面" min-width="80" align="center">
         <template #default="{ row }">
           <div style="display: flex; align-items: center; gap: 8px; width: 100%">
             <el-tooltip :content="row.page_url" placement="top">
@@ -79,13 +106,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="地理位置" width="130" align="center" prop="location" />
+      <el-table-column label="地理位置" width="150" align="center" prop="location" />
 
       <el-table-column label="浏览器" width="140" align="center" prop="browser" />
 
       <el-table-column label="操作系统" width="120" align="center" prop="os" />
 
-      <el-table-column label="来源" width="170" align="center">
+      <el-table-column label="来源" width="240" align="center">
         <template #default="{ row }">
           <el-tooltip v-if="row.referer" :content="row.referer" placement="top">
             <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
@@ -104,7 +131,9 @@
 
       <el-table-column label="操作" width="90" align="center" fixed="right">
         <template #default="{ row }">
-          <el-button type="danger" link @click="handleDelete(row.id)"> 删除 </el-button>
+          <template v-if="isSuperAdmin">
+            <el-button type="danger" link @click="handleDelete(row.id)"> 删除 </el-button>
+          </template>
         </template>
       </el-table-column>
     </common-list>
@@ -114,12 +143,13 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed, watch } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Connection } from '@element-plus/icons-vue';
+import { Connection, Delete } from '@element-plus/icons-vue';
 import CommonList from '@/components/common/CommonList.vue';
 import VisitFilter from './components/VisitFilter.vue';
 import type { Visit, VisitListQuery } from '@/types/stats';
-import { getVisits, deleteVisit } from '@/api/stats';
+import { getVisits, deleteVisit, batchDeleteVisits } from '@/api/stats';
 import { formatDateTime } from '@/utils/date';
+import { getCurrentUserRole } from '@/utils/auth';
 
 const loading = ref(false);
 const visitList = ref<Visit[]>([]);
@@ -129,6 +159,15 @@ const queryParams = ref<VisitListQuery>({
   page: 1,
   page_size: 20,
 });
+
+// 选中的ID列表
+const selectedIds = ref<number[]>([]);
+
+// 获取当前用户角色
+const currentRole = computed(() => getCurrentUserRole());
+
+// 判断是否为超级管理员
+const isSuperAdmin = computed(() => currentRole.value === 'super_admin');
 
 // 快速筛选相关
 const quickFilters = reactive({
@@ -208,6 +247,8 @@ const fetchVisits = async () => {
     ]);
     visitList.value = result.list;
     total.value = result.total;
+    // 清空选中项
+    selectedIds.value = [];
   } catch {
     if (!errorMessageShown) {
       errorMessageShown = true;
@@ -236,6 +277,43 @@ const handleDelete = async (id: number) => {
   } catch (error: unknown) {
     if (error !== 'cancel') {
       ElMessage.error((error as Error)?.message || '删除失败');
+    }
+  }
+};
+
+/**
+ * 处理表格选择变化
+ */
+const handleSelectionChange = (selection: Visit[]) => {
+  selectedIds.value = selection.map(item => item.id);
+};
+
+/**
+ * 批量删除
+ */
+const handleBatchDelete = async () => {
+  if (selectedIds.value.length === 0) {
+    ElMessage.warning('请先选择要删除的访问日志');
+    return;
+  }
+
+  try {
+    await ElMessageBox.confirm(
+      `确定要删除选中的 ${selectedIds.value.length} 条访问日志吗？`,
+      '批量删除',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+    );
+
+    await batchDeleteVisits(selectedIds.value);
+    ElMessage.success('批量删除成功');
+    fetchVisits();
+  } catch (error: unknown) {
+    if (error !== 'cancel') {
+      ElMessage.error((error as Error)?.message || '批量删除失败');
     }
   }
 };
@@ -280,5 +358,20 @@ onMounted(() => {
 .visit-list-page > :deep(.common-list) {
   flex: 1;
   min-height: 0;
+}
+
+.batch-delete-btn-mobile {
+  display: none;
+}
+
+/* 移动端样式 */
+@media (max-width: 768px) {
+  .batch-delete-btn-pc {
+    display: none;
+  }
+
+  .batch-delete-btn-mobile {
+    display: inline-flex;
+  }
 }
 </style>

@@ -2,9 +2,8 @@ import { getSettingGroup } from '~/composables/api/sysconfig';
 
 export default defineEventHandler(async event => {
   try {
+    const [blogConfig] = await Promise.all([getSettingGroup('blog')]);
     const processConfig = (config: Record<string, unknown>, prefix: string) => {
-
-    const processConfig = (config: any, prefix: string) => {
       const processed: Record<string, string> = {};
       Object.entries(config).forEach(([key, value]) => {
         if (key.startsWith(`${prefix}.`)) {

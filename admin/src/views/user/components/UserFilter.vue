@@ -3,7 +3,7 @@
     <!-- 第一行：关键词、是否启用、是否删除、注册时间 -->
     <el-col :span="6">
       <el-form-item label="关键词">
-        <el-input v-model="filterForm.keyword" placeholder="搜索邮箱、昵称" clearable>
+        <el-input v-model="filterForm.keyword" placeholder="搜索邮箱、昵称、地址" clearable>
           <template #prefix>
             <el-icon><Search /></el-icon>
           </template>

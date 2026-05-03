@@ -66,12 +66,25 @@ export async function apiRequest<T = any>(
   }
 
   try {
-    return await $fetch<T>(url, {
+    const response = await $fetch<T>(url, {
       ...options,
       baseURL: config.public.apiUrl,
       headers,
       credentials: 'include', // 发送 Cookie
     } as any);
+
+    // 检查业务状态码
+    if (response && typeof response === 'object' && 'code' in response) {
+      const apiResponse = response as any;
+      if (apiResponse.code !== 0) {
+        // 业务错误，抛出异常
+        const error = new Error(apiResponse.message || '请求失败');
+        (error as any).response = { status: apiResponse.code, data: apiResponse };
+        throw error;
+      }
+    }
+
+    return response;
   } catch (error: any) {
     // 401 自动刷新 token
     if (error?.response?.status === 401 && !options._retry) {

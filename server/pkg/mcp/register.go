@@ -87,4 +87,14 @@ func (s *publicServer) registerTools(server *sdkmcp.Server) {
 		Description: "用户管理。action：list/get/create/update/delete。",
 		InputSchema: tools.UserManageInputSchema(),
 	}, userWrapper.ManageUser)
+
+	// 创建访问日志服务包装器
+	visitWrapper := tools.NewVisitWrapper(s.statsService)
+
+	// visit_manage - 访问日志管理聚合 Tool
+	sdkmcp.AddTool(server, &sdkmcp.Tool{
+		Name:        "visit_manage",
+		Description: "访问日志管理。action：list/delete/batch_delete。",
+		InputSchema: tools.VisitManageInputSchema(),
+	}, visitWrapper.ManageVisit)
 }

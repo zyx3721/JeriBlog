@@ -322,3 +322,19 @@ const handleSubmit = async () => {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.image-upload-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .select-file-btn {
+    width: 100%;
+
+    i {
+      margin-right: 4px;
+    }
+  }
+}
+</style>

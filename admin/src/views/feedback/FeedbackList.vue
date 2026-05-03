@@ -272,6 +272,11 @@ const truncateUrl = (url: string) => {
 };
 
 onMounted(() => {
+  // 检查路由 state，如果有 keyword 则自动填充并搜索
+  const state = history.state as { keyword?: string };
+  if (state?.keyword) {
+    queryParams.value.keyword = state.keyword;
+  }
   // 初始化快速筛选值（从 queryParams）
   syncQuickFiltersFromQueryParams();
   fetchList();

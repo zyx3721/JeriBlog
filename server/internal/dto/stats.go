@@ -145,6 +145,11 @@ type GetVisitLogsRequest struct {
 	EndTime    string `form:"end_time"`                                    // 结束时间（格式：2006-01-02）
 }
 
+// BatchDeleteRequest 批量删除请求
+type BatchDeleteRequest struct {
+	IDs []uint `json:"ids" binding:"required,min=1"` // 要删除的ID列表
+}
+
 // ============ 访问日志响应 ============
 
 // VisitLogItem 访问日志项

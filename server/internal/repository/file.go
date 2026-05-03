@@ -130,7 +130,7 @@ func (r *FileRepository) GetByFilter(filter *FileListFilter, offset, limit int) 
 		query = query.Where("status = ?", *filter.Status)
 	}
 	if filter.UploadType != "" {
-		query = query.Where("upload_type = ?", filter.UploadType)
+		query = query.Where("upload_type LIKE ?", "%"+filter.UploadType+"%")
 	}
 	if filter.MinSize > 0 {
 		query = query.Where("file_size >= ?", filter.MinSize)

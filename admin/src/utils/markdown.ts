@@ -467,6 +467,7 @@ function createMarkdownRenderer(): MarkdownIt {
   instance.use(underline);
   instance.use(katex, { throwOnError: false, errorColor: '#cc0000' });
   instance.use(customBlocksPlugin);
+  instance.use(relaxedEmphasisPlugin);
 
   return instance;
 }
@@ -475,24 +476,22 @@ function renderFence(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   token: any,
   escapeHtml: (value: string) => string,
-  sourceAttrs = ''
 ): string {
   const code = token.content;
   const lang = token.info.trim();
 
+  // 特殊处理 Mermaid 代码块（不进行代码高亮）
   if (lang === 'mermaid') {
-    return `<pre class="mermaid"${sourceAttrs}><code>${escapeHtml(code)}</code></pre>`;
+    return `<pre class="mermaid"><code>${escapeHtml(code)}</code></pre>`;
   }
 
+  // 高亮代码
   let highlightedCode = '';
   const displayLang = (lang || 'text').toUpperCase();
 
   if (lang && hljs.getLanguage(lang)) {
     try {
-      highlightedCode = hljs.highlight(code, {
-        language: lang,
-        ignoreIllegals: true,
-      }).value;
+      highlightedCode = hljs.highlight(code, { language: lang, ignoreIllegals: true }).value;
     } catch {
       highlightedCode = escapeHtml(code);
     }
@@ -500,16 +499,26 @@ function renderFence(
     highlightedCode = escapeHtml(code);
   }
 
-  const numberedLines = highlightedCode
-    .replace(/\n$/, '')
-    .split('\n')
-    .map(
-      (line, index) =>
-        `<span class="line-number" data-line="${index + 1}"></span><span class="line-content">${line}</span>`
-    )
-    .join('\n');
+  // 添加行号（保持 HTML 标签完整性）
+  const lines = code.replace(/\n$/, '').split('\n');
+  const numberedLines = lines
+    .map((line: string, index: number) => {
+      // 对每一行原始代码单独进行高亮
+      let lineHighlighted = '';
+      if (lang && hljs.getLanguage(lang)) {
+        try {
+          lineHighlighted = hljs.highlight(line, { language: lang, ignoreIllegals: true }).value;
+        } catch {
+          lineHighlighted = escapeHtml(line);
+        }
+      } else {
+        lineHighlighted = escapeHtml(line);
+      }
+      return `<div class="code-line"><span class="line-number" data-line="${index + 1}"></span><span class="line-content">${lineHighlighted}</span></div>`;
+    })
+    .join('');
 
-  return `<div class="code-block-container"${sourceAttrs}><div class="code-toolbar"><button class="code-fold-btn" onclick="this.closest('.code-block-container').classList.toggle('collapsed')" title="折叠/展开"><i class="ri-arrow-down-s-line"></i></button><span class="code-lang">${displayLang}</span><button class="code-copy-btn" onclick="copyCodeBlock(this)" title="复制代码"><i class="ri-file-copy-fill"></i></button></div><pre><code>${numberedLines}</code></pre></div>`;
+  return `<div class="code-block-container"><div class="code-toolbar"><button class="code-fold-btn" onclick="this.closest('.code-block-container').classList.toggle('collapsed')" title="折叠/展开"><i class="ri-arrow-down-s-line"></i></button><span class="code-lang">${displayLang}</span><button class="code-copy-btn" onclick="copyCodeBlock(this)" title="复制代码"><i class="ri-file-copy-fill"></i></button></div><pre><code>${numberedLines}</code></pre></div>`;
 }
 
 // 创建 markdown-it 实例
@@ -519,6 +528,7 @@ md.renderer.rules.fence = (tokens, idx) => {
   if (!token) return '';
   return renderFence(token, md.utils.escapeHtml);
 };
+
 function customBlocksPlugin(md: MarkdownIt) {
   // 块级规则
   md.block.ruler.before('fence', 'custom_blocks', (state, startLine, endLine, silent) => {
@@ -748,6 +758,26 @@ function customBlocksPlugin(md: MarkdownIt) {
 
     return false;
   });
+}
+
+// 放宽加粗/斜体的边界限制
+function relaxedEmphasisPlugin(md: MarkdownIt) {
+  // 保存原始的 scanDelims 方法
+  const State = md.inline.State
+  const originalScanDelims = State.prototype.scanDelims
+
+  // 重写 scanDelims 方法
+  State.prototype.scanDelims = function(start, canSplitWord) {
+    const result = originalScanDelims.call(this, start, canSplitWord)
+
+    // 放宽 can_close 的限制：只要能 open，就允许 close
+    // 这样 **text**2 中的第二个 ** 就能正确识别为结束标记
+    if (result.can_open) {
+      result.can_close = true
+    }
+
+    return result
+  }
 }
 
 // DOMPurify 配置
@@ -1038,7 +1068,7 @@ function createLineNumberMd(): MarkdownIt {
   lineMd.renderer.rules.fence = (tokens, idx) => {
     const token = tokens[idx];
     if (!token) return '';
-    return renderFence(token, lineMd.utils.escapeHtml, buildSourceAttrs(token.meta, 'block'));
+    return renderFence(token, lineMd.utils.escapeHtml);
   };
 
   const blockTags = [
@@ -1274,32 +1304,85 @@ export function copyCodeBlock(button: HTMLElement): void {
   const code = container.querySelector('code');
   if (!code) return;
 
-  // 只提取代码内容，不包含行号
-  const codeLines = Array.from(code.querySelectorAll('.line-content'));
-  const codeText = codeLines.map(line => line.textContent || '').join('\n');
+  // 方案：查找所有 .code-line 元素，从中提取 .line-content 的文本
+  const lines: string[] = [];
 
-  // 复制到剪贴板
-  navigator.clipboard
-    .writeText(codeText)
-    .then(() => {
-      // 更新按钮状态
-      const icon = button.querySelector('i');
-      if (icon) {
-        icon.className = 'ri-check-line';
+  // 查找所有 .code-line 元素
+  const codeLines = code.querySelectorAll('.code-line');
+  codeLines.forEach(codeLine => {
+    // 从每个 .code-line 中找到 .line-content
+    const lineContent = codeLine.querySelector('.line-content');
+    if (lineContent) {
+      // 使用 textContent 直接获取纯文本（自动解码 HTML 实体）
+      lines.push(lineContent.textContent || '');
+    }
+  });
+
+  const codeText = lines.join('\n');
+
+  // 更新按钮状态的函数
+  const updateButtonState = (success: boolean) => {
+    const icon = button.querySelector('i');
+    if (icon) {
+      icon.className = success ? 'ri-check-line' : 'ri-error-warning-line';
+      if (success) {
         button.classList.add('copied');
       }
+    }
 
-      // 2秒后恢复
-      setTimeout(() => {
-        if (icon) {
-          icon.className = 'ri-file-copy-fill';
-          button.classList.remove('copied');
-        }
-      }, 2000);
-    })
-    .catch(err => {
-      console.error('复制失败:', err);
-    });
+    // 2秒后恢复
+    setTimeout(() => {
+      if (icon) {
+        icon.className = 'ri-file-copy-fill';
+        button.classList.remove('copied');
+      }
+    }, 2000);
+  };
+
+  // 优先使用 Clipboard API（需要 HTTPS 或 localhost）
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard
+      .writeText(codeText)
+      .then(() => updateButtonState(true))
+      .catch(() => {
+        // Clipboard API 失败，降级到传统方法
+        fallbackCopy(codeText, updateButtonState);
+      });
+  } else {
+    // 非安全上下文（HTTP），使用传统方法
+    fallbackCopy(codeText, updateButtonState);
+  }
+}
+
+// 降级复制方法（兼容 HTTP 环境）
+function fallbackCopy(text: string, callback: (success: boolean) => void): void {
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.style.position = 'fixed';
+  textarea.style.top = '0';
+  textarea.style.left = '0';
+  textarea.style.width = '2em';
+  textarea.style.height = '2em';
+  textarea.style.padding = '0';
+  textarea.style.border = 'none';
+  textarea.style.outline = 'none';
+  textarea.style.boxShadow = 'none';
+  textarea.style.background = 'transparent';
+  textarea.style.opacity = '0';
+
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+
+  try {
+    const successful = document.execCommand('copy');
+    callback(successful);
+  } catch (err) {
+    console.error('降级复制失败:', err);
+    callback(false);
+  }
+
+  document.body.removeChild(textarea);
 }
 
 // 标签页切换功能

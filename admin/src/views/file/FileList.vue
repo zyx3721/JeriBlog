@@ -38,11 +38,11 @@
       <template #toolbar-before>
         <template v-if="!showFilter">
           <el-select
-            v-model="query.upload_type"
+            v-model="quickFilters.upload_type"
             placeholder="用途"
             clearable
             style="width: 140px"
-            @change="handleSearch"
+            @change="handleQuickFilterChange"
           >
             <el-option-group label="用户相关">
               <el-option label="用户头像" value="用户头像" />
@@ -177,7 +177,8 @@
         <el-dialog
           v-model="referencesDialogVisible"
           title="文件引用详情"
-          width="600px"
+          width="90%"
+          style="max-width: 600px"
           :close-on-click-modal="false"
         >
           <div v-loading="referencesLoading" class="references-content">
@@ -190,6 +191,14 @@
                     {{ getReferenceTypeName(ref.type) }}
                   </el-tag>
                   <span class="reference-field">{{ ref.field }}</span>
+                  <!-- 评论类型时显示所属内容类型 -->
+                  <el-tag
+                    v-if="ref.type === 'comment' && ref.target_type"
+                    :type="getCommentTargetTypeTag(ref.target_type, ref.target_key)"
+                    size="small"
+                  >
+                    {{ getCommentTargetTypeName(ref.target_type, ref.target_key) }}
+                  </el-tag>
                 </div>
 
                 <div class="reference-body">
@@ -238,6 +247,7 @@ const currentFile = ref<FileInfo | null>(null);
 const quickFilters = reactive({
   file_type: undefined as string | undefined,
   status: undefined as number | undefined,
+  upload_type: undefined as string | undefined,
 });
 
 /**
@@ -270,6 +280,7 @@ const toggleFilter = () => {
 const syncQuickFiltersFromQuery = () => {
   quickFilters.file_type = query.value.file_type;
   quickFilters.status = query.value.status;
+  quickFilters.upload_type = query.value.upload_type;
 };
 
 /**
@@ -278,6 +289,7 @@ const syncQuickFiltersFromQuery = () => {
 const handleQuickFilterChange = () => {
   query.value.file_type = quickFilters.file_type;
   query.value.status = quickFilters.status;
+  query.value.upload_type = quickFilters.upload_type;
   query.value.page = 1;
   loadList();
 };
@@ -298,16 +310,34 @@ const loadList = async () => {
   }
 };
 
-const handleSearch = () => {
-  query.page = 1;
-  loadList();
-};
-
 const copyUrl = async (file: FileInfo) => {
   try {
-    await navigator.clipboard.writeText(file.file_url);
-    ElMessage.success('已复制');
-  } catch {
+    // 优先使用现代 Clipboard API
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(file.file_url);
+      ElMessage.success('已复制');
+      return;
+    }
+
+    // 降级方案：使用传统的 document.execCommand
+    const textArea = document.createElement('textarea');
+    textArea.value = file.file_url;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    const successful = document.execCommand('copy');
+    document.body.removeChild(textArea);
+
+    if (successful) {
+      ElMessage.success('已复制');
+    } else {
+      ElMessage.error('复制失败');
+    }
+  } catch (error) {
     ElMessage.error('复制失败');
   }
 };
@@ -359,31 +389,39 @@ const handleReferenceClick = (ref: FileReference) => {
       break;
 
     case 'article':
-      // 跳转到文章前端访问链接 /posts/<slug>/
-      if (ref.url) {
-        window.open(ref.url, '_blank'); // 新窗口打开，不关闭对话框
-      }
+      // 跳转到文章管理页面，通过 state 传递搜索关键词
+      referencesDialogVisible.value = false; // 当前窗口跳转，关闭对话框
+      router.push({
+        path: '/articles',
+        state: { keyword: ref.title },
+      });
       break;
 
     case 'moment':
-      // 跳转到动态前端访问地址 /moment
-      if (ref.url) {
-        window.open(ref.url, '_blank'); // 新窗口打开，不关闭对话框
-      }
+      // 跳转到动态管理页面，通过 state 传递搜索关键词
+      referencesDialogVisible.value = false; // 当前窗口跳转，关闭对话框
+      router.push({
+        path: '/moments',
+        state: { keyword: ref.title },
+      });
       break;
 
     case 'comment':
-      // 跳转到评论所属文章前端访问链接 /posts/<slug>/
+      // 跳转到评论所属文章/页面的前端访问链接
       if (ref.url) {
         window.open(ref.url, '_blank'); // 新窗口打开，不关闭对话框
+      } else {
+        ElMessage.warning('该评论所属内容已被删除');
       }
       break;
 
     case 'friend':
-      // 跳转到友链前端访问地址 /friend
-      if (ref.url) {
-        window.open(ref.url, '_blank'); // 新窗口打开，不关闭对话框
-      }
+      // 跳转到友链管理页面，通过 state 传递搜索关键词
+      referencesDialogVisible.value = false; // 当前窗口跳转，关闭对话框
+      router.push({
+        path: '/friends',
+        state: { keyword: ref.title },
+      });
       break;
 
     case 'setting':
@@ -444,6 +482,29 @@ const getReferenceTypeName = (type: string) => {
   return nameMap[type] || type;
 };
 
+// 获取评论所属内容类型的标签颜色
+const getCommentTargetTypeTag = (targetType: string, targetKey?: string) => {
+  if (targetType === 'article') return 'success';
+  if (targetType === 'page') {
+    if (targetKey === 'moment') return 'warning';
+    if (targetKey === 'message') return 'info';
+    if (targetKey === 'friend') return 'danger';
+  }
+  return undefined;
+};
+
+// 获取评论所属内容类型的名称
+const getCommentTargetTypeName = (targetType: string, targetKey?: string) => {
+  if (targetType === 'article') return '文章';
+  if (targetType === 'page') {
+    if (targetKey === 'moment') return '动态';
+    if (targetKey === 'message') return '留言';
+    if (targetKey === 'friend') return '友链';
+    return '页面';
+  }
+  return targetType;
+};
+
 // 获取引用标题显示内容
 const getReferenceTitle = (ref: FileReference) => {
   // 如果是系统设置类型，根据字段名区分基本配置和博客配置
@@ -494,129 +555,162 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-    /* 搜索表单样式已移至全局样式 main.scss */
+  /* 搜索表单样式已移至全局样式 main.scss */
 
-    .file-list-page {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
+  .file-list-page {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .filter-slide-enter-active,
+  .filter-slide-leave-active {
+    transition: all 0.1s linear;
+  }
+
+  .filter-slide-enter-from,
+  .filter-slide-leave-to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  .filter-slide-enter-to,
+  .filter-slide-leave-from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .file-list-page > :deep(.filter-panel) {
+    flex-shrink: 0;
+  }
+
+  .file-list-page > :deep(.common-list) {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .references-content {
+    min-height: 150px;
+    padding: 4px;
+  }
+
+  .reference-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: calc(
+      3 * (16px + 12px + 12px + 16px + 24px)
+    ); /* 3行的高度: padding + gap + header + body + margin */
+    overflow-y: auto;
+
+    /* 美化滚动条 */
+    &::-webkit-scrollbar {
+      width: 6px;
     }
 
-    .filter-slide-enter-active,
-    .filter-slide-leave-active {
-      transition: all 0.1s linear;
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
     }
 
-    .filter-slide-enter-from,
-    .filter-slide-leave-to {
-      opacity: 0;
-      transform: translateY(-4px);
-    }
-
-    .filter-slide-enter-to,
-    .filter-slide-leave-from {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .file-list-page > :deep(.filter-panel) {
-      flex-shrink: 0;
-    }
-
-    .file-list-page > :deep(.common-list) {
-      flex: 1;
-      min-height: 0;
-    }
-
-    .references-content {
-      min-height: 150px;
-      padding: 4px;
-    }
-
-    .reference-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      max-height: calc(
-        3 * (16px + 12px + 12px + 16px + 24px)
-      ); /* 3行的高度: padding + gap + header + body + margin */
-      overflow-y: auto;
-
-      /* 美化滚动条 */
-      &::-webkit-scrollbar {
-        width: 6px;
-      }
-
-      &::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 3px;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        background: #c1c1c1;
-        border-radius: 3px;
-
-        &:hover {
-          background: #a8a8a8;
-        }
-      }
-    }
-
-    .reference-item {
-      padding: 16px;
-      border: 1px solid #e4e7ed;
-      border-radius: 8px;
-      background: #fafafa;
-      transition: all 0.3s;
+    &::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 3px;
 
       &:hover {
-        border-color: #409eff;
-        box-shadow: 0 2px 12px rgba(64, 158, 255, 0.15);
-        transform: translateY(-2px);
+        background: #a8a8a8;
       }
+    }
+  }
+
+  .reference-item {
+    padding: 16px;
+    border: 1px solid #e4e7ed;
+    border-radius: 8px;
+    background: #fafafa;
+    transition: all 0.3s;
+
+    &:hover {
+      border-color: #409eff;
+      box-shadow: 0 2px 12px rgba(64, 158, 255, 0.15);
+      transform: translateY(-2px);
+    }
+  }
+
+  .reference-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+
+    .reference-field {
+      font-size: 13px;
+      color: #909399;
+      padding: 2px 8px;
+      background: #fff;
+      border-radius: 4px;
+      border: 1px solid #e4e7ed;
+    }
+  }
+
+  .reference-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    .reference-title {
+      flex: 1;
+      font-size: 14px;
+      color: #303133;
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .reference-link {
+      flex-shrink: 0;
+      font-size: 13px;
+
+      i {
+        margin-right: 4px;
+      }
+    }
+  }
+
+  /* 移动端优化 */
+  @media (max-width: 768px) {
+    .reference-item {
+      padding: 12px;
     }
 
     .reference-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
 
       .reference-field {
-        font-size: 13px;
-        color: #909399;
-        padding: 2px 8px;
-        background: #fff;
-        border-radius: 4px;
-        border: 1px solid #e4e7ed;
+        font-size: 12px;
+        padding: 2px 6px;
       }
     }
 
     .reference-body {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
 
       .reference-title {
-        flex: 1;
-        font-size: 14px;
-        color: #303133;
-        font-weight: 500;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        white-space: normal;
+        word-break: break-all;
+        line-height: 1.5;
       }
 
       .reference-link {
-        flex-shrink: 0;
-        font-size: 13px;
-
-        i {
-          margin-right: 4px;
-        }
+        align-self: flex-end;
       }
     }
-  </style>
-</template>
+  }
+</style>

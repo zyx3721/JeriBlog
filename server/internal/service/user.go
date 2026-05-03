@@ -493,14 +493,15 @@ func (s *UserService) UpdateForWeb(id uint, req *dto.UpdateUserRequest) error {
 	if req.Avatar != "" {
 		user.Avatar = req.Avatar
 	}
-	if req.Badge != "" {
-		if err := s.validateBadge(req.Badge); err != nil {
+	if req.Badge != nil {
+		if err := s.validateBadge(*req.Badge); err != nil {
 			return err
 		}
-		user.Badge = req.Badge
+		user.Badge = *req.Badge
 	}
-	if req.Website != "" {
-		user.Website = req.Website
+
+	if req.Website != nil {
+		user.Website = *req.Website
 	}
 
 	// 处理头像变化
@@ -889,7 +890,7 @@ func (s *UserService) downloadAndSaveCravatarAvatar(email string, userID uint, h
 		reader,
 		filename,
 		"image/webp",
-		"用户头像",
+		"",
 		userID,
 		host,
 	)

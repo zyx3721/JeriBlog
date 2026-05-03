@@ -374,6 +374,11 @@ func (s *StatsService) DeleteVisitLog(id uint) error {
 	return s.statsRepo.DeleteVisitLog(id)
 }
 
+// BatchDeleteVisitLogs 批量删除访问日志
+func (s *StatsService) BatchDeleteVisitLogs(ids []uint) error {
+	return s.statsRepo.BatchDeleteVisitLogs(ids)
+}
+
 // ============ 辅助方法 ============
 
 // generateVisitorID 生成访客唯一标识

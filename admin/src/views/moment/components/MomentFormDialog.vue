@@ -891,7 +891,7 @@ const handleSearchMusic = async () => {
   hasSearched.value = true;
 
   try {
-    const apiUrl = `https://api.injahow.cn/meting/?server=netease&type=search&id=${encodeURIComponent(keyword)}`;
+    const apiUrl = `https://meting.flec.top/api?server=netease&type=search&id=${encodeURIComponent(keyword)}`;
     const response = await fetch(apiUrl);
     const data = await response.json();
     musicSearchResults.value = Array.isArray(data) ? data : [];
@@ -1187,41 +1187,46 @@ const removeContent = (type: string) => {
   removeMap[type as keyof typeof removeMap]?.();
 };
 
-// 监听器
+// 监听对话框打开/关闭，在打开时初始化表单数据
 watch(
-  () => props.editMoment,
-  moment => {
-    resetForm();
-    if (moment) {
-      Object.assign(formData.content, moment.content);
-      formData.is_publish = moment.is_publish;
-      publishTime.value = moment.publish_time || '';
+  visible,
+  val => {
+    if (val) {
+      // 对话框打开时，根据 editMoment 初始化表单
+      resetForm();
 
-      // 加载已有图片（编辑时）
-      if (moment.content.images?.length) {
-        imageItems.value = moment.content.images.map(url => ({
-          id: `${Date.now()}-${Math.random()}`,
-          type: 'url' as const,
-          url: url,
-        }));
-      }
+      if (props.editMoment) {
+        // 编辑模式：填充动态数据
+        Object.assign(formData.content, props.editMoment.content);
+        formData.is_publish = props.editMoment.is_publish;
+        publishTime.value = props.editMoment.publish_time || '';
 
-      // 加载已有视频（编辑时）
-      if (moment.content.video?.url) {
-        videoItem.value = {
-          type: 'url' as const,
-          url: moment.content.video.url,
-          platform: moment.content.video.platform,
-          video_id: moment.content.video.video_id,
-        };
-      }
+        // 加载已有图片（编辑时）
+        if (props.editMoment.content.images?.length) {
+          imageItems.value = props.editMoment.content.images.map(url => ({
+            id: `${Date.now()}-${Math.random()}`,
+            type: 'url' as const,
+            url: url,
+          }));
+        }
 
-      // 加载已有音频（编辑时）
-      if (moment.content.audio?.url) {
-        audioItem.value = {
-          type: 'url' as const,
-          url: moment.content.audio.url,
-        };
+        // 加载已有视频（编辑时）
+        if (props.editMoment.content.video?.url) {
+          videoItem.value = {
+            type: 'url' as const,
+            url: props.editMoment.content.video.url,
+            platform: props.editMoment.content.video.platform,
+            video_id: props.editMoment.content.video.video_id,
+          };
+        }
+
+        // 加载已有音频（编辑时）
+        if (props.editMoment.content.audio?.url) {
+          audioItem.value = {
+            type: 'url' as const,
+            url: props.editMoment.content.audio.url,
+          };
+        }
       }
     }
   },
@@ -1265,12 +1270,13 @@ const uploadAudio = async (): Promise<string | null> => {
   return audioItem.value.url;
 };
 
-// 提交表单
+// 取消表单
 const handleCancel = () => {
   visible.value = false;
   resetForm();
 };
 
+// 提交表单
 const handleSubmit = async () => {
   submitLoading.value = true;
   try {

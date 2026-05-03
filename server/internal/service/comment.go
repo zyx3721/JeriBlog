@@ -292,6 +292,9 @@ func (s *CommentService) DeleteForWeb(ctx context.Context, id uint, userID uint)
 		return errors.New("无权删除此评论")
 	}
 
+	// 标记评论中的图片为未使用
+	s.markImagesAsUnused(comment.Content)
+
 	// 只删除评论本身，子评论保留
 	if err := s.repo.DeleteForWeb(ctx, id); err != nil {
 		return err
@@ -1209,7 +1212,7 @@ func (s *CommentService) markImagesAsUnused(content string) {
 	}
 
 	for _, imageURL := range extractCommentImageURLs(content) {
-		_ = s.fileService.MarkAsUsed(imageURL, "评论贴图")
+		_ = s.fileService.MarkAsUnused(imageURL, "评论贴图")
 	}
 	if s.fileService == nil || content == "" {
 		return
