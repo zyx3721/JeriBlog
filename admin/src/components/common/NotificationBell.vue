@@ -11,7 +11,13 @@
 
 <template>
   <div class="notification-bell">
-    <el-popover placement="bottom" :width="450" trigger="click" v-model:visible="visible">
+    <el-popover
+      placement="bottom"
+      :width="popoverWidth"
+      trigger="click"
+      v-model:visible="visible"
+      :popper-style="popperStyle"
+    >
       <template #reference>
         <el-badge :value="unreadCount" :hidden="unreadCount === 0" class="bell-badge">
           <el-button :icon="Bell" circle @click="handleBellClick" />
@@ -127,6 +133,24 @@ const currentPage = ref(1);
 const hasMore = ref(true);
 let timer: number;
 let previousUnreadCount = 0;
+
+// 计算弹窗宽度
+const popoverWidth = ref(450);
+const popperStyle = ref({});
+
+// 监听窗口大小变化
+const updatePopoverWidth = () => {
+  const isMobile = window.innerWidth <= 768;
+  if (isMobile) {
+    popoverWidth.value = Math.min(window.innerWidth - 20, 450);
+    popperStyle.value = {
+      maxWidth: 'calc(100vw - 20px)',
+    };
+  } else {
+    popoverWidth.value = 450;
+    popperStyle.value = {};
+  }
+};
 
 // 统一的加载方法
 const loadNotifications = async (reset = false) => {
@@ -284,6 +308,9 @@ const formatTime = (time: string) => formatMomentTime(time);
 
 // 定时轮询
 onMounted(() => {
+  updatePopoverWidth();
+  window.addEventListener('resize', updatePopoverWidth);
+
   loadNotifications(true);
   // 请求通知权限
   requestNotificationPermission();
@@ -313,12 +340,30 @@ onMounted(() => {
   }, 30000);
 });
 
-onUnmounted(() => timer && clearInterval(timer));
+onUnmounted(() => {
+  timer && clearInterval(timer);
+  window.removeEventListener('resize', updatePopoverWidth);
+});
 </script>
 
 <style scoped lang="scss">
 .notification-bell {
   margin-right: 20px;
+
+  // 移动端调整
+  @media (max-width: 768px) {
+    margin-right: 10px;
+
+    :deep(.el-button) {
+      width: 36px;
+      height: 36px;
+    }
+
+    :deep(.el-badge__content) {
+      font-size: 11px;
+      padding: 0 4px;
+    }
+  }
 }
 
 .notification-popover {
@@ -436,6 +481,58 @@ onUnmounted(() => timer && clearInterval(timer));
           line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
+        }
+      }
+    }
+  }
+
+  // 移动端内边距调整
+  @media (max-width: 768px) {
+    .notification-header {
+      padding: 8px 10px;
+
+      .title {
+        font-size: 14px;
+      }
+
+      .header-actions {
+        gap: 4px;
+
+        :deep(.el-button) {
+          padding: 4px 8px;
+          font-size: 12px;
+        }
+      }
+    }
+
+    .notification-list {
+      max-height: calc(100vh - 200px);
+
+      .notification-item {
+        padding: 10px;
+
+        .notification-icon {
+          margin-right: 8px;
+
+          :deep(.el-icon) {
+            font-size: 20px;
+          }
+        }
+
+        .notification-content-wrapper {
+          .notification-header-line {
+            .notification-title {
+              font-size: 13px;
+            }
+
+            .notification-time {
+              font-size: 11px;
+            }
+          }
+
+          .notification-content {
+            font-size: 12px;
+          }
         }
       }
     }
