@@ -219,6 +219,11 @@ defineEmits<{
       :deep(.el-pagination .el-select) {
         width: 110px;
       }
+      :deep(.el-pagination) {
+        .el-pager {
+          display: none !important;
+        }
+      }
     }
   }
 
