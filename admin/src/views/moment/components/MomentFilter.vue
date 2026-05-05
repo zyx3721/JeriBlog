@@ -303,7 +303,7 @@ const handleMobileDateChange = () => {
 };
 
 onMounted(() => {
-// 组件挂载时初始化日期范围
+  // 组件挂载时初始化日期范围
   if (filterForm.value.start_time && filterForm.value.end_time) {
     dateRange.value = [filterForm.value.start_time, filterForm.value.end_time];
     startDate.value = filterForm.value.start_time;

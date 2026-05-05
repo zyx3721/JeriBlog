@@ -16,66 +16,70 @@
     width="90%"
     style="max-width: 600px"
     :close-on-click-modal="false"
+    align-center
+    class="user-form-dialog"
   >
-    <el-form ref="formRef" :model="formData" :rules="formRules" label-width="100px">
-      <el-form-item label="邮箱" prop="email">
-        <el-input v-model="formData.email" placeholder="请输入用户邮箱" clearable />
-      </el-form-item>
+    <div class="dialog-scroll-content">
+      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="80px">
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="formData.email" placeholder="请输入用户邮箱" clearable />
+        </el-form-item>
 
-      <el-form-item label="昵称" prop="nickname">
-        <el-input v-model="formData.nickname" placeholder="请输入用户昵称" clearable />
-      </el-form-item>
+        <el-form-item label="昵称" prop="nickname">
+          <el-input v-model="formData.nickname" placeholder="请输入用户昵称" clearable />
+        </el-form-item>
 
-      <el-form-item label="网站" prop="website">
-        <el-input v-model="formData.website" placeholder="请输入用户网站（可选）" clearable />
-      </el-form-item>
+        <el-form-item label="网站" prop="website">
+          <el-input v-model="formData.website" placeholder="请输入用户网站（可选）" clearable />
+        </el-form-item>
 
-      <el-form-item label="徽章" prop="badge">
-        <el-input v-model="formData.badge" placeholder="请输入用户徽章（可选）" clearable />
-      </el-form-item>
+        <el-form-item label="徽章" prop="badge">
+          <el-input v-model="formData.badge" placeholder="请输入用户徽章（可选）" clearable />
+        </el-form-item>
 
-      <el-form-item label="密码" prop="password">
-        <el-input
-          v-model="formData.password"
-          type="password"
-          :placeholder="isEdit ? '留空则不修改密码' : '请输入密码'"
-          show-password
-          clearable
-          autocomplete="new-password"
-        />
-      </el-form-item>
-
-      <el-form-item label="头像" prop="avatar">
-        <div class="image-upload-wrapper">
-          <ImageUploader
-            ref="avatarUploaderRef"
-            v-model="formData.avatar"
-            upload-type="用户头像"
-            width="120px"
-            height="120px"
+        <el-form-item label="密码" prop="password">
+          <el-input
+            v-model="formData.password"
+            type="password"
+            :placeholder="isEdit ? '留空则不修改密码' : '请输入密码'"
+            show-password
+            clearable
+            autocomplete="new-password"
           />
-          <el-button class="select-file-btn" @click="openFilePicker">
-            <i class="ri-folder-image-line"></i>
-            选择文件
-          </el-button>
-        </div>
-      </el-form-item>
+        </el-form-item>
 
-      <el-form-item label="角色" prop="role">
-        <el-select v-model="formData.role" placeholder="请选择角色" style="width: 100%">
-          <el-option
-            v-for="option in roleOptions"
-            :key="option.value"
-            :label="option.label"
-            :value="option.value"
-          />
-        </el-select>
-      </el-form-item>
+        <el-form-item label="头像" prop="avatar">
+          <div class="image-upload-wrapper">
+            <ImageUploader
+              ref="avatarUploaderRef"
+              v-model="formData.avatar"
+              upload-type="用户头像"
+              width="120px"
+              height="120px"
+            />
+            <el-button class="select-file-btn" @click="openFilePicker">
+              <i class="ri-folder-image-line"></i>
+              选择文件
+            </el-button>
+          </div>
+        </el-form-item>
 
-      <el-form-item v-if="isEdit" label="状态" prop="is_enabled">
-        <el-switch v-model="formData.is_enabled" active-text="启用" inactive-text="禁用" />
-      </el-form-item>
-    </el-form>
+        <el-form-item label="角色" prop="role">
+          <el-select v-model="formData.role" placeholder="请选择角色" style="width: 100%">
+            <el-option
+              v-for="option in roleOptions"
+              :key="option.value"
+              :label="option.label"
+              :value="option.value"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item v-if="isEdit" label="状态" prop="is_enabled">
+          <el-switch v-model="formData.is_enabled" active-text="启用" inactive-text="禁用" />
+        </el-form-item>
+      </el-form>
+    </div>
 
     <template #footer>
       <span class="dialog-footer">
@@ -334,6 +338,123 @@ const handleSubmit = async () => {
 
     i {
       margin-right: 4px;
+    }
+  }
+}
+
+.user-form-dialog {
+  .dialog-scroll-content {
+    padding-right: 8px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .user-form-dialog {
+    :deep(.el-dialog) {
+      max-height: 75vh;
+    }
+
+    .dialog-scroll-content {
+      max-height: 55vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-right: 4px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    :deep(.el-dialog__header) {
+      padding: 16px;
+
+      .el-dialog__title {
+        font-size: 16px;
+      }
+    }
+
+    :deep(.el-dialog__body) {
+      padding: 16px;
+    }
+
+    :deep(.el-dialog__footer) {
+      padding: 12px 16px;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    :deep(.el-form-item) {
+      margin-bottom: 18px;
+    }
+
+    :deep(.el-form-item__label) {
+      width: 70px !important;
+      font-size: 14px;
+    }
+
+    :deep(.el-form-item__content) {
+      margin-left: 70px !important;
+    }
+
+    :deep(.el-input) {
+      .el-input__inner {
+        font-size: 14px;
+      }
+    }
+
+    :deep(.el-select) {
+      width: 100%;
+    }
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .user-form-dialog {
+    :deep(.el-dialog) {
+      max-height: 80vh;
+    }
+
+    .dialog-scroll-content {
+      max-height: 60vh;
+    }
+
+    :deep(.el-dialog__header) {
+      padding: 14px;
+
+      .el-dialog__title {
+        font-size: 15px;
+      }
+    }
+
+    :deep(.el-dialog__body) {
+      padding: 14px;
+    }
+
+    :deep(.el-dialog__footer) {
+      padding: 10px 14px;
+      display: flex;
+      gap: 8px;
+
+      .el-button {
+        flex: 1;
+        padding: 9px 16px;
+        font-size: 13px;
+      }
+    }
+
+    :deep(.el-form-item) {
+      margin-bottom: 16px;
+    }
+
+    :deep(.el-form-item__label) {
+      width: 60px !important;
+      font-size: 13px;
+    }
+
+    :deep(.el-form-item__content) {
+      margin-left: 60px !important;
+    }
+
+    :deep(.el-input) {
+      .el-input__inner {
+        font-size: 13px;
+      }
     }
   }
 }
