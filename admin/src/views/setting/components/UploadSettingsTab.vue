@@ -357,21 +357,57 @@ const showUseSSL = computed(() => {
 </script>
 
 <style scoped lang="scss">
-.upload-settings-tab {
-  .el-divider {
-    margin: 24px 0 16px 0;
-  }
-}
-
 .unit-tip {
   margin-left: 8px;
   color: #909399;
 }
 
+// 移动端适配
 @media (max-width: 768px) {
-  :deep(.el-form-item__label) {
-    width: 100px !important;
-    font-size: 13px;
+  .upload-settings-tab {
+    .setting-form {
+      :deep(.el-form-item) {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        margin-bottom: 18px;
+
+        .el-form-item__label {
+          width: 100% !important;
+          text-align: left !important;
+          padding: 0 0 8px 0 !important;
+          font-size: 14px;
+          line-height: 1.5;
+          justify-content: flex-start !important;
+        }
+
+        .el-form-item__content {
+          width: 100%;
+          margin-left: 0 !important;
+
+          .el-input,
+          .el-select,
+          .el-input-number,
+          .el-switch {
+            width: 100%;
+          }
+
+          .el-input-number {
+            width: 100%;
+
+            :deep(.el-input__wrapper) {
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .unit-tip {
+    margin-left: 0;
+    margin-top: 4px;
+    display: block;
   }
 }
 </style>

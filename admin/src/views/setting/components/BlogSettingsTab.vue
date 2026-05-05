@@ -727,6 +727,7 @@ defineExpose({
   .image-upload-wrapper {
     display: flex;
     flex-direction: column;
+    align-items: stretch;
     gap: 8px;
 
     .select-file-btn {
@@ -752,14 +753,75 @@ defineExpose({
       gap: 0;
     }
 
+    .image-upload-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+
+      .select-file-btn {
+        width: 100%;
+        max-width: 200px;
+      }
+    }
+
     .motto-inputs {
       flex-direction: column;
     }
-  }
 
-  :deep(.el-form-item__label) {
-    width: 100px !important;
-    font-size: 13px;
+    :deep(.el-form-item) {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      margin-bottom: 18px;
+
+      .el-form-item__label {
+        width: 100% !important;
+        text-align: left !important;
+        padding: 0 0 8px 0 !important;
+        font-size: 14px;
+        line-height: 1.5;
+        justify-content: flex-start !important;
+      }
+
+      .el-form-item__content {
+        width: 100%;
+        margin-left: 0 !important;
+
+        .el-input,
+        .el-textarea,
+        .el-select,
+        .el-input-number,
+        .el-date-picker {
+          width: 100%;
+        }
+
+        :deep(.json-list-editor) {
+          width: 100%;
+
+          .dynamic-list-item {
+            flex-direction: column;
+            gap: 8px;
+
+            .el-input,
+            .el-select {
+              width: 100% !important;
+              margin: 0 !important;
+            }
+          }
+        }
+      }
+    }
+
+    :deep(.el-form-item) {
+      .el-input-group {
+        width: 100%;
+
+        .el-input__wrapper {
+          width: 100%;
+        }
+      }
+    }
   }
 }
 </style>

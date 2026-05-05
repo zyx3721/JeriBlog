@@ -977,7 +977,8 @@ onMounted(() => {
 
     :deep(.el-tab-pane) {
       padding: 0 8px;
-      overflow-x: auto;
+      overflow-y: auto;
+      overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
 
@@ -986,15 +987,20 @@ onMounted(() => {
       }
 
       .setting-form {
-        max-width: none;
-        min-width: 800px;
+        max-width: 100%;
+        width: 100%;
       }
     }
   }
 
-  :deep(.el-form-item__label) {
-    width: 120px !important;
-    flex-shrink: 0;
+  // 按钮组优化
+  :deep(.el-button-group) {
+    display: flex;
+    width: 100%;
+
+    .el-button {
+      flex: 1;
+    }
   }
 }
 </style>

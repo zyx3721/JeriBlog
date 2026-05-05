@@ -175,9 +175,32 @@ defineProps<{
 <style lang="scss" scoped>
 // 移动端适配
 @media (max-width: 768px) {
-  :deep(.el-form-item__label) {
-    width: 100px !important;
-    font-size: 13px;
+  .setting-form {
+    :deep(.el-form-item) {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      margin-bottom: 18px;
+
+      .el-form-item__label {
+        width: 100% !important;
+        text-align: left !important;
+        padding: 0 0 8px 0 !important;
+        font-size: 14px;
+        line-height: 1.5;
+        justify-content: flex-start !important;
+      }
+
+      .el-form-item__content {
+        width: 100%;
+        margin-left: 0 !important;
+
+        .el-input,
+        .el-switch {
+          width: 100%;
+        }
+      }
+    }
   }
 }
 </style>

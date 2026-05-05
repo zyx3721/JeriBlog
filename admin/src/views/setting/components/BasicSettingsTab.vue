@@ -175,11 +175,11 @@ defineExpose({
   .image-upload-wrapper {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 8px;
 
     .select-file-btn {
-      align-self: stretch;
+      width: 100%;
 
       i {
         margin-right: 4px;
@@ -195,11 +195,45 @@ defineExpose({
       flex-direction: column;
       gap: 0;
     }
-  }
 
-  :deep(.el-form-item__label) {
-    width: 100px !important;
-    font-size: 13px;
+    .image-upload-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+
+      .select-file-btn {
+        width: 100%;
+        max-width: 200px;
+      }
+    }
+
+    :deep(.el-form-item) {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      margin-bottom: 18px;
+
+      .el-form-item__label {
+        width: 100% !important;
+        text-align: left !important;
+        padding: 0 0 8px 0 !important;
+        font-size: 14px;
+        line-height: 1.5;
+        justify-content: flex-start !important;
+      }
+
+      .el-form-item__content {
+        width: 100%;
+        margin-left: 0 !important;
+
+        .el-input,
+        .el-textarea,
+        .el-select {
+          width: 100%;
+        }
+      }
+    }
   }
 }
 </style>
