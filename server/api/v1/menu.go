@@ -128,6 +128,7 @@ func (h *MenuHandler) Delete(ctx *gin.Context) {
 // Get 获取菜单详情
 //
 //	@Summary	获取菜单详情
+//	 @Description	获取菜单项的详细信息
 //	@Tags		菜单管理
 //	@Accept		json
 //	@Produce	json

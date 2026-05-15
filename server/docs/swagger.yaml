@@ -1,6 +1,6 @@
 basePath: /api/v1
 definitions:
-  jeri_blog_internal_dto.AIAISummaryRequest:
+  dto.AIAISummaryRequest:
     properties:
       content:
         description: 文章内容
@@ -8,13 +8,13 @@ definitions:
     required:
     - content
     type: object
-  jeri_blog_internal_dto.AIAISummaryResponse:
+  dto.AIAISummaryResponse:
     properties:
       summary:
         description: 生成的AI摘要
         type: string
     type: object
-  jeri_blog_internal_dto.AISummaryRequest:
+  dto.AISummaryRequest:
     properties:
       content:
         description: 文章内容
@@ -22,13 +22,13 @@ definitions:
     required:
     - content
     type: object
-  jeri_blog_internal_dto.AISummaryResponse:
+  dto.AISummaryResponse:
     properties:
       summary:
         description: 生成的摘要
         type: string
     type: object
-  jeri_blog_internal_dto.AITestRequest:
+  dto.AITestRequest:
     properties:
       api_key:
         type: string
@@ -41,7 +41,7 @@ definitions:
     - base_url
     - model
     type: object
-  jeri_blog_internal_dto.AITitleRequest:
+  dto.AITitleRequest:
     properties:
       content:
         description: 文章内容
@@ -49,13 +49,13 @@ definitions:
     required:
     - content
     type: object
-  jeri_blog_internal_dto.AITitleResponse:
+  dto.AITitleResponse:
     properties:
       title:
         description: 生成的标题
         type: string
     type: object
-  jeri_blog_internal_dto.AdminCreateUserRequest:
+  dto.AdminCreateUserRequest:
     properties:
       avatar:
         maxLength: 255
@@ -75,7 +75,7 @@ definitions:
         type: string
       role:
         allOf:
-        - $ref: '#/definitions/jeri_blog_internal_model.UserRole'
+        - $ref: '#/definitions/model.UserRole'
         enum:
         - super_admin
         - admin
@@ -90,7 +90,7 @@ definitions:
     - password
     - role
     type: object
-  jeri_blog_internal_dto.AdminUpdateUserRequest:
+  dto.AdminUpdateUserRequest:
     properties:
       avatar:
         maxLength: 255
@@ -115,7 +115,7 @@ definitions:
         type: string
       role:
         allOf:
-        - $ref: '#/definitions/jeri_blog_internal_model.UserRole'
+        - $ref: '#/definitions/model.UserRole'
         enum:
         - super_admin
         - admin
@@ -126,7 +126,7 @@ definitions:
         maxLength: 255
         type: string
     type: object
-  jeri_blog_internal_dto.ApplyFriendRequest:
+  dto.ApplyFriendRequest:
     properties:
       avatar:
         description: 网站头像/logo
@@ -154,7 +154,7 @@ definitions:
     - name
     - url
     type: object
-  jeri_blog_internal_dto.ArchiveItem:
+  dto.ArchiveItem:
     properties:
       count:
         description: 文章数量
@@ -166,15 +166,15 @@ definitions:
         description: 年份
         type: string
     type: object
-  jeri_blog_internal_dto.ArchivesResponse:
+  dto.ArchivesResponse:
     properties:
       archives:
         description: 归档列表
         items:
-          $ref: '#/definitions/jeri_blog_internal_dto.ArchiveItem'
+          $ref: '#/definitions/dto.ArchiveItem'
         type: array
     type: object
-  jeri_blog_internal_dto.ArticleAdminDetailResponse:
+  dto.ArticleAdminDetailResponse:
     properties:
       ai_summary:
         type: string
@@ -202,7 +202,7 @@ definitions:
       location:
         type: string
       publish_time:
-        $ref: '#/definitions/jeri_blog_pkg_utils.JSONTime'
+        $ref: '#/definitions/utils.JSONTime'
       slug:
         type: string
       summary:
@@ -219,9 +219,9 @@ definitions:
       title:
         type: string
       update_time:
-        $ref: '#/definitions/jeri_blog_pkg_utils.JSONTime'
+        $ref: '#/definitions/utils.JSONTime'
     type: object
-  jeri_blog_internal_dto.ArticleContribution:
+  dto.ArticleContribution:
     properties:
       count:
         description: 文章发布数量
@@ -230,7 +230,7 @@ definitions:
         description: 日期 YYYY-MM-DD
         type: string
     type: object
-  jeri_blog_internal_dto.ArticleDetailResponse:
+  dto.ArticleDetailResponse:
     properties:
       ai_summary:
         type: string
@@ -274,7 +274,7 @@ definitions:
             type: string
         type: object
       publish_time:
-        $ref: '#/definitions/jeri_blog_pkg_utils.JSONTime'
+        $ref: '#/definitions/utils.JSONTime'
       slug:
         type: string
       summary:
@@ -293,13 +293,13 @@ definitions:
       title:
         type: string
       update_time:
-        $ref: '#/definitions/jeri_blog_pkg_utils.JSONTime'
+        $ref: '#/definitions/utils.JSONTime'
       url:
         type: string
       view_count:
         type: integer
     type: object
-  jeri_blog_internal_dto.BatchDeleteRequest:
+  dto.BatchDeleteRequest:
     properties:
       ids:
         description: 要删除的ID列表
@@ -310,7 +310,7 @@ definitions:
     required:
     - ids
     type: object
-  jeri_blog_internal_dto.CategoryForWebResponse:
+  dto.CategoryForWebResponse:
     properties:
       count:
         type: integer
@@ -327,7 +327,7 @@ definitions:
       url:
         type: string
     type: object
-  jeri_blog_internal_dto.CategoryStats:
+  dto.CategoryStats:
     properties:
       count:
         description: 文章数量
@@ -336,7 +336,7 @@ definitions:
         description: 分类名称
         type: string
     type: object
-  jeri_blog_internal_dto.ChangePasswordRequest:
+  dto.ChangePasswordRequest:
     properties:
       new_password:
         maxLength: 32
@@ -348,7 +348,7 @@ definitions:
     - new_password
     - old_password
     type: object
-  jeri_blog_internal_dto.CollectRequest:
+  dto.CollectRequest:
     properties:
       article_id:
         description: 文章ID（可选）
@@ -388,14 +388,14 @@ definitions:
         description: 访问URL
         type: string
     type: object
-  jeri_blog_internal_dto.CommentListResponse:
+  dto.CommentListResponse:
     properties:
       content:
         type: string
       created_at:
-        $ref: '#/definitions/jeri_blog_pkg_utils.JSONTime'
+        $ref: '#/definitions/utils.JSONTime'
       deleted_at:
-        $ref: '#/definitions/jeri_blog_pkg_utils.JSONTime'
+        $ref: '#/definitions/utils.JSONTime'
       id:
         type: integer
       parent_id:
@@ -427,7 +427,7 @@ definitions:
             type: string
         type: object
     type: object
-  jeri_blog_internal_dto.CommentResponse:
+  dto.CommentResponse:
     properties:
       browser:
         description: 浏览器内核
@@ -435,7 +435,7 @@ definitions:
       content:
         type: string
       created_at:
-        $ref: '#/definitions/jeri_blog_pkg_utils.JSONTime'
+        $ref: '#/definitions/utils.JSONTime'
       id:
         type: integer
       is_deleted:
@@ -450,7 +450,7 @@ definitions:
         type: integer
       replies:
         items:
-          $ref: '#/definitions/jeri_blog_internal_dto.CommentResponse'
+          $ref: '#/definitions/dto.CommentResponse'
         type: array
       reply_user:
         properties:
@@ -495,7 +495,7 @@ definitions:
             type: string
         type: object
     type: object
-  jeri_blog_internal_dto.CreateArticleRequest:
+  dto.CreateArticleRequest:
     properties:
       category_id:
         type: integer
@@ -533,7 +533,7 @@ definitions:
     - content
     - title
     type: object
-  jeri_blog_internal_dto.CreateCategoryRequest:
+  dto.CreateCategoryRequest:
     properties:
       description:
         maxLength: 200
@@ -546,7 +546,7 @@ definitions:
     required:
     - name
     type: object
-  jeri_blog_internal_dto.CreateCommentRequest:
+  dto.CreateCommentRequest:
     properties:
       content:
         maxLength: 500
@@ -579,7 +579,7 @@ definitions:
     - content
     - target_type
     type: object
-  jeri_blog_internal_dto.CreateFriendRequest:
+  dto.CreateFriendRequest:
     properties:
       avatar:
         maxLength: 255
@@ -610,7 +610,7 @@ definitions:
     - name
     - url
     type: object
-  jeri_blog_internal_dto.CreateFriendTypeRequest:
+  dto.CreateFriendTypeRequest:
     properties:
       is_visible:
         type: boolean
@@ -622,21 +622,21 @@ definitions:
     required:
     - name
     type: object
-  jeri_blog_internal_dto.CreateMomentRequest:
+  dto.CreateMomentRequest:
     properties:
       content:
-        $ref: '#/definitions/jeri_blog_internal_dto.MomentContent'
+        $ref: '#/definitions/dto.MomentContent'
       is_publish:
         description: 是否发布，默认true
         type: boolean
       publish_time:
         allOf:
-        - $ref: '#/definitions/jeri_blog_pkg_utils.JSONTime'
+        - $ref: '#/definitions/utils.JSONTime'
         description: 发布时间（可选，不填则使用创建时间）
     required:
     - content
     type: object
-  jeri_blog_internal_dto.CreateTagRequest:
+  dto.CreateTagRequest:
     properties:
       description:
         maxLength: 200
@@ -647,7 +647,7 @@ definitions:
     required:
     - name
     type: object
-  jeri_blog_internal_dto.DashboardStats:
+  dto.DashboardStats:
     properties:
       comments_growth:
         description: 评论数增长率
@@ -695,14 +695,14 @@ definitions:
         description: 访客量增长率
         type: number
     type: object
-  jeri_blog_internal_dto.DeactivateAccountRequest:
+  dto.DeactivateAccountRequest:
     properties:
       password:
         type: string
     required:
     - password
     type: object
-  jeri_blog_internal_dto.FeedbackResponse:
+  dto.FeedbackResponse:
     properties:
       admin_reply:
         type: string
@@ -711,7 +711,7 @@ definitions:
         type: string
       feedback_time:
         allOf:
-        - $ref: '#/definitions/jeri_blog_pkg_utils.JSONTime'
+        - $ref: '#/definitions/utils.JSONTime'
         description: 反馈时间
       form_content:
         description: 表单内容
@@ -721,7 +721,7 @@ definitions:
         type: string
       reply_time:
         allOf:
-        - $ref: '#/definitions/jeri_blog_pkg_utils.JSONTime'
+        - $ref: '#/definitions/utils.JSONTime'
         description: 回复时间
       report_type:
         type: string
@@ -735,7 +735,7 @@ definitions:
       user_agent:
         type: string
     type: object
-  jeri_blog_internal_dto.FileReferenceResponse:
+  dto.FileReferenceResponse:
     properties:
       field:
         description: 引用字段：封面图片/正文图片/头像等
@@ -759,7 +759,7 @@ definitions:
         description: 跳转链接
         type: string
     type: object
-  jeri_blog_internal_dto.FileResponse:
+  dto.FileResponse:
     properties:
       file_name:
         type: string
@@ -779,32 +779,32 @@ definitions:
         description: 文件状态：0=未使用 1=使用中
         type: integer
       upload_time:
-        $ref: '#/definitions/jeri_blog_pkg_utils.JSONTime'
+        $ref: '#/definitions/utils.JSONTime'
       upload_type:
         type: string
       user_id:
         type: integer
     type: object
-  jeri_blog_internal_dto.FileUploadForWebResponse:
+  dto.FileUploadForWebResponse:
     properties:
       file_url:
         type: string
       original_name:
         type: string
     type: object
-  jeri_blog_internal_dto.ForgotPasswordRequest:
+  dto.ForgotPasswordRequest:
     properties:
       email:
         type: string
     required:
     - email
     type: object
-  jeri_blog_internal_dto.FriendGroupResponse:
+  dto.FriendGroupResponse:
     properties:
       friends:
         description: 该类型下的友链（已排序）
         items:
-          $ref: '#/definitions/jeri_blog_internal_dto.FriendInGroupResponse'
+          $ref: '#/definitions/dto.FriendInGroupResponse'
         type: array
       type_id:
         description: 类型ID，未分类为 null
@@ -816,7 +816,7 @@ definitions:
         description: 类型排序值
         type: integer
     type: object
-  jeri_blog_internal_dto.FriendInGroupResponse:
+  dto.FriendInGroupResponse:
     properties:
       avatar:
         type: string
@@ -836,12 +836,12 @@ definitions:
       url:
         type: string
     type: object
-  jeri_blog_internal_dto.GroupedFriendsResponse:
+  dto.GroupedFriendsResponse:
     properties:
       groups:
         description: 友链分组列表
         items:
-          $ref: '#/definitions/jeri_blog_internal_dto.FriendGroupResponse'
+          $ref: '#/definitions/dto.FriendGroupResponse'
         type: array
       total_friends:
         description: 友链总数
@@ -850,7 +850,7 @@ definitions:
         description: 分组总数
         type: integer
     type: object
-  jeri_blog_internal_dto.ImportArticleError:
+  dto.ImportArticleError:
     properties:
       error:
         type: string
@@ -859,14 +859,14 @@ definitions:
       title:
         type: string
     type: object
-  jeri_blog_internal_dto.ImportArticlesResult:
+  dto.ImportArticlesResult:
     properties:
       categories_added:
         description: 新增分类数量
         type: integer
       errors:
         items:
-          $ref: '#/definitions/jeri_blog_internal_dto.ImportArticleError'
+          $ref: '#/definitions/dto.ImportArticleError'
         type: array
       failed:
         type: integer
@@ -878,7 +878,7 @@ definitions:
       total:
         type: integer
     type: object
-  jeri_blog_internal_dto.ImportCommentError:
+  dto.ImportCommentError:
     properties:
       content:
         type: string
@@ -887,11 +887,11 @@ definitions:
       index:
         type: integer
     type: object
-  jeri_blog_internal_dto.ImportCommentsResult:
+  dto.ImportCommentsResult:
     properties:
       errors:
         items:
-          $ref: '#/definitions/jeri_blog_internal_dto.ImportCommentError'
+          $ref: '#/definitions/dto.ImportCommentError'
         type: array
       failed:
         type: integer
@@ -902,7 +902,7 @@ definitions:
       user_created:
         type: integer
     type: object
-  jeri_blog_internal_dto.LoginRequest:
+  dto.LoginRequest:
     properties:
       email:
         type: string
@@ -912,14 +912,14 @@ definitions:
     - email
     - password
     type: object
-  jeri_blog_internal_dto.LoginResponse:
+  dto.LoginResponse:
     properties:
       access_token:
         type: string
       user:
-        $ref: '#/definitions/jeri_blog_internal_dto.UserResponse'
+        $ref: '#/definitions/dto.UserResponse'
     type: object
-  jeri_blog_internal_dto.MenuCreateRequest:
+  dto.MenuCreateRequest:
     properties:
       icon:
         description: 图标
@@ -956,7 +956,7 @@ definitions:
     - title
     - type
     type: object
-  jeri_blog_internal_dto.MenuDeleteRequest:
+  dto.MenuDeleteRequest:
     properties:
       children_action:
         description: 子菜单处理方式：delete-删除子菜单，upgrade-升级为主菜单
@@ -965,7 +965,7 @@ definitions:
         - upgrade
         type: string
     type: object
-  jeri_blog_internal_dto.MenuResponse:
+  dto.MenuResponse:
     properties:
       icon:
         type: string
@@ -984,12 +984,12 @@ definitions:
       url:
         type: string
     type: object
-  jeri_blog_internal_dto.MenuTreeNode:
+  dto.MenuTreeNode:
     properties:
       children:
         description: 子菜单列表
         items:
-          $ref: '#/definitions/jeri_blog_internal_dto.MenuTreeNode'
+          $ref: '#/definitions/dto.MenuTreeNode'
         type: array
       icon:
         type: string
@@ -1008,7 +1008,7 @@ definitions:
       url:
         type: string
     type: object
-  jeri_blog_internal_dto.MenuUpdateRequest:
+  dto.MenuUpdateRequest:
     properties:
       icon:
         description: 图标
@@ -1045,17 +1045,17 @@ definitions:
     - title
     - type
     type: object
-  jeri_blog_internal_dto.MomentAudio:
+  dto.MomentAudio:
     properties:
       url:
         description: 音频URL（本地音频或在线音频链接）
         type: string
     type: object
-  jeri_blog_internal_dto.MomentContent:
+  dto.MomentContent:
     properties:
       audio:
         allOf:
-        - $ref: '#/definitions/jeri_blog_internal_dto.MomentAudio'
+        - $ref: '#/definitions/dto.MomentAudio'
         description: 音频（本地或在线）
       book:
         additionalProperties: {}
@@ -1068,7 +1068,7 @@ definitions:
         type: array
       link:
         allOf:
-        - $ref: '#/definitions/jeri_blog_internal_dto.MomentLink'
+        - $ref: '#/definitions/dto.MomentLink'
         description: 外链
       location:
         description: 位置信息
@@ -1079,7 +1079,7 @@ definitions:
         type: object
       music:
         allOf:
-        - $ref: '#/definitions/jeri_blog_internal_dto.MomentMusic'
+        - $ref: '#/definitions/dto.MomentMusic'
         description: 音乐（基于MetingJS）
       tags:
         description: 标签
@@ -1089,10 +1089,10 @@ definitions:
         type: string
       video:
         allOf:
-        - $ref: '#/definitions/jeri_blog_internal_dto.MomentVideo'
+        - $ref: '#/definitions/dto.MomentVideo'
         description: 视频（本地或在线）
     type: object
-  jeri_blog_internal_dto.MomentLink:
+  dto.MomentLink:
     properties:
       favicon:
         type: string
@@ -1101,18 +1101,18 @@ definitions:
       url:
         type: string
     type: object
-  jeri_blog_internal_dto.MomentListResponse:
+  dto.MomentListResponse:
     properties:
       content:
-        $ref: '#/definitions/jeri_blog_internal_dto.MomentContent'
+        $ref: '#/definitions/dto.MomentContent'
       id:
         type: integer
       is_publish:
         type: boolean
       publish_time:
-        $ref: '#/definitions/jeri_blog_pkg_utils.JSONTime'
+        $ref: '#/definitions/utils.JSONTime'
     type: object
-  jeri_blog_internal_dto.MomentMusic:
+  dto.MomentMusic:
     properties:
       id:
         description: 音乐ID
@@ -1124,7 +1124,7 @@ definitions:
         description: 类型：song, playlist, album, artist
         type: string
     type: object
-  jeri_blog_internal_dto.MomentVideo:
+  dto.MomentVideo:
     properties:
       platform:
         description: 平台：bilibili, youtube（本地视频为空）
@@ -1136,11 +1136,11 @@ definitions:
         description: 视频ID（在线视频的ID，本地视频为空）
         type: string
     type: object
-  jeri_blog_internal_dto.NotificationListResponse:
+  dto.NotificationListResponse:
     properties:
       list:
         items:
-          $ref: '#/definitions/jeri_blog_internal_dto.NotificationResponse'
+          $ref: '#/definitions/dto.NotificationResponse'
         type: array
       page:
         type: integer
@@ -1152,13 +1152,13 @@ definitions:
         description: 未读数量
         type: integer
     type: object
-  jeri_blog_internal_dto.NotificationResponse:
+  dto.NotificationResponse:
     properties:
       content:
         description: 通知内容
         type: string
       created_at:
-        $ref: '#/definitions/jeri_blog_pkg_utils.JSONTime'
+        $ref: '#/definitions/utils.JSONTime'
       data:
         description: 结构化数据（JSON 对象）
         type: object
@@ -1170,7 +1170,7 @@ definitions:
         description: 跳转链接
         type: string
       read_at:
-        $ref: '#/definitions/jeri_blog_pkg_utils.JSONTime'
+        $ref: '#/definitions/utils.JSONTime'
       sender:
         description: 发送者昵称
         type: string
@@ -1187,7 +1187,7 @@ definitions:
         description: 类型中文文本（前端直接显示）
         type: string
     type: object
-  jeri_blog_internal_dto.RegisterRequest:
+  dto.RegisterRequest:
     properties:
       email:
         type: string
@@ -1207,7 +1207,7 @@ definitions:
     - nickname
     - password
     type: object
-  jeri_blog_internal_dto.ResetPasswordRequest:
+  dto.ResetPasswordRequest:
     properties:
       code:
         type: string
@@ -1222,7 +1222,7 @@ definitions:
     - email
     - password
     type: object
-  jeri_blog_internal_dto.SetPasswordRequest:
+  dto.SetPasswordRequest:
     properties:
       confirm_password:
         maxLength: 32
@@ -1236,23 +1236,23 @@ definitions:
     - confirm_password
     - password
     type: object
-  jeri_blog_internal_dto.SettingGroupResponse:
+  dto.SettingGroupResponse:
     properties:
       group:
         type: string
       settings:
         items:
-          $ref: '#/definitions/jeri_blog_internal_dto.SettingItemResponse'
+          $ref: '#/definitions/dto.SettingItemResponse'
         type: array
     type: object
-  jeri_blog_internal_dto.SettingItemResponse:
+  dto.SettingItemResponse:
     properties:
       key:
         type: string
       value:
         type: string
     type: object
-  jeri_blog_internal_dto.SiteStatsResponse:
+  dto.SiteStatsResponse:
     properties:
       month_pageviews:
         description: 本月访问
@@ -1300,7 +1300,7 @@ definitions:
         description: 昨日访客
         type: integer
     type: object
-  jeri_blog_internal_dto.SubmitFeedbackRequest:
+  dto.SubmitFeedbackRequest:
     properties:
       attachmentFiles:
         description: 附件文件URL数组
@@ -1329,20 +1329,20 @@ definitions:
     - reportType
     - reportUrl
     type: object
-  jeri_blog_internal_dto.SubscriberResponse:
+  dto.SubscriberResponse:
     properties:
       active:
         type: boolean
       created_at:
-        $ref: '#/definitions/jeri_blog_pkg_utils.JSONTime'
+        $ref: '#/definitions/utils.JSONTime'
       email:
         type: string
       id:
         type: integer
       updated_at:
-        $ref: '#/definitions/jeri_blog_pkg_utils.JSONTime'
+        $ref: '#/definitions/utils.JSONTime'
     type: object
-  jeri_blog_internal_dto.SystemDynamicInfo:
+  dto.SystemDynamicInfo:
     properties:
       cpu_usage:
         type: number
@@ -1375,7 +1375,7 @@ definitions:
       version_latest_version:
         type: string
     type: object
-  jeri_blog_internal_dto.SystemStaticInfo:
+  dto.SystemStaticInfo:
     properties:
       app_version:
         type: string
@@ -1410,7 +1410,7 @@ definitions:
       timezone:
         type: string
     type: object
-  jeri_blog_internal_dto.TagForWebResponse:
+  dto.TagForWebResponse:
     properties:
       count:
         type: integer
@@ -1425,7 +1425,7 @@ definitions:
       url:
         type: string
     type: object
-  jeri_blog_internal_dto.TagStats:
+  dto.TagStats:
     properties:
       count:
         description: 文章数量
@@ -1434,7 +1434,7 @@ definitions:
         description: 标签名称
         type: string
     type: object
-  jeri_blog_internal_dto.TrendData:
+  dto.TrendData:
     properties:
       date:
         description: 日期
@@ -1446,7 +1446,7 @@ definitions:
         description: 访客量
         type: integer
     type: object
-  jeri_blog_internal_dto.UpdateArticleRequest:
+  dto.UpdateArticleRequest:
     properties:
       ai_summary:
         description: AI 总结
@@ -1473,7 +1473,7 @@ definitions:
         description: 发布地点
         type: string
       publish_time:
-        $ref: '#/definitions/jeri_blog_pkg_utils.JSONTime'
+        $ref: '#/definitions/utils.JSONTime'
       slug:
         description: 自定义文章Slug
         type: string
@@ -1486,9 +1486,9 @@ definitions:
       title:
         type: string
       update_time:
-        $ref: '#/definitions/jeri_blog_pkg_utils.JSONTime'
+        $ref: '#/definitions/utils.JSONTime'
     type: object
-  jeri_blog_internal_dto.UpdateCategoryRequest:
+  dto.UpdateCategoryRequest:
     properties:
       description:
         maxLength: 200
@@ -1501,7 +1501,7 @@ definitions:
     required:
     - name
     type: object
-  jeri_blog_internal_dto.UpdateCommentRequest:
+  dto.UpdateCommentRequest:
     properties:
       content:
         maxLength: 500
@@ -1510,7 +1510,7 @@ definitions:
     required:
     - content
     type: object
-  jeri_blog_internal_dto.UpdateFeedbackRequest:
+  dto.UpdateFeedbackRequest:
     properties:
       admin_reply:
         type: string
@@ -1523,7 +1523,7 @@ definitions:
     required:
     - status
     type: object
-  jeri_blog_internal_dto.UpdateFriendRequest:
+  dto.UpdateFriendRequest:
     properties:
       accessible:
         description: 可访问性状态
@@ -1563,7 +1563,7 @@ definitions:
     - name
     - url
     type: object
-  jeri_blog_internal_dto.UpdateFriendTypeRequest:
+  dto.UpdateFriendTypeRequest:
     properties:
       is_visible:
         type: boolean
@@ -1575,21 +1575,21 @@ definitions:
     required:
     - name
     type: object
-  jeri_blog_internal_dto.UpdateMomentRequest:
+  dto.UpdateMomentRequest:
     properties:
       content:
-        $ref: '#/definitions/jeri_blog_internal_dto.MomentContent'
+        $ref: '#/definitions/dto.MomentContent'
       is_publish:
         description: 是否发布
         type: boolean
       publish_time:
         allOf:
-        - $ref: '#/definitions/jeri_blog_pkg_utils.JSONTime'
+        - $ref: '#/definitions/utils.JSONTime'
         description: 发布时间（可编辑）
     required:
     - content
     type: object
-  jeri_blog_internal_dto.UpdateSettingGroupRequest:
+  dto.UpdateSettingGroupRequest:
     properties:
       settings:
         additionalProperties:
@@ -1598,7 +1598,7 @@ definitions:
     required:
     - settings
     type: object
-  jeri_blog_internal_dto.UpdateTagRequest:
+  dto.UpdateTagRequest:
     properties:
       description:
         maxLength: 200
@@ -1609,7 +1609,7 @@ definitions:
     required:
     - name
     type: object
-  jeri_blog_internal_dto.UpdateUserRequest:
+  dto.UpdateUserRequest:
     properties:
       avatar:
         maxLength: 255
@@ -1629,14 +1629,14 @@ definitions:
         maxLength: 255
         type: string
     type: object
-  jeri_blog_internal_dto.UserResponse:
+  dto.UserResponse:
     properties:
       avatar:
         type: string
       badge:
         type: string
       created_at:
-        $ref: '#/definitions/jeri_blog_pkg_utils.JSONTime'
+        $ref: '#/definitions/utils.JSONTime'
       email:
         type: string
       email_hash:
@@ -1652,7 +1652,7 @@ definitions:
         description: 是否为虚拟邮箱（需绑定真实邮箱）
         type: boolean
       last_login:
-        $ref: '#/definitions/jeri_blog_pkg_utils.JSONTime'
+        $ref: '#/definitions/utils.JSONTime'
       linked_oauths:
         description: '["github", "google", "qq"]'
         items:
@@ -1661,17 +1661,28 @@ definitions:
       nickname:
         type: string
       role:
-        $ref: '#/definitions/jeri_blog_internal_model.UserRole'
+        $ref: '#/definitions/model.UserRole'
       website:
         type: string
     type: object
-  jeri_blog_internal_dto.WeChatExportResult:
+  dto.WeChatExportResult:
     properties:
       html:
         description: 公众号 HTML，用于复制粘贴到微信公众平台
         type: string
     type: object
-  jeri_blog_internal_model.Category:
+  linkparser.Metadata:
+    properties:
+      description:
+        type: string
+      favicon:
+        type: string
+      title:
+        type: string
+      url:
+        type: string
+    type: object
+  model.Category:
     properties:
       created_at:
         type: string
@@ -1688,7 +1699,7 @@ definitions:
       updated_at:
         type: string
     type: object
-  jeri_blog_internal_model.Tag:
+  model.Tag:
     properties:
       created_at:
         type: string
@@ -1703,7 +1714,7 @@ definitions:
       updated_at:
         type: string
     type: object
-  jeri_blog_internal_model.UserRole:
+  model.UserRole:
     enum:
     - super_admin
     - admin
@@ -1725,18 +1736,7 @@ definitions:
     - RoleAdmin
     - RoleUser
     - RoleGuest
-  jeri_blog_pkg_linkparser.Metadata:
-    properties:
-      description:
-        type: string
-      favicon:
-        type: string
-      title:
-        type: string
-      url:
-        type: string
-    type: object
-  jeri_blog_pkg_response.PageResult:
+  response.PageResult:
     properties:
       list: {}
       page:
@@ -1746,7 +1746,7 @@ definitions:
       total:
         type: integer
     type: object
-  jeri_blog_pkg_response.Response:
+  response.Response:
     properties:
       code:
         type: integer
@@ -1758,12 +1758,12 @@ definitions:
       message:
         type: string
     type: object
-  jeri_blog_pkg_utils.JSONTime:
+  utils.JSONTime:
     properties:
       time.Time:
         type: string
     type: object
-  jeri_blog_pkg_videoparser.VideoInfo:
+  videoparser.VideoInfo:
     properties:
       platform:
         description: bilibili, youtube, 或空（本地视频）
@@ -1794,7 +1794,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.AIAISummaryRequest'
+          $ref: '#/definitions/dto.AIAISummaryRequest'
       produces:
       - application/json
       responses:
@@ -1802,23 +1802,23 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.AIAISummaryResponse'
+                  $ref: '#/definitions/dto.AIAISummaryResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 生成AI摘要
@@ -1835,7 +1835,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.AISummaryRequest'
+          $ref: '#/definitions/dto.AISummaryRequest'
       produces:
       - application/json
       responses:
@@ -1843,23 +1843,23 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.AISummaryResponse'
+                  $ref: '#/definitions/dto.AISummaryResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 生成文章摘要
@@ -1876,22 +1876,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.AITestRequest'
+          $ref: '#/definitions/dto.AITestRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 测试AI配置
@@ -1908,7 +1908,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.AITitleRequest'
+          $ref: '#/definitions/dto.AITitleRequest'
       produces:
       - application/json
       responses:
@@ -1916,23 +1916,23 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.AITitleResponse'
+                  $ref: '#/definitions/dto.AITitleResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 生成标题
@@ -1998,19 +1998,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_pkg_response.PageResult'
+                  $ref: '#/definitions/response.PageResult'
               type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 文章列表
@@ -2026,7 +2026,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.CreateArticleRequest'
+          $ref: '#/definitions/dto.CreateArticleRequest'
       produces:
       - application/json
       responses:
@@ -2034,23 +2034,23 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.ArticleAdminDetailResponse'
+                  $ref: '#/definitions/dto.ArticleAdminDetailResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 新建文章
@@ -2073,23 +2073,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 删除文章
@@ -2112,27 +2112,27 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.ArticleAdminDetailResponse'
+                  $ref: '#/definitions/dto.ArticleAdminDetailResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 文章详情
@@ -2153,7 +2153,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.UpdateArticleRequest'
+          $ref: '#/definitions/dto.UpdateArticleRequest'
       produces:
       - application/json
       responses:
@@ -2161,27 +2161,27 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.ArticleAdminDetailResponse'
+                  $ref: '#/definitions/dto.ArticleAdminDetailResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 更新文章
@@ -2208,15 +2208,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 下载为 Markdown
@@ -2240,23 +2240,23 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.WeChatExportResult'
+                  $ref: '#/definitions/dto.WeChatExportResult'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 生成微信公众号 HTML
@@ -2299,23 +2299,23 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.ImportArticlesResult'
+                  $ref: '#/definitions/dto.ImportArticlesResult'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 导入文章数据
@@ -2341,15 +2341,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 分类列表
@@ -2365,7 +2365,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.CreateCategoryRequest'
+          $ref: '#/definitions/dto.CreateCategoryRequest'
       produces:
       - application/json
       responses:
@@ -2373,23 +2373,23 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_model.Category'
+                  $ref: '#/definitions/model.Category'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 创建分类
@@ -2412,23 +2412,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 删除分类
@@ -2450,23 +2450,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 分类详情
@@ -2487,7 +2487,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.UpdateCategoryRequest'
+          $ref: '#/definitions/dto.UpdateCategoryRequest'
       produces:
       - application/json
       responses:
@@ -2495,27 +2495,27 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_model.Category'
+                  $ref: '#/definitions/model.Category'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 更新分类
@@ -2566,23 +2566,23 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_pkg_response.PageResult'
+                  $ref: '#/definitions/response.PageResult'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 评论列表
@@ -2598,7 +2598,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.CreateCommentRequest'
+          $ref: '#/definitions/dto.CreateCommentRequest'
       produces:
       - application/json
       responses:
@@ -2606,23 +2606,23 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.CommentResponse'
+                  $ref: '#/definitions/dto.CommentResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 创建评论
@@ -2645,23 +2645,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 删除评论
@@ -2684,27 +2684,27 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.CommentListResponse'
+                  $ref: '#/definitions/dto.CommentListResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 评论详情
@@ -2727,23 +2727,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 切换评论状态
@@ -2774,23 +2774,23 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.ImportCommentsResult'
+                  $ref: '#/definitions/dto.ImportCommentsResult'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 导入评论数据
@@ -2850,15 +2850,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 文件列表
@@ -2886,19 +2886,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.FileResponse'
+                  $ref: '#/definitions/dto.FileResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 文件上传
@@ -2921,23 +2921,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 删除文件
@@ -2959,26 +2959,26 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
-      summary: 文件详情（管理）
+      summary: 文件详情
       tags:
       - 文件管理
   /admin/files/{id}/references:
@@ -2999,29 +2999,29 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/jeri_blog_internal_dto.FileReferenceResponse'
+                    $ref: '#/definitions/dto.FileReferenceResponse'
                   type: array
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 文件引用详情
@@ -3075,15 +3075,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 友链列表
@@ -3099,26 +3099,26 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.CreateFriendRequest'
+          $ref: '#/definitions/dto.CreateFriendRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 创建友链
@@ -3141,23 +3141,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 删除友链
@@ -3179,23 +3179,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 友链详情
@@ -3216,30 +3216,30 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.UpdateFriendRequest'
+          $ref: '#/definitions/dto.UpdateFriendRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 更新友链
@@ -3263,15 +3263,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 友链类型列表 [类型]
@@ -3287,26 +3287,26 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.CreateFriendTypeRequest'
+          $ref: '#/definitions/dto.CreateFriendTypeRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 创建友链类型 [类型]
@@ -3327,23 +3327,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 删除友链类型 [类型]
@@ -3363,23 +3363,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 友链类型详情 [类型]
@@ -3400,30 +3400,30 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.UpdateFriendTypeRequest'
+          $ref: '#/definitions/dto.UpdateFriendTypeRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 更新友链类型 [类型]
@@ -3446,11 +3446,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/jeri_blog_internal_dto.MenuTreeNode'
+                    $ref: '#/definitions/dto.MenuTreeNode'
                   type: array
               type: object
       security:
@@ -3468,7 +3468,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.MenuCreateRequest'
+          $ref: '#/definitions/dto.MenuCreateRequest'
       produces:
       - application/json
       responses:
@@ -3476,10 +3476,10 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.MenuResponse'
+                  $ref: '#/definitions/dto.MenuResponse'
               type: object
       security:
       - BearerAuth: []
@@ -3501,14 +3501,14 @@ paths:
         in: body
         name: request
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.MenuDeleteRequest'
+          $ref: '#/definitions/dto.MenuDeleteRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 删除菜单
@@ -3517,6 +3517,7 @@ paths:
     get:
       consumes:
       - application/json
+      description: 获取菜单项的详细信息
       parameters:
       - description: 菜单ID
         in: path
@@ -3530,10 +3531,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.MenuResponse'
+                  $ref: '#/definitions/dto.MenuResponse'
               type: object
       security:
       - BearerAuth: []
@@ -3555,7 +3556,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.MenuUpdateRequest'
+          $ref: '#/definitions/dto.MenuUpdateRequest'
       produces:
       - application/json
       responses:
@@ -3563,10 +3564,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.MenuResponse'
+                  $ref: '#/definitions/dto.MenuResponse'
               type: object
       security:
       - BearerAuth: []
@@ -3634,19 +3635,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_pkg_response.PageResult'
+                  $ref: '#/definitions/response.PageResult'
               type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 动态列表
@@ -3662,7 +3663,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.CreateMomentRequest'
+          $ref: '#/definitions/dto.CreateMomentRequest'
       produces:
       - application/json
       responses:
@@ -3670,23 +3671,23 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.MomentListResponse'
+                  $ref: '#/definitions/dto.MomentListResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 创建动态
@@ -3709,23 +3710,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 删除动态
@@ -3748,27 +3749,27 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.MomentListResponse'
+                  $ref: '#/definitions/dto.MomentListResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 动态详情
@@ -3789,7 +3790,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.UpdateMomentRequest'
+          $ref: '#/definitions/dto.UpdateMomentRequest'
       produces:
       - application/json
       responses:
@@ -3797,27 +3798,27 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.MomentListResponse'
+                  $ref: '#/definitions/dto.MomentListResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 更新动态
@@ -3861,15 +3862,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: RSS文章列表
@@ -3890,23 +3891,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 标记文章已读
@@ -3921,15 +3922,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 全部标记已读
@@ -3944,15 +3945,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 立即刷新RSS
@@ -3983,19 +3984,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.SettingGroupResponse'
+                  $ref: '#/definitions/dto.SettingGroupResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 获取配置分组
@@ -4023,22 +4024,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.UpdateSettingGroupRequest'
+          $ref: '#/definitions/dto.UpdateSettingGroupRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 更新配置分组
@@ -4056,7 +4057,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
                   additionalProperties:
@@ -4066,11 +4067,11 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 重置 MCP Secret
@@ -4088,11 +4089,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/jeri_blog_internal_dto.CategoryStats'
+                    $ref: '#/definitions/dto.CategoryStats'
                   type: array
               type: object
       security:
@@ -4123,11 +4124,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/jeri_blog_internal_dto.ArticleContribution'
+                    $ref: '#/definitions/dto.ArticleContribution'
                   type: array
               type: object
       security:
@@ -4147,10 +4148,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.DashboardStats'
+                  $ref: '#/definitions/dto.DashboardStats'
               type: object
       security:
       - BearerAuth: []
@@ -4169,11 +4170,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/jeri_blog_internal_dto.TagStats'
+                    $ref: '#/definitions/dto.TagStats'
                   type: array
               type: object
       security:
@@ -4215,11 +4216,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/jeri_blog_internal_dto.TrendData'
+                    $ref: '#/definitions/dto.TrendData'
                   type: array
               type: object
       security:
@@ -4285,10 +4286,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_pkg_response.PageResult'
+                  $ref: '#/definitions/response.PageResult'
               type: object
       security:
       - BearerAuth: []
@@ -4312,7 +4313,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 删除访问日志
@@ -4329,14 +4330,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.BatchDeleteRequest'
+          $ref: '#/definitions/dto.BatchDeleteRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 批量删除访问日志
@@ -4354,10 +4355,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.SystemDynamicInfo'
+                  $ref: '#/definitions/dto.SystemDynamicInfo'
               type: object
       security:
       - BearerAuth: []
@@ -4376,10 +4377,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.SystemStaticInfo'
+                  $ref: '#/definitions/dto.SystemStaticInfo'
               type: object
       security:
       - BearerAuth: []
@@ -4406,15 +4407,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 标签列表
@@ -4430,7 +4431,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.CreateTagRequest'
+          $ref: '#/definitions/dto.CreateTagRequest'
       produces:
       - application/json
       responses:
@@ -4438,23 +4439,23 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_model.Tag'
+                  $ref: '#/definitions/model.Tag'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 创建标签
@@ -4477,23 +4478,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 删除标签
@@ -4515,23 +4516,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 标签详情
@@ -4552,7 +4553,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.UpdateTagRequest'
+          $ref: '#/definitions/dto.UpdateTagRequest'
       produces:
       - application/json
       responses:
@@ -4560,27 +4561,27 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_model.Tag'
+                  $ref: '#/definitions/model.Tag'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 更新标签
@@ -4645,23 +4646,23 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_pkg_response.PageResult'
+                  $ref: '#/definitions/response.PageResult'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 用户列表
@@ -4677,30 +4678,30 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.AdminCreateUserRequest'
+          $ref: '#/definitions/dto.AdminCreateUserRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 创建用户
@@ -4723,19 +4724,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 删除用户
@@ -4758,23 +4759,23 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.UserResponse'
+                  $ref: '#/definitions/dto.UserResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 用户详情
@@ -4795,26 +4796,26 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.AdminUpdateUserRequest'
+          $ref: '#/definitions/dto.AdminUpdateUserRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 更新用户
@@ -4862,15 +4863,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
                   allOf:
-                  - $ref: '#/definitions/jeri_blog_pkg_response.PageResult'
+                  - $ref: '#/definitions/response.PageResult'
                   - properties:
                       list:
                         items:
-                          $ref: '#/definitions/jeri_blog_internal_dto.FeedbackResponse'
+                          $ref: '#/definitions/dto.FeedbackResponse'
                         type: array
                     type: object
               type: object
@@ -4895,7 +4896,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 删除反馈
@@ -4917,10 +4918,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.FeedbackResponse'
+                  $ref: '#/definitions/dto.FeedbackResponse'
               type: object
       security:
       - BearerAuth: []
@@ -4941,14 +4942,14 @@ paths:
         name: feedback
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.UpdateFeedbackRequest'
+          $ref: '#/definitions/dto.UpdateFeedbackRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 更新反馈
@@ -4977,19 +4978,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.NotificationListResponse'
+                  $ref: '#/definitions/dto.NotificationListResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 获取通知列表
@@ -5006,15 +5007,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 清空所有通知
@@ -5031,15 +5032,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 清空已读通知
@@ -5067,15 +5068,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
                   allOf:
-                  - $ref: '#/definitions/jeri_blog_pkg_response.PageResult'
+                  - $ref: '#/definitions/response.PageResult'
                   - properties:
                       list:
                         items:
-                          $ref: '#/definitions/jeri_blog_internal_dto.SubscriberResponse'
+                          $ref: '#/definitions/dto.SubscriberResponse'
                         type: array
                     type: object
               type: object
@@ -5100,7 +5101,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 删除订阅者
@@ -5128,7 +5129,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
                   properties:
@@ -5146,7 +5147,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 下载图片
@@ -5174,15 +5175,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_pkg_linkparser.Metadata'
+                  $ref: '#/definitions/linkparser.Metadata'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 获取链接元数据
@@ -5210,15 +5211,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_pkg_videoparser.VideoInfo'
+                  $ref: '#/definitions/videoparser.VideoInfo'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 解析视频URL
@@ -5235,7 +5236,7 @@ paths:
         name: feedback
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.SubmitFeedbackRequest'
+          $ref: '#/definitions/dto.SubmitFeedbackRequest'
       produces:
       - application/json
       responses:
@@ -5243,10 +5244,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.FeedbackResponse'
+                  $ref: '#/definitions/dto.FeedbackResponse'
               type: object
       summary: 提交反馈投诉
       tags:
@@ -5269,10 +5270,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.FeedbackResponse'
+                  $ref: '#/definitions/dto.FeedbackResponse'
               type: object
       summary: 查询反馈投诉进度
       tags:
@@ -5300,19 +5301,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.NotificationListResponse'
+                  $ref: '#/definitions/dto.NotificationListResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 获取用户通知列表
@@ -5335,15 +5336,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 标记通知为已读
@@ -5360,15 +5361,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 标记所有通知为已读
@@ -5395,7 +5396,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       summary: 邮件订阅
       tags:
       - 订阅
@@ -5416,7 +5417,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       summary: 订阅退订
       tags:
       - 订阅
@@ -5447,11 +5448,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 解析音乐信息
@@ -5494,15 +5495,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_pkg_response.PageResult'
+                  $ref: '#/definitions/response.PageResult'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       summary: 获取文章列表
       tags:
       - 文章
@@ -5524,16 +5525,38 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.ArticleDetailResponse'
+                  $ref: '#/definitions/dto.ArticleDetailResponse'
               type: object
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       summary: 文章详情
+      tags:
+      - 文章
+  /articles/random:
+    get:
+      description: 随机返回一篇已发布文章的 slug
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 随机文章
       tags:
       - 文章
   /articles/search:
@@ -5562,15 +5585,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_pkg_response.PageResult'
+                  $ref: '#/definitions/response.PageResult'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       summary: 搜索文章
       tags:
       - 文章
@@ -5638,22 +5661,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.ForgotPasswordRequest'
+          $ref: '#/definitions/dto.ForgotPasswordRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       summary: 重置密码请求
       tags:
       - 认证
@@ -5668,7 +5691,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.LoginRequest'
+          $ref: '#/definitions/dto.LoginRequest'
       produces:
       - application/json
       responses:
@@ -5676,19 +5699,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.LoginResponse'
+                  $ref: '#/definitions/dto.LoginResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       summary: 用户登录
       tags:
       - 认证
@@ -5703,11 +5726,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 用户登出
@@ -5725,19 +5748,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.LoginResponse'
+                  $ref: '#/definitions/dto.LoginResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       summary: 刷新token
       tags:
       - 认证
@@ -5752,7 +5775,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.RegisterRequest'
+          $ref: '#/definitions/dto.RegisterRequest'
       produces:
       - application/json
       responses:
@@ -5760,19 +5783,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.LoginResponse'
+                  $ref: '#/definitions/dto.LoginResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       summary: 用户注册
       tags:
       - 认证
@@ -5787,22 +5810,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.ResetPasswordRequest'
+          $ref: '#/definitions/dto.ResetPasswordRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       summary: 重置密码
       tags:
       - 认证
@@ -5826,7 +5849,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       summary: 分类列表
       tags:
       - 分类
@@ -5848,15 +5871,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.CategoryForWebResponse'
+                  $ref: '#/definitions/dto.CategoryForWebResponse'
               type: object
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       summary: 分类详情
       tags:
       - 分类
@@ -5871,7 +5894,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.CollectRequest'
+          $ref: '#/definitions/dto.CollectRequest'
       produces:
       - application/json
       responses:
@@ -5914,15 +5937,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_pkg_response.PageResult'
+                  $ref: '#/definitions/response.PageResult'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       summary: 评论列表
       tags:
       - 评论
@@ -5936,7 +5959,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.CreateCommentRequest'
+          $ref: '#/definitions/dto.CreateCommentRequest'
       produces:
       - application/json
       responses:
@@ -5944,15 +5967,15 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.CommentResponse'
+                  $ref: '#/definitions/dto.CommentResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       summary: 发表评论
       tags:
       - 评论
@@ -5973,23 +5996,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 删除评论
@@ -6010,7 +6033,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.UpdateCommentRequest'
+          $ref: '#/definitions/dto.UpdateCommentRequest'
       produces:
       - application/json
       responses:
@@ -6018,27 +6041,27 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.CommentResponse'
+                  $ref: '#/definitions/dto.CommentResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 修改评论
@@ -6054,10 +6077,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.GroupedFriendsResponse'
+                  $ref: '#/definitions/dto.GroupedFriendsResponse'
               type: object
       summary: 友链列表
       tags:
@@ -6073,22 +6096,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.ApplyFriendRequest'
+          $ref: '#/definitions/dto.ApplyFriendRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 申请友链
@@ -6110,11 +6133,11 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/jeri_blog_internal_dto.MenuTreeNode'
+                    $ref: '#/definitions/dto.MenuTreeNode'
                   type: array
               type: object
       summary: 获取菜单树
@@ -6141,10 +6164,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_pkg_response.PageResult'
+                  $ref: '#/definitions/response.PageResult'
               type: object
       summary: 动态列表
       tags:
@@ -6189,7 +6212,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
                   additionalProperties:
@@ -6199,11 +6222,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       summary: 获取配置分组
       tags:
       - 配置
@@ -6219,10 +6242,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.ArchivesResponse'
+                  $ref: '#/definitions/dto.ArchivesResponse'
               type: object
       summary: 文章归档
       tags:
@@ -6239,10 +6262,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.SiteStatsResponse'
+                  $ref: '#/definitions/dto.SiteStatsResponse'
               type: object
       summary: 网站统计
       tags:
@@ -6267,7 +6290,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       summary: 标签列表
       tags:
       - 标签
@@ -6289,15 +6312,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.TagForWebResponse'
+                  $ref: '#/definitions/dto.TagForWebResponse'
               type: object
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       summary: 标签详情
       tags:
       - 标签
@@ -6324,15 +6347,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.FileUploadForWebResponse'
+                  $ref: '#/definitions/dto.FileUploadForWebResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       summary: 文件上传
       tags:
       - 文件
@@ -6347,22 +6370,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.DeactivateAccountRequest'
+          $ref: '#/definitions/dto.DeactivateAccountRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 注销账号
@@ -6385,15 +6408,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 解绑第三方账号
@@ -6410,22 +6433,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.SetPasswordRequest'
+          $ref: '#/definitions/dto.SetPasswordRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 设置密码
@@ -6441,22 +6464,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.ChangePasswordRequest'
+          $ref: '#/definitions/dto.ChangePasswordRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 修改密码
@@ -6474,15 +6497,15 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.UserResponse'
+                  $ref: '#/definitions/dto.UserResponse'
               type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 个人资料
@@ -6498,7 +6521,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/jeri_blog_internal_dto.UpdateUserRequest'
+          $ref: '#/definitions/dto.UpdateUserRequest'
       produces:
       - application/json
       responses:
@@ -6506,19 +6529,19 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/jeri_blog_internal_dto.UserResponse'
+                  $ref: '#/definitions/dto.UserResponse'
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/jeri_blog_pkg_response.Response'
+            $ref: '#/definitions/response.Response'
       security:
       - BearerAuth: []
       summary: 更新资料

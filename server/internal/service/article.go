@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 	"time"
@@ -51,6 +52,32 @@ type ArticleService struct {
 	config            *config.Config // 配置对象（支持热重载）
 	md                goldmark.Markdown
 	httpClient        *http.Client
+}
+
+const defaultImageProxy = "https://gh.llkk.cc/"
+
+func resolveImageDownloadURL(imgURL string, imageProxy string) string {
+	if !isGitHubRawURL(imgURL) {
+		return imgURL
+	}
+
+	proxy := strings.TrimSpace(imageProxy)
+	if proxy == "" {
+		proxy = defaultImageProxy
+	}
+	if !strings.HasSuffix(proxy, "/") {
+		proxy += "/"
+	}
+
+	return proxy + imgURL
+}
+
+func isGitHubRawURL(imgURL string) bool {
+	parsedURL, err := url.Parse(imgURL)
+	if err != nil {
+		return false
+	}
+	return strings.EqualFold(parsedURL.Hostname(), "raw.githubusercontent.com")
 }
 
 // NewArticleService 创建文章服务实例
@@ -165,6 +192,12 @@ func (s *ArticleService) ListForWeb(ctx context.Context, req *dto.ListArticlesFo
 
 	return response, total, nil
 }
+
+// GetRandomSlug 随机返回一篇已发布文章的 slug
+func (s *ArticleService) GetRandomSlug(ctx context.Context) (string, error) {
+	return s.articleRepo.GetRandomSlug()
+}
+
 
 // Search 搜索文章
 func (s *ArticleService) Search(ctx context.Context, req *dto.SearchArticlesRequest) ([]dto.ArticleWebResponse, int64, error) {
@@ -1045,19 +1078,8 @@ func (s *ArticleService) uploadSingleImage(ctx context.Context, imgURL string, h
 		return imgURL, nil
 	}
 
-	// 应用图片代理（如果配置了代理地址）
-	downloadURL := imgURL
-	if imageProxy != "" {
-		// 确保代理地址以 / 结尾
-		proxy := strings.TrimSpace(imageProxy)
-		if !strings.HasSuffix(proxy, "/") {
-			proxy += "/"
-		}
-		// 为 GitHub raw 地址添加代理前缀
-		if strings.Contains(imgURL, "raw.githubusercontent.com") {
-			downloadURL = proxy + imgURL
-		}
-	}
+	// Resolve the final URL here so fetchImage only performs HTTP I/O.
+	downloadURL := resolveImageDownloadURL(imgURL, imageProxy)
 
 	// 下载图片
 	data, ext, err := s.fetchImage(ctx, downloadURL)
@@ -1284,8 +1306,6 @@ func parseMarkdownArticle(filename, content string) (*ParsedArticle, error) {
 	return parsed, nil
 }
 
-
-
 // ============ 微信公众号导出 ============
 
 // ExportToWeChat 将文章渲染为微信公众号 HTML 格式
@@ -1315,11 +1335,6 @@ func (s *ArticleService) ExportToWeChat(_ context.Context, id uint) *dto.WeChatE
 
 // fetchImage 下载图片，返回数据和扩展名
 func (s *ArticleService) fetchImage(ctx context.Context, imgURL string) ([]byte, string, error) {
-	// 如果图片链接包含 raw.githubusercontent.com，使用代理加速下载
-	if strings.Contains(imgURL, "raw.githubusercontent.com") {
-		imgURL = "https://gh.llkk.cc/" + imgURL
-	}
-
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, imgURL, nil)
 	if err != nil {
 		return nil, "", err

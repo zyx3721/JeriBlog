@@ -184,7 +184,7 @@ func (ctrl *FileController) List(c *gin.Context) {
 
 // Get 获取文件详情
 //
-//	@Summary		文件详情（管理）
+//	@Summary		文件详情
 //	@Description	获取文件详细信息
 //	@Tags			文件管理
 //	@Accept			json
