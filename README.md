@@ -1449,6 +1449,7 @@ systemctl reload nginx
 
 - `GET /api/v1/articles` - 获取文章列表
 - `GET /api/v1/articles/search` - 搜索文章
+- `GET /api/v1/articles/random` - 随机获取一篇已发布文章的 slug
 - `GET /api/v1/articles/:slug` - 获取文章详情
 
 ### 6.3.5 标签
@@ -1656,6 +1657,12 @@ systemctl reload nginx
 # 七、版本历史
 
 ## 最新版本
+
+- **v3.1.1** (2026-05-16) - 功能与修复版本：随机阅读与图片代理优化
+  - 新增前台导航栏随机阅读入口
+  - 新增 `GET /api/v1/articles/random` 随机文章公开接口
+  - 修复导入文章自定义图片代理二次拼接问题
+  - 详见 [v3.1.1 更新日志](verchanglog/v3.1.1.md)
 
 - **v3.1.0** (2026-05-10) - 修复版本：核心功能修复与优化
   - 侧边栏交互逻辑重构（Vue 响应式状态管理）
