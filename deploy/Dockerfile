@@ -67,7 +67,7 @@ FROM node:22-alpine AS runtime
 ENV TZ=Asia/Shanghai
 
 # 安装 Nginx、supervisord 及运行时依赖；移除默认站点配置
-RUN apk update \
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories \
  && apk add --no-cache nginx supervisor ca-certificates tzdata curl && \
     rm -f /etc/nginx/http.d/default.conf
 
