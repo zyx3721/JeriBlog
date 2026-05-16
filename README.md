@@ -1658,6 +1658,12 @@ systemctl reload nginx
 
 ## 最新版本
 
+- **v3.1.2** (2026-05-16) - 修复版本：文章导出 GitHub 图片代理优化
+  - 优化管理后台文章导出 ZIP 图片下载逻辑
+  - `raw.githubusercontent.com` 图片导出时自动使用 `https://gh-proxy.com/`
+  - 保持非 GitHub raw 图片原链下载
+  - 详见 [v3.1.2 更新日志](verchanglog/v3.1.2.md)
+
 - **v3.1.1** (2026-05-16) - 功能与修复版本：随机阅读与图片代理优化
   - 新增前台导航栏随机阅读入口
   - 新增 `GET /api/v1/articles/random` 随机文章公开接口
