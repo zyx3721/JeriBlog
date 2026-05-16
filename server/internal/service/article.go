@@ -55,6 +55,14 @@ type ArticleService struct {
 }
 
 const defaultImageProxy = "https://gh.llkk.cc/"
+const exportImageProxy = "https://gh-proxy.com/"
+
+func resolveExportImageDownloadURL(imgURL string) string {
+	if isGitHubRawURL(imgURL) {
+		return exportImageProxy + imgURL
+	}
+	return imgURL
+}
 
 func resolveImageDownloadURL(imgURL string, imageProxy string) string {
 	if !isGitHubRawURL(imgURL) {
@@ -1491,8 +1499,10 @@ func (s *ArticleService) DownloadZip(ctx context.Context, id uint) ([]byte, stri
 			sem <- struct{}{}
 			defer func() { <-sem }()
 
+			downloadURL := resolveExportImageDownloadURL(imgURL)
+
 			result := imageDownloadResult{url: imgURL}
-			if data, ext, err := s.fetchImage(ctx, imgURL); err == nil {
+			if data, ext, err := s.fetchImage(ctx, downloadURL); err == nil {
 				result.data = data
 				result.ext = ext
 
