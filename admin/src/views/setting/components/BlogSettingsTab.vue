@@ -114,6 +114,33 @@
       </el-form-item>
     </div>
 
+    <div class="theme-row">
+      <el-form-item label="日间开始">
+        <el-time-select
+          v-model="form.theme_light_start"
+          :disabled="loading"
+          placeholder="日间主题"
+          start="00:00"
+          step="00:30"
+          end="23:30"
+          :clearable="false"
+          style="width: 150px"
+        />
+      </el-form-item>
+      <el-form-item label="夜间开始">
+        <el-time-select
+          v-model="form.theme_dark_start"
+          :disabled="loading"
+          placeholder="夜间主题"
+          start="00:00"
+          step="00:30"
+          end="23:30"
+          :clearable="false"
+          style="width: 150px"
+        />
+      </el-form-item>
+    </div>
+
     <el-form-item label="侧边栏公告">
       <el-input
         v-model="form.announcement"
@@ -496,6 +523,10 @@ interface BlogFormData {
   // 页脚链接
   footerLinksList: Array<{ name: string; url: string }>;
 
+  // 主题配置
+  theme_light_start: string;
+  theme_dark_start: string;
+
   // 页面配置
   moments_size: number;
   message_content: string;
@@ -738,6 +769,16 @@ defineExpose({
       }
     }
   }
+
+  .theme-row {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+
+    .el-form-item {
+      margin-bottom: 22px;
+    }
+  }
 }
 
 .motto-inputs {
@@ -763,6 +804,11 @@ defineExpose({
         width: 100%;
         max-width: 200px;
       }
+    }
+
+    .theme-row {
+      flex-direction: column;
+      gap: 0;
     }
 
     .motto-inputs {

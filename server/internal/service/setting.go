@@ -81,6 +81,8 @@ const (
 	KeyBlogMomentsSize       = "blog.moments_size"        // 动态列表每页数量
 	KeyBlogMessageContent    = "blog.message_content"     // 留言信内容
 	KeyBlogHomeLayout        = "blog.home_layout"         // 首页布局（waterfall/single_column）
+	KeyBlogThemeLightStart   = "blog.theme_light_start"   // 日间主题开始时间（HH:MM）
+	KeyBlogThemeDarkStart    = "blog.theme_dark_start"    // 夜间主题开始时间（HH:MM）
 )
 
 // 配置键常量 - Notification 相关
@@ -438,6 +440,14 @@ func (s *SettingService) ApplyDatabaseConfig(cfg *config.Config) error {
 		cfg.Blog.HomeLayout = "waterfall"
 		if v, ok := blogSettings[KeyBlogHomeLayout]; ok && v != "" {
 			cfg.Blog.HomeLayout = v
+		}
+		cfg.Blog.ThemeLightStart = "06:00"
+		if v, ok := blogSettings[KeyBlogThemeLightStart]; ok && v != "" {
+			cfg.Blog.ThemeLightStart = v
+		}
+		cfg.Blog.ThemeDarkStart = "18:00"
+		if v, ok := blogSettings[KeyBlogThemeDarkStart]; ok && v != "" {
+			cfg.Blog.ThemeDarkStart = v
 		}
 	}
 

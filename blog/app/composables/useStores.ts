@@ -415,6 +415,8 @@ export function useSysConfig() {
     moments_size: '30',
     message_content: '',
     home_layout: 'waterfall',
+    theme_light_start: '06:00',
+    theme_dark_start: '18:00',
   }));
 
   const oauthConfig = useState<Record<string, string>>('sysconfig-oauth', () => ({
