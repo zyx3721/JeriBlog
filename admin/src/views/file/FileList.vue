@@ -113,8 +113,11 @@
           <el-image
             v-if="isImage(row)"
             :src="row.file_url"
+            :preview-src-list="[row.file_url]"
             fit="cover"
-            style="width: 50px; height: 50px; border-radius: 4px"
+            style="width: 50px; height: 50px; border-radius: 4px; cursor: pointer"
+            preview-teleported
+            hide-on-click-modal
           />
         </template>
       </el-table-column>
@@ -555,162 +558,162 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-  /* 搜索表单样式已移至全局样式 main.scss */
+/* 搜索表单样式已移至全局样式 main.scss */
 
-  .file-list-page {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+.file-list-page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.filter-slide-enter-active,
+.filter-slide-leave-active {
+  transition: all 0.1s linear;
+}
+
+.filter-slide-enter-from,
+.filter-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+.filter-slide-enter-to,
+.filter-slide-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.file-list-page > :deep(.filter-panel) {
+  flex-shrink: 0;
+}
+
+.file-list-page > :deep(.common-list) {
+  flex: 1;
+  min-height: 0;
+}
+
+.references-content {
+  min-height: 150px;
+  padding: 4px;
+}
+
+.reference-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: calc(
+    3 * (16px + 12px + 12px + 16px + 24px)
+  ); /* 3行的高度: padding + gap + header + body + margin */
+  overflow-y: auto;
+
+  /* 美化滚动条 */
+  &::-webkit-scrollbar {
+    width: 6px;
   }
 
-  .filter-slide-enter-active,
-  .filter-slide-leave-active {
-    transition: all 0.1s linear;
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
   }
 
-  .filter-slide-enter-from,
-  .filter-slide-leave-to {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-
-  .filter-slide-enter-to,
-  .filter-slide-leave-from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .file-list-page > :deep(.filter-panel) {
-    flex-shrink: 0;
-  }
-
-  .file-list-page > :deep(.common-list) {
-    flex: 1;
-    min-height: 0;
-  }
-
-  .references-content {
-    min-height: 150px;
-    padding: 4px;
-  }
-
-  .reference-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    max-height: calc(
-      3 * (16px + 12px + 12px + 16px + 24px)
-    ); /* 3行的高度: padding + gap + header + body + margin */
-    overflow-y: auto;
-
-    /* 美化滚动条 */
-    &::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: #f1f1f1;
-      border-radius: 3px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: #c1c1c1;
-      border-radius: 3px;
-
-      &:hover {
-        background: #a8a8a8;
-      }
-    }
-  }
-
-  .reference-item {
-    padding: 16px;
-    border: 1px solid #e4e7ed;
-    border-radius: 8px;
-    background: #fafafa;
-    transition: all 0.3s;
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
 
     &:hover {
-      border-color: #409eff;
-      box-shadow: 0 2px 12px rgba(64, 158, 255, 0.15);
-      transform: translateY(-2px);
+      background: #a8a8a8;
     }
+  }
+}
+
+.reference-item {
+  padding: 16px;
+  border: 1px solid #e4e7ed;
+  border-radius: 8px;
+  background: #fafafa;
+  transition: all 0.3s;
+
+  &:hover {
+    border-color: #409eff;
+    box-shadow: 0 2px 12px rgba(64, 158, 255, 0.15);
+    transform: translateY(-2px);
+  }
+}
+
+.reference-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+
+  .reference-field {
+    font-size: 13px;
+    color: #909399;
+    padding: 2px 8px;
+    background: #fff;
+    border-radius: 4px;
+    border: 1px solid #e4e7ed;
+  }
+}
+
+.reference-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  .reference-title {
+    flex: 1;
+    font-size: 14px;
+    color: #303133;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .reference-link {
+    flex-shrink: 0;
+    font-size: 13px;
+
+    i {
+      margin-right: 4px;
+    }
+  }
+}
+
+/* 移动端优化 */
+@media (max-width: 768px) {
+  .reference-item {
+    padding: 12px;
   }
 
   .reference-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
 
     .reference-field {
-      font-size: 13px;
-      color: #909399;
-      padding: 2px 8px;
-      background: #fff;
-      border-radius: 4px;
-      border: 1px solid #e4e7ed;
+      font-size: 12px;
+      padding: 2px 6px;
     }
   }
 
   .reference-body {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
 
     .reference-title {
-      flex: 1;
-      font-size: 14px;
-      color: #303133;
-      font-weight: 500;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      white-space: normal;
+      word-break: break-all;
+      line-height: 1.5;
     }
 
     .reference-link {
-      flex-shrink: 0;
-      font-size: 13px;
-
-      i {
-        margin-right: 4px;
-      }
+      align-self: flex-end;
     }
   }
-
-  /* 移动端优化 */
-  @media (max-width: 768px) {
-    .reference-item {
-      padding: 12px;
-    }
-
-    .reference-header {
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 10px;
-
-      .reference-field {
-        font-size: 12px;
-        padding: 2px 6px;
-      }
-    }
-
-    .reference-body {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 8px;
-
-      .reference-title {
-        white-space: normal;
-        word-break: break-all;
-        line-height: 1.5;
-      }
-
-      .reference-link {
-        align-self: flex-end;
-      }
-    }
-  }
+}
 </style>

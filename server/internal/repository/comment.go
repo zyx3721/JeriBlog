@@ -73,7 +73,7 @@ func (r *CommentRepository) GetByTargetID(ctx context.Context, targetType string
 		return nil, 0, err
 	}
 
-	query = query.Order("created_at DESC").
+	query = query.Order("is_pinned DESC, created_at DESC").
 		Preload("User", func(db *gorm.DB) *gorm.DB {
 			return db.Unscoped().Select("id, nickname, avatar, email, website, badge, role, deleted_at")
 		})
@@ -97,7 +97,7 @@ func (r *CommentRepository) GetRepliesByRootIDs(ctx context.Context, rootIDs []u
 	var replies []model.Comment
 	err := r.db.WithContext(ctx).Unscoped().
 		Where("root_id IN ?", rootIDs).
-		Order("created_at ASC").
+		Order("is_pinned DESC, created_at ASC").
 		Preload("User", func(db *gorm.DB) *gorm.DB {
 			return db.Unscoped().Select("id, nickname, avatar, email, website, badge, role, deleted_at")
 		}).
@@ -290,6 +290,15 @@ func (r *CommentRepository) UpdateStatus(ctx context.Context, id uint, status in
 		Model(&model.Comment{}).
 		Where("id = ?", id).
 		Update("status", status).Error
+}
+
+// TogglePinned 切换评论置顶状态，返回影响行数
+func (r *CommentRepository) TogglePinned(ctx context.Context, id uint) (int64, error) {
+	result := r.db.WithContext(ctx).
+		Model(&model.Comment{}).
+		Where("id = ?", id).
+		UpdateColumn("is_pinned", gorm.Expr("NOT is_pinned"))
+	return result.RowsAffected, result.Error
 }
 
 // DeleteForWeb 软删除评论

@@ -358,6 +358,18 @@ func (s *CommentService) ToggleStatus(ctx context.Context, id uint) error {
 	return s.repo.UpdateStatus(ctx, id, comment.Status)
 }
 
+// TogglePinned 切换评论置顶状态
+func (s *CommentService) TogglePinned(ctx context.Context, id uint) error {
+	rowsAffected, err := s.repo.TogglePinned(ctx, id)
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return errors.New("评论不存在")
+	}
+	return nil
+}
+
 // Delete 硬删除评论
 func (s *CommentService) Delete(ctx context.Context, id uint) error {
 	comment, err := s.repo.Get(ctx, id)
@@ -483,6 +495,7 @@ func (s *CommentService) toCommentResponse(comment *model.Comment) *dto.CommentR
 	resp := &dto.CommentResponse{
 		ID:        comment.ID,
 		ParentID:  comment.ParentID,
+		IsPinned:  comment.IsPinned,
 		CreatedAt: utils.NewJSONTime(comment.CreatedAt),
 		Replies:   []dto.CommentResponse{},
 	}
@@ -612,6 +625,7 @@ func (s *CommentService) toDTO(comment *model.Comment) *dto.CommentListResponse 
 		ID:        comment.ID,
 		Content:   comment.Content,
 		Status:    comment.Status,
+		IsPinned:  comment.IsPinned,
 		ParentID:  comment.ParentID,
 		CreatedAt: utils.NewJSONTime(comment.CreatedAt),
 	}

@@ -45,6 +45,7 @@ type CommentResponse struct {
 	ID        uint           `json:"id"`
 	Content   string         `json:"content"`
 	IsDeleted bool           `json:"is_deleted"`
+	IsPinned  bool           `json:"is_pinned"` // 是否置顶
 	ParentID  *uint          `json:"parent_id"`
 	CreatedAt utils.JSONTime `json:"created_at"`
 	Location  string         `json:"location,omitempty"` // 地理位置
@@ -103,6 +104,7 @@ type CommentListResponse struct {
 	ID        uint            `json:"id"`
 	Content   string          `json:"content"`
 	Status    int             `json:"status"`
+	IsPinned  bool            `json:"is_pinned"` // 是否置顶
 	ParentID  *uint           `json:"parent_id"`
 	CreatedAt utils.JSONTime  `json:"created_at"`
 	DeletedAt *utils.JSONTime `json:"deleted_at,omitempty"`
