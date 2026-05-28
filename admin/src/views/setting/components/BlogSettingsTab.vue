@@ -749,6 +749,7 @@ const currentField = ref<
   | 'background_image'
   | 'screenshot'
   | 'about_exhibition'
+  | 'wechat_offaccounts'
   | 'wechat_qrcode'
   | 'alipay_qrcode'
 >('favicon');
@@ -760,6 +761,7 @@ const openFilePicker = (
     | 'background_image'
     | 'screenshot'
     | 'about_exhibition'
+    | 'wechat_offaccounts'
     | 'wechat_qrcode'
     | 'alipay_qrcode'
 ) => {
