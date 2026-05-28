@@ -83,6 +83,8 @@ const (
 	KeyBlogHomeLayout        = "blog.home_layout"         // 首页布局（waterfall/single_column）
 	KeyBlogThemeLightStart   = "blog.theme_light_start"   // 日间主题开始时间（HH:MM）
 	KeyBlogThemeDarkStart    = "blog.theme_dark_start"    // 夜间主题开始时间（HH:MM）
+	KeyBlogWechatOffAccounts = "blog.wechat_offaccounts"  // 公众号二维码图片URL
+	KeyBlogWechatOffName     = "blog.wechat_offname"      // 公众号名称
 )
 
 // 配置键常量 - Notification 相关
@@ -307,6 +309,7 @@ func (s *SettingService) UpdateGroup(group string, updates map[string]string) er
 			handleImageChange(KeyBlogScreenshot, "博客截图")
 			handleImageChange(KeyBlogWechatQrCode, "微信收款码")
 			handleImageChange(KeyBlogAlipayQrCode, "支付宝收款码")
+			handleImageChange(KeyBlogWechatOffAccounts, "公众号二维码")
 		}
 	}
 
@@ -448,6 +451,12 @@ func (s *SettingService) ApplyDatabaseConfig(cfg *config.Config) error {
 		cfg.Blog.ThemeDarkStart = "18:00"
 		if v, ok := blogSettings[KeyBlogThemeDarkStart]; ok && v != "" {
 			cfg.Blog.ThemeDarkStart = v
+		}
+		if v, ok := blogSettings[KeyBlogWechatOffAccounts]; ok && v != "" {
+			cfg.Blog.WechatOffAccounts = v
+		}
+		if v, ok := blogSettings[KeyBlogWechatOffName]; ok && v != "" {
+			cfg.Blog.WechatOffName = v
 		}
 	}
 

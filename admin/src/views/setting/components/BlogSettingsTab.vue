@@ -189,6 +189,27 @@
       />
     </el-form-item>
 
+    <div class="image-row">
+      <el-form-item label="公众号二维码">
+        <ImageUploader
+          ref="wechatOffAccountsUploaderRef"
+          v-model="form.wechat_offaccounts"
+          upload-type="公众号二维码"
+          width="120px"
+          height="120px"
+          :disabled="loading"
+        />
+      </el-form-item>
+
+      <el-form-item label="公众号名称" style="flex: 1; max-width: 300px">
+        <el-input
+          v-model="form.wechat_offname"
+          placeholder="公众号名称，如：JeriBlog"
+          :disabled="loading"
+        />
+      </el-form-item>
+    </div>
+
     <el-divider content-position="left">页面配置</el-divider>
 
     <el-form-item label="动态数量">
@@ -511,6 +532,10 @@ interface BlogFormData {
   announcement: string;
   typingTextsList: Array<{ value: string }>;
 
+  // 公众号配置
+  wechat_offaccounts: string;
+  wechat_offname: string;
+
   // 社交媒体
   sidebarSocialList: Array<{ name: string; url: string; icon: string }>;
   footerSocialList: Array<{
@@ -564,6 +589,7 @@ const faviconUploaderRef = ref<InstanceType<typeof ImageUploader>>();
 const backgroundUploaderRef = ref<InstanceType<typeof ImageUploader>>();
 const screenshotUploaderRef = ref<InstanceType<typeof ImageUploader>>();
 const aboutExhibitionUploaderRef = ref<InstanceType<typeof ImageUploader>>();
+const wechatOffAccountsUploaderRef = ref<InstanceType<typeof ImageUploader>>();
 const rewardWechatUploaderRef = ref<InstanceType<typeof ImageUploader>>();
 const rewardAlipayUploaderRef = ref<InstanceType<typeof ImageUploader>>();
 
@@ -739,6 +765,7 @@ defineExpose({
   backgroundUploaderRef,
   screenshotUploaderRef,
   aboutExhibitionUploaderRef,
+  wechatOffAccountsUploaderRef,
   rewardWechatUploaderRef,
   rewardAlipayUploaderRef,
 });

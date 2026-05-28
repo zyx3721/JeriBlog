@@ -19,7 +19,7 @@
 --   用户头像、文章封面、文章配图、文章视频、文章音频、文章附件、
 --   动态配图、动态视频、动态音频、评论贴图、友情链接A、友情链接S、
 --   站长头像、站长形象、博客图标、博客背景、博客截图、
---   展览图片、微信收款码、支付宝收款码、菜单图标、反馈投诉
+--   展览图片、微信收款码、支付宝收款码、菜单图标、反馈投诉、公众号二维码
 -- =============================================
 
 BEGIN;
@@ -396,7 +396,19 @@ WHERE EXISTS (
     WHERE fb.form_content LIKE '%' || f.file_url || '%'
 );
 
--- 23. 对 upload_type 进行排序（保证一致性）
+-- 23. 公众号二维码（settings.key = 'blog.wechat_offaccounts'）
+UPDATE files f
+SET upload_type = CASE
+    WHEN upload_type = '' OR upload_type IS NULL THEN '公众号二维码'
+    ELSE upload_type || ',公众号二维码'
+END
+WHERE EXISTS (
+    SELECT 1 FROM settings s
+    WHERE s.value = f.file_url
+    AND s.key = 'blog.wechat_offaccounts'
+);
+
+-- 24. 对 upload_type 进行排序（保证一致性）
 UPDATE files
 SET upload_type = (
     SELECT string_agg(type_item, ',' ORDER BY type_item)

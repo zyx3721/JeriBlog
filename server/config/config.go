@@ -78,6 +78,8 @@ type BlogConfig struct {
 	HomeLayout      string // 首页布局（waterfall/single_column）
 	ThemeLightStart string // 日间主题开始时间（HH:MM）
 	ThemeDarkStart  string // 夜间主题开始时间（HH:MM）
+	WechatOffAccounts  string // 公众号二维码图片URL
+	WechatOffName      string // 公众号名称
 }
 
 // NotificationConfig 通知配置（从数据库动态加载）

@@ -402,6 +402,8 @@ export function useSysConfig() {
     home_layout: 'waterfall',
     theme_light_start: '06:00',
     theme_dark_start: '18:00',
+    wechat_offaccounts: '',
+    wechat_offname: '',
   }));
 
   const oauthConfig = useState<Record<string, string>>('sysconfig-oauth', () => ({

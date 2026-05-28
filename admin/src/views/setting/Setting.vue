@@ -155,6 +155,10 @@ const blogForm = ref({
   announcement: '',
   typingTextsList: [] as Array<{ value: string }>,
 
+  // 公众号配置
+  wechat_offaccounts: '',
+  wechat_offname: '',
+
   // 社交媒体
   sidebarSocialList: [] as Array<{ name: string; url: string; icon: string }>,
   footerSocialList: [] as Array<{
@@ -364,6 +368,10 @@ const loadBlogConfigs = async () => {
       background_image: configs.background_image || '',
       screenshot: configs.screenshot || '',
       announcement: configs.announcement || '',
+
+      // 公众号配置
+      wechat_offaccounts: configs.wechat_offaccounts || '',
+      wechat_offname: configs.wechat_offname || '',
 
       // 关于页面配置
       about_describe: configs.about_describe || '',
@@ -643,6 +651,13 @@ const handleSave = async () => {
           })
         );
       }
+      if (blogUploaders.wechatOffAccountsUploaderRef?.getPendingCount()) {
+        uploadPromises.push(
+          blogUploaders.wechatOffAccountsUploaderRef.uploadPendingFile().then(url => {
+            if (url) blogForm.value.wechat_offaccounts = url;
+          })
+        );
+      }
       if (blogUploaders.rewardWechatUploaderRef?.getPendingCount()) {
         uploadPromises.push(
           blogUploaders.rewardWechatUploaderRef.uploadPendingFile().then(url => {
@@ -700,6 +715,8 @@ const handleSave = async () => {
       'blog.sidebar_social': JSON.stringify(blogForm.value.sidebarSocialList),
       'blog.footer_social': JSON.stringify(blogForm.value.footerSocialList),
       'blog.footer_links': JSON.stringify(blogForm.value.footerLinksList),
+      'blog.wechat_offaccounts': blogForm.value.wechat_offaccounts,
+      'blog.wechat_offname': blogForm.value.wechat_offname,
       'blog.about_describe': blogForm.value.about_describe,
       'blog.about_describe_tips': blogForm.value.about_describe_tips,
       'blog.about_exhibition': blogForm.value.about_exhibition,

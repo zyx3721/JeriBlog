@@ -1145,6 +1145,9 @@ server {
     location = /atom.xml {
         proxy_pass http://127.0.0.1:8080/atom.xml;
     }
+    location = /rss.xml {
+        proxy_pass http://127.0.0.1:8080/rss.xml;
+    }
     
     # 动态音乐解析
     location /tools/parse-music {
@@ -1298,6 +1301,9 @@ server {
     # RSS 订阅
     location = /atom.xml {
         proxy_pass http://127.0.0.1:8080/atom.xml;
+    }
+    location = /rss.xml {
+        proxy_pass http://127.0.0.1:8080/rss.xml;
     }
     
     # 动态音乐解析

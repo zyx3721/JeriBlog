@@ -38,6 +38,7 @@ var reconciledSettingImageKeys = []string{
 	KeyBlogScreenshot,
 	KeyBlogWechatQrCode,
 	KeyBlogAlipayQrCode,
+	KeyBlogWechatOffAccounts,
 }
 
 // FileUsageChecker 文件引用检查器
@@ -619,6 +620,7 @@ func getSettingFieldName(key string) string {
 		KeyBlogScreenshot:      "博客截图",
 		KeyBlogWechatQrCode:    "微信收款码",
 		KeyBlogAlipayQrCode:    "支付宝收款码",
+		KeyBlogWechatOffAccounts: "公众号二维码",
 	}
 	if name, ok := fieldNames[key]; ok {
 		return name
