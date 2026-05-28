@@ -921,27 +921,6 @@ echo "VITE_API_URL=http://your-domain.com/api/v1" > .env
 echo "VITE_API_URL=https://your-domain.com/api/v1" > .env
 ```
 
-3. 修改 `config.js` 文件（可选）：
-
-由于后续通过 Nginx 代理访问，因此这里配置为：
-
-```bash
-# 配置二选一
-## HTTP 方式
-cat > public/config.js <<EOF
-window.__APP_CONFIG__ = {
-  apiUrl: "http://your-domain.com/api/v1"
-};
-EOF
-
-## HTTPS 方式（SSL 证书）
-cat > public/config.js <<EOF
-window.__APP_CONFIG__ = {
-  apiUrl: "https://your-domain.com/api/v1"
-};
-EOF
-```
-
 4. 构建前端项目：
 
 ```bash
@@ -1085,7 +1064,28 @@ pm2 delete blog-frontend       # 删除进程
 
 由于 Admin 前端使用二级路径，因此Nginx 中使用 `alias` 来指向 **包含 `index.html` 的目录本身**（如 `/data/myBlog/admin/dist` ，可按实际路径调整）。
 
-### 5.5.1 HTTP 示例
+### 5.5.1 修改 `config.js` 文件
+
+在配置反向代理之前，先修改 `/data/myBlog/admin/dist` 目录下的 `config.js` 文件配置，该运行时配置用于每次修改 API 地址后，无需重新构建即可访问：
+
+```bash
+# 配置二选一
+## HTTP 方式
+cat > public/config.js <<EOF
+window.__APP_CONFIG__ = {
+  apiUrl: "http://your-domain.com/api/v1"
+};
+EOF
+
+## HTTPS 方式（SSL 证书）
+cat > public/config.js <<EOF
+window.__APP_CONFIG__ = {
+  apiUrl: "https://your-domain.com/api/v1"
+};
+EOF
+```
+
+### 5.5.2 HTTP 示例
 
 > 配置 Nginx （按需替换域名/路径/证书），`HTTP 示例` ：
 
@@ -1221,7 +1221,7 @@ server {
 }
 ```
 
-### 5.5.2 HTTPS 示例
+### 5.5.3 HTTPS 示例
 
 > HTTPS 示例（含 80→443 跳转，请替换证书路径）：
 
