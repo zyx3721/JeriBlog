@@ -457,6 +457,7 @@ cp env.example .env
 # 步骤2：编辑 .env，配置数据库连接等信息
 vim .env
 # 服务器配置
+SERVER_HOST=localhost
 SERVER_PORT=8080
 SERVER_ALLOW_ORIGINS=*
 
@@ -488,7 +489,7 @@ go run cmd/main.go
 nohup go run cmd/main.go > app.log 2>&1 &
 ```
 
-后端服务默认运行在 `http://localhost:8080` ，如需指定端口，请修改环境变量文件内的 `SERVER_PORT` 参数。首次启动会自动创建数据库和默认管理员账户 `admin@example.com / 123456` 。
+后端服务默认运行在 `http://localhost:8080` ，如需指定外部监听地址和端口，请修改环境变量文件内的 `SERVER_HOST` 和 `SERVER_PORT` 参数。首次启动会自动创建数据库和默认管理员账户 `admin@example.com / 123456` 。
 
 ## 3.5 Admin 前端配置与启动
 
@@ -830,6 +831,7 @@ cp env.example .env
 # 步骤2：编辑 .env，配置数据库连接等信息
 vim .env
 # 服务器配置
+SERVER_HOST=localhost
 SERVER_PORT=8080
 SERVER_ALLOW_ORIGINS=*
 

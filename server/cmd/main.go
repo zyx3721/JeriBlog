@@ -76,8 +76,8 @@ func main() {
 	r := router.InitRouter(db, cfg)
 
 	// 启动服务器
-	addr := fmt.Sprintf("0.0.0.0:%d", cfg.Server.Port)
-	logger.Info("Server is running at http://localhost:%d", cfg.Server.Port)
+	addr := fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)
+	logger.Info("Server is running at http://%s:%d", cfg.Server.Host, cfg.Server.Port)
 	if err := r.Run(addr); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}

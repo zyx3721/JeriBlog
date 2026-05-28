@@ -22,6 +22,7 @@ type Config struct {
 
 // ServerConfig 服务器配置
 type ServerConfig struct {
+	Host         string
 	Port         int
 	AllowOrigins []string
 	Scheme       string // 强制指定 scheme（留空则自动检测）
@@ -57,29 +58,29 @@ type BasicConfig struct {
 
 // BlogConfig 博客配置（从数据库动态加载）
 type BlogConfig struct {
-	Title           string // 博客标题
-	Subtitle        string // 博客副标题
-	Slogan          string // 博客标语
-	Description     string // 博客描述
-	Keywords        string // 博客关键词
-	Established     string // 建站日期
-	Favicon         string // 网站Favicon
-	BackgroundImage string // 背景图片
-	Screenshot      string // 站点截图
-	Announcement    string // 公告内容
-	CustomHead      string // 自定义 Head 代码
-	CustomBody      string // 自定义 Body 代码
-	Emojis          string // 表情包配置
-	Font            string // 字体配置（URL|字体名称）
-	WechatQrCode    string // 微信收款码
-	AlipayQrCode    string // 支付宝收款码
-	MomentsSize     int    // 动态列表每页数量
-	MessageContent  string // 留言信内容
-	HomeLayout      string // 首页布局（waterfall/single_column）
-	ThemeLightStart string // 日间主题开始时间（HH:MM）
-	ThemeDarkStart  string // 夜间主题开始时间（HH:MM）
-	WechatOffAccounts  string // 公众号二维码图片URL
-	WechatOffName      string // 公众号名称
+	Title             string // 博客标题
+	Subtitle          string // 博客副标题
+	Slogan            string // 博客标语
+	Description       string // 博客描述
+	Keywords          string // 博客关键词
+	Established       string // 建站日期
+	Favicon           string // 网站Favicon
+	BackgroundImage   string // 背景图片
+	Screenshot        string // 站点截图
+	Announcement      string // 公告内容
+	CustomHead        string // 自定义 Head 代码
+	CustomBody        string // 自定义 Body 代码
+	Emojis            string // 表情包配置
+	Font              string // 字体配置（URL|字体名称）
+	WechatQrCode      string // 微信收款码
+	AlipayQrCode      string // 支付宝收款码
+	MomentsSize       int    // 动态列表每页数量
+	MessageContent    string // 留言信内容
+	HomeLayout        string // 首页布局（waterfall/single_column）
+	ThemeLightStart   string // 日间主题开始时间（HH:MM）
+	ThemeDarkStart    string // 夜间主题开始时间（HH:MM）
+	WechatOffAccounts string // 公众号二维码图片URL
+	WechatOffName     string // 公众号名称
 }
 
 // NotificationConfig 通知配置（从数据库动态加载）
@@ -200,6 +201,7 @@ type OAuthProviderConfig struct {
 func LoadConfig() (*Config, error) {
 	config := &Config{
 		Server: ServerConfig{
+			Host:         getEnv("SERVER_HOST", "localhost"),
 			Port:         getEnvAsInt("SERVER_PORT", 8080),
 			AllowOrigins: getEnvAsSlice("SERVER_ALLOW_ORIGINS", []string{"*"}),
 			Scheme:       getEnv("SERVER_SCHEME", ""),
