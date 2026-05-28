@@ -10,19 +10,33 @@
 -->
 
 <script setup lang="ts">
-const { basicConfig, blogConfig } = useSysConfig();
-const { total: articlesTotal, fetchArticles } = useArticles();
-const avatarUrl = computed(() => basicConfig.value.author_avatar || '/avatar.webp');
-const { total: categoriesTotal } = useCategories();
-const { total: tagsTotal } = useTags();
+import { parseJSON } from '@/utils/json';
+import { getArticlesForWeb } from '@/composables/api/article';
+import { getCategories } from '@/composables/api/category';
+import { getTags } from '@/composables/api/tag';
 
-const parseJSON = <T = any,>(jsonStr: string | undefined, fallback: T): T => {
-  try {
-    return jsonStr ? JSON.parse(jsonStr) : fallback;
-  } catch {
-    return fallback;
-  }
-};
+const { basicConfig, blogConfig } = useSysConfig();
+const avatarUrl = computed(() => basicConfig.value.author_avatar || '/avatar.webp');
+
+const useCountFetch = (key: string, fetcher: () => Promise<{ total?: number }>) =>
+  useAsyncData(key, async () => {
+    try {
+      const { total } = await fetcher();
+      return total || 0;
+    } catch {
+      return 0;
+    }
+  });
+
+const { data: articlesData } = await useCountFetch('sidebar-articles-count', () =>
+  getArticlesForWeb({ page: 1, page_size: 1 })
+);
+const { data: categoriesData } = await useCountFetch('sidebar-categories-count', getCategories);
+const { data: tagsData } = await useCountFetch('sidebar-tags-count', getTags);
+
+const articlesTotal = computed(() => articlesData.value ?? 0);
+const categoriesTotal = computed(() => categoriesData.value ?? 0);
+const tagsTotal = computed(() => tagsData.value ?? 0);
 
 const contacts = computed(() => {
   const socialList = parseJSON<Array<{ name: string; url: string; icon: string }>>(
@@ -30,12 +44,6 @@ const contacts = computed(() => {
     []
   );
   return socialList.filter(item => item.url && item.url.trim() !== '');
-});
-
-onMounted(async () => {
-  if (articlesTotal.value === 0) {
-    await fetchArticles({ page: 1, page_size: 1 });
-  }
 });
 </script>
 

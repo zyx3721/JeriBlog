@@ -77,6 +77,7 @@ export default defineNuxtConfig({
     public: {
       apiUrl: '',
       adminUrl: '',
+      appVersion: process.env.JERIBLOG_VERSION || '1.0.0',
     },
   },
 

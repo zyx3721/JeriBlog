@@ -32,10 +32,15 @@ FROM node:22-alpine AS blog-builder
 
 WORKDIR /src/blog
 
+ARG APP_VERSION=3.2.0
+
 COPY blog/package.json ./
 RUN npm install --registry=https://registry.npmmirror.com
 
 COPY blog/ ./
+
+# 注入版本号并构建应用
+ENV JERIBLOG_VERSION=${APP_VERSION}
 RUN npm run build
 
 ############################

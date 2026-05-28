@@ -10,6 +10,8 @@
 -->
 
 <script setup lang="ts">
+defineOptions({ inheritAttrs: false });
+
 interface Props {
   modelValue: boolean;
   title?: string;
@@ -44,7 +46,7 @@ const handleConfirm = () => {
   <Teleport to="body">
     <Transition name="modal">
       <div v-if="modelValue" class="dialog-overlay" @click.self="handleClose">
-        <div class="dialog-container">
+        <div class="dialog-container" v-bind="$attrs">
           <!-- 头部 -->
           <div v-if="title" class="dialog-header">
             <h3 class="dialog-title">{{ title }}</h3>
@@ -176,13 +178,13 @@ const handleConfirm = () => {
 
 @media (max-width: 768px) {
   .dialog-overlay {
-    padding: 0;
+    padding: 16px;
   }
 
   .dialog-container {
-    max-width: 100% !important;
-    max-height: 100vh;
-    border-radius: 0;
+    max-width: 92vw !important;
+    max-height: calc(100vh - 32px);
+    border-radius: 12px;
   }
 
   .dialog-header {
