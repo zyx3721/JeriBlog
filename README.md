@@ -632,6 +632,9 @@ API_URL=https://your-domain.com/api/v1
 # 在 deploy/ 目录下构建（构建上下文为项目根目录）
 cd deploy
 docker build -t jeriblog:latest -f Dockerfile ..
+
+# 如果要指定版本，可执行以下命令（默认系统信息版本为 dev）
+docker build -t jeriblog:latest --build-arg APP_VERSION=v3.2.0 -f Dockerfile .. 
 ```
 
 然后修改 `deploy/docker-compose.yml` 中 `jeriblog` 服务的 `image` 字段为 `jeriblog:latest` 。

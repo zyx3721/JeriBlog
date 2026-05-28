@@ -32,7 +32,7 @@ FROM node:22-alpine AS blog-builder
 
 WORKDIR /src/blog
 
-ARG APP_VERSION=3.2.0
+ARG APP_VERSION=dev
 
 COPY blog/package.json ./
 RUN npm install --registry=https://registry.npmmirror.com
@@ -61,8 +61,9 @@ COPY server/ ./
 
 # 默认尝试构建静态二进制；如项目依赖 CGO，可在构建时传入 CGO_ENABLED=1
 ARG CGO_ENABLED=0
+ARG APP_VERSION=dev
 ENV CGO_ENABLED=${CGO_ENABLED}
-RUN go build -o blog-backend ./cmd/main.go
+RUN go build -ldflags="-s -w -X jeri_blog/internal/service.AppVersion=${APP_VERSION}" -o blog-backend ./cmd/main.go
 
 ############################
 # 4) runtime
