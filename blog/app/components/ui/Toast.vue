@@ -11,6 +11,7 @@
 
 <script setup lang="ts">
 export interface ToastProps {
+  id?: number;
   message: string;
   type?: 'success' | 'error' | 'warning' | 'info';
   show?: boolean;
