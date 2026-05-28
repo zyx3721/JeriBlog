@@ -190,20 +190,21 @@ const fetchFileList = async () => {
   try {
     loading.value = true;
 
-    const params: FileQuery = {
+    const baseParams: FileQuery = {
       page: currentPage.value,
-      page_size: pageSize.value > 0 ? pageSize.value : 1000,
+      page_size: pageSize.value,
     };
 
     const keyword = searchKeyword.value.trim();
     if (keyword) {
-      params.keyword = keyword;
+      baseParams.keyword = keyword;
     }
 
     if (resolvedFileType.value) {
-      params.file_type = resolvedFileType.value;
+      baseParams.file_type = resolvedFileType.value;
     }
 
+    const params = pageSize.value > 0 ? baseParams : await resolveAllFileParams(baseParams);
     const response = await getFileList(params);
 
     fileList.value = response.list || [];
@@ -215,6 +216,21 @@ const fetchFileList = async () => {
   } finally {
     loading.value = false;
   }
+};
+
+const resolveAllFileParams = async (baseParams: FileQuery): Promise<FileQuery> => {
+  const totalResponse = await getFileList({
+    ...baseParams,
+    page: 1,
+    page_size: 1,
+  });
+  const totalCount = totalResponse.total || 0;
+
+  return {
+    ...baseParams,
+    page: 1,
+    page_size: Math.max(totalCount, 1),
+  };
 };
 
 // 判断是否为图片
@@ -296,11 +312,20 @@ const handleClose = () => {
     overflow-y: auto;
     margin-bottom: 16px;
 
+    @media (max-width: 768px) {
+      min-height: 180px;
+      max-height: min(320px, 42vh);
+    }
+
     .empty-state {
       display: flex;
       align-items: center;
       justify-content: center;
       height: 300px;
+
+      @media (max-width: 768px) {
+        height: 180px;
+      }
     }
 
     .file-grid {

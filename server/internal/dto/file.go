@@ -36,7 +36,7 @@ type FileUploadForWebResponse struct {
 // ListFilesRequest 文件列表请求
 type ListFilesRequest struct {
 	Page       int    `form:"page,default=1" binding:"min=1"`
-	PageSize   int    `form:"page_size,default=20" binding:"min=1,max=100"`
+	PageSize   int    `form:"page_size,default=20" binding:"min=1"`
 	Keyword    string `form:"keyword"`
 	FileType   string `form:"file_type"`
 	Status     *int   `form:"status"`
@@ -66,11 +66,11 @@ type FileResponse struct {
 
 // FileReferenceResponse 文件引用详情响应
 type FileReferenceResponse struct {
-	Type        string `json:"type"`         // 引用类型：article/friend/moment/setting/user/menu/feedback/comment
-	ID          uint   `json:"id"`           // 引用对象ID
-	Title       string `json:"title"`        // 引用对象标题
-	Field       string `json:"field"`        // 引用字段：封面图片/正文图片/头像等
-	URL         string `json:"url"`          // 跳转链接
-	TargetType  string `json:"target_type"`  // 评论所属内容类型：article/page/moment（仅 type=comment 时有值）
-	TargetKey   string `json:"target_key"`   // 评论所属内容标识：文章slug/页面key（仅 type=comment 时有值）
+	Type       string `json:"type"`        // 引用类型：article/friend/moment/setting/user/menu/feedback/comment
+	ID         uint   `json:"id"`          // 引用对象ID
+	Title      string `json:"title"`       // 引用对象标题
+	Field      string `json:"field"`       // 引用字段：封面图片/正文图片/头像等
+	URL        string `json:"url"`         // 跳转链接
+	TargetType string `json:"target_type"` // 评论所属内容类型：article/page/moment（仅 type=comment 时有值）
+	TargetKey  string `json:"target_key"`  // 评论所属内容标识：文章slug/页面key（仅 type=comment 时有值）
 }

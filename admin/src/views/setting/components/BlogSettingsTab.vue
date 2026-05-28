@@ -168,6 +168,7 @@
         :fields="sidebarSocialFields"
         :default-item="{ name: '', url: '', icon: '' }"
         :disabled="loading"
+        mobile-layout="name-icon"
       />
     </el-form-item>
 
@@ -177,6 +178,7 @@
         :fields="footerSocialFields"
         :default-item="{ name: '', url: '', icon: '', position: 'left' }"
         :disabled="loading"
+        mobile-layout="footer-social"
       />
     </el-form-item>
 
@@ -186,22 +188,29 @@
         :fields="footerLinksFields"
         :default-item="{ name: '', url: '' }"
         :disabled="loading"
+        mobile-layout="name-url"
       />
     </el-form-item>
 
-    <div class="image-row">
+    <div class="image-row wechat-official-row">
       <el-form-item label="公众号二维码">
-        <ImageUploader
-          ref="wechatOffAccountsUploaderRef"
-          v-model="form.wechat_offaccounts"
-          upload-type="公众号二维码"
-          width="120px"
-          height="120px"
-          :disabled="loading"
-        />
+        <div class="image-upload-wrapper">
+          <ImageUploader
+            ref="wechatOffAccountsUploaderRef"
+            v-model="form.wechat_offaccounts"
+            upload-type="公众号二维码"
+            width="120px"
+            height="120px"
+            :disabled="loading"
+          />
+          <el-button class="select-file-btn" @click="openFilePicker('wechat_offaccounts')">
+            <i class="ri-folder-image-line"></i>
+            选择文件
+          </el-button>
+        </div>
       </el-form-item>
 
-      <el-form-item label="公众号名称" style="flex: 1; max-width: 300px">
+      <el-form-item label="公众号名称" class="wechat-official-name" style="flex: 1; max-width: 300px">
         <el-input
           v-model="form.wechat_offname"
           placeholder="公众号名称，如：JeriBlog"
@@ -287,6 +296,7 @@
         :fields="profileFields"
         :disabled="loading"
         hide-controls
+        mobile-layout="profile-color"
       />
     </el-form-item>
 
@@ -358,6 +368,7 @@
         :fields="socializeFields"
         :default-item="{ name: '', url: '' }"
         :disabled="loading"
+        mobile-layout="name-url"
       />
     </el-form-item>
 
@@ -367,6 +378,7 @@
         :fields="creationFields"
         :default-item="{ name: '', url: '' }"
         :disabled="loading"
+        mobile-layout="name-url"
       />
     </el-form-item>
 
@@ -376,6 +388,7 @@
         :fields="versionsFields"
         :disabled="loading"
         hide-controls
+        mobile-layout="name-url"
       />
     </el-form-item>
 
@@ -385,6 +398,7 @@
         :fields="unionsFields"
         :default-item="{ name: '', url: '' }"
         :disabled="loading"
+        mobile-layout="name-url"
       />
     </el-form-item>
 
@@ -779,6 +793,18 @@ defineExpose({
 
     .el-form-item {
       margin-bottom: 22px;
+    }
+  }
+
+  .wechat-official-row {
+    align-items: flex-start;
+  }
+
+  .wechat-official-name {
+    align-self: flex-start;
+
+    :deep(.el-form-item__content) {
+      align-items: flex-start;
     }
   }
 

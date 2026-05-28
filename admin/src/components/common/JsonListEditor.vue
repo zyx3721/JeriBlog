@@ -10,8 +10,12 @@
 -->
 
 <template>
-  <div class="json-list-editor">
-    <div v-for="(item, index) in internalValue" :key="index" class="editor-item">
+  <div :class="['json-list-editor', `mobile-layout-${mobileLayout}`]">
+    <div
+      v-for="(item, index) in internalValue"
+      :key="index"
+      :class="['editor-item', { 'has-controls': !hideControls }]"
+    >
       <!-- 排序按钮 -->
       <template v-if="!hideControls">
         <el-button
@@ -37,6 +41,7 @@
         <el-input
           v-if="field.type === 'text'"
           v-model="item[field.key]"
+          :class="['editor-field', `field-${field.key}`]"
           :placeholder="field.placeholder"
           :style="field.style"
           :disabled="disabled"
@@ -47,6 +52,7 @@
         <el-select
           v-else-if="field.type === 'select'"
           v-model="item[field.key]"
+          :class="['editor-field', `field-${field.key}`]"
           :placeholder="field.placeholder"
           :style="field.style"
           :disabled="disabled"
@@ -72,6 +78,7 @@
         <el-color-picker
           v-else-if="field.type === 'color'"
           v-model="item[field.key]"
+          :class="['editor-field', `field-${field.key}`]"
           :disabled="disabled"
           @change="emitUpdate"
         />
@@ -107,6 +114,13 @@
 import { ref, watch } from 'vue';
 import { Delete, Plus, ArrowUp, ArrowDown } from '@element-plus/icons-vue';
 
+export type MobileLayout =
+  | 'none'
+  | 'name-icon'
+  | 'footer-social'
+  | 'name-url'
+  | 'profile-color';
+
 export interface FieldConfig {
   key: string;
   type: 'text' | 'select' | 'color';
@@ -126,12 +140,14 @@ export interface JsonListEditorProps {
   defaultItem?: Record<string, any>;
   disabled?: boolean;
   hideControls?: boolean;
+  mobileLayout?: MobileLayout;
 }
 
 const props = withDefaults(defineProps<JsonListEditorProps>(), {
   disabled: false,
   defaultItem: () => ({}),
   hideControls: false,
+  mobileLayout: 'none',
 });
 
 const emit = defineEmits<{
@@ -207,6 +223,203 @@ const addItem = () => {
 
     &.add-row {
       justify-content: flex-end;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .editor-item {
+      .editor-field {
+        margin: 0 !important;
+
+        :deep(.el-input),
+        :deep(.el-select),
+        :deep(.el-input__wrapper),
+        :deep(.el-select__wrapper) {
+          width: 100%;
+        }
+      }
+    }
+
+    &:not(.mobile-layout-none) {
+      .editor-item {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        align-items: flex-start;
+        gap: 8px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--el-border-color-lighter);
+
+        > .el-button {
+          grid-row: 1;
+          width: 32px;
+          height: 32px;
+          min-width: 32px;
+          min-height: 32px;
+          margin-left: 0;
+        }
+
+        > .el-button:nth-of-type(1) {
+          grid-column: 1;
+        }
+
+        > .el-button:nth-of-type(2) {
+          grid-column: 1;
+          margin-left: 40px !important;
+        }
+
+        > .el-button:last-child {
+          grid-column: -2 / -1;
+          justify-self: end;
+        }
+
+        .editor-field {
+          min-width: 0;
+        }
+
+        &.add-row {
+          justify-content: flex-end;
+          padding-top: 8px;
+          border-bottom: 0;
+        }
+      }
+    }
+
+    &.mobile-layout-name-icon {
+      .field-name,
+      .field-icon {
+        grid-row: 1;
+      }
+
+      .field-name {
+        grid-column: 1 / 4;
+      }
+
+      .field-icon {
+        grid-column: 4 / 7;
+      }
+
+      .field-url {
+        grid-column: 1 / 7;
+        grid-row: 2;
+      }
+
+      .editor-item.has-controls {
+        .field-name,
+        .field-icon {
+          grid-row: 2;
+        }
+
+        .field-url {
+          grid-row: 3;
+        }
+      }
+    }
+
+    &.mobile-layout-footer-social {
+      .editor-item {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .field-name,
+      .field-position {
+        grid-row: 1;
+      }
+
+      .field-name {
+        grid-column: 1 / 3;
+      }
+
+      .field-position {
+        grid-column: 3 / 4;
+      }
+
+      .field-icon {
+        grid-column: 1 / 4;
+        grid-row: 2;
+      }
+
+      .field-url {
+        grid-column: 1 / 4;
+        grid-row: 3;
+      }
+
+      .editor-item.has-controls {
+        .field-name,
+        .field-position {
+          grid-row: 2;
+        }
+
+        .field-icon {
+          grid-row: 3;
+        }
+
+        .field-url {
+          grid-row: 4;
+        }
+      }
+    }
+
+    &.mobile-layout-name-url {
+      .editor-item {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .field-name {
+        grid-column: 1 / 2;
+        grid-row: 1;
+      }
+
+      .field-url,
+      .field-version {
+        grid-column: 2 / 4;
+        grid-row: 1;
+      }
+
+      .editor-item.has-controls {
+        .field-name,
+        .field-url,
+        .field-version {
+          grid-row: 2;
+        }
+      }
+    }
+
+    &.mobile-layout-profile-color {
+      .editor-item {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) 40px;
+      }
+
+      .field-label {
+        grid-column: 1 / 2;
+        grid-row: 1;
+      }
+
+      .field-value {
+        grid-column: 2 / 3;
+        grid-row: 1;
+      }
+
+      .field-color {
+        grid-column: 3 / 4;
+        grid-row: 1;
+      }
+
+      .editor-item.has-controls {
+        .field-label,
+        .field-value,
+        .field-color {
+          grid-row: 2;
+        }
+      }
+    }
+
+    &.mobile-layout-name-icon,
+    &.mobile-layout-footer-social,
+    &.mobile-layout-name-url,
+    &.mobile-layout-profile-color {
+      .editor-field {
+        width: 100% !important;
+      }
     }
   }
 }

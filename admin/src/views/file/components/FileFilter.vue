@@ -90,6 +90,7 @@
             <el-option label="展览图片" value="展览图片" />
             <el-option label="微信收款码" value="微信收款码" />
             <el-option label="支付宝收款码" value="支付宝收款码" />
+            <el-option label="公众号二维码" value="公众号二维码" />
           </el-option-group>
           <el-option-group label="其他">
             <el-option label="菜单图标" value="菜单图标" />
