@@ -86,17 +86,21 @@ const refreshFriends = () => {
     <div v-for="menu in footerMenus" :key="menu.id" class="group-item">
       <div class="item-title" role="heading" aria-level="2">{{ menu.title }}</div>
       <nav class="item-content" :aria-label="`${menu.title}导航`">
-        <a
-          v-for="child in menu.children"
-          :key="child.id"
-          class="content_link"
-          :href="child.url"
-          :target="isExternalLink(child.url) ? '_blank' : '_self'"
-          :rel="isExternalLink(child.url) ? 'noopener noreferrer' : undefined"
-          :aria-label="child.title"
-        >
-          {{ child.title }}
-        </a>
+        <template v-for="child in menu.children" :key="child.id">
+          <a
+            v-if="isExternalLink(child.url)"
+            class="content_link"
+            :href="child.url"
+            target="_blank"
+            rel="noopener noreferrer"
+            :aria-label="child.title"
+          >
+            {{ child.title }}
+          </a>
+          <NuxtLink v-else class="content_link" :to="child.url" :aria-label="child.title">
+            {{ child.title }}
+          </NuxtLink>
+        </template>
       </nav>
     </div>
 
@@ -125,14 +129,14 @@ const refreshFriends = () => {
           >
             {{ friend.name }}
           </a>
-          <a
+          <NuxtLink
             v-if="friendGroups.length > 3"
-            href="/friend"
+            to="/friend"
             class="content_link"
             aria-label="查看更多友链"
           >
             更多...
-          </a>
+          </NuxtLink>
         </nav>
       </div>
     </ClientOnly>

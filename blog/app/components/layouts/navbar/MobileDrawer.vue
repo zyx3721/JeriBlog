@@ -43,6 +43,10 @@ const isImageUrl = (icon: string): boolean => {
   );
 };
 
+const isInternalUrl = (url?: string): boolean => {
+  return !!url && url.startsWith('/');
+};
+
 const close = () => emit('update:modelValue', false);
 
 const toggleSubmenu = (menuId: number) => {
@@ -88,18 +92,18 @@ watch(
 
           <!-- 站点数据 -->
           <div class="site-data">
-            <a href="/archive" @click="close">
+            <NuxtLink to="/archive" @click="close">
               <div class="headline">文章</div>
               <div class="length-num">{{ articleCount }}</div>
-            </a>
-            <a href="/tags" @click="close">
+            </NuxtLink>
+            <NuxtLink to="/tags" @click="close">
               <div class="headline">标签</div>
               <div class="length-num">{{ tagCount }}</div>
-            </a>
-            <a href="/categories" @click="close">
+            </NuxtLink>
+            <NuxtLink to="/categories" @click="close">
               <div class="headline">分类</div>
               <div class="length-num">{{ categoryCount }}</div>
-            </a>
+            </NuxtLink>
           </div>
 
           <!-- 滑动菜单容器 -->
@@ -130,26 +134,61 @@ watch(
                       </div>
                       <Transition name="submenu">
                         <div v-show="expandedMenus.has(menu.id)" class="submenu">
-                          <a
-                            v-for="child in menu.children"
-                            :key="child.id"
-                            :href="child.url"
-                            class="nav-item"
-                            @click="close"
-                          >
-                            <img
-                              v-if="child.icon && isImageUrl(child.icon)"
-                              :src="child.icon"
-                              :alt="child.title"
-                              class="menu-icon-img"
-                            />
-                            <i v-else-if="child.icon" :class="child.icon" />
-                            <span>{{ child.title }}</span>
-                          </a>
+                          <template v-for="child in menu.children" :key="child.id">
+                            <a
+                              v-if="child.url && !isInternalUrl(child.url)"
+                              :href="child.url"
+                              class="nav-item"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              @click="close"
+                            >
+                              <img
+                                v-if="child.icon && isImageUrl(child.icon)"
+                                :src="child.icon"
+                                :alt="child.title"
+                                class="menu-icon-img"
+                              />
+                              <i v-else-if="child.icon" :class="child.icon" />
+                              <span>{{ child.title }}</span>
+                            </a>
+                            <NuxtLink
+                              v-else-if="child.url"
+                              :to="child.url"
+                              class="nav-item"
+                              @click="close"
+                            >
+                              <img
+                                v-if="child.icon && isImageUrl(child.icon)"
+                                :src="child.icon"
+                                :alt="child.title"
+                                class="menu-icon-img"
+                              />
+                              <i v-else-if="child.icon" :class="child.icon" />
+                              <span>{{ child.title }}</span>
+                            </NuxtLink>
+                            <span v-else class="nav-item">
+                              <img
+                                v-if="child.icon && isImageUrl(child.icon)"
+                                :src="child.icon"
+                                :alt="child.title"
+                                class="menu-icon-img"
+                              />
+                              <i v-else-if="child.icon" :class="child.icon" />
+                              <span>{{ child.title }}</span>
+                            </span>
+                          </template>
                         </div>
                       </Transition>
                     </template>
-                    <a v-else :href="menu.url" class="nav-item" @click="close">
+                    <a
+                      v-else-if="menu.url && !isInternalUrl(menu.url)"
+                      :href="menu.url"
+                      class="nav-item"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      @click="close"
+                    >
                       <img
                         v-if="menu.icon && isImageUrl(menu.icon)"
                         :src="menu.icon"
@@ -159,6 +198,16 @@ watch(
                       <i v-else-if="menu.icon" :class="menu.icon" />
                       <span>{{ menu.title }}</span>
                     </a>
+                    <NuxtLink v-else-if="menu.url" :to="menu.url" class="nav-item" @click="close">
+                      <img
+                        v-if="menu.icon && isImageUrl(menu.icon)"
+                        :src="menu.icon"
+                        :alt="menu.title"
+                        class="menu-icon-img"
+                      />
+                      <i v-else-if="menu.icon" :class="menu.icon" />
+                      <span>{{ menu.title }}</span>
+                    </NuxtLink>
                   </template>
                 </div>
 
@@ -171,22 +220,50 @@ watch(
                   >
                     <div class="section-title">{{ menu.title }}</div>
                     <div class="aggregate-grid">
-                      <a
-                        v-for="child in menu.children"
-                        :key="child.id"
-                        :href="child.url"
-                        class="aggregate-item"
-                        @click="close"
-                      >
-                        <NuxtImg
-                          v-if="child.icon && isImageUrl(child.icon)"
-                          :src="child.icon"
-                          :alt="child.title"
-                          loading="lazy"
-                        />
-                        <i v-else-if="child.icon" :class="child.icon" />
-                        <span>{{ child.title }}</span>
-                      </a>
+                      <template v-for="child in menu.children" :key="child.id">
+                        <a
+                          v-if="child.url && !isInternalUrl(child.url)"
+                          :href="child.url"
+                          class="aggregate-item"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          @click="close"
+                        >
+                          <NuxtImg
+                            v-if="child.icon && isImageUrl(child.icon)"
+                            :src="child.icon"
+                            :alt="child.title"
+                            loading="lazy"
+                          />
+                          <i v-else-if="child.icon" :class="child.icon" />
+                          <span>{{ child.title }}</span>
+                        </a>
+                        <NuxtLink
+                          v-else-if="child.url"
+                          :to="child.url"
+                          class="aggregate-item"
+                          @click="close"
+                        >
+                          <NuxtImg
+                            v-if="child.icon && isImageUrl(child.icon)"
+                            :src="child.icon"
+                            :alt="child.title"
+                            loading="lazy"
+                          />
+                          <i v-else-if="child.icon" :class="child.icon" />
+                          <span>{{ child.title }}</span>
+                        </NuxtLink>
+                        <span v-else class="aggregate-item">
+                          <NuxtImg
+                            v-if="child.icon && isImageUrl(child.icon)"
+                            :src="child.icon"
+                            :alt="child.title"
+                            loading="lazy"
+                          />
+                          <i v-else-if="child.icon" :class="child.icon" />
+                          <span>{{ child.title }}</span>
+                        </span>
+                      </template>
                     </div>
                   </div>
                 </div>

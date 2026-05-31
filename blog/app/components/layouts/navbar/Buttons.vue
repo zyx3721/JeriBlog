@@ -83,7 +83,7 @@ const handleRandom = async () => {
   isRandomLoading.value = true;
   try {
     const slug = await getRandomArticleSlug();
-    window.location.href = `/posts/${slug}`;
+    await navigateTo(`/posts/${slug}`);
   } finally {
     isRandomLoading.value = false;
   }
@@ -157,16 +157,16 @@ const handleLogout = () => {
                 <span class="user-email">{{ userEmail }}</span>
               </div>
             </div>
-            <a href="/profile" class="dropdown-item" @click="showUserMenu = false">
+            <NuxtLink to="/profile" class="dropdown-item" @click="showUserMenu = false">
               <i class="ri-user-settings-line" />
               个人设置
-            </a>
+            </NuxtLink>
             <a :href="adminUrl" class="dropdown-item" @click="showUserMenu = false">
               <i class="ri-dashboard-line" />
               管理后台
             </a>
-            <a
-              href="/notifications"
+            <NuxtLink
+              to="/notifications"
               class="dropdown-item notification-item"
               @click="showUserMenu = false"
             >
@@ -175,7 +175,7 @@ const handleLogout = () => {
               <span v-if="unreadCount > 0" class="notification-badge">{{
                 unreadCount > 99 ? '99+' : unreadCount
               }}</span>
-            </a>
+            </NuxtLink>
             <button class="dropdown-item" @click="handleLogout">
               <i class="ri-logout-box-line" />
               退出登录

@@ -15,9 +15,9 @@ const { blogConfig } = useSysConfig();
 
 <template>
   <div class="logo-container">
-    <a href="/" class="logo brighten" aria-label="返回首页">
+    <NuxtLink to="/" class="logo brighten" aria-label="返回首页">
       {{ blogConfig.subtitle }}
-    </a>
+    </NuxtLink>
   </div>
 </template>
 

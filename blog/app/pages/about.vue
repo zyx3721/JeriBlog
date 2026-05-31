@@ -291,7 +291,7 @@ const formatWords = (words: string) => {
             <span class="tips">本月访问</span><span>{{ siteStats.month_pageviews || 0 }}</span>
           </div>
         </div>
-        <a class="T-btn" href="/statistics">更多统计</a>
+        <NuxtLink class="T-btn" to="/statistics">更多统计</NuxtLink>
       </div>
       <div class="about-layout union">
         <div class="tips">共创</div>

@@ -68,7 +68,7 @@ const contacts = computed(() => {
         <div class="num">{{ tagsTotal }}</div>
       </router-link>
     </div>
-    <a href="/subscribe" class="card-info-btn">订阅本站</a>
+    <NuxtLink to="/subscribe" class="card-info-btn">订阅本站</NuxtLink>
     <div class="card-info-icons">
       <a
         v-for="contact in contacts"

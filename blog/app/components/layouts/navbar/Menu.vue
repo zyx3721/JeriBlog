@@ -39,6 +39,10 @@ const isImageUrl = (icon: string): boolean => {
     icon.startsWith('data:')
   );
 };
+
+const isInternalUrl = (url?: string): boolean => {
+  return !!url && url.startsWith('/');
+};
 </script>
 
 <template>
@@ -47,7 +51,14 @@ const isImageUrl = (icon: string): boolean => {
       <template v-for="menu in navigationMenus" :key="menu.id">
         <!-- 有子菜单的菜单项 -->
         <div v-if="menu.children && menu.children.length > 0" class="menu-item dropdown">
-          <a v-if="menu.url" :href="menu.url" class="brighten" :aria-label="menu.title">
+          <a
+            v-if="menu.url && !isInternalUrl(menu.url)"
+            :href="menu.url"
+            class="brighten"
+            :aria-label="menu.title"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <img
               v-if="menu.icon && isImageUrl(menu.icon)"
               :src="menu.icon"
@@ -58,6 +69,17 @@ const isImageUrl = (icon: string): boolean => {
             <span>{{ menu.title }}</span>
             <i class="ri-arrow-down-s-line arrow-icon" />
           </a>
+          <NuxtLink v-else-if="menu.url" :to="menu.url" class="brighten" :aria-label="menu.title">
+            <img
+              v-if="menu.icon && isImageUrl(menu.icon)"
+              :src="menu.icon"
+              :alt="menu.title"
+              class="menu-icon-img"
+            />
+            <i v-else-if="menu.icon" :class="menu.icon" />
+            <span>{{ menu.title }}</span>
+            <i class="ri-arrow-down-s-line arrow-icon" />
+          </NuxtLink>
 
           <span v-else class="brighten menu-label">
             <img
@@ -74,7 +96,13 @@ const isImageUrl = (icon: string): boolean => {
           <!-- 下拉菜单 -->
           <ul class="dropdown-menu">
             <li v-for="child in menu.children" :key="child.id">
-              <a :href="child.url" :aria-label="child.title">
+              <a
+                v-if="child.url && !isInternalUrl(child.url)"
+                :href="child.url"
+                :aria-label="child.title"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <img
                   v-if="child.icon && isImageUrl(child.icon)"
                   :src="child.icon"
@@ -84,12 +112,39 @@ const isImageUrl = (icon: string): boolean => {
                 <i v-else-if="child.icon" :class="child.icon" />
                 <span>{{ child.title }}</span>
               </a>
+              <NuxtLink v-else-if="child.url" :to="child.url" :aria-label="child.title">
+                <img
+                  v-if="child.icon && isImageUrl(child.icon)"
+                  :src="child.icon"
+                  :alt="child.title"
+                  class="menu-icon-img"
+                />
+                <i v-else-if="child.icon" :class="child.icon" />
+                <span>{{ child.title }}</span>
+              </NuxtLink>
+              <span v-else class="menu-label" :aria-label="child.title">
+                <img
+                  v-if="child.icon && isImageUrl(child.icon)"
+                  :src="child.icon"
+                  :alt="child.title"
+                  class="menu-icon-img"
+                />
+                <i v-else-if="child.icon" :class="child.icon" />
+                <span>{{ child.title }}</span>
+              </span>
             </li>
           </ul>
         </div>
 
         <!-- 无子菜单的菜单项 -->
-        <a v-else :href="menu.url" class="brighten" :aria-label="menu.title">
+        <a
+          v-else-if="menu.url && !isInternalUrl(menu.url)"
+          :href="menu.url"
+          class="brighten"
+          :aria-label="menu.title"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <img
             v-if="menu.icon && isImageUrl(menu.icon)"
             :src="menu.icon"
@@ -99,6 +154,26 @@ const isImageUrl = (icon: string): boolean => {
           <i v-else-if="menu.icon" :class="menu.icon" />
           <span>{{ menu.title }}</span>
         </a>
+        <NuxtLink v-else-if="menu.url" :to="menu.url" class="brighten" :aria-label="menu.title">
+          <img
+            v-if="menu.icon && isImageUrl(menu.icon)"
+            :src="menu.icon"
+            :alt="menu.title"
+            class="menu-icon-img"
+          />
+          <i v-else-if="menu.icon" :class="menu.icon" />
+          <span>{{ menu.title }}</span>
+        </NuxtLink>
+        <span v-else class="brighten menu-label">
+          <img
+            v-if="menu.icon && isImageUrl(menu.icon)"
+            :src="menu.icon"
+            :alt="menu.title"
+            class="menu-icon-img"
+          />
+          <i v-else-if="menu.icon" :class="menu.icon" />
+          <span>{{ menu.title }}</span>
+        </span>
       </template>
     </div>
     <ClientOnly>

@@ -23,6 +23,10 @@ const isImageIcon = (icon: string) => {
     icon && (icon.startsWith('http://') || icon.startsWith('https://') || icon.startsWith('/'))
   );
 };
+
+const isInternalUrl = (url?: string) => {
+  return !!url && url.startsWith('/');
+};
 </script>
 
 <template>
@@ -46,22 +50,47 @@ const isImageIcon = (icon: string) => {
 
         <!-- 子菜单列 -->
         <div class="group-children">
-          <a
-            v-for="child in menu.children"
-            :key="child.id"
-            :href="child.url"
-            :aria-label="child.title"
-          >
-            <NuxtImg
-              v-if="child.icon && isImageIcon(child.icon)"
-              :src="child.icon"
-              :alt="child.title"
-              class="icon-img"
-              loading="lazy"
-            />
-            <i v-else-if="child.icon" :class="child.icon + ' ri-lg'" />
-            <span>{{ child.title }}</span>
-          </a>
+          <template v-for="child in menu.children" :key="child.id">
+            <a
+              v-if="child.url && !isInternalUrl(child.url)"
+              :href="child.url"
+              :aria-label="child.title"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <NuxtImg
+                v-if="child.icon && isImageIcon(child.icon)"
+                :src="child.icon"
+                :alt="child.title"
+                class="icon-img"
+                loading="lazy"
+              />
+              <i v-else-if="child.icon" :class="child.icon + ' ri-lg'" />
+              <span>{{ child.title }}</span>
+            </a>
+            <NuxtLink v-else-if="child.url" :to="child.url" :aria-label="child.title">
+              <NuxtImg
+                v-if="child.icon && isImageIcon(child.icon)"
+                :src="child.icon"
+                :alt="child.title"
+                class="icon-img"
+                loading="lazy"
+              />
+              <i v-else-if="child.icon" :class="child.icon + ' ri-lg'" />
+              <span>{{ child.title }}</span>
+            </NuxtLink>
+            <span v-else :aria-label="child.title">
+              <NuxtImg
+                v-if="child.icon && isImageIcon(child.icon)"
+                :src="child.icon"
+                :alt="child.title"
+                class="icon-img"
+                loading="lazy"
+              />
+              <i v-else-if="child.icon" :class="child.icon + ' ri-lg'" />
+              <span>{{ child.title }}</span>
+            </span>
+          </template>
         </div>
       </div>
     </div>
