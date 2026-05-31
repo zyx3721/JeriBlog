@@ -148,7 +148,7 @@
             inline-prompt
             active-text="显示"
             inactive-text="隐藏"
-            @change="handleStatusChange(row)"
+            @change="handleStatusChange(row as Comment)"
           />
         </template>
       </el-table-column>
@@ -161,14 +161,14 @@
             inline-prompt
             active-text="是"
             inactive-text="否"
-            @change="handlePinned(row)"
+            @change="handlePinned(row as Comment)"
           />
         </template>
       </el-table-column>
 
       <el-table-column label="操作" width="180" align="center" fixed="right">
         <template #default="{ row }">
-          <el-button type="primary" link size="small" @click="openReplyDialog(row)">
+          <el-button type="primary" link size="small" @click="openReplyDialog(row as Comment)">
             回复
           </el-button>
           <el-button type="danger" link size="small" @click="handleDelete(row.id)">

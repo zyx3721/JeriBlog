@@ -27,8 +27,12 @@
           <el-button type="primary" plain size="small" @click="openForm()">新增</el-button>
         </template>
         <template #default="{ row }">
-          <el-button type="primary" link size="small" @click="openForm(row)">编辑</el-button>
-          <el-button type="danger" link size="small" @click="remove(row)">删除</el-button>
+          <el-button type="primary" link size="small" @click="openForm(row as Category)"
+            >编辑</el-button
+          >
+          <el-button type="danger" link size="small" @click="remove(row as Category)"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>

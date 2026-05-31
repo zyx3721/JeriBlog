@@ -166,7 +166,7 @@
             type="primary"
             link
             size="small"
-            @click="handleMarkRead(row)"
+            @click="handleMarkRead(row as RssArticle)"
           >
             标记已读
           </el-button>

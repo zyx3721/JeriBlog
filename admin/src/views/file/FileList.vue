@@ -112,7 +112,7 @@
       <el-table-column label="预览" width="80" align="center">
         <template #default="{ row }">
           <el-image
-            v-if="isImage(row)"
+            v-if="isImage(row as FileInfo)"
             :src="row.file_url"
             :preview-src-list="[row.file_url]"
             fit="cover"
@@ -154,7 +154,7 @@
         <template #default="{ row }">
           <el-link
             type="primary"
-            @click="handleShowReferences(row)"
+            @click="handleShowReferences(row as FileInfo)"
             :disabled="!row.reference_count || row.reference_count === 0"
           >
             {{ row.reference_count || 0 }}
@@ -170,7 +170,9 @@
 
       <el-table-column label="操作" width="180" align="center" fixed="right">
         <template #default="{ row }">
-          <el-button link type="primary" size="small" @click="copyUrl(row)">复制链接</el-button>
+          <el-button link type="primary" size="small" @click="copyUrl(row as FileInfo)"
+            >复制链接</el-button
+          >
           <el-button link type="danger" size="small" @click="handleDelete(row.id)">删除</el-button>
         </template>
       </el-table-column>

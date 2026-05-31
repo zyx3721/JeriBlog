@@ -82,7 +82,7 @@ import { Refresh, Filter, Plus } from '@element-plus/icons-vue';
 withDefaults(
   defineProps<{
     title: string;
-    data: unknown[];
+    data: any[];
     loading?: boolean;
     total?: number;
     page?: number;
