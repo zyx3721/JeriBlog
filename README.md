@@ -642,7 +642,7 @@ docker build \
   -f Dockerfile \
   -t jeriblog:latest \
   --build-arg ALPINE_MIRROR=mirrors.aliyun.com \
-  --build-arg APP_VERSION=v3.2.1 \
+  --build-arg APP_VERSION=v3.2.2 \
   ..
 ```
 
@@ -1673,6 +1673,12 @@ systemctl reload nginx
 # 七、版本历史
 
 ## 最新版本
+
+- **v3.2.2** (2026-06-08) - 功能与修复版本：第三方服务配置化与部署优化
+  - 新增 Meting-API、头像服务、IP 查询、封面制作 API 等第三方服务地址配置
+  - 新增 OAuth Worker 代理后台配置，支持运行时热加载
+  - 修复前台全局横向溢出样式，优化 Dockerfile Alpine 镜像源配置
+  - 详见 [v3.2.2 更新日志](verchanglog/v3.2.2.md)
 
 - **v3.2.1** (2026-06-01) - 修复版本：前台加载动画与后台构建类型修复
   - 优化前台加载动画触发逻辑，仅首次访问和浏览器刷新时播放
