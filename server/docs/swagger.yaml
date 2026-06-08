@@ -5466,43 +5466,6 @@ paths:
       summary: 订阅退订
       tags:
       - 订阅
-  /api/v1/tools/parse-music:
-    get:
-      consumes:
-      - application/json
-      description: 通过 Meting API 解析音乐平台的歌曲信息（网易云、QQ音乐等）
-      parameters:
-      - description: 音乐平台（netease/tencent/kugou等）
-        in: query
-        name: server
-        required: true
-        type: string
-      - description: 类型（song/playlist/album等）
-        in: query
-        name: type
-        required: true
-        type: string
-      - description: 音乐ID
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - BearerAuth: []
-      summary: 解析音乐信息
-      tags:
-      - 工具
   /articles:
     get:
       consumes:

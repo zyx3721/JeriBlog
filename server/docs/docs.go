@@ -5984,63 +5984,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/tools/parse-music": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "通过 Meting API 解析音乐平台的歌曲信息（网易云、QQ音乐等）",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "工具"
-                ],
-                "summary": "解析音乐信息",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "音乐平台（netease/tencent/kugou等）",
-                        "name": "server",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "类型（song/playlist/album等）",
-                        "name": "type",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "音乐ID",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/articles": {
             "get": {
                 "description": "获取已发布文章，置顶文章在前，支持按年/月/分类/标签筛选",

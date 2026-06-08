@@ -1513,10 +1513,6 @@ systemctl reload nginx
 - `POST /api/v1/subscribe` - 订阅邮件通知
 - `GET /api/v1/subscribe/unsubscribe` - 退订邮件通知
 
-### 6.3.15 工具接口
-
-- `POST /api/v1/tools/parse-music` - 解析音乐信息（支持网易云、QQ音乐等平台）
-
 ## 6.4 后台管理接口
 
 基础路径：`/api/v1/admin`，所有接口需携带管理员 JWT Token。

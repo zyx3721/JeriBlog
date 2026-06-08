@@ -142,6 +142,15 @@
         :disabled="loading"
       />
     </el-form-item>
+
+    <el-divider content-position="left">代理配置</el-divider>
+    <el-form-item label="Worker 代理">
+      <el-input
+        v-model="form.worker_proxy"
+        placeholder="Cloudflare Worker 代理地址"
+        :disabled="loading"
+      />
+    </el-form-item>
   </el-form>
 </template>
 
@@ -163,6 +172,7 @@ interface OAuthForm {
   'microsoft.client_id': string;
   'microsoft.client_secret': string;
   'microsoft.redirect_url': string;
+  worker_proxy: string;
 }
 
 const form = defineModel<OAuthForm>('form', { required: true });

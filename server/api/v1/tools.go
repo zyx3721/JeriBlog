@@ -15,7 +15,6 @@ import (
 	"jeri_blog/pkg/linkparser"
 	"jeri_blog/pkg/response"
 	"jeri_blog/pkg/videoparser"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -155,63 +154,4 @@ func (c *ToolsController) DownloadImage(ctx *gin.Context) {
 		"content_length": len(data),
 		"data":           data,
 	})
-}
-
-// ParseMusic 解析音乐信息（代理Meting API）
-//
-//	@Summary		解析音乐信息
-//	@Description	通过 Meting API 解析音乐平台的歌曲信息（网易云、QQ音乐等）
-//	@Tags			工具
-//	@Accept			json
-//	@Produce		json
-//	@Security		BearerAuth
-// @Param 			server query string true "音乐平台（netease/tencent/kugou等）"
-// @Param 			type query string true "类型（song/playlist/album等）"
-// @Param 			id query string true "音乐ID"
-//	@Success		200		{object}	response.Response
-//	@Failure		400		{object}	response.Response
-//	@Router			/api/v1/tools/parse-music [get]
-func (c *ToolsController) ParseMusic(ctx *gin.Context) {
-	server := ctx.Query("server")
-	musicType := ctx.Query("type")
-	id := ctx.Query("id")
-
-	// 参数验证
-	if server == "" || musicType == "" || id == "" {
-		response.ValidateFailed(ctx, "缺少必需参数: server, type, id")
-		return
-	}
-
-	// 构建请求URL
-	apiURL := fmt.Sprintf("https://api.injahow.cn/meting/?server=%s&type=%s&id=%s", server, musicType, id)
-
-	// 发起请求
-	resp, err := http.Get(apiURL)
-	if err != nil {
-		response.Failed(ctx, fmt.Sprintf("请求音乐API失败: %v", err))
-		return
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		response.Failed(ctx, fmt.Sprintf("音乐API返回错误状态码: %d", resp.StatusCode))
-		return
-	}
-
-	// 读取响应数据
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		response.Failed(ctx, fmt.Sprintf("读取响应数据失败: %v", err))
-		return
-	}
-
-	// 解析JSON数据
-	var musicData []interface{}
-	if err := json.Unmarshal(data, &musicData); err != nil {
-		response.Failed(ctx, fmt.Sprintf("解析音乐数据失败: %v", err))
-		return
-	}
-
-	// 使用标准响应格式返回
-	response.Success(ctx, musicData)
 }

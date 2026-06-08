@@ -210,7 +210,11 @@
         </div>
       </el-form-item>
 
-      <el-form-item label="公众号名称" class="wechat-official-name" style="flex: 1; max-width: 300px">
+      <el-form-item
+        label="公众号名称"
+        class="wechat-official-name"
+        style="flex: 1; max-width: 300px"
+      >
         <el-input
           v-model="form.wechat_offname"
           placeholder="公众号名称，如：JeriBlog"
@@ -506,6 +510,40 @@
       </template>
     </el-alert>
 
+    <el-divider content-position="left">第三方服务</el-divider>
+
+    <el-form-item label="Meting-API">
+      <el-input
+        v-model="form.meting_api"
+        placeholder="Meting-API 地址，如 https://api.injahow.cn/meting/"
+        :disabled="loading"
+      />
+    </el-form-item>
+
+    <el-form-item label="头像服务">
+      <el-input
+        v-model="form.cravatar_url"
+        placeholder="头像服务 URL，%s 为邮箱哈希，如 https://cravatar.cn/avatar/%s?s=200&d=robohash"
+        :disabled="loading"
+      />
+    </el-form-item>
+
+    <el-form-item label="IP 查询">
+      <el-input
+        v-model="form.ip_api_url"
+        placeholder="IP 归属地查询 URL，%s 为 IP，如 http://ip-api.com/json/%s?lang=zh-CN"
+        :disabled="loading"
+      />
+    </el-form-item>
+
+    <el-form-item label="封面制作">
+      <el-input
+        v-model="form.cover_maker_api"
+        placeholder="封面制作图片源 API，如 https://pixhub.flec.top"
+        :disabled="loading"
+      />
+    </el-form-item>
+
     <el-divider content-position="left">表情包配置</el-divider>
 
     <el-form-item label="表情包">
@@ -590,6 +628,10 @@ interface BlogFormData {
   alipay_qrcode: string;
   emojis: string;
   font: string;
+  meting_api: string;
+  cravatar_url: string;
+  ip_api_url: string;
+  cover_maker_api: string;
 }
 
 const form = defineModel<BlogFormData>('form', { required: true });

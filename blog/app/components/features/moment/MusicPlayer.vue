@@ -11,12 +11,14 @@
 
 <script lang="ts" setup>
 import type { MomentMusic } from '@@/types/moment';
+import { useSysConfig } from '@/composables/useStores';
 
 interface AudioTrack {
   name: string;
   artist: string;
   url: string;
   cover: string;
+  lrc?: string;
 }
 
 interface MusicApiResponse {
@@ -38,6 +40,9 @@ interface LyricLine {
 const props = defineProps<{
   music: MomentMusic;
 }>();
+
+const { blogConfig } = useSysConfig();
+const metingApi = computed(() => blogConfig.value.meting_api || 'https://api.injahow.cn/meting/');
 
 // 播放器状态
 const audioRef = ref<HTMLAudioElement | null>(null);
@@ -102,13 +107,8 @@ const fetchLyrics = async (lrcUrl: string): Promise<string> => {
 const fetchMusicData = async () => {
   try {
     const { server, type, id } = props.music;
-    const config = useRuntimeConfig();
-    const apiUrl = `${config.public.apiUrl}/tools/parse-music/?server=${server}&type=${type}&id=${id}`;
-    const response = await fetch(apiUrl);
-    const result = await response.json();
-
-    // 处理标准响应格式 { code, message, data }
-    const data = result.data || result;
+    const response = await fetch(`${metingApi.value}?server=${server}&type=${type}&id=${id}`);
+    const data = await response.json();
     const list = Array.isArray(data) ? data : [data];
 
     audioList.value = list.map((item: MusicApiResponse) => ({

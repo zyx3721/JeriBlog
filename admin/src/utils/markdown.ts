@@ -28,6 +28,14 @@ import katex from '@traptitech/markdown-it-katex';
 import DOMPurify from 'dompurify';
 import hljs from 'highlight.js';
 
+// Meting-API URL（可通过 setMetingApiUrl 更新）
+let metingApiUrl = 'https://api.injahow.cn/meting/';
+
+/** 设置 Meting-API URL */
+export function setMetingApiUrl(url: string) {
+  if (url) metingApiUrl = url;
+}
+
 // ========== 属性解析函数 ==========
 
 /**
@@ -368,7 +376,7 @@ function renderMusic(params: string[], sourceAttrs = ''): string {
 
   const audioId = `audio-${Math.random().toString(36).slice(2, 9)}`;
 
-  const embedUrl = `https://api.injahow.cn/meting/?server=${server}&type=song&id=${musicId}`;
+  const embedUrl = `${metingApiUrl}?server=${server}&type=song&id=${musicId}`;
 
   return `<div class="custom-audio" data-audio-id="${audioId}" data-music-id="${musicId}"${sourceAttrs}>
   <div class="custom-audio-type">播放在线音乐</div>
@@ -475,7 +483,7 @@ function createMarkdownRenderer(): MarkdownIt {
 function renderFence(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   token: any,
-  escapeHtml: (value: string) => string,
+  escapeHtml: (value: string) => string
 ): string {
   const code = token.content;
   const lang = token.info.trim();
@@ -763,21 +771,21 @@ function customBlocksPlugin(md: MarkdownIt) {
 // 放宽加粗/斜体的边界限制
 function relaxedEmphasisPlugin(md: MarkdownIt) {
   // 保存原始的 scanDelims 方法
-  const State = md.inline.State
-  const originalScanDelims = State.prototype.scanDelims
+  const State = md.inline.State;
+  const originalScanDelims = State.prototype.scanDelims;
 
   // 重写 scanDelims 方法
-  State.prototype.scanDelims = function(start, canSplitWord) {
-    const result = originalScanDelims.call(this, start, canSplitWord)
+  State.prototype.scanDelims = function (start, canSplitWord) {
+    const result = originalScanDelims.call(this, start, canSplitWord);
 
     // 放宽 can_close 的限制：只要能 open，就允许 close
     // 这样 **text**2 中的第二个 ** 就能正确识别为结束标记
     if (result.can_open) {
-      result.can_close = true
+      result.can_close = true;
     }
 
-    return result
-  }
+    return result;
+  };
 }
 
 // DOMPurify 配置

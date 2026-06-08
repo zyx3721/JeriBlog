@@ -198,6 +198,10 @@ const blogForm = ref({
   alipay_qrcode: '',
   emojis: '',
   font: '',
+  meting_api: '',
+  cravatar_url: '',
+  ip_api_url: '',
+  cover_maker_api: '',
 });
 
 // 上传配置表单
@@ -311,6 +315,7 @@ const oauthForm = ref({
   'microsoft.client_id': '',
   'microsoft.client_secret': '',
   'microsoft.redirect_url': '',
+  worker_proxy: '',
 });
 
 // 通用配置加载函数
@@ -435,6 +440,10 @@ const loadBlogConfigs = async () => {
     blogForm.value.alipay_qrcode = configs.alipay_qrcode || '';
     blogForm.value.emojis = configs.emojis || '';
     blogForm.value.font = configs.font || '';
+    blogForm.value.meting_api = configs.meting_api || '';
+    blogForm.value.cravatar_url = configs.cravatar_url || '';
+    blogForm.value.ip_api_url = configs.ip_api_url || '';
+    blogForm.value.cover_maker_api = configs.cover_maker_api || '';
   } catch {
     ElMessage.error('获取博客配置失败');
   }
@@ -547,6 +556,7 @@ const loadOAuthConfigs = async () => {
       'microsoft.client_id': configs['microsoft.client_id'] || '',
       'microsoft.client_secret': configs['microsoft.client_secret'] || '',
       'microsoft.redirect_url': configs['microsoft.redirect_url'] || '',
+      worker_proxy: configs.worker_proxy || '',
     });
   } catch {
     ElMessage.error('获取 OAuth 配置失败');
@@ -735,6 +745,10 @@ const handleSave = async () => {
       'blog.alipay_qrcode': blogForm.value.alipay_qrcode,
       'blog.emojis': blogForm.value.emojis,
       'blog.font': blogForm.value.font,
+      'blog.meting_api': blogForm.value.meting_api,
+      'blog.cravatar_url': blogForm.value.cravatar_url,
+      'blog.ip_api_url': blogForm.value.ip_api_url,
+      'blog.cover_maker_api': blogForm.value.cover_maker_api,
       'blog.moments_size': String(blogForm.value.moments_size),
       'blog.message_content': blogForm.value.message_content,
       'blog.home_layout': blogForm.value.home_layout,
@@ -826,6 +840,7 @@ const handleSave = async () => {
       'oauth.microsoft.client_id': oauthForm.value['microsoft.client_id'],
       'oauth.microsoft.client_secret': oauthForm.value['microsoft.client_secret'],
       'oauth.microsoft.redirect_url': oauthForm.value['microsoft.redirect_url'],
+      'oauth.worker_proxy': oauthForm.value.worker_proxy,
     };
 
     // 构建需要保存的配置组列表

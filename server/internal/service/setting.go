@@ -24,6 +24,7 @@ import (
 	"jeri_blog/pkg/email"
 	"jeri_blog/pkg/feishu"
 	"jeri_blog/pkg/random"
+	"jeri_blog/pkg/utils"
 
 	"gorm.io/gorm"
 )
@@ -85,6 +86,10 @@ const (
 	KeyBlogThemeDarkStart    = "blog.theme_dark_start"    // 夜间主题开始时间（HH:MM）
 	KeyBlogWechatOffAccounts = "blog.wechat_offaccounts"  // 公众号二维码图片URL
 	KeyBlogWechatOffName     = "blog.wechat_offname"      // 公众号名称
+	KeyBlogMetingAPI         = "blog.meting_api"          // Meting-API 地址
+	KeyBlogCravatarURL       = "blog.cravatar_url"        // 头像服务 URL（%s 为邮箱哈希）
+	KeyBlogIPApiURL          = "blog.ip_api_url"          // IP 归属地查询 URL（%s 为 IP）
+	KeyBlogCoverMakerAPI     = "blog.cover_maker_api"     // 封面制作图片源 API
 )
 
 // 配置键常量 - Notification 相关
@@ -177,6 +182,7 @@ const (
 	KeyOAuthMicrosoftClientSecret = "oauth.microsoft.client_secret"
 	KeyOAuthMicrosoftRedirectURL  = "oauth.microsoft.redirect_url"
 	KeyOAuthSessionSecret         = "oauth.session_secret" // Session 加密密钥
+	KeyOAuthWorkerProxy           = "oauth.worker_proxy"   // OAuth Worker 代理地址
 )
 
 // SettingService 配置服务
@@ -457,6 +463,20 @@ func (s *SettingService) ApplyDatabaseConfig(cfg *config.Config) error {
 		}
 		if v, ok := blogSettings[KeyBlogWechatOffName]; ok && v != "" {
 			cfg.Blog.WechatOffName = v
+		}
+		if v, ok := blogSettings[KeyBlogMetingAPI]; ok && v != "" {
+			cfg.Blog.MetingAPI = v
+		}
+		if v, ok := blogSettings[KeyBlogCravatarURL]; ok && v != "" {
+			cfg.Blog.CravatarURL = v
+			utils.SetCravatarURL(v)
+		}
+		if v, ok := blogSettings[KeyBlogIPApiURL]; ok && v != "" {
+			cfg.Blog.IPApiURL = v
+			utils.SetIPApiURL(v)
+		}
+		if v, ok := blogSettings[KeyBlogCoverMakerAPI]; ok && v != "" {
+			cfg.Blog.CoverMakerAPI = v
 		}
 	}
 
@@ -757,6 +777,10 @@ func (s *SettingService) ApplyDatabaseConfig(cfg *config.Config) error {
 		}
 		if v, ok := oauthSettings[KeyOAuthMicrosoftRedirectURL]; ok && v != "" {
 			cfg.OAuth.Microsoft.RedirectURL = v
+		}
+		if v, ok := oauthSettings[KeyOAuthWorkerProxy]; ok && v != "" {
+			cfg.OAuth.WorkerProxy = v
+			auth.SetWorkerProxy(v)
 		}
 	}
 

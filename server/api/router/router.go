@@ -292,8 +292,6 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 		// ==================== 健康检查 ====================
 		frontendAPI.GET("/health", systemController.Health) // 服务及数据库状态检查
 
-		// ==================== 工具接口（公开）====================
-		frontendAPI.GET("/tools/parse-music", toolsHandler.ParseMusic) // 音乐解析（前台播放器使用）
 	}
 
 	// ============================
@@ -406,14 +404,14 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 		// ==================== 统计管理 ====================
 		statsManagement := adminAPI.Group("/stats")
 		{
-			statsManagement.GET("/dashboard", statsHandler.GetDashboard)                     // 获取仪表盘统计
-			statsManagement.GET("/trend", statsHandler.GetTrend)                             // 获取访问趋势
-			statsManagement.GET("/category", statsHandler.GetCategoryStats)                  // 获取分类统计
-			statsManagement.GET("/tag", statsHandler.GetTagStats)                            // 获取标签统计
-			statsManagement.GET("/contribution", statsHandler.GetArticleContribution)        // 获取文章贡献数据
-			statsManagement.GET("/visits", statsHandler.GetVisitLogs)                        // 获取访问日志
-			statsManagement.DELETE("/visits/batch", statsHandler.BatchDeleteVisitLogs)       // 批量删除访问日志
-			statsManagement.DELETE("/visits/:id", statsHandler.DeleteVisitLog)               // 删除访问日志
+			statsManagement.GET("/dashboard", statsHandler.GetDashboard)               // 获取仪表盘统计
+			statsManagement.GET("/trend", statsHandler.GetTrend)                       // 获取访问趋势
+			statsManagement.GET("/category", statsHandler.GetCategoryStats)            // 获取分类统计
+			statsManagement.GET("/tag", statsHandler.GetTagStats)                      // 获取标签统计
+			statsManagement.GET("/contribution", statsHandler.GetArticleContribution)  // 获取文章贡献数据
+			statsManagement.GET("/visits", statsHandler.GetVisitLogs)                  // 获取访问日志
+			statsManagement.DELETE("/visits/batch", statsHandler.BatchDeleteVisitLogs) // 批量删除访问日志
+			statsManagement.DELETE("/visits/:id", statsHandler.DeleteVisitLog)         // 删除访问日志
 		}
 
 		// ==================== 菜单管理 ====================
@@ -448,7 +446,7 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 		// ==================== 配置管理 ====================
 		settingManagement := adminAPI.Group("/settings")
 		{
-			settingManagement.GET("/:group", settingController.GetGroup)      // 获取指定分组的配置
+			settingManagement.GET("/:group", settingController.GetGroup)                                               // 获取指定分组的配置
 			settingManagement.PATCH("/:group", middleware.IsSuperAdmin(), settingController.UpdateGroup)               // 更新指定分组的配置（仅超级管理员）
 			settingManagement.PUT("/ai/mcp-secret/reset", middleware.IsSuperAdmin(), settingController.ResetMCPSecret) // 重置 MCP Secret（仅超级管理员）
 		}
@@ -465,7 +463,6 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 		toolsManagement.POST("/parse-video", toolsHandler.ParseVideo)
 		toolsManagement.POST("/fetch-linkmeta", toolsHandler.FetchLinkMetadata)
 		toolsManagement.POST("/download-image", toolsHandler.DownloadImage)
-		toolsManagement.GET("/parse-music", toolsHandler.ParseMusic)
 
 		// ==================== AI功能相关 ====================
 		aiManagement := adminAPI.Group("/ai")

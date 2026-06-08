@@ -569,8 +569,9 @@ import {
 } from '@element-plus/icons-vue';
 import type { CreateMomentRequest, UpdateMomentRequest, Moment } from '@/types/moment';
 import { createMoment, updateMoment } from '@/api/moment';
-import { fetchLinkInfo, parseVideo, parseMusic } from '@/api/tools';
+import { fetchLinkInfo, parseVideo } from '@/api/tools';
 import { uploadFile } from '@/api/file';
+import { getSettingGroup } from '@/api/sysconfig';
 import { formatForBackend } from '@/utils/date';
 import FilePickerDialog from '@/components/common/FilePickerDialog.vue';
 
@@ -635,6 +636,7 @@ const musicSearchKeyword = ref('');
 const musicSearchResults = ref<MusicSearchItem[]>([]);
 const searchingMusic = ref(false);
 const hasSearched = ref(false);
+const metingApiUrl = ref('https://api.injahow.cn/meting/');
 
 // 图片数据项
 interface ImageItem {
@@ -680,14 +682,6 @@ const formData = reactive<CreateMomentRequest>({
 const publishTime = ref('');
 
 // 计算属性
-const hasContent = computed(
-  () =>
-    formData.content.link?.url ||
-    imageItems.value.length ||
-    formData.content.music?.id ||
-    videoItem.value
-);
-
 const otherContentPreviews = computed(() => {
   const previews = [];
   if (formData.content.link?.url) {
@@ -843,7 +837,10 @@ const handleParseMusic = async () => {
   fetchingMusic.value = true;
   try {
     const { server, type, id } = formData.content.music;
-    const data = await parseMusic({ server, type, id });
+    const apiUrl = `${metingApiUrl.value}?server=${server}&type=${type}&id=${id}`;
+
+    const response = await fetch(apiUrl);
+    const data = await response.json();
 
     if (data && data.length > 0) {
       const info = data[0];
@@ -891,7 +888,7 @@ const handleSearchMusic = async () => {
   hasSearched.value = true;
 
   try {
-    const apiUrl = `https://meting.flec.top/api?server=netease&type=search&id=${encodeURIComponent(keyword)}`;
+    const apiUrl = `${metingApiUrl.value}?server=netease&type=search&id=${encodeURIComponent(keyword)}`;
     const response = await fetch(apiUrl);
     const data = await response.json();
     musicSearchResults.value = Array.isArray(data) ? data : [];
@@ -1190,10 +1187,18 @@ const removeContent = (type: string) => {
 // 监听对话框打开/关闭，在打开时初始化表单数据
 watch(
   visible,
-  val => {
+  async val => {
     if (val) {
       // 对话框打开时，根据 editMoment 初始化表单
       resetForm();
+
+      try {
+        const blogSettings = await getSettingGroup('blog');
+        const apiUrl = blogSettings['blog.meting_api'] || '';
+        if (apiUrl) metingApiUrl.value = apiUrl;
+      } catch {
+        // 使用默认值
+      }
 
       if (props.editMoment) {
         // 编辑模式：填充动态数据

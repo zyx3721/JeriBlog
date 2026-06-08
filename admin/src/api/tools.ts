@@ -22,25 +22,6 @@ export interface DownloadImageResponse {
 }
 
 /**
- * 音乐信息接口
- */
-export interface MusicInfo {
-  title: string;
-  artist: string;
-  album?: string;
-  cover?: string;
-  url: string;
-  duration?: number;
-}
-
-/**
- * 解析音乐请求接口
- */
-export interface ParseMusicRequest {
-  url: string;
-}
-
-/**
  * 工具API模块 - 用于视频解析、链接元数据获取等通用工具功能
  */
 
@@ -69,13 +50,4 @@ export function parseVideo(data: ParseVideoRequest): Promise<VideoInfo> {
  */
 export function downloadImage(data: { url: string }): Promise<DownloadImageResponse> {
   return request.post('/admin/tools/download-image', data);
-}
-
-/**
- * 解析音乐信息（代理Meting API）
- * @param params 音乐参数 { server: string, type: string, id: string }
- * @returns Promise<any[]>
- */
-export function parseMusic(params: { server: string; type: string; id: string }): Promise<any[]> {
-  return request.get('/admin/tools/parse-music', { params });
 }
