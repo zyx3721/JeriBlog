@@ -73,6 +73,7 @@ FROM node:22-alpine AS runtime
 ENV TZ=Asia/Shanghai
 
 # 安装 Nginx、supervisord 及运行时依赖；移除默认站点配置
+ARG ALPINE_MIRROR=
 RUN if [ -n "$ALPINE_MIRROR" ]; then \
       sed -i "s/dl-cdn.alpinelinux.org/${ALPINE_MIRROR}/g" /etc/apk/repositories; \
     fi \
