@@ -19,7 +19,7 @@ FROM node:22-alpine AS admin-builder
 WORKDIR /src/admin
 
 # 优先复制依赖描述文件以利用构建缓存
-COPY admin/package.json ./
+COPY admin/package*.json ./
 RUN npm install --registry=https://registry.npmmirror.com
 
 COPY admin/ ./
@@ -34,7 +34,7 @@ WORKDIR /src/blog
 
 ARG APP_VERSION=dev
 
-COPY blog/package.json ./
+COPY blog/package*.json ./
 RUN npm install --registry=https://registry.npmmirror.com
 
 COPY blog/ ./
