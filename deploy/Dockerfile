@@ -18,9 +18,12 @@ FROM node:22-alpine AS admin-builder
 
 WORKDIR /src/admin
 
+# npm 依赖下载源（构建时可用 --build-arg 覆盖）
+ARG NPM_REGISTRY=https://registry.npmmirror.com
+
 # 优先复制依赖描述文件以利用构建缓存
 COPY admin/package*.json ./
-RUN npm install --registry=https://registry.npmmirror.com
+RUN npm install --registry=${NPM_REGISTRY}
 
 COPY admin/ ./
 RUN npm run build
@@ -34,8 +37,11 @@ WORKDIR /src/blog
 
 ARG APP_VERSION=dev
 
+# npm 依赖下载源（构建时可用 --build-arg 覆盖）
+ARG NPM_REGISTRY=https://registry.npmmirror.com
+
 COPY blog/package*.json ./
-RUN npm install --registry=https://registry.npmmirror.com
+RUN npm install --registry=${NPM_REGISTRY}
 
 COPY blog/ ./
 
